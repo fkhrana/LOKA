@@ -1,0 +1,269 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GestureRecognizer : MonoBehaviour
+{
+    public static GestureRecognizer Instance { get; private set; }
+
+    public int sampleCount = 64;
+    public float squareSize = 250f;
+    [Tooltip("Ambang maksimal score rata-rata; semakin rendah berarti gesture harus lebih mirip.")]
+    public float maxAverageDistance = 30f;
+
+    private readonly List<GestureTemplate> templates = new List<GestureTemplate>();
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        BuildTemplates();
+    }
+
+    private void BuildTemplates()
+    {
+        templates.Clear();
+        templates.Add(new GestureTemplate("Circle", GenerateCircleTemplate(sampleCount)));
+        templates.Add(new GestureTemplate("Square", GenerateSquareTemplate(sampleCount)));
+    }
+
+    public void Recognize(List<Vector2> rawPoints)
+    {
+        if (rawPoints == null || rawPoints.Count < 5)
+        {
+            Debug.Log("Tidak ada gesture yang valid untuk dikenali.");
+            return;
+        }
+
+        var candidate = ProcessPoints(rawPoints);
+        if (candidate == null)
+        {
+            Debug.Log("Gesture tidak valid setelah pemrosesan.");
+            return;
+        }
+
+        string bestName = "Tidak dikenali";
+        float bestDistance = float.MaxValue;
+
+        float angleRange = Mathf.Deg2Rad * 45f;
+        foreach (var template in templates)
+        {
+            float distance = DistanceAtBestAngle(candidate, template.Points, -angleRange, angleRange);
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestName = template.Name;
+            }
+        }
+
+        float score = bestDistance / candidate.Count;
+        if (score > maxAverageDistance)
+        {
+            Debug.Log($"Tidak dikenali. Score: {score:F2}");
+        }
+        else
+        {
+            Debug.Log($"Gesture terdeteksi: {bestName}. Score: {score:F2}");
+        }
+    }
+
+    private List<Vector2> ProcessPoints(List<Vector2> points)
+    {
+        var resampled = Resample(points, sampleCount);
+        resampled = ScaleToSquare(resampled, squareSize);
+        resampled = TranslateToOrigin(resampled);
+        return resampled;
+    }
+
+    private List<Vector2> GenerateCircleTemplate(int numPoints)
+    {
+        var points = new List<Vector2>(numPoints);
+        for (int i = 0; i < numPoints; i++)
+        {
+            float angle = 2f * Mathf.PI * i / numPoints;
+            points.Add(new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)));
+        }
+
+        return ProcessPoints(points);
+    }
+
+    private List<Vector2> GenerateSquareTemplate(int numPoints)
+    {
+        var points = new List<Vector2>(numPoints);
+        int side = Mathf.Max(1, numPoints / 4);
+
+        for (int i = 0; i < side; i++)
+            points.Add(new Vector2(-1f + 2f * i / Mathf.Max(1, side - 1), 1f));
+        for (int i = 0; i < side; i++)
+            points.Add(new Vector2(1f, 1f - 2f * i / Mathf.Max(1, side - 1)));
+        for (int i = 0; i < side; i++)
+            points.Add(new Vector2(1f - 2f * i / Mathf.Max(1, side - 1), -1f));
+        for (int i = 0; i < side; i++)
+            points.Add(new Vector2(-1f, -1f + 2f * i / Mathf.Max(1, side - 1)));
+
+        return ProcessPoints(points);
+    }
+
+    private List<Vector2> Resample(List<Vector2> points, int n)
+    {
+        float pathLength = PathLength(points);
+        float interval = pathLength / (n - 1);
+        var newPoints = new List<Vector2> { points[0] };
+        float distanceSoFar = 0f;
+
+        for (int i = 1; i < points.Count; i++)
+        {
+            float d = Vector2.Distance(points[i - 1], points[i]);
+            if ((distanceSoFar + d) >= interval)
+            {
+                float t = (interval - distanceSoFar) / d;
+                Vector2 newPoint = Vector2.Lerp(points[i - 1], points[i], t);
+                newPoints.Add(newPoint);
+                points.Insert(i, newPoint);
+                distanceSoFar = 0f;
+            }
+            else
+            {
+                distanceSoFar += d;
+            }
+        }
+
+        while (newPoints.Count < n)
+            newPoints.Add(points[points.Count - 1]);
+
+        return newPoints;
+    }
+
+    private List<Vector2> ScaleToSquare(List<Vector2> points, float size)
+    {
+        float minX = float.MaxValue, minY = float.MaxValue;
+        float maxX = float.MinValue, maxY = float.MinValue;
+
+        foreach (var p in points)
+        {
+            minX = Mathf.Min(minX, p.x);
+            minY = Mathf.Min(minY, p.y);
+            maxX = Mathf.Max(maxX, p.x);
+            maxY = Mathf.Max(maxY, p.y);
+        }
+
+        float width = maxX - minX;
+        float height = maxY - minY;
+        float scale = Mathf.Max(width, height) > 0 ? size / Mathf.Max(width, height) : 1f;
+
+        var newPoints = new List<Vector2>(points.Count);
+        foreach (var p in points)
+        {
+            newPoints.Add(new Vector2(p.x * scale, p.y * scale));
+        }
+
+        return newPoints;
+    }
+
+    private List<Vector2> TranslateToOrigin(List<Vector2> points)
+    {
+        Vector2 centroid = Vector2.zero;
+        foreach (var p in points)
+        {
+            centroid += p;
+        }
+
+        centroid /= points.Count;
+        var newPoints = new List<Vector2>(points.Count);
+        foreach (var p in points)
+        {
+            newPoints.Add(p - centroid);
+        }
+
+        return newPoints;
+    }
+
+    private float PathDistance(List<Vector2> a, List<Vector2> b)
+    {
+        float distance = 0f;
+        int count = Mathf.Min(a.Count, b.Count);
+        for (int i = 0; i < count; i++)
+        {
+            distance += Vector2.Distance(a[i], b[i]);
+        }
+
+        return count > 0 ? distance / count : float.MaxValue;
+    }
+
+    private List<Vector2> RotateBy(List<Vector2> points, float angle)
+    {
+        float cos = Mathf.Cos(angle);
+        float sin = Mathf.Sin(angle);
+        var newPoints = new List<Vector2>(points.Count);
+        foreach (var p in points)
+        {
+            newPoints.Add(new Vector2(p.x * cos - p.y * sin, p.x * sin + p.y * cos));
+        }
+
+        return newPoints;
+    }
+
+    private float DistanceAtAngle(List<Vector2> points, List<Vector2> template, float angle)
+    {
+        var rotated = RotateBy(points, angle);
+        return PathDistance(rotated, template);
+    }
+
+    private float DistanceAtBestAngle(List<Vector2> points, List<Vector2> template, float a, float b, float threshold = 0.0174533f)
+    {
+        float phi = 0.5f * (-1f + Mathf.Sqrt(5f));
+        float x1 = phi * a + (1 - phi) * b;
+        float x2 = (1 - phi) * a + phi * b;
+        float f1 = DistanceAtAngle(points, template, x1);
+        float f2 = DistanceAtAngle(points, template, x2);
+
+        while (Mathf.Abs(b - a) > threshold)
+        {
+            if (f1 < f2)
+            {
+                b = x2;
+                x2 = x1;
+                f2 = f1;
+                x1 = phi * a + (1 - phi) * b;
+                f1 = DistanceAtAngle(points, template, x1);
+            }
+            else
+            {
+                a = x1;
+                x1 = x2;
+                f1 = f2;
+                x2 = (1 - phi) * a + phi * b;
+                f2 = DistanceAtAngle(points, template, x2);
+            }
+        }
+
+        return Mathf.Min(f1, f2);
+    }
+
+    private float PathLength(List<Vector2> points)
+    {
+        float length = 0f;
+        for (int i = 1; i < points.Count; i++)
+        {
+            length += Vector2.Distance(points[i - 1], points[i]);
+        }
+
+        return length;
+    }
+
+    private class GestureTemplate
+    {
+        public string Name { get; }
+        public List<Vector2> Points { get; }
+
+        public GestureTemplate(string name, List<Vector2> points)
+        {
+            Name = name;
+            Points = points;
+        }
+    }
+}
