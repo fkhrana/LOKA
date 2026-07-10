@@ -5,6 +5,18 @@ public class MainMenu : MonoBehaviour
 {
   public void PlayGame()
   {
-    SceneManager.LoadSceneAsync(1);
+    SceneManager.LoadScene("ChooseHero");
   }
+
+  public void LevelingGame()
+  {
+    SceneManager.LoadScene("Leveling");
+  }
+
+  public void ExitGame()
+  {
+     Debug.Log("Keluar dari game");
+     Application.Quit();
+  }
+
 }
