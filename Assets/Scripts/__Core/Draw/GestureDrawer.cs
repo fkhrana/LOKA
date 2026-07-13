@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
@@ -7,6 +8,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(LineRenderer))]
 public class GestureDrawer : MonoBehaviour
 {
+    public event Action<List<Vector2>> StrokeCompleted;
+
     public LineRenderer lineRenderer;
     public float minPointDistance = 0.05f;
     private readonly List<Vector3> drawPoints = new List<Vector3>();
@@ -115,7 +118,11 @@ public class GestureDrawer : MonoBehaviour
             points2D.Add(new Vector2(p.x, p.y));
         }
 
-        if (GestureRecognizer.Instance != null)
+        if (StrokeCompleted != null)
+        {
+            StrokeCompleted.Invoke(points2D);
+        }
+        else if (GestureRecognizer.Instance != null)
         {
             GestureRecognizer.Instance.Recognize(points2D);
         }
