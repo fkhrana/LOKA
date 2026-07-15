@@ -7,4 +7,9 @@ public class ChooseHero : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void PlayGame()
+    {
+        SceneManager.LoadScene("Scratch");
+    }
 }
