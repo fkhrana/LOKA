@@ -177,7 +177,7 @@ MonoBehaviour:
     m_Top: 200
     m_Bottom: 200
   m_ChildAlignment: 3
-  m_Spacing: 40
+  m_Spacing: 70
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -282,7 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1074,8 +1074,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f85de3302b1c34fb4a5d903079bbb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  scrollbar: {fileID: 0}
-  snapSpeed: 10
+  scrolbar: {fileID: 0}
 --- !u!1 &1575778335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,8 +1433,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2140543313}
   m_HandleRect: {fileID: 2140543312}
   m_Direction: 0
-  m_Value: -0.00000038146973
-  m_Size: 0.6666667
+  m_Value: -0.00000035903034
+  m_Size: 0.6530612
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1680,7 +1679,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3529412}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
