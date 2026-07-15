@@ -9,6 +9,9 @@ public class GestureChallengeManager : MonoBehaviour
     [SerializeField] private float nextRandomChallengeDelay = 0.15f;
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private GestureRecognizer gestureRecognizer;
+    [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private int damageOnFail = 10;
+    [SerializeField] private int healOnSuccess = 0;
     [SerializeField] private TMP_Text promptText;
     [SerializeField] private string idlePrompt = "Gambar bebas";
 
@@ -33,6 +36,9 @@ public class GestureChallengeManager : MonoBehaviour
 
         if (gestureRecognizer == null)
             gestureRecognizer = GestureRecognizer.Instance != null ? GestureRecognizer.Instance : FindAnyObjectByType<GestureRecognizer>();
+
+        if (playerHealth == null)
+            playerHealth = FindAnyObjectByType<PlayerHealth>();
     }
 
     private void OnEnable()
@@ -115,6 +121,9 @@ public class GestureChallengeManager : MonoBehaviour
         {
             Debug.Log($"Challenge sukses: {result.DetectedShape}");
 
+            if (playerHealth != null && healOnSuccess > 0)
+                playerHealth.Heal(healOnSuccess);
+
             if (IsRandomChallengeModeActive)
             {
                 SetNextRandomChallenge();
@@ -127,6 +136,9 @@ public class GestureChallengeManager : MonoBehaviour
         else
         {
             Debug.Log($"Challenge gagal. Diminta {CurrentRequiredGesture}, terdeteksi {result.DetectedShape}");
+
+            if (playerHealth != null && damageOnFail > 0)
+                playerHealth.TakeDamage(damageOnFail);
         }
     }
 
