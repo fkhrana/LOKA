@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Rana/Scratch.unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
+  - enabled: 1
+    path: Assets/Scenes/Nayla/MiniGame.unity
+    guid: 0c164eb9eed21124a82aa36120cad2b4
+  - enabled: 1
+    path: Assets/Scenes/Nayla/GameOver.unity
+    guid: 6f21932ed5fcce34ea2b56e7289f32e6
+  - enabled: 1
+    path: Assets/Scenes/Nayla/Win.unity
+    guid: b8597d5a1c8f6424c9958a932a19dffc
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
