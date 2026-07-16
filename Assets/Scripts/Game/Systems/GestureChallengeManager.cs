@@ -1,28 +1,21 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 public class GestureChallengeManager : MonoBehaviour
 {
     public static GestureChallengeManager Instance { get; private set; }
 
-    public event System.Action<GestureRecognitionResult, UnityEngine.Object> ChallengeSucceeded;
-
     [SerializeField] private float nextRandomChallengeDelay = 0.15f;
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int damageOnFail = 10;
     [SerializeField] private int healOnSuccess = 0;
-    [SerializeField] private TMP_Text promptText;
-    [SerializeField] private string idlePrompt = "Gambar bebas";
 
     public GestureShape CurrentRequiredGesture { get; private set; } = GestureShape.None;
     public bool IsRandomChallengeModeActive { get; private set; }
-    public UnityEngine.Object CurrentChallengeSource => currentChallengeSource;
 
     private Coroutine randomChallengeCoroutine;
     private readonly GestureShape[] randomShapes = { GestureShape.Circle, GestureShape.Square };
-    private UnityEngine.Object currentChallengeSource;
 
     private void Awake()
     {
@@ -53,28 +46,20 @@ public class GestureChallengeManager : MonoBehaviour
             gestureDrawer.GestureRecognized -= HandleGestureRecognized;
     }
 
-    public void SetChallenge(GestureShape requiredGesture, UnityEngine.Object challengeSource = null)
+    public void SetChallenge(GestureShape requiredGesture)
     {
         StopRandomChallengeMode();
-        currentChallengeSource = challengeSource;
         CurrentRequiredGesture = requiredGesture;
-        UpdatePrompt();
     }
 
-    public void ClearChallenge(UnityEngine.Object challengeSource = null)
+    public void ClearChallenge()
     {
-        if (currentChallengeSource != null && challengeSource != null && currentChallengeSource != challengeSource)
-            return;
-
         StopRandomChallengeMode();
-        currentChallengeSource = null;
         CurrentRequiredGesture = GestureShape.None;
-        UpdatePrompt();
     }
 
-    public void StartRandomChallengeMode(UnityEngine.Object challengeSource = null)
+    public void StartRandomChallengeMode()
     {
-        currentChallengeSource = challengeSource;
         IsRandomChallengeModeActive = true;
         SetRandomPromptImmediately();
         SetNextRandomChallenge();
@@ -135,8 +120,6 @@ public class GestureChallengeManager : MonoBehaviour
             if (playerHealth != null && healOnSuccess > 0)
                 playerHealth.Heal(healOnSuccess);
 
-            var challengeSource = currentChallengeSource;
-
             if (IsRandomChallengeModeActive)
             {
                 SetNextRandomChallenge();
@@ -145,8 +128,6 @@ public class GestureChallengeManager : MonoBehaviour
             {
                 ClearChallenge();
             }
-
-            ChallengeSucceeded?.Invoke(result, challengeSource);
         }
         else
         {
@@ -157,40 +138,6 @@ public class GestureChallengeManager : MonoBehaviour
         }
     }
 
-    private void UpdatePrompt()
-    {
-        if (promptText == null)
-        {
-            Debug.LogWarning("GestureChallengeManager: Prompt Text belum di-assign di Inspector.");
-            return;
-        }
-
-        if (CurrentRequiredGesture == GestureShape.None)
-        {
-            promptText.text = idlePrompt;
-            return;
-        }
-
-        promptText.text = $"{GetGestureLabel(CurrentRequiredGesture)}";
-    }
-
-    private string GetGestureLabel(GestureShape gestureShape)
-    {
-        switch (gestureShape)
-        {
-            case GestureShape.Circle:
-                return "LINGKARAN";
-            case GestureShape.Square:
-                return "KOTAK";
-            case GestureShape.Na:
-                return "NA";
-            case GestureShape.Ka:
-                return "KA";
-            default:
-                return gestureShape.ToString();
-        }
-    }
-
     private System.Collections.IEnumerator DelayThenSetRandomChallenge()
     {
         if (nextRandomChallengeDelay > 0f)
@@ -198,7 +145,6 @@ public class GestureChallengeManager : MonoBehaviour
 
         var nextShape = GetRandomShape(CurrentRequiredGesture);
         CurrentRequiredGesture = nextShape;
-        UpdatePrompt();
         randomChallengeCoroutine = null;
     }
 
@@ -224,6 +170,5 @@ public class GestureChallengeManager : MonoBehaviour
     private void SetRandomPromptImmediately()
     {
         CurrentRequiredGesture = GetRandomShape();
-        UpdatePrompt();
     }
 }
