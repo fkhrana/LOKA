@@ -350,6 +350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GestureDrawer
   lineRenderer: {fileID: 256010450}
   minPointDistance: 0.05
+  firstStrokeGracePeriod: 0.35
 --- !u!120 &256010450
 LineRenderer:
   serializedVersion: 3
@@ -497,7 +498,9 @@ MonoBehaviour:
   spawnAreaSize: {x: 6.65, y: 4.5}
   spawnPoints: []
   spawnedParent: {fileID: 0}
-  availableGestures: 0200000003000000
+  gestureCategory: 1
+  availableShapeGestures: 0200000003000000
+  availableAksaraGestures: 0400000005000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2
   maxSpawnDistance: 3
@@ -944,6 +947,10 @@ MonoBehaviour:
   sampleCount: 64
   squareSize: 250
   maxAverageDistance: 30
+  maxAbsoluteScore: 60
+  cornerThresholdDegrees: 45
+  maxAllowedCorners: 5
+  recognitionMarginRatio: 0.9
   maxEndpointDistanceRatio: 0.18
 --- !u!114 &1483876491
 MonoBehaviour:

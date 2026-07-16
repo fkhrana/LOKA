@@ -17,9 +17,6 @@ public class EnemyGestureCommand : MonoBehaviour
     private int remainingCorrectGestures;
     private bool isSubscribed;
     private bool challengeActive;
-    private static GestureDrawer staticGestureDrawer;
-    private static bool isStaticGestureSubscribed;
-
     private static List<Vector2> cachedStrokePoints;
     private static bool cachedStrokeResultUsed;
     private static bool cachedStrokeHandled;
@@ -239,19 +236,6 @@ public class EnemyGestureCommand : MonoBehaviour
         isSubscribed = false;
     }
 
-    private static void ApplyDamageToNearbyPlayer()
-    {
-        for (int i = 0; i < activeEnemies.Count; i++)
-        {
-            var enemy = activeEnemies[i];
-            if (enemy != null && enemy.playerHealth != null && enemy.damageOnFail > 0)
-            {
-                enemy.playerHealth.TakeDamage(enemy.damageOnFail);
-                return;
-            }
-        }
-    }
-
     private void UpdatePrompt()
     {
         if (promptText == null)
@@ -263,10 +247,27 @@ public class EnemyGestureCommand : MonoBehaviour
             return;
         }
 
-        string gestureLabel = gestureToCommand == GestureShape.Circle ? "LINGKARAN" : "KOTAK";
+        string gestureLabel = GetGestureLabel(gestureToCommand);
         if (remainingCorrectGestures > 1)
             promptText.text = $"{gestureLabel} x{remainingCorrectGestures}";
         else
             promptText.text = $"{gestureLabel}";
+    }
+
+    private string GetGestureLabel(GestureShape gestureShape)
+    {
+        switch (gestureShape)
+        {
+            case GestureShape.Circle:
+                return "LINGKARAN";
+            case GestureShape.Square:
+                return "KOTAK";
+            case GestureShape.Na:
+                return "NA";
+            case GestureShape.Ka:
+                return "KA";
+            default:
+                return gestureShape.ToString();
+        }
     }
 }

@@ -182,6 +182,10 @@ public class GestureChallengeManager : MonoBehaviour
                 return "LINGKARAN";
             case GestureShape.Square:
                 return "KOTAK";
+            case GestureShape.Na:
+                return "NA";
+            case GestureShape.Ka:
+                return "KA";
             default:
                 return gestureShape.ToString();
         }

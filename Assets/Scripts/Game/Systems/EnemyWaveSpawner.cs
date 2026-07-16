@@ -11,7 +11,9 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private Vector2 spawnAreaSize = new Vector2(4f, 4f);
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private Transform spawnedParent;
-    [SerializeField] private GestureShape[] availableGestures = { GestureShape.Circle, GestureShape.Square };
+    [SerializeField] private GestureCategory gestureCategory = GestureCategory.Shapes;
+    [SerializeField] private GestureShape[] availableShapeGestures = { GestureShape.Circle, GestureShape.Square };
+    [SerializeField] private GestureShape[] availableAksaraGestures = { GestureShape.Na, GestureShape.Ka };
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
     [SerializeField, Min(0.1f)] private float minSpawnDistance = 0.5f;
     [SerializeField, Min(0.1f)] private float maxSpawnDistance = 3f;
@@ -171,10 +173,40 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private GestureShape GetGestureForIndex(int index)
     {
-        if (availableGestures == null || availableGestures.Length == 0)
+        var candidates = GetAvailableGesturesByCategory();
+        if (candidates == null || candidates.Length == 0)
             return GestureShape.Circle;
 
-        int selectedIndex = Random.Range(0, availableGestures.Length);
-        return availableGestures[selectedIndex];
+        int selectedIndex = Random.Range(0, candidates.Length);
+        return candidates[selectedIndex];
+    }
+
+    private GestureShape[] GetAvailableGesturesByCategory()
+    {
+        switch (gestureCategory)
+        {
+            case GestureCategory.Aksara:
+                return availableAksaraGestures != null && availableAksaraGestures.Length > 0
+                    ? availableAksaraGestures
+                    : new[] { GestureShape.Na, GestureShape.Ka };
+            case GestureCategory.Shapes:
+                return availableShapeGestures != null && availableShapeGestures.Length > 0
+                    ? availableShapeGestures
+                    : new[] { GestureShape.Circle, GestureShape.Square };
+            default:
+                var combined = new List<GestureShape>();
+                if (availableShapeGestures != null)
+                    combined.AddRange(availableShapeGestures);
+                if (availableAksaraGestures != null)
+                    combined.AddRange(availableAksaraGestures);
+                return combined.Count > 0 ? combined.ToArray() : new[] { GestureShape.Circle, GestureShape.Square, GestureShape.Na, GestureShape.Ka };
+        }
+    }
+
+    private enum GestureCategory
+    {
+        Shapes,
+        Aksara,
+        Mixed
     }
 }

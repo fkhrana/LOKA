@@ -8,16 +8,14 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(LineRenderer))]
 public class GestureDrawer : MonoBehaviour
 {
-    public event Action<List<Vector2>> StrokeCompleted;
     public event Action<List<Vector2>, GestureRecognitionResult> GestureRecognized;
 
     public LineRenderer lineRenderer;
     public float minPointDistance = 0.05f;
-    public float singleStrokeAutoDetectDelay = 0.2f;
+    public float firstStrokeGracePeriod = 0.35f;
 
     private readonly List<Vector3> currentStrokePoints = new List<Vector3>();
     private readonly List<List<Vector2>> completedStrokes = new List<List<Vector2>>();
-    private readonly List<List<Vector3>> completedStrokePoints = new List<List<Vector3>>();
     private readonly List<LineRenderer> completedStrokeRenderers = new List<LineRenderer>();
     private bool isDrawing;
     private bool isAwaitingNextStroke;
@@ -81,6 +79,8 @@ public class GestureDrawer : MonoBehaviour
         if (isAwaitingNextStroke && !isDrawing && Time.unscaledTime >= pendingRecognitionTime)
         {
             FinalizeRecognition();
+            isAwaitingNextStroke = false;
+            pendingRecognitionTime = 0f;
         }
     }
 
@@ -173,24 +173,28 @@ public class GestureDrawer : MonoBehaviour
         }
 
         completedStrokes.Add(points2D);
-        completedStrokePoints.Add(new List<Vector3>(currentStrokePoints));
         PersistStroke(currentStrokePoints);
-
-        if (StrokeCompleted != null)
-        {
-            StrokeCompleted.Invoke(points2D);
-        }
 
         if (completedStrokes.Count == 1)
         {
             isAwaitingNextStroke = true;
-            pendingRecognitionTime = Time.unscaledTime + singleStrokeAutoDetectDelay;
+            pendingRecognitionTime = Time.unscaledTime + firstStrokeGracePeriod;
+            return;
         }
-        else
+
+        if (completedStrokes.Count >= 2)
         {
-            isAwaitingNextStroke = false;
-            pendingRecognitionTime = 0f;
+            if (GestureRecognizer.Instance != null)
+            {
+                GestureRecognizer.Instance.Recognize(completedStrokes);
+            }
+
+            FinalizeRecognition();
+            return;
         }
+
+        isAwaitingNextStroke = false;
+        pendingRecognitionTime = 0f;
     }
 
     private void FinalizeRecognition()
@@ -218,15 +222,10 @@ public class GestureDrawer : MonoBehaviour
             Debug.LogWarning("GestureRecognizer belum tersedia di scene.");
         }
 
-        if (result.IsRecognized)
-        {
-            ClearRecognizedStrokes();
-        }
-        else
-        {
-            isAwaitingNextStroke = false;
-            pendingRecognitionTime = 0f;
-        }
+        ClearRecognizedStrokes();
+        ClearCurrentStrokePreview();
+        isAwaitingNextStroke = false;
+        pendingRecognitionTime = 0f;
     }
 
     private void PersistStroke(List<Vector3> points)
@@ -270,7 +269,6 @@ public class GestureDrawer : MonoBehaviour
     private void ClearRecognizedStrokes()
     {
         completedStrokes.Clear();
-        completedStrokePoints.Clear();
 
         foreach (var renderer in completedStrokeRenderers)
         {
