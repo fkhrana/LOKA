@@ -10,8 +10,10 @@ public class GestureRecognizer : MonoBehaviour
 
     public int sampleCount = 64;
     public float squareSize = 250f;
-    [Tooltip("Ambang maksimal score rata-rata; semakin rendah berarti gesture harus lebih mirip.")]
-    public float maxAverageDistance = 30f;
+    [Tooltip("Ambang maksimal jarak rata-rata; semakin rendah berarti gesture harus lebih mirip.")]
+    public float maxAverageDistance = 45f;
+    [Tooltip("Rasio minimum pemisahan antara hasil terbaik dan kedua terbaik agar bentuk dianggap jelas.")]
+    public float recognitionMarginRatio = 0.90f;
     [Tooltip("Rasio jarak titik awal-akhir terhadap ukuran gesture. Makin kecil makin ketat untuk menolak garis terbuka.")]
     public float maxEndpointDistanceRatio = 0.18f;
 
@@ -38,29 +40,57 @@ public class GestureRecognizer : MonoBehaviour
 
     public GestureRecognitionResult Recognize(List<Vector2> rawPoints, GestureShape expectedShape = GestureShape.None)
     {
-        if (rawPoints == null || rawPoints.Count < 5)
+        if (rawPoints == null || rawPoints.Count == 0)
         {
             Debug.Log("Tidak ada gesture yang valid untuk dikenali.");
-            return new GestureRecognitionResult(GestureShape.Unknown, 0f, false, expectedShape, false);
+            return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, 1);
         }
 
-        var candidate = ProcessPoints(rawPoints);
+        var singleStroke = new List<List<Vector2>> { rawPoints };
+        return Recognize(singleStroke, expectedShape);
+    }
+
+    public GestureRecognitionResult Recognize(List<List<Vector2>> strokes, GestureShape expectedShape = GestureShape.None)
+    {
+        if (strokes == null || strokes.Count == 0)
+        {
+            Debug.Log("Tidak ada stroke yang valid untuk dikenali.");
+            return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, 0);
+        }
+
+        var combinedPoints = new List<Vector2>();
+        foreach (var stroke in strokes)
+        {
+            if (stroke == null || stroke.Count < 2)
+                continue;
+
+            combinedPoints.AddRange(stroke);
+        }
+
+        if (combinedPoints.Count < 5)
+        {
+            Debug.Log("Tidak ada gesture yang valid untuk dikenali.");
+            return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
+        }
+
+        var candidate = ProcessPoints(combinedPoints);
         if (candidate == null)
         {
             Debug.Log("Gesture tidak valid setelah pemrosesan.");
-            return new GestureRecognitionResult(GestureShape.Unknown, 0f, false, expectedShape, false);
+            return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
         }
 
-        if (!HasClosedEnoughShape(rawPoints))
+        if (!HasClosedEnoughShape(combinedPoints))
         {
             Debug.Log("Gesture tidak dikenali. Stroke terlalu terbuka untuk circle/square.");
-            var rejectedResult = new GestureRecognitionResult(GestureShape.Unknown, float.MaxValue, false, expectedShape, false);
+            var rejectedResult = new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
             GestureEvaluated?.Invoke(rejectedResult);
             return rejectedResult;
         }
 
         GestureShape bestShape = GestureShape.Unknown;
         float bestDistance = float.MaxValue;
+        float secondBestDistance = float.MaxValue;
 
         float angleRange = Mathf.Deg2Rad * 45f;
         foreach (var template in templates)
@@ -68,29 +98,37 @@ public class GestureRecognizer : MonoBehaviour
             float distance = DistanceAtBestAngle(candidate, template.Points, -angleRange, angleRange);
             if (distance < bestDistance)
             {
+                secondBestDistance = bestDistance;
                 bestDistance = distance;
                 bestShape = template.Shape;
+            }
+            else if (distance < secondBestDistance)
+            {
+                secondBestDistance = distance;
             }
         }
 
         float score = bestDistance / candidate.Count;
-        bool isRecognized = score <= maxAverageDistance;
+        float secondAverageDistance = secondBestDistance == float.MaxValue ? float.MaxValue : secondBestDistance / candidate.Count;
+        bool hasClearMatch = score <= maxAverageDistance &&
+                             (secondBestDistance == float.MaxValue || score <= secondAverageDistance * recognitionMarginRatio || score <= 18f);
+        bool isRecognized = hasClearMatch;
         bool matchesExpected = expectedShape == GestureShape.None || (isRecognized && bestShape == expectedShape);
 
-        if (score > maxAverageDistance)
+        if (!isRecognized)
         {
-            Debug.Log($"Tidak dikenali. Score: {score:F2}");
+            Debug.Log($"Tidak dikenali. Bentuk terlalu ambigu atau tidak jelas. strokeCount: {strokes.Count}, score: {score:F2}");
         }
         else if (expectedShape != GestureShape.None && bestShape != expectedShape)
         {
-            Debug.Log($"Gesture salah. Diminta: {expectedShape}, terdeteksi: {bestShape}. Score: {score:F2}");
+            Debug.Log($"Gesture salah. Diminta: {expectedShape}, terdeteksi: {bestShape}. strokeCount: {strokes.Count}, score: {score:F2}");
         }
         else
         {
-            Debug.Log($"Gesture terdeteksi: {bestShape}. Score: {score:F2}");
+            Debug.Log($"Gesture terdeteksi: {bestShape}. strokeCount: {strokes.Count}, score: {score:F2}");
         }
 
-        var result = new GestureRecognitionResult(bestShape, score, isRecognized, expectedShape, matchesExpected);
+        var result = new GestureRecognitionResult(bestShape, isRecognized, expectedShape, matchesExpected, score, strokes.Count);
         GestureEvaluated?.Invoke(result);
         return result;
     }
@@ -330,17 +368,19 @@ public enum GestureShape
 public struct GestureRecognitionResult
 {
     public GestureShape DetectedShape { get; }
-    public float Score { get; }
     public bool IsRecognized { get; }
     public GestureShape ExpectedShape { get; }
     public bool MatchesExpected { get; }
+    public float Score { get; }
+    public int StrokeCount { get; }
 
-    public GestureRecognitionResult(GestureShape detectedShape, float score, bool isRecognized, GestureShape expectedShape, bool matchesExpected)
+    public GestureRecognitionResult(GestureShape detectedShape, bool isRecognized, GestureShape expectedShape, bool matchesExpected, float score, int strokeCount)
     {
         DetectedShape = detectedShape;
-        Score = score;
         IsRecognized = isRecognized;
         ExpectedShape = expectedShape;
         MatchesExpected = matchesExpected;
+        Score = score;
+        StrokeCount = strokeCount;
     }
 }

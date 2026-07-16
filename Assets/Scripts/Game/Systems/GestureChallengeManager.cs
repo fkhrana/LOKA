@@ -6,9 +6,10 @@ public class GestureChallengeManager : MonoBehaviour
 {
     public static GestureChallengeManager Instance { get; private set; }
 
+    public event System.Action<GestureRecognitionResult, UnityEngine.Object> ChallengeSucceeded;
+
     [SerializeField] private float nextRandomChallengeDelay = 0.15f;
     [SerializeField] private GestureDrawer gestureDrawer;
-    [SerializeField] private GestureRecognizer gestureRecognizer;
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int damageOnFail = 10;
     [SerializeField] private int healOnSuccess = 0;
@@ -17,9 +18,11 @@ public class GestureChallengeManager : MonoBehaviour
 
     public GestureShape CurrentRequiredGesture { get; private set; } = GestureShape.None;
     public bool IsRandomChallengeModeActive { get; private set; }
+    public UnityEngine.Object CurrentChallengeSource => currentChallengeSource;
 
     private Coroutine randomChallengeCoroutine;
     private readonly GestureShape[] randomShapes = { GestureShape.Circle, GestureShape.Square };
+    private UnityEngine.Object currentChallengeSource;
 
     private void Awake()
     {
@@ -34,9 +37,6 @@ public class GestureChallengeManager : MonoBehaviour
         if (gestureDrawer == null)
             gestureDrawer = FindAnyObjectByType<GestureDrawer>();
 
-        if (gestureRecognizer == null)
-            gestureRecognizer = GestureRecognizer.Instance != null ? GestureRecognizer.Instance : FindAnyObjectByType<GestureRecognizer>();
-
         if (playerHealth == null)
             playerHealth = FindAnyObjectByType<PlayerHealth>();
     }
@@ -44,31 +44,37 @@ public class GestureChallengeManager : MonoBehaviour
     private void OnEnable()
     {
         if (gestureDrawer != null)
-            gestureDrawer.StrokeCompleted += HandleStrokeCompleted;
+            gestureDrawer.GestureRecognized += HandleGestureRecognized;
     }
 
     private void OnDisable()
     {
         if (gestureDrawer != null)
-            gestureDrawer.StrokeCompleted -= HandleStrokeCompleted;
+            gestureDrawer.GestureRecognized -= HandleGestureRecognized;
     }
 
-    public void SetChallenge(GestureShape requiredGesture)
+    public void SetChallenge(GestureShape requiredGesture, UnityEngine.Object challengeSource = null)
     {
         StopRandomChallengeMode();
+        currentChallengeSource = challengeSource;
         CurrentRequiredGesture = requiredGesture;
         UpdatePrompt();
     }
 
-    public void ClearChallenge()
+    public void ClearChallenge(UnityEngine.Object challengeSource = null)
     {
+        if (currentChallengeSource != null && challengeSource != null && currentChallengeSource != challengeSource)
+            return;
+
         StopRandomChallengeMode();
+        currentChallengeSource = null;
         CurrentRequiredGesture = GestureShape.None;
         UpdatePrompt();
     }
 
-    public void StartRandomChallengeMode()
+    public void StartRandomChallengeMode(UnityEngine.Object challengeSource = null)
     {
+        currentChallengeSource = challengeSource;
         IsRandomChallengeModeActive = true;
         SetRandomPromptImmediately();
         SetNextRandomChallenge();
@@ -104,25 +110,32 @@ public class GestureChallengeManager : MonoBehaviour
         return CurrentRequiredGesture != GestureShape.None;
     }
 
-    private void HandleStrokeCompleted(List<Vector2> points)
+    private void HandleGestureRecognized(List<Vector2> points, GestureRecognitionResult result)
     {
-        if (gestureRecognizer == null)
-        {
-            Debug.LogWarning("GestureRecognizer belum tersedia di scene.");
+        if (EnemyGestureCommand.HasActiveEnemyChallenges())
             return;
-        }
 
-        var result = gestureRecognizer.Recognize(points, CurrentRequiredGesture);
+        if (result.IsRecognized && EnemyGestureCommand.HasActiveEnemyMatchingGesture(result.DetectedShape))
+            return;
 
         if (!HasActiveChallenge())
             return;
 
-        if (result.MatchesExpected)
+        if (!result.IsRecognized)
+        {
+            if (playerHealth != null && damageOnFail > 0)
+                playerHealth.TakeDamage(damageOnFail);
+            return;
+        }
+
+        if (result.DetectedShape == CurrentRequiredGesture)
         {
             Debug.Log($"Challenge sukses: {result.DetectedShape}");
 
             if (playerHealth != null && healOnSuccess > 0)
                 playerHealth.Heal(healOnSuccess);
+
+            var challengeSource = currentChallengeSource;
 
             if (IsRandomChallengeModeActive)
             {
@@ -132,6 +145,8 @@ public class GestureChallengeManager : MonoBehaviour
             {
                 ClearChallenge();
             }
+
+            ChallengeSucceeded?.Invoke(result, challengeSource);
         }
         else
         {
@@ -156,7 +171,7 @@ public class GestureChallengeManager : MonoBehaviour
             return;
         }
 
-        promptText.text = $"Gambar: {GetGestureLabel(CurrentRequiredGesture)}";
+        promptText.text = $"{GetGestureLabel(CurrentRequiredGesture)}";
     }
 
     private string GetGestureLabel(GestureShape gestureShape)
