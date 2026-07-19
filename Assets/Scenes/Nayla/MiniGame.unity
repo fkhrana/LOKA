@@ -455,13 +455,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConnectDotsManager
   dotPrefab: {fileID: 6428854823021306280, guid: d62f2d193ce99884ca47d07aa4b0cff8, type: 3}
-  dotPositions:
-  - {x: 0, y: 2}
-  - {x: 1, y: -1}
-  - {x: -1.5, y: 0.5}
-  - {x: 1.5, y: 0.5}
-  - {x: -1, y: -1}
+  shapes:
+  - shapeName: Bintang
+    dotPositions:
+    - {x: 0, y: 3}
+    - {x: 0, y: -3}
+    - {x: -2.5, y: 0}
+    - {x: 0.5, y: 0}
+  - shapeName: Kotak
+    dotPositions:
+    - {x: -1, y: 1}
+    - {x: 1, y: 1}
+    - {x: 1, y: -1}
+    - {x: -1, y: -1}
   lineRenderer: {fileID: 249921073}
+  delayBeforeNextShape: 2
+  dotTriggerRadius: 0.5
 --- !u!1 &1897280399
 GameObject:
   m_ObjectHideFlags: 0
