@@ -8,7 +8,6 @@ public class GestureChallengeManager : MonoBehaviour
     [SerializeField] private float nextRandomChallengeDelay = 0.15f;
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private PlayerHealth playerHealth;
-    [SerializeField] private int damageOnFail = 10;
     [SerializeField] private int healOnSuccess = 0;
 
     public GestureShape CurrentRequiredGesture { get; private set; } = GestureShape.None;
@@ -108,8 +107,6 @@ public class GestureChallengeManager : MonoBehaviour
 
         if (!result.IsRecognized)
         {
-            if (playerHealth != null && damageOnFail > 0)
-                playerHealth.TakeDamage(damageOnFail);
             return;
         }
 
@@ -132,9 +129,6 @@ public class GestureChallengeManager : MonoBehaviour
         else
         {
             Debug.Log($"Challenge gagal. Diminta {CurrentRequiredGesture}, terdeteksi {result.DetectedShape}");
-
-            if (playerHealth != null && damageOnFail > 0)
-                playerHealth.TakeDamage(damageOnFail);
         }
     }
 

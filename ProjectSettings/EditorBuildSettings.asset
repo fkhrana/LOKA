@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Nayla/Leveling.unity
     guid: ec9be71663d5c3e46ada1c7265107247
   - enabled: 1
-    path: Assets/Scenes/Rana/Scratch.unity
+    path: Assets/Scenes/Rana/MainGameplay(Drawing).unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
   - enabled: 1
     path: Assets/Scenes/Nayla/MiniGame.unity

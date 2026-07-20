@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -9,17 +10,15 @@ public class EnemyGestureCommand : MonoBehaviour
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private TMP_Text promptText;
-    [SerializeField] private string idlePrompt = "Enemy siap";
-    [SerializeField] private int damageOnFail = 10;
     [SerializeField] private int healOnSuccess = 0;
-
     private PlayerHealth playerHealth;
+    private Transform playerTransform;
     private int remainingCorrectGestures;
     private bool isSubscribed;
     private bool challengeActive;
     private static List<Vector2> cachedStrokePoints;
-    private static bool cachedStrokeResultUsed;
     private static bool cachedStrokeHandled;
+    private EnemyMovementBehavior movementBehavior;
 
     private static readonly List<EnemyGestureCommand> activeEnemies = new List<EnemyGestureCommand>();
 
@@ -64,6 +63,24 @@ public class EnemyGestureCommand : MonoBehaviour
         if (playerHealth == null)
             playerHealth = FindAnyObjectByType<PlayerHealth>();
 
+        playerTransform = playerHealth != null ? playerHealth.transform : null;
+
+        movementBehavior = GetComponent<EnemyMovementBehavior>();
+        if (movementBehavior == null)
+            movementBehavior = GetComponentInChildren<EnemyMovementBehavior>(true);
+
+        if (movementBehavior == null)
+            movementBehavior = gameObject.AddComponent<EnemyMovementBehavior>();
+
+        if (movementBehavior != null)
+        {
+            var spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
+            var enemyCollider = GetComponent<Collider2D>();
+            if (enemyCollider == null)
+                enemyCollider = GetComponentInChildren<Collider2D>(true);
+            movementBehavior.Initialize(playerHealth, enemyCollider, spriteRenderer);
+        }
+
         UpdatePrompt();
     }
 
@@ -77,12 +94,31 @@ public class EnemyGestureCommand : MonoBehaviour
     {
         activeEnemies.Remove(this);
         UnsubscribeFromGestureDrawer();
+        if (movementBehavior != null)
+            movementBehavior.SetActive(false);
     }
 
     private void Start()
     {
         if (autoIssueOnStart)
             IssueCommand();
+    }
+
+    private void Update()
+    {
+        if (!challengeActive)
+            return;
+
+        Debug.Log($"EnemyGestureCommand.Update challengeActive={challengeActive} hasMovement={(movementBehavior != null)}");
+    }
+
+    private void LateUpdate()
+    {
+        if (!challengeActive)
+            return;
+
+        if (movementBehavior != null)
+            movementBehavior.Tick();
     }
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)
@@ -93,13 +129,16 @@ public class EnemyGestureCommand : MonoBehaviour
     public void IssueCommand()
     {
         if (gestureDrawer == null)
-        {
             Debug.LogWarning("EnemyGestureCommand: GestureDrawer belum tersedia di scene.");
-            return;
-        }
 
         remainingCorrectGestures = Mathf.Max(1, requiredCorrectGestures);
         challengeActive = true;
+        Debug.Log($"EnemyGestureCommand.IssueCommand active={challengeActive} movementBehavior={(movementBehavior != null)}");
+        if (movementBehavior != null)
+            movementBehavior.SetActive(true);
+        else
+            Debug.LogWarning("EnemyGestureCommand: EnemyMovementBehavior tidak tersedia.");
+
         UpdatePrompt();
     }
 
@@ -107,6 +146,8 @@ public class EnemyGestureCommand : MonoBehaviour
     {
         challengeActive = false;
         remainingCorrectGestures = Mathf.Max(1, requiredCorrectGestures);
+        if (movementBehavior != null)
+            movementBehavior.SetActive(false);
         UpdatePrompt();
     }
 
@@ -121,6 +162,8 @@ public class EnemyGestureCommand : MonoBehaviour
         requiredCorrectGestures = Mathf.Max(1, correctGestureCount);
         remainingCorrectGestures = requiredCorrectGestures;
         challengeActive = true;
+        if (movementBehavior != null)
+            movementBehavior.SetActive(true);
         UpdatePrompt();
     }
 
@@ -132,7 +175,6 @@ public class EnemyGestureCommand : MonoBehaviour
         if (cachedStrokePoints != points)
         {
             cachedStrokePoints = points;
-            cachedStrokeResultUsed = false;
             cachedStrokeHandled = false;
         }
         else if (cachedStrokeHandled)
@@ -142,35 +184,36 @@ public class EnemyGestureCommand : MonoBehaviour
 
         if (!result.IsRecognized)
         {
-            if (!cachedStrokeResultUsed && playerHealth != null && damageOnFail > 0)
-            {
-                playerHealth.TakeDamage(damageOnFail);
-                cachedStrokeResultUsed = true;
-            }
             return;
         }
 
         var target = FindNearestActiveEnemyMatchingGesture(points, result.DetectedShape);
         if (target == null)
         {
-            if (!cachedStrokeResultUsed && playerHealth != null && damageOnFail > 0)
-            {
-                playerHealth.TakeDamage(damageOnFail);
-                cachedStrokeResultUsed = true;
-            }
             return;
         }
 
         if (target != this)
             return;
 
-        cachedStrokeResultUsed = true;
         cachedStrokeHandled = true;
 
         if (playerHealth != null && healOnSuccess > 0)
             playerHealth.Heal(healOnSuccess);
 
         remainingCorrectGestures--;
+
+        if (movementBehavior != null)
+        {
+            float knockbackDuration = movementBehavior.PlayKnockback(remainingCorrectGestures <= 0);
+            if (remainingCorrectGestures <= 0)
+            {
+                challengeActive = false;
+                UpdatePrompt();
+                StartCoroutine(DestroyAfter(knockbackDuration));
+                return;
+            }
+        }
 
         if (remainingCorrectGestures > 0)
         {
@@ -179,6 +222,8 @@ public class EnemyGestureCommand : MonoBehaviour
         }
 
         challengeActive = false;
+        if (movementBehavior != null)
+            movementBehavior.SetActive(false);
         UpdatePrompt();
         Destroy(gameObject);
     }
@@ -236,6 +281,12 @@ public class EnemyGestureCommand : MonoBehaviour
         isSubscribed = false;
     }
 
+    private IEnumerator DestroyAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        Destroy(gameObject);
+    }
+
     private void UpdatePrompt()
     {
         if (promptText == null)
@@ -243,7 +294,7 @@ public class EnemyGestureCommand : MonoBehaviour
 
         if (!challengeActive)
         {
-            promptText.text = idlePrompt;
+            promptText.text = string.Empty;
             return;
         }
 

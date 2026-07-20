@@ -150,8 +150,9 @@ public class GestureRecognizer : MonoBehaviour
         int totalCandidatePoints = candidateStrokes.Count * sampleCount;
         float averageDistance = bestDistance / totalCandidatePoints;
         float secondAverageDistance = secondBestDistance == float.MaxValue ? float.MaxValue : secondBestDistance / totalCandidatePoints;
+        float effectiveMaxAbsoluteScore = Mathf.Min(maxAbsoluteScore, 50f);
         bool hasClearMatch = averageDistance <= maxAverageDistance &&
-                             bestDistance <= maxAbsoluteScore &&
+                             bestDistance <= effectiveMaxAbsoluteScore &&
                              (secondBestDistance == float.MaxValue || averageDistance <= secondAverageDistance * recognitionMarginRatio || averageDistance <= 18f);
         bool isRecognized = hasClearMatch;
         bool matchesExpected = expectedShape == GestureShape.None || (isRecognized && bestShape == expectedShape);

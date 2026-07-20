@@ -15,7 +15,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private GestureShape[] availableShapeGestures = { GestureShape.Circle, GestureShape.Square };
     [SerializeField] private GestureShape[] availableAksaraGestures = { GestureShape.Na, GestureShape.Ka };
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
-    [SerializeField, Min(0.1f)] private float minSpawnDistance = 0.5f;
+    [SerializeField, Min(0.1f)] private float minSpawnDistance = 1f;
     [SerializeField, Min(0.1f)] private float maxSpawnDistance = 3f;
 
     private readonly List<EnemyGestureCommand> spawnedEnemies = new List<EnemyGestureCommand>();
@@ -141,25 +141,17 @@ public class EnemyWaveSpawner : MonoBehaviour
             return position;
 
         int attempt = 0;
-        while ((IsPositionTooClose(position, usedPositions) || IsPositionTooFar(position, usedPositions)) && attempt < 20)
+        while (IsPositionTooClose(position, usedPositions) && attempt < 40)
         {
-            if (useSpawnArea || spawnPoints == null || spawnPoints.Length == 0)
-            {
-                position = GetAreaSpawnPosition();
-            }
-            else
-            {
-                position += new Vector3(
-                    Random.Range(-maxSpawnDistance, maxSpawnDistance),
-                    0f,
-                    Random.Range(-maxSpawnDistance, maxSpawnDistance));
-            }
-
+            position = GetAreaSpawnPosition();
             attempt++;
         }
 
         if (IsPositionTooClose(position, usedPositions))
-            position += new Vector3(minSpawnDistance, 0f, minSpawnDistance);
+        {
+            Vector2 nudge = Random.insideUnitCircle.normalized * minSpawnDistance;
+            position += new Vector3(nudge.x, nudge.y, 0f);
+        }
 
         return position;
     }
