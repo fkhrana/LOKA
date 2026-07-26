@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Rana/MainGameplay(Drawing).unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
   - enabled: 1
-    path: Assets/Scenes/Nayla/MiniGame.unity
+    path: Assets/Scenes/Nayla/Puzzle.unity
     guid: 0c164eb9eed21124a82aa36120cad2b4
   - enabled: 1
     path: Assets/Scenes/Nayla/GameOver.unity

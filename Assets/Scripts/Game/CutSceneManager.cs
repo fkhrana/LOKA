@@ -32,15 +32,17 @@ public class CutsceneManager : MonoBehaviour
             tutorialMenu.SetActive(false);
 
         if (pauseButton != null)
+        {
             pauseButton.interactable = true;
+        }
 
         if (skipButton != null)
-            skipButton.gameObject.SetActive(true);
+        {
+            skipButton.interactable = true;
+        }
     }
 
-    // =========================
-    // PAUSE
-    // =========================
+// pause button
     public void OnPauseClicked()
     {
         if (isPaused) return;
@@ -55,21 +57,21 @@ public class CutsceneManager : MonoBehaviour
         if (videoPlayer != null)
             videoPlayer.Pause();
 
+        // Disable tombol tanpa menyembunyikan
+        if (pauseButton != null)
+            pauseButton.interactable = false;
+
         if (skipButton != null)
-            skipButton.gameObject.SetActive(false);
+            skipButton.interactable = false;
     }
 
-    // =========================
-    // CONTINUE
-    // =========================
+// continue button
     public void OnContinueClicked()
     {
         ResumeVideo();
     }
 
-    // =========================
-    // CLOSE MENU
-    // =========================
+// close button
     public void OnCloseClicked()
     {
         ResumeVideo();
@@ -92,14 +94,12 @@ public class CutsceneManager : MonoBehaviour
             pauseButton.interactable = true;
 
         if (skipButton != null)
-            skipButton.gameObject.SetActive(true);
+            skipButton.interactable = true;
 
         isPaused = false;
     }
 
-    // =========================
-    // OPEN TUTORIAL
-    // =========================
+//    tutorial panel
     public void OnTutorialClicked()
     {
         if (panelMenu != null)
@@ -108,16 +108,14 @@ public class CutsceneManager : MonoBehaviour
         if (tutorialMenu != null)
             tutorialMenu.SetActive(true);
 
+        // disable tombol selama tutorial
         if (pauseButton != null)
             pauseButton.interactable = false;
 
         if (skipButton != null)
-            skipButton.gameObject.SetActive(false);
+            skipButton.interactable = false;
     }
-
-    // =========================
-    // CLOSE TUTORIAL
-    // =========================
+// close button tutorial
     public void OnTutorialCloseClicked()
     {
         if (tutorialMenu != null)
@@ -126,19 +124,20 @@ public class CutsceneManager : MonoBehaviour
         if (panelMenu != null)
             panelMenu.SetActive(true);
 
+        // Masih berada di menu pause
         if (pauseButton != null)
-            pauseButton.interactable = true;
+            pauseButton.interactable = false;
 
-        // Skip tetap disembunyikan karena masih berada di menu pause
         if (skipButton != null)
-            skipButton.gameObject.SetActive(false);
+            skipButton.interactable = false;
     }
 
-    // =========================
-    // SKIP
-    // =========================
+    // skip button
     public void OnSkipClicked()
     {
+        if (!skipButton.interactable)
+            return;
+
         Time.timeScale = 1f;
 
         if (videoPlayer != null)

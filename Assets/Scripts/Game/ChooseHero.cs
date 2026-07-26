@@ -10,6 +10,6 @@ public class ChooseHero : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("Scratch");
+        SceneManager.LoadScene("CutScenee");
     }
 }
