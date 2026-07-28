@@ -208,6 +208,10 @@ public class EnemyGestureCommand : MonoBehaviour
             float knockbackDuration = movementBehavior.PlayKnockback(remainingCorrectGestures <= 0);
             if (remainingCorrectGestures <= 0)
             {
+                var enemy = GetComponent<Enemy>();
+                if (enemy != null)
+                    enemy.OnDefeated();
+
                 challengeActive = false;
                 UpdatePrompt();
                 StartCoroutine(DestroyAfter(knockbackDuration));

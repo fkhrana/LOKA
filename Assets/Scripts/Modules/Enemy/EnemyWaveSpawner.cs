@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class EnemySpawnEntry
+{
+    public EnemyData enemyData;
+    public AksaraData aksaraData;
+    [Range(0f, 1f)] public float weight = 1f;
+}
+
 public class EnemyWaveSpawner : MonoBehaviour
 {
     [SerializeField] private EnemyGestureCommand enemyPrefab;
@@ -11,6 +19,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private Vector2 spawnAreaSize = new Vector2(4f, 4f);
     [SerializeField] private Transform[] spawnPoints;
     [SerializeField] private Transform spawnedParent;
+    [SerializeField] private EnemySpawnEntry[] spawnEntries;
     [SerializeField] private GestureCategory gestureCategory = GestureCategory.Shapes;
     [SerializeField] private GestureShape[] availableShapeGestures = { GestureShape.Circle, GestureShape.Square };
     [SerializeField] private GestureShape[] availableAksaraGestures = { GestureShape.Na, GestureShape.Ka };
@@ -53,7 +62,18 @@ public class EnemyWaveSpawner : MonoBehaviour
 
             EnemyGestureCommand enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, parent);
             enemy.SetAutoIssueOnStart(false);
-            enemy.ConfigureChallenge(GetGestureForIndex(i), requiredCorrectGestures);
+
+            EnemySpawnEntry selectedEntry = GetRandomEntry();
+            Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            if (enemyComponent != null && selectedEntry != null)
+            {
+                enemyComponent.Configure(selectedEntry.enemyData, selectedEntry.aksaraData);
+            }
+            else
+            {
+                enemy.ConfigureChallenge(GetGestureForIndex(i), requiredCorrectGestures);
+            }
+
             enemy.IssueCommand();
             spawnedEnemies.Add(enemy);
         }
@@ -71,6 +91,39 @@ public class EnemyWaveSpawner : MonoBehaviour
         }
 
         spawnedEnemies.Clear();
+    }
+
+    private EnemySpawnEntry GetRandomEntry()
+    {
+        if (spawnEntries == null || spawnEntries.Length == 0)
+            return null;
+
+        float totalWeight = 0f;
+        foreach (var entry in spawnEntries)
+        {
+            if (entry == null || entry.weight <= 0f)
+                continue;
+
+            totalWeight += entry.weight;
+        }
+
+        if (totalWeight <= 0f)
+            return null;
+
+        float roll = Random.value * totalWeight;
+        float currentWeight = 0f;
+
+        foreach (var entry in spawnEntries)
+        {
+            if (entry == null || entry.weight <= 0f)
+                continue;
+
+            currentWeight += entry.weight;
+            if (roll <= currentWeight)
+                return entry;
+        }
+
+        return spawnEntries[spawnEntries.Length - 1];
     }
 
     private Vector3 GetSpawnPosition(int index, List<Vector3> usedPositions)
