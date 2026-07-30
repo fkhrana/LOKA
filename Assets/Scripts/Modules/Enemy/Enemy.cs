@@ -8,6 +8,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private AksaraData aksaraData;
     [SerializeField] private SpriteRenderer bodyRenderer;
     [SerializeField] private SpriteRenderer aksaraIconRenderer;
+    [SerializeField] private AksaraFragmentItem aksaraIconFragment;
 
     private EnemyGestureCommand gestureCommand;
     private EnemyMovementBehavior movementBehavior;
@@ -87,7 +88,31 @@ public class Enemy : MonoBehaviour
 
         if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData != null)
         {
-            Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} will be dropped.");
+            if (CollectedAksaraManager.Instance != null)
+            {
+                if (CollectedAksaraManager.Instance.TryRegisterDrop(aksaraData.GestureShape))
+                {
+                    if (aksaraIconFragment != null)
+                    {
+                        aksaraIconFragment.transform.SetParent(null);
+                        aksaraIconFragment.Initialize(aksaraData, aksaraIconFragment.transform.position);
+                        Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped.");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Enemy {name} is configured to drop a fragment but aksaraIconFragment is null.");
+                    }
+                }
+                else
+                {
+                    Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} already dropped this wave; skipping.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[Enemy] CollectedAksaraManager.Instance is null; cannot register drop.");
+            }
+
             return;
         }
 
