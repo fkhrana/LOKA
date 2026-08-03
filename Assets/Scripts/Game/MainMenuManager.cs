@@ -7,6 +7,8 @@ public class MainMenu : MonoBehaviour
     public GameObject settingPanel;
     public GameObject koleksiPanel;
     public GameObject levelPanel;
+    public GameObject creditsPanel;
+    public GameObject TutorialPanel;
 
     [Header("Scene Settings")]
         public int nextSceneIndex = 4;
@@ -21,6 +23,9 @@ public class MainMenu : MonoBehaviour
 
         if (levelPanel != null)
             levelPanel.SetActive(false);
+
+        if (creditsPanel != null)
+            creditsPanel.SetActive(false);
     }
 
     //=========================
@@ -68,5 +73,25 @@ public class MainMenu : MonoBehaviour
     public void CloseLevel()
     {
         levelPanel.SetActive(false);
+    }
+
+    public void OpenCredit()
+    {
+        creditsPanel.SetActive(true);
+    }
+
+    public void CloseCredit()
+    {
+        creditsPanel.SetActive(false);
+    }
+
+    public void OpenTutorial()
+    {
+        TutorialPanel.SetActive(true);
+    }
+
+    public void CloseTutorial()
+    {
+        TutorialPanel.SetActive(false);
     }
 }
