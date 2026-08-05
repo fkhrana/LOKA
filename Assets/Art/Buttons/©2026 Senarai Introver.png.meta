@@ -1,0 +1,611 @@
+fileFormatVersion: 2
+guid: 582ee4d9f00f8274a8c6aae027916e43
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2355495745522385762
+    second: "\xA92026 Senarai Introver_0"
+  - first:
+      213: -6216358235121034411
+    second: "\xA92026 Senarai Introver_1"
+  - first:
+      213: 4811123653720499025
+    second: "\xA92026 Senarai Introver_2"
+  - first:
+      213: -6003460053944743782
+    second: "\xA92026 Senarai Introver_3"
+  - first:
+      213: -3920615075528134658
+    second: "\xA92026 Senarai Introver_4"
+  - first:
+      213: 1883435586810022713
+    second: "\xA92026 Senarai Introver_5"
+  - first:
+      213: -683339771568035153
+    second: "\xA92026 Senarai Introver_6"
+  - first:
+      213: -4660902694004870397
+    second: "\xA92026 Senarai Introver_7"
+  - first:
+      213: 5102141926568558060
+    second: "\xA92026 Senarai Introver_8"
+  - first:
+      213: -3993552065322574530
+    second: "\xA92026 Senarai Introver_9"
+  - first:
+      213: -598764145562924304
+    second: "\xA92026 Senarai Introver_10"
+  - first:
+      213: -8990674839018897883
+    second: "\xA92026 Senarai Introver_11"
+  - first:
+      213: 3497559295713373617
+    second: "\xA92026 Senarai Introver_12"
+  - first:
+      213: 4810807029493956854
+    second: "\xA92026 Senarai Introver_13"
+  - first:
+      213: 7588987194088402336
+    second: "\xA92026 Senarai Introver_14"
+  - first:
+      213: -8038404419944154786
+    second: "\xA92026 Senarai Introver_15"
+  - first:
+      213: -8220229952886051089
+    second: "\xA92026 Senarai Introver_16"
+  - first:
+      213: 1874103847497321994
+    second: "\xA92026 Senarai Introver_17"
+  - first:
+      213: -1472063670124033756
+    second: "\xA92026 Senarai Introver_18"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 19
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2634ecd86e660b020800000000000000
+      internalID: 2355495745522385762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_1"
+      rect:
+        serializedVersion: 2
+        x: 19
+        y: 0
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55b590fee1f0bb9a0800000000000000
+      internalID: -6216358235121034411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_2"
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 0
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1536d7ef87b84c240800000000000000
+      internalID: 4811123653720499025
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_3"
+      rect:
+        serializedVersion: 2
+        x: 51
+        y: 0
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a98406d73ec6faca0800000000000000
+      internalID: -6003460053944743782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_4"
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 0
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: effaa127c5d2799c0800000000000000
+      internalID: -3920615075528134658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_5"
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 0
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93b0425ffae432a10800000000000000
+      internalID: 1883435586810022713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_6"
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 0
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: faa6ac6291a4486f0800000000000000
+      internalID: -683339771568035153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_7"
+      rect:
+        serializedVersion: 2
+        x: 119
+        y: 0
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 303bd2fb1b5215fb0800000000000000
+      internalID: -4660902694004870397
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_8"
+      rect:
+        serializedVersion: 2
+        x: 133
+        y: 0
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cedfeb6cc037ec640800000000000000
+      internalID: 5102141926568558060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_9"
+      rect:
+        serializedVersion: 2
+        x: 148
+        y: 0
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3d9b6a2e8d0498c0800000000000000
+      internalID: -3993552065322574530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_10"
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 0
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0fa4b779e23c0b7f0800000000000000
+      internalID: -598764145562924304
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_11"
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 0
+        width: 6
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52e7c395ed4ba3380800000000000000
+      internalID: -8990674839018897883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_12"
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 0
+        width: 20
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bd6cd906a3d98030800000000000000
+      internalID: 3497559295713373617
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_13"
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 0
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f080fb218b63c240800000000000000
+      internalID: 4810807029493956854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_14"
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 0
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ada0a415af715960800000000000000
+      internalID: 7588987194088402336
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_15"
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 0
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e597c44f4c9d17090800000000000000
+      internalID: -8038404419944154786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_16"
+      rect:
+        serializedVersion: 2
+        x: 239
+        y: 0
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fee63361960ebed80800000000000000
+      internalID: -8220229952886051089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_17"
+      rect:
+        serializedVersion: 2
+        x: 253
+        y: 0
+        width: 15
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0e45461587220a10800000000000000
+      internalID: 1874103847497321994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\xA92026 Senarai Introver_18"
+      rect:
+        serializedVersion: 2
+        x: 268
+        y: 0
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 429cf7f24ed229be0800000000000000
+      internalID: -1472063670124033756
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "\xA92026 Senarai Introver_0": 2355495745522385762
+      "\xA92026 Senarai Introver_1": -6216358235121034411
+      "\xA92026 Senarai Introver_10": -598764145562924304
+      "\xA92026 Senarai Introver_11": -8990674839018897883
+      "\xA92026 Senarai Introver_12": 3497559295713373617
+      "\xA92026 Senarai Introver_13": 4810807029493956854
+      "\xA92026 Senarai Introver_14": 7588987194088402336
+      "\xA92026 Senarai Introver_15": -8038404419944154786
+      "\xA92026 Senarai Introver_16": -8220229952886051089
+      "\xA92026 Senarai Introver_17": 1874103847497321994
+      "\xA92026 Senarai Introver_18": -1472063670124033756
+      "\xA92026 Senarai Introver_2": 4811123653720499025
+      "\xA92026 Senarai Introver_3": -6003460053944743782
+      "\xA92026 Senarai Introver_4": -3920615075528134658
+      "\xA92026 Senarai Introver_5": 1883435586810022713
+      "\xA92026 Senarai Introver_6": -683339771568035153
+      "\xA92026 Senarai Introver_7": -4660902694004870397
+      "\xA92026 Senarai Introver_8": 5102141926568558060
+      "\xA92026 Senarai Introver_9": -3993552065322574530
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

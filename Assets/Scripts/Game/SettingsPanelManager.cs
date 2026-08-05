@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
@@ -7,43 +5,27 @@ using TMPro;
 
 public class SettingsPanelManager : MonoBehaviour
 {
-    public TMP_Dropdown graphicsDropdown;
+    [Header("Graphics")]
+    [SerializeField] private TMP_Dropdown graphicsDropdown;
 
-    public Slider masterv;
-    public Slider musicv;
-    public Slider sfxv;
+    [Header("Audio")]
+    [SerializeField] private Slider musicSlider;
+    [SerializeField] private Slider sfxSlider;
 
-    public AudioMixer mainAudioMixer;
+    [SerializeField] private AudioMixer mainAudioMixer;
 
     public void ChangeGraphicsQuality()
     {
         QualitySettings.SetQualityLevel(graphicsDropdown.value);
     }
 
-    public void ChangeMasterVolume()
-    {
-        mainAudioMixer.SetFloat("MasterV", masterv.value);
-    }
-
     public void ChangeMusicVolume()
     {
-        mainAudioMixer.SetFloat("MusicV", musicv.value);
+        mainAudioMixer.SetFloat("MusicV", musicSlider.value);
     }
 
     public void ChangeSfxVolume()
     {
-        mainAudioMixer.SetFloat("SFXV", sfxv.value);
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        mainAudioMixer.SetFloat("SFXV", sfxSlider.value);
     }
 }
