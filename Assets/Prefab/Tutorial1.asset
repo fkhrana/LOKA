@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb94526b18c6bb54a846d6d757743993, type: 3}
   m_Name: Tutorial1
   m_EditorClassIdentifier: Assembly-CSharp::Christina.UI.CarouselEntry
-  <EntryGraphic>k__BackingField: {fileID: 2704208188245951875, guid: bf8c83ed6efa88a4a9d1264bb4c26283, type: 3}
-  <Headline>k__BackingField: Pertama
-  <Description>k__BackingField: ABCD123
+  <EntryGraphic>k__BackingField: {fileID: -5295148826807700203, guid: 6c5730a29972395469ddacbe4d087096, type: 3}
+  <Headline>k__BackingField: Gambar aksara yang dibawa oleh musuh
+  <Description>k__BackingField: 
   levelNameToLoad: Tutorial1

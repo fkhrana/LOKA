@@ -137,10 +137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcd47d97675c9f44c9fe6e0fd1cbc3e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  icon: {fileID: 0}
-  namaText: {fileID: 0}
-  jumlahText: {fileID: 0}
-  lockIcon: {fileID: 0}
+  icon: {fileID: 3717271705579466510}
+  namaText: {fileID: 3287487387216407088}
+  jumlahText: {fileID: 661009993225310913}
+  lockIcon: {fileID: 8934970390490346352}
 --- !u!1 &6713768048198259269
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 7x
+  m_text: 0x
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

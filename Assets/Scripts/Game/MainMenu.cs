@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour
 
     [Header("Scene Settings")]
 
-    [SerializeField] private int nextSceneIndex = 4;
+    [SerializeField] private int nextSceneIndex = 1;
 
     [Space]
 

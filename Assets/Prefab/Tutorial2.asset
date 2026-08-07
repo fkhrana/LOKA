@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb94526b18c6bb54a846d6d757743993, type: 3}
   m_Name: Tutorial2
   m_EditorClassIdentifier: Assembly-CSharp::Christina.UI.CarouselEntry
-  <EntryGraphic>k__BackingField: {fileID: -3571453731875283761, guid: 89547df2526301d488f3b01f6b634d45, type: 3}
+  <EntryGraphic>k__BackingField: {fileID: 21300000, guid: 89f02f3f8db700a43892deae9144f38c, type: 3}
   <Headline>k__BackingField: Kedua
   <Description>k__BackingField: ABCD123
   levelNameToLoad: Tutorial2
