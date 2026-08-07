@@ -288,6 +288,11 @@ public class GestureDrawer : MonoBehaviour
         ClearRecognizedStrokes();
     }
 
+    public void ResetGestureInput()
+    {
+        ResetGesture();
+    }
+
     private Vector3 GetMouseWorldPosition()
     {
 #if ENABLE_INPUT_SYSTEM

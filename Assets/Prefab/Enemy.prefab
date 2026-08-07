@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: NA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -207,7 +207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovementBehavior
   moveSpeed: 1.5
-  damageOnContact: 10
+  damageOnContact: 20
   contactCooldown: 0.35
   moveLeft: 1
   bobAmplitude: 0.1
@@ -346,7 +346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.07301211, y: 1.7845054}
+  m_AnchoredPosition: {x: -0.07301211, y: -1.42}
   m_SizeDelta: {x: 3.9815, y: 0.8202}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8916544117474469147
@@ -493,7 +493,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 88ba77e9fdb75284da3aa84fc193784e, type: 3}
+  m_Sprite: {fileID: -7708458740652960053, guid: 0cc4326725378354f8f794c5c39019a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -531,9 +531,9 @@ Transform:
   m_GameObject: {fileID: 8600932948098547897}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.08, y: -1.07, z: -1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -0.08, y: 1.28, z: -1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 553753422824559807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

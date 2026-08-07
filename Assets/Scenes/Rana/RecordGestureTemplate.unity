@@ -166,6 +166,7 @@ MonoBehaviour:
   sampleCount: 64
   squareSize: 250
   maxAverageDistance: 45
+  maxAbsoluteScore: 50
   cornerThresholdDegrees: 45
   maxAllowedCorners: 5
   recognitionMarginRatio: 0.9
@@ -215,8 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureTemplateRecorder
   drawer: {fileID: 1392741719}
-  gestureName: KA
-  autoOpenOutputFolder: 0
+  gestureName: MA
 --- !u!1 &1368193397
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GestureDrawer
   lineRenderer: {fileID: 1392741720}
   minPointDistance: 0.05
-  singleStrokeAutoDetectDelay: 5
+  firstStrokeGracePeriod: 0.35
 --- !u!120 &1392741720
 LineRenderer:
   serializedVersion: 3

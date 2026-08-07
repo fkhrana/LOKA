@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Enemy
   moveSpeed: 1.5
-  damageOnContact: 10
+  damageOnContact: 20
   contactCooldown: 0.35
   requiredCorrectGestures: 1
-  enemySprite: {fileID: 21300000, guid: 88ba77e9fdb75284da3aa84fc193784e, type: 3}
+  enemySprite: {fileID: -7708458740652960053, guid: 0cc4326725378354f8f794c5c39019a1, type: 3}
   dropsAksaraFragment: 1
   dropForce: 1

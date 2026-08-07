@@ -13,10 +13,65 @@ public class PuzzleManager : MonoBehaviour
     public GameObject puzzlePanel;
     public PowerManager powerManager; 
     public float delayBeforeWave2 = 2f;
+    [Tooltip("Optional: GestureDrawer yang mengelola input gesture. Dinonaktifkan saat puzzle panel muncul.")]
+    public GestureDrawer gestureDrawer;
+
+    private bool wave1PuzzleShown;
+    private bool puzzleCompleted;
 
     void Awake()
     {
         Instance = this;
+        if (gestureDrawer == null)
+            gestureDrawer = FindAnyObjectByType<GestureDrawer>();
+    }
+
+    public void ShowPuzzleOnce()
+    {
+        if (wave1PuzzleShown)
+            return;
+
+        wave1PuzzleShown = true;
+        puzzleCompleted = false;
+        if (puzzlePanel != null)
+        {
+            DisableGestureInput();
+            puzzlePanel.SetActive(true);
+        }
+    }
+
+    public void ShowPuzzlePanel()
+    {
+        if (puzzlePanel != null)
+        {
+            DisableGestureInput();
+            puzzlePanel.SetActive(true);
+        }
+    }
+
+    private void DisableGestureInput()
+    {
+        if (gestureDrawer != null)
+        {
+            gestureDrawer.ResetGestureInput();
+            gestureDrawer.enabled = false;
+        }
+    }
+
+    private void EnableGestureInput()
+    {
+        if (gestureDrawer != null)
+            gestureDrawer.enabled = true;
+    }
+
+    public bool IsPuzzleCompleted()
+    {
+        return puzzleCompleted;
+    }
+
+    public void MarkPuzzleCompleted()
+    {
+        puzzleCompleted = true;
     }
 
     public void CheckPuzzleComplete()
@@ -32,12 +87,16 @@ public class PuzzleManager : MonoBehaviour
     void OnPuzzleComplete()
     {
         Debug.Log("Puzzle selesai!");
+        MarkPuzzleCompleted();
         StartCoroutine(PuzzleCompleteSequence());
     }
 
     IEnumerator PuzzleCompleteSequence()
     {
         puzzlePanel.SetActive(false);
+
+        if (gestureDrawer != null)
+            EnableGestureInput();
 
         if (powerManager != null)
         {

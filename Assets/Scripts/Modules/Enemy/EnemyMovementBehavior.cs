@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemyMovementBehavior : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 1.5f;
-    [SerializeField] private int damageOnContact = 10;
+    [SerializeField] private int damageOnContact = 20;
     [SerializeField] private float contactCooldown = 0.35f;
     [SerializeField] private bool moveLeft = true;
     [SerializeField] private float bobAmplitude = 0.08f;
@@ -239,10 +239,8 @@ public class EnemyMovementBehavior : MonoBehaviour
             return;
 
         playerHealth.TakeDamage(damageOnContact);
-        isActive = false;
-        float knockbackDuration = PlayKnockback(true);
-        contactCooldownTimer = contactCooldown + knockbackDuration + knockbackExtraCooldown;
-        Debug.Log($"EnemyMovementBehavior: Player hit, stopping enemy and playing knockback for {knockbackDuration:F2}s.");
+        Debug.Log("EnemyMovementBehavior: Player hit, enemy destroyed after contact.");
+        Destroy(gameObject);
     }
 
     private void MoveToPosition(Vector2 position)

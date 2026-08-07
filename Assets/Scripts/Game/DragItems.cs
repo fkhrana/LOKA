@@ -8,6 +8,7 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private Vector3 startPosition;
     private Transform startParent;
     private CanvasGroup canvasGroup;
+    private Transform dragRoot;
 
     void Awake()
     {
@@ -20,6 +21,14 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         startPosition = transform.position;
         startParent = transform.parent;
+
+        var parentCanvas = GetComponentInParent<Canvas>();
+        if (parentCanvas != null)
+        {
+            dragRoot = parentCanvas.transform;
+            transform.SetParent(dragRoot, true);
+        }
+        transform.SetAsLastSibling();
 
         canvasGroup.alpha = 0.6f;
         canvasGroup.blocksRaycasts = false; // biar raycast tembus ke slot di bawahnya
