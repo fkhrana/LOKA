@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
@@ -5,144 +6,292 @@ using UnityEngine.UI;
 
 public class CutsceneManager : MonoBehaviour
 {
-    [Header("Panel References")]
     public GameObject panelMenu;
     public GameObject tutorialMenu;
+    public GameObject creditsMenu;
 
-    [Header("Buttons")]
     public Button pauseButton;
     public Button skipButton;
+    public Button creditsButton;
+    public Button homeButton;
+    public Button BackButton;
 
-    [Header("Scene Settings")]
-    public int nextSceneIndex = 4;
+    public int nextSceneIndex = 3;
+    public int CutScene = 2;
 
-    [Header("Video Player")]
     public VideoPlayer videoPlayer;
 
     private bool isPaused = false;
+
+
+    // =========================
+    // START
+    // =========================
 
     void Start()
     {
         Time.timeScale = 1f;
 
+        // Sembunyikan semua panel
         if (panelMenu != null)
             panelMenu.SetActive(false);
 
         if (tutorialMenu != null)
             tutorialMenu.SetActive(false);
 
+        if (creditsMenu != null)
+            creditsMenu.SetActive(false);
+
+        // Aktifkan tombol utama
         if (pauseButton != null)
-        {
             pauseButton.interactable = true;
-        }
 
         if (skipButton != null)
-        {
             skipButton.interactable = true;
-        }
+
+        if (creditsButton != null)
+            creditsButton.interactable = true;
+
+        if (homeButton != null)
+            homeButton.interactable = true;
     }
 
-// pause button
+
+    // =========================
+    // PAUSE BUTTON
+    // =========================
+
     public void OnPauseClicked()
     {
-        if (isPaused) return;
+        if (isPaused)
+            return;
 
         isPaused = true;
 
+        // Buka Settings Panel
         if (panelMenu != null)
             panelMenu.SetActive(true);
 
-        Time.timeScale = 0f;
+        PauseVideo();
 
-        if (videoPlayer != null)
-            videoPlayer.Pause();
-
-        // Disable tombol tanpa menyembunyikan
-        if (pauseButton != null)
-            pauseButton.interactable = false;
-
-        if (skipButton != null)
-            skipButton.interactable = false;
+        // Disable tombol di belakang
+        DisableMainButtons();
     }
 
-// continue button
+
+    // =========================
+    // CONTINUE BUTTON
+    // =========================
+
     public void OnContinueClicked()
     {
         ResumeVideo();
     }
 
-// close button
+
+    // =========================
+    // CLOSE SETTINGS
+    // =========================
+
     public void OnCloseClicked()
     {
         ResumeVideo();
     }
 
+
+    // =========================
+    // TUTORIAL BUTTON
+    // =========================
+
+    public void OnTutorialClicked()
+    {
+        // Tutup Settings
+        if (panelMenu != null)
+            panelMenu.SetActive(false);
+
+        // Buka Tutorial
+        if (tutorialMenu != null)
+            tutorialMenu.SetActive(true);
+
+        // Tetap pause
+        PauseVideo();
+
+        DisableMainButtons();
+    }
+
+
+    // =========================
+    // BACK FROM TUTORIAL
+    // =========================
+
+    public void OnTutorialBackClicked()
+    {
+        // Tutup Tutorial
+        if (tutorialMenu != null)
+            tutorialMenu.SetActive(false);
+
+        // Kembali ke Settings
+        if (panelMenu != null)
+            panelMenu.SetActive(true);
+
+        // Tetap pause
+        PauseVideo();
+
+        DisableMainButtons();
+    }
+
+
+    // =========================
+    // CREDITS BUTTON
+    // =========================
+
+    public void OnCreditsClicked()
+    {
+        // Tutup Settings
+        if (panelMenu != null)
+            panelMenu.SetActive(false);
+
+        // Buka Credits
+        if (creditsMenu != null)
+            creditsMenu.SetActive(true);
+
+        // Tetap pause
+        PauseVideo();
+
+        DisableMainButtons();
+    }
+
+
+    // =========================
+    // BACK FROM CREDITS
+    // =========================
+
+    public void OnCreditsBackClicked()
+    {
+        // Tutup Credits
+        if (creditsMenu != null)
+            creditsMenu.SetActive(false);
+
+        // Kembali ke Settings
+        if (panelMenu != null)
+            panelMenu.SetActive(true);
+
+        // Tetap pause
+        PauseVideo();
+
+        DisableMainButtons();
+    }
+
+
+    // =========================
+    // HOME BUTTON
+    // =========================
+
+    public void OnHomeClicked()
+    {
+        // Kembalikan Time Scale
+        Time.timeScale = 1f;
+
+        // Stop video
+        if (videoPlayer != null)
+            videoPlayer.Stop();
+
+        // Kembali ke Main Menu
+        SceneManager.LoadScene(CutScene);
+    }
+
+
+    // =========================
+    // SKIP BUTTON
+    // =========================
+
+    public void OnSkipClicked()
+    {
+        if (skipButton != null && !skipButton.interactable)
+            return;
+
+        // Kembalikan Time Scale
+        Time.timeScale = 1f;
+
+        // Stop video
+        if (videoPlayer != null)
+            videoPlayer.Stop();
+
+        // Pindah ke scene berikutnya
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+
+
+    // =========================
+    // PAUSE VIDEO
+    // =========================
+
+    private void PauseVideo()
+    {
+        Time.timeScale = 0f;
+
+        if (videoPlayer != null)
+            videoPlayer.Pause();
+
+        isPaused = true;
+    }
+
+
+    // =========================
+    // RESUME VIDEO
+    // =========================
+
     private void ResumeVideo()
     {
+        // Tutup semua panel
         if (panelMenu != null)
             panelMenu.SetActive(false);
 
         if (tutorialMenu != null)
             tutorialMenu.SetActive(false);
 
+        if (creditsMenu != null)
+            creditsMenu.SetActive(false);
+
+        // Jalankan kembali waktu
         Time.timeScale = 1f;
 
+        // Lanjutkan video
         if (videoPlayer != null)
             videoPlayer.Play();
 
+        // Aktifkan tombol utama
+        EnableMainButtons();
+
+        isPaused = false;
+    }
+
+
+    // =========================
+    // DISABLE MAIN BUTTONS
+    // =========================
+
+    private void DisableMainButtons()
+    {
+        if (pauseButton != null)
+            pauseButton.interactable = false;
+
+        if (skipButton != null)
+            skipButton.interactable = false;
+    }
+
+
+    // =========================
+    // ENABLE MAIN BUTTONS
+    // =========================
+
+    private void EnableMainButtons()
+    {
         if (pauseButton != null)
             pauseButton.interactable = true;
 
         if (skipButton != null)
             skipButton.interactable = true;
-
-        isPaused = false;
-    }
-
-//    tutorial panel
-    public void OnTutorialClicked()
-    {
-        if (panelMenu != null)
-            panelMenu.SetActive(false);
-
-        if (tutorialMenu != null)
-            tutorialMenu.SetActive(true);
-
-        // disable tombol selama tutorial
-        if (pauseButton != null)
-            pauseButton.interactable = false;
-
-        if (skipButton != null)
-            skipButton.interactable = false;
-    }
-// close button tutorial
-    public void OnTutorialCloseClicked()
-    {
-        if (tutorialMenu != null)
-            tutorialMenu.SetActive(false);
-
-        if (panelMenu != null)
-            panelMenu.SetActive(true);
-
-        // Masih berada di menu pause
-        if (pauseButton != null)
-            pauseButton.interactable = false;
-
-        if (skipButton != null)
-            skipButton.interactable = false;
-    }
-
-    // skip button
-    public void OnSkipClicked()
-    {
-        if (!skipButton.interactable)
-            return;
-
-        Time.timeScale = 1f;
-
-        if (videoPlayer != null)
-            videoPlayer.Stop();
-
-        SceneManager.LoadScene(nextSceneIndex);
     }
 }
+

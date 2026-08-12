@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 public class MainMenu : MonoBehaviour
 {
     [Header("Panels")]
-
     [SerializeField] private GameObject settingPanel;
     [SerializeField] private GameObject koleksiPanel;
     [SerializeField] private GameObject levelPanel;
@@ -12,15 +11,19 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject tutorialPanel;
 
     [Space]
+    [Header("Buttons")]
+    [SerializeField] private GameObject settingButton;
+    [SerializeField] private GameObject koleksiButton;
+    [SerializeField] private GameObject levelButton;
+    [SerializeField] private GameObject creditsButton;
+    [SerializeField] private GameObject tutorialButton;
 
+    [Space]
     [Header("Scene Settings")]
-
     [SerializeField] private int nextSceneIndex = 1;
 
     [Space]
-
     [Header("SFX")]
-
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
 
@@ -42,20 +45,33 @@ public class MainMenu : MonoBehaviour
     private void PlayClickSFX()
     {
         if (sfxSource != null && clickSound != null)
-        {
             sfxSource.PlayOneShot(clickSound);
-        }
     }
 
-    private void CloseWithAnimation(GameObject panel)
+    // ---------- GENERIC OPEN / CLOSE ----------
+
+    private void OpenPanel(GameObject panel, GameObject openButton)
     {
-        DialogBox dialog = panel.GetComponent<DialogBox>();
+        PlayClickSFX();
+        panel?.SetActive(true);
+        openButton?.SetActive(false);
+    }
+
+    private void ClosePanel(GameObject panel, GameObject openButton)
+    {
+        PlayClickSFX();
+
+        DialogBox dialog = panel != null ? panel.GetComponent<DialogBox>() : null;
 
         if (dialog != null)
             dialog.CloseDialog();
         else
-            panel.SetActive(false);
+            panel?.SetActive(false);
+
+        openButton?.SetActive(true);
     }
+
+    // ---------- SCENE ----------
 
     public void TapToStart()
     {
@@ -63,63 +79,23 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene(nextSceneIndex);
     }
 
-    public void OpenSetting()
-    {
-        PlayClickSFX();
-        settingPanel.SetActive(true);
-    }
+    // ---------- SETTING ----------
+    public void OpenSetting() => OpenPanel(settingPanel, settingButton);
+    public void CloseSetting() => ClosePanel(settingPanel, settingButton);
 
-    public void CloseSetting()
-    {
-        PlayClickSFX();
-        CloseWithAnimation(settingPanel);
-    }
+    // ---------- COLLECTION ----------
+    public void OpenCollection() => OpenPanel(koleksiPanel, koleksiButton);
+    public void CloseCollection() => ClosePanel(koleksiPanel, koleksiButton);
 
-    public void OpenCollection()
-    {
-        PlayClickSFX();
-        koleksiPanel.SetActive(true);
-    }
+    // ---------- LEVEL ----------
+    public void OpenLevel() => OpenPanel(levelPanel, levelButton);
+    public void CloseLevel() => ClosePanel(levelPanel, levelButton);
 
-    public void CloseCollection()
-    {
-        PlayClickSFX();
-        CloseWithAnimation(koleksiPanel);
-    }
+    // ---------- CREDIT ----------
+    public void OpenCredit() => OpenPanel(creditsPanel, creditsButton);
+    public void CloseCredit() => ClosePanel(creditsPanel, creditsButton);
 
-    public void OpenLevel()
-    {
-        PlayClickSFX();
-        levelPanel.SetActive(true);
-    }
-
-    public void CloseLevel()
-    {
-        PlayClickSFX();
-        CloseWithAnimation(levelPanel);
-    }
-
-    public void OpenCredit()
-    {
-        PlayClickSFX();
-        creditsPanel.SetActive(true);
-    }
-
-    public void CloseCredit()
-    {
-        PlayClickSFX();
-        CloseWithAnimation(creditsPanel);
-    }
-
-    public void OpenTutorial()
-    {
-        PlayClickSFX();
-        tutorialPanel.SetActive(true);
-    }
-
-    public void CloseTutorial()
-    {
-        PlayClickSFX();
-        CloseWithAnimation(tutorialPanel);
-    }
+    // ---------- TUTORIAL ----------
+    public void OpenTutorial() => OpenPanel(tutorialPanel, tutorialButton);
+    public void CloseTutorial() => ClosePanel(tutorialPanel, tutorialButton);
 }

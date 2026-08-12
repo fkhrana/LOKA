@@ -12,7 +12,7 @@ public class DialogBox : MonoBehaviour
 
     private void OnEnable()
     {
-        background.alpha = 0;
+        background.alpha = 255;
         background.LeanAlpha(1, 0.5f);
 
         box.localPosition = new Vector3(0, -Screen.height, 0);
