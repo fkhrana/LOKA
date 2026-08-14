@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
@@ -17,7 +16,6 @@ public class CutsceneManager : MonoBehaviour
     public Button BackButton;
 
     public int nextSceneIndex = 3;
-    public int CutScene = 2;
 
     public VideoPlayer videoPlayer;
 
@@ -54,6 +52,8 @@ public class CutsceneManager : MonoBehaviour
 
         if (homeButton != null)
             homeButton.interactable = true;
+
+        isPaused = false;
     }
 
 
@@ -184,7 +184,7 @@ public class CutsceneManager : MonoBehaviour
 
 
     // =========================
-    // HOME BUTTON
+    // HOME / CURRENT SCENE
     // =========================
 
     public void OnHomeClicked()
@@ -196,8 +196,10 @@ public class CutsceneManager : MonoBehaviour
         if (videoPlayer != null)
             videoPlayer.Stop();
 
-        // Kembali ke Main Menu
-        SceneManager.LoadScene(CutScene);
+        // Restart scene yang sedang aktif
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
     }
 
 
@@ -294,4 +296,3 @@ public class CutsceneManager : MonoBehaviour
             skipButton.interactable = true;
     }
 }
-
