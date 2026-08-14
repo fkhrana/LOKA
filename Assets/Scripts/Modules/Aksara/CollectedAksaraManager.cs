@@ -35,8 +35,39 @@ public class CollectedAksaraManager : MonoBehaviour
         if (aksaraData == null)
             return;
 
+        if (IsCollected(aksaraData))
+        {
+            Debug.Log($"[CollectedAksaraManager] Aksara already collected: {aksaraData.AksaraName}");
+            return;
+        }
+
         collectedThisWave.Add(aksaraData);
         Debug.Log($"[CollectedAksaraManager] Collected aksara: {aksaraData.AksaraName}");
+    }
+
+    public bool IsCollected(AksaraData aksaraData)
+    {
+        if (aksaraData == null)
+            return false;
+
+        foreach (var collectedAksara in collectedThisWave)
+        {
+            if (collectedAksara == aksaraData)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool IsCollected(GestureShape shape)
+    {
+        foreach (var collectedAksara in collectedThisWave)
+        {
+            if (collectedAksara != null && collectedAksara.GestureShape == shape)
+                return true;
+        }
+
+        return false;
     }
 
     public void ResetWave()

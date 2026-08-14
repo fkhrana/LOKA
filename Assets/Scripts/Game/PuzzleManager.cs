@@ -11,13 +11,16 @@ public class PuzzleManager : MonoBehaviour
 
     [Header("Referensi UI & VFX")]
     public GameObject puzzlePanel;
+    public GameObject winPanel;
     public PowerManager powerManager; 
+    public float delayBeforeWinPanel = 2f;
     public float delayBeforeWave2 = 2f;
     [Tooltip("Optional: GestureDrawer yang mengelola input gesture. Dinonaktifkan saat puzzle panel muncul.")]
     public GestureDrawer gestureDrawer;
 
     private bool wave1PuzzleShown;
     private bool puzzleCompleted;
+    private bool winPanelShown;
 
     void Awake()
     {
@@ -86,6 +89,9 @@ public class PuzzleManager : MonoBehaviour
 
     void OnPuzzleComplete()
     {
+        if (puzzleCompleted)
+            return;
+
         Debug.Log("Puzzle selesai!");
         MarkPuzzleCompleted();
         StartCoroutine(PuzzleCompleteSequence());
@@ -93,8 +99,7 @@ public class PuzzleManager : MonoBehaviour
 
     IEnumerator PuzzleCompleteSequence()
     {
-        puzzlePanel.SetActive(false);
-
+        // Tetap tampilkan puzzle panel selama delay, jangan langsung di-nonaktifkan
         if (gestureDrawer != null)
             EnableGestureInput();
 
@@ -102,6 +107,19 @@ public class PuzzleManager : MonoBehaviour
         {
             powerManager.SetUnlocked();          // ganti tampilan jadi unlocked
             StartCoroutine(PopEffect(powerManager.transform)); // animasi pop
+        }
+
+        yield return new WaitForSeconds(delayBeforeWinPanel);
+
+        // Tutup puzzle panel sebelum menampilkan win panel
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(false);
+
+        if (winPanel != null && !winPanelShown)
+        {
+            winPanelShown = true;
+            winPanel.SetActive(true);
+            Time.timeScale = 0f;
         }
 
         yield return new WaitForSeconds(delayBeforeWave2);

@@ -32,6 +32,8 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private EnemyGestureCommand enemyPrefab;
     [SerializeField, Min(0)] private int enemyCount = 0;
     [SerializeField] private bool spawnOnStart = true;
+    [SerializeField] private GameObject waveTransitionBanner;
+    [SerializeField, Min(0.1f)] private float waveTransitionBannerDuration = 1.5f;
     [SerializeField] private bool useSpawnArea = false;
     [SerializeField] private Vector2 spawnAreaCenter = Vector2.zero;
     [SerializeField] private Vector2 spawnAreaSize = new Vector2(4f, 4f);
@@ -181,8 +183,13 @@ public class EnemyWaveSpawner : MonoBehaviour
             if (waveIndex < waves.Count - 1)
             {
                 yield return StartCoroutine(WaitForWaveToClearRoutine(delayBetweenWaves));
+                yield return StartCoroutine(ShowWaveTransitionBannerRoutine(waveIndex + 2));
+            }
+            else
+            {
+                yield return StartCoroutine(WaitForWaveToClearRoutine(delayBetweenWaves));
 
-                if (waveIndex == 0 && PuzzleManager.Instance != null)
+                if (PuzzleManager.Instance != null && !PuzzleManager.Instance.IsPuzzleCompleted())
                 {
                     PuzzleManager.Instance.ShowPuzzleOnce();
                     yield return StartCoroutine(WaitForPuzzleCompletionRoutine());
@@ -191,6 +198,22 @@ public class EnemyWaveSpawner : MonoBehaviour
         }
 
         currentWaveIndex = waves.Count;
+    }
+
+    private IEnumerator ShowWaveTransitionBannerRoutine(int nextWaveNumber)
+    {
+        if (waveTransitionBanner == null)
+            yield break;
+
+        waveTransitionBanner.SetActive(true);
+
+        var canvasGroup = waveTransitionBanner.GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+            canvasGroup.alpha = 1f;
+
+        yield return new WaitForSeconds(waveTransitionBannerDuration);
+
+        waveTransitionBanner.SetActive(false);
     }
 
     private IEnumerator SpawnWaveDefinitionRoutine(EnemyWaveDefinition wave, int waveIndex)

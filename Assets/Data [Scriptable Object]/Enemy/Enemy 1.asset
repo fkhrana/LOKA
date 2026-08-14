@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Enemy 1
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Enemy
-  moveSpeed: 1.5
+  moveSpeed: 3
   damageOnContact: 20
   contactCooldown: 0.35
   requiredCorrectGestures: 1
