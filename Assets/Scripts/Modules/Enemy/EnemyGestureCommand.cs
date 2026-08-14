@@ -196,6 +196,9 @@ public class EnemyGestureCommand : MonoBehaviour
         if (target != this)
             return;
 
+        if (!IsVisibleOnCamera())
+            return;
+
         cachedStrokeHandled = true;
 
         if (playerHealth != null && healOnSuccess > 0)
@@ -243,7 +246,7 @@ public class EnemyGestureCommand : MonoBehaviour
 
     private static EnemyGestureCommand FindNearestActiveEnemyMatchingGesture(List<Vector2> points, GestureShape detectedGesture)
     {
-        var activeList = activeEnemies.FindAll(enemy => enemy != null && enemy.challengeActive && enemy.gestureToCommand == detectedGesture);
+        var activeList = activeEnemies.FindAll(enemy => enemy != null && enemy.challengeActive && enemy.gestureToCommand == detectedGesture && enemy.IsVisibleOnCamera());
         if (activeList.Count == 0)
             return null;
 
@@ -307,6 +310,40 @@ public class EnemyGestureCommand : MonoBehaviour
             promptText.text = $"{gestureLabel} x{remainingCorrectGestures}";
         else
             promptText.text = $"{gestureLabel}";
+    }
+
+    public bool IsVisibleOnCamera()
+    {
+        Camera cam = Camera.main;
+        if (cam == null)
+            return true;
+
+        Renderer renderer = GetComponentInChildren<Renderer>(true);
+        if (renderer != null)
+        {
+            var bounds = renderer.bounds;
+            Vector3 min = cam.WorldToViewportPoint(bounds.min);
+            Vector3 max = cam.WorldToViewportPoint(bounds.max);
+
+            return min.z >= 0f && max.z >= 0f &&
+                   min.x >= 0f && max.x <= 1f &&
+                   min.y >= 0f && max.y <= 1f;
+        }
+
+        Collider2D collider = GetComponentInChildren<Collider2D>(true);
+        if (collider != null)
+        {
+            var bounds = collider.bounds;
+            Vector3 min = cam.WorldToViewportPoint(bounds.min);
+            Vector3 max = cam.WorldToViewportPoint(bounds.max);
+
+            return min.z >= 0f && max.z >= 0f &&
+                   min.x >= 0f && max.x <= 1f &&
+                   min.y >= 0f && max.y <= 1f;
+        }
+
+        Vector3 viewportPoint = cam.WorldToViewportPoint(transform.position);
+        return viewportPoint.z >= 0f && viewportPoint.x >= 0f && viewportPoint.x <= 1f && viewportPoint.y >= 0f && viewportPoint.y <= 1f;
     }
 
     private string GetGestureLabel(GestureShape gestureShape)
