@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -12,6 +13,7 @@ public class LevelProgressManager : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Slider progressBar;
     [SerializeField] private TMP_Text progressText;
+    [SerializeField] private float progressAnimationDuration = 0.25f;
 
     [Header("Optional Events")]
     public UnityEvent OnReachedWaveMilestone; // invoked when reaching a milestone (e.g., show puzzle)
@@ -21,6 +23,7 @@ public class LevelProgressManager : MonoBehaviour
     private int processedEnemies = 0; // number of enemies spawned/processed
     private HashSet<int> triggeredMilestones = new HashSet<int>();
     private List<int> milestones = new List<int>();
+    private Coroutine progressAnimation;
 
     private void Awake()
     {
@@ -62,7 +65,24 @@ public class LevelProgressManager : MonoBehaviour
     private void UpdateUI()
     {
         if (progressBar != null)
-            progressBar.value = (float)processedEnemies / (float)totalEnemies;
+        {
+            float targetValue = (float)processedEnemies / (float)totalEnemies;
+
+            if (progressBar.fillRect != null)
+                progressBar.fillRect.gameObject.SetActive(processedEnemies > 0);
+
+            if (progressAnimation != null)
+                StopCoroutine(progressAnimation);
+
+            if (targetValue <= 0f || progressAnimationDuration <= 0f)
+            {
+                progressBar.value = targetValue;
+            }
+            else
+            {
+                progressAnimation = StartCoroutine(AnimateProgressBar(targetValue));
+            }
+        }
 
         if (progressText != null)
             progressText.text = $"{processedEnemies}/{totalEnemies}";
@@ -82,5 +102,23 @@ public class LevelProgressManager : MonoBehaviour
         {
             OnReachedLevelComplete?.Invoke();
         }
+    }
+
+    private IEnumerator AnimateProgressBar(float targetValue)
+    {
+        float startValue = progressBar.value;
+        float elapsed = 0f;
+
+        while (elapsed < progressAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / progressAnimationDuration);
+            t = t * t * (3f - 2f * t);
+            progressBar.value = Mathf.Lerp(startValue, targetValue, t);
+            yield return null;
+        }
+
+        progressBar.value = targetValue;
+        progressAnimation = null;
     }
 }

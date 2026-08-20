@@ -5,6 +5,8 @@ using UnityEngine.UI;
 public class PlayerHealthBarUI : MonoBehaviour
 {
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private Image healthImage;
+    [SerializeField] private Sprite[] healthSprites;
     [SerializeField] private Slider slider;
     [SerializeField] private Image fillImage;
     [SerializeField] private RectTransform fillTransform;
@@ -16,6 +18,9 @@ public class PlayerHealthBarUI : MonoBehaviour
     {
         if (playerHealth == null)
             playerHealth = FindAnyObjectByType<PlayerHealth>();
+
+        if (healthImage == null)
+            healthImage = fillImage;
 
         if (fillTransform == null && fillImage != null)
             fillTransform = fillImage.rectTransform;
@@ -50,6 +55,17 @@ public class PlayerHealthBarUI : MonoBehaviour
     {
         float normalized = max > 0 ? (float)current / max : 0f;
 
+        if (healthImage != null && healthSprites != null && healthSprites.Length > 0)
+        {
+            int spriteIndex = Mathf.Clamp(
+                Mathf.FloorToInt((1f - normalized) * healthSprites.Length),
+                0,
+                healthSprites.Length - 1);
+
+            if (healthSprites[spriteIndex] != null)
+                healthImage.sprite = healthSprites[spriteIndex];
+        }
+
         if (slider != null)
         {
             slider.minValue = 0f;
@@ -57,7 +73,7 @@ public class PlayerHealthBarUI : MonoBehaviour
             slider.value = normalized;
         }
 
-        if (fillImage != null)
+        if (fillImage != null && (healthSprites == null || healthSprites.Length == 0))
         {
             if (fillImage.type == Image.Type.Filled)
             {
