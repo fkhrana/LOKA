@@ -50,8 +50,15 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
     private bool isOpened;
 
-    private void Start()
+    private void Awake()
     {
+        triggerButton.onClick.AddListener(OnHadiahClicked);
+    }
+
+    private void OnEnable()
+    {
+        StopAllCoroutines();
+
         // =====================================================
         // HADIAH - POSISI AWAL
         // =====================================================
@@ -96,17 +103,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
         buttonsGroup.gameObject.SetActive(false);
 
 
-        // =====================================================
-        // BUTTON HADIAH
-        // =====================================================
-
-        triggerButton.onClick.AddListener(OnHadiahClicked);
-
-
-        // =====================================================
-        // PLAY POPUP
-        // =====================================================
-
+        isOpened = false;
         StartCoroutine(HadiahPopupRoutine());
     }
 
@@ -125,7 +122,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         while (t < popupDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             float p = popupCurve.Evaluate(
                 Mathf.Clamp01(t / popupDuration)
@@ -157,7 +154,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         while (t < popupReturnDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             float p = Mathf.Clamp01(
                 t / popupReturnDuration
@@ -194,6 +191,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         // Cegah klik dobel
         triggerButton.interactable = false;
+        triggerButton.gameObject.SetActive(false);
 
         StartCoroutine(OpenBookRoutine());
     }
@@ -212,7 +210,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         while (t < slideDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             float normalizedTime =
                 Mathf.Clamp01(t / slideDuration);
@@ -348,7 +346,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         while (t < settleDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             float p =
                 Mathf.Clamp01(t / settleDuration);
@@ -451,7 +449,7 @@ public class BookOpenSlideAnimator : MonoBehaviour
 
         while (t < buttonsFadeDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
 
             buttonsGroup.alpha =
                 Mathf.Clamp01(

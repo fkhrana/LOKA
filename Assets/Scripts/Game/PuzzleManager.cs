@@ -11,16 +11,15 @@ public class PuzzleManager : MonoBehaviour
 
     [Header("Referensi UI & VFX")]
     public GameObject puzzlePanel;
+    public GameObject rewardPanel;
     public GameObject winPanel;
     public PowerManager powerManager; 
     public float delayBeforeWinPanel = 2f;
-    public float delayBeforeWave2 = 2f;
     [Tooltip("Optional: GestureDrawer yang mengelola input gesture. Dinonaktifkan saat puzzle panel muncul.")]
     public GestureDrawer gestureDrawer;
 
     private bool wave1PuzzleShown;
     private bool puzzleCompleted;
-    private bool winPanelShown;
 
     void Awake()
     {
@@ -111,20 +110,15 @@ public class PuzzleManager : MonoBehaviour
 
         yield return new WaitForSeconds(delayBeforeWinPanel);
 
-        // Tutup puzzle panel sebelum menampilkan win panel
+        // Tutup puzzle panel sebelum menampilkan reward panel
         if (puzzlePanel != null)
             puzzlePanel.SetActive(false);
 
-        if (winPanel != null && !winPanelShown)
+        if (rewardPanel != null)
         {
-            winPanelShown = true;
-            winPanel.SetActive(true);
+            rewardPanel.SetActive(true);
             Time.timeScale = 0f;
         }
-
-        yield return new WaitForSeconds(delayBeforeWave2);
-
-        GoToWave2();
     }
 
     IEnumerator PopEffect(Transform target)
@@ -154,9 +148,4 @@ public class PuzzleManager : MonoBehaviour
         target.localScale = originalScale;
     }
 
-    void GoToWave2()
-    {
-        Debug.Log("Lanjut ke Wave 2");
-        // WaveManager.Instance.StartWave(2);
-    }
 }

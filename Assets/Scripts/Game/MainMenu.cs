@@ -27,6 +27,11 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
 
+    private void Awake()
+    {
+        Time.timeScale = 1f;
+    }
+
     private void Start()
     {
         settingPanel?.SetActive(false);

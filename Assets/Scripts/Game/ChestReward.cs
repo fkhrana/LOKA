@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class ChestReward : MonoBehaviour
 {
@@ -10,11 +9,22 @@ public class ChestReward : MonoBehaviour
     [SerializeField] private GameObject powerUp;
     [SerializeField] private Animator powerUpAnimator;
 
+    [Header("Panels")]
+    [SerializeField] private GameObject rewardPanel;
+    [SerializeField] private GameObject winPanel;
+
     private bool isOpened = false;
 
     private void Start()
     {
-        powerUp.SetActive(false);
+        if (chestAnimator != null)
+            chestAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+
+        if (powerUpAnimator != null)
+            powerUpAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+
+        if (powerUp != null)
+            powerUp.SetActive(false);
     }
 
     public void OpenChest()
@@ -25,15 +35,23 @@ public class ChestReward : MonoBehaviour
         isOpened = true;
 
         // Chest bergerak
-        chestAnimator.SetTrigger("Open");
+        if (chestAnimator != null)
+            chestAnimator.SetTrigger("Open");
 
         // Aktifkan PowerUp
-        powerUp.SetActive(true);
-        powerUpAnimator.Play("PowerUp_Appear");
+        if (powerUp != null)
+            powerUp.SetActive(true);
+
+        if (powerUpAnimator != null)
+            powerUpAnimator.Play("PowerUp_Appear", 0, 0f);
     }
 
     public void GoFinalResult()
     {
-        SceneManager.LoadScene("FinalResult");
+        if (rewardPanel != null)
+            rewardPanel.SetActive(false);
+
+        if (winPanel != null)
+            winPanel.SetActive(true);
     }
 }
