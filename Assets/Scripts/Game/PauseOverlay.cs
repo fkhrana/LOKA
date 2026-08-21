@@ -19,6 +19,7 @@ public class PauseOverlay : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string gameplaySceneName = "Gameplay";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+    
 
     private bool isPaused = false;
 
