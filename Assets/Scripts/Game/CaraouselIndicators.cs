@@ -20,6 +20,18 @@ namespace Christina.UI
             button.onClick.AddListener(_onClickAction);
         }
 
+        private void Awake()
+        {
+            // FIX: pastikan setiap instance mulai dari transparan,
+            // gak bergantung ke Reset() yang cuma jalan di editor
+            if (image != null)
+            {
+                var color = image.color;
+                color.a = 0f;
+                image.color = color;
+            }
+        }
+
         private void OnDestroy()
         {
             button.onClick.RemoveListener(_onClickAction);
@@ -55,7 +67,7 @@ namespace Christina.UI
             float time = 0;
             while (time < duration)
             {
-                time += Time.deltaTime;
+                time += Time.unscaledDeltaTime;
                 float lerpValue = time / duration;
                 Color newColor = image.color;
                 newColor.a = Mathf.Lerp(startAlpha, targetAlpha, lerpValue);

@@ -64,7 +64,8 @@ namespace Christina.UI
             float time = 0;
             while (time < duration)
             {
-                time += Time.deltaTime;
+                // FIX: pakai unscaledDeltaTime supaya hover effect tetap responsif walau timeScale = 0
+                time += Time.unscaledDeltaTime;
                 float lerpValue = time / duration;
                 Color newColor = buttonBackground.color;
                 newColor.a = Mathf.Lerp(startAlpha, targetAlpha, lerpValue);

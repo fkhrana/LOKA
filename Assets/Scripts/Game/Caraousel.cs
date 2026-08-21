@@ -196,7 +196,8 @@ namespace Christina.UI
 
                     scrollRect.horizontalNormalizedPosition = newPosition;
 
-                    elapsedTime += Time.deltaTime;
+                    // FIX: pakai unscaledDeltaTime supaya tetap jalan walau Time.timeScale = 0
+                    elapsedTime += Time.unscaledDeltaTime;
                     yield return null;
                 }
             }
@@ -210,7 +211,8 @@ namespace Christina.UI
             if (!autoScroll)
                 return;
 
-            _autoScrollTimer -= Time.deltaTime;
+            // FIX: pakai unscaledDeltaTime supaya auto scroll tetap jalan walau timeScale = 0
+            _autoScrollTimer -= Time.unscaledDeltaTime;
 
             if (_autoScrollTimer <= 0)
             {

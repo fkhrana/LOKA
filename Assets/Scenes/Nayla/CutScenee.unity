@@ -701,7 +701,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -1075,58 +1075,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1991099716138518962, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 38
-      objectReference: {fileID: 0}
-    - target: {fileID: 1991099716138518962, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -31
-      objectReference: {fileID: 0}
     - target: {fileID: 2381823958426288633, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
       propertyPath: m_Name
       value: TutorialPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 2381823958426288633, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3944257069907467633, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 118040767}
-    - target: {fileID: 3944257069907467633, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseTutorial
-      objectReference: {fileID: 0}
-    - target: {fileID: 3944257069907467633, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PauseOverlay, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 6742872028501165128, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 3824595535668656808, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
-    - target: {fileID: 6742872028501165128, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6742872028501165128, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_RaycastTarget
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7258539284908892867, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_RaycastTarget
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7654518452060896949, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8136523581747827467, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 1847479086438568090, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3561ec7040e7c974a9d07b8bcd791d9a, type: 3}
