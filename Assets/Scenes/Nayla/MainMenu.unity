@@ -754,7 +754,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &274872207
 RectTransform:
   m_ObjectHideFlags: 0
@@ -991,7 +991,7 @@ GameObject:
   - component: {fileID: 398155369}
   - component: {fileID: 398155368}
   m_Layer: 5
-  m_Name: Home Button (2)
+  m_Name: Back Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1092,7 +1092,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -8179835044053879540, guid: fa233b6652c2be74ba78e88676d02462, type: 3}
+  m_Sprite: {fileID: -4319977200541631774, guid: b442aa7f58cca354a8dcb18a2136e847, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1257,7 +1257,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &511750229
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2097,7 +2097,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -0.0002746582, y: 316.96002}
-  m_SizeDelta: {x: 30, y: 633.92}
+  m_SizeDelta: {x: 0, y: 633.92}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &766249911
 MonoBehaviour:
@@ -2643,9 +2643,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
   levelCardPrefab: {fileID: 6484995376208470013, guid: de57c40e46a248e4984fd1f0a09d6421, type: 3}
   contentParent: {fileID: 766249910}
-  levelIcons:
-  - {fileID: 7028842072390148906, guid: ce8b0fd1e4c0df54babac1ceb00e033c, type: 3}
+  carouselSnap: {fileID: 2061052741}
+  replayButton: {fileID: 2121114637}
+  lockedLevelIcons:
+  - {fileID: -8271439518806972371, guid: a11205f260c1d87449403d89ab67dae8, type: 3}
   - {fileID: -3571278149730965589, guid: 72925e4a5a5c4404384e15dffd511b5a, type: 3}
+  - {fileID: 8127168267730269012, guid: b59e2dacc08fd6a4ba57ab81a5f77025, type: 3}
+  unlockedLevelIcons:
+  - {fileID: 7028842072390148906, guid: ce8b0fd1e4c0df54babac1ceb00e033c, type: 3}
+  - {fileID: -3002448445795776205, guid: d728b46ca7798d64e8526f1db36322a9, type: 3}
+  - {fileID: -5472879786514868279, guid: 043c056ef9963e848a5a19bb5a4d08f0, type: 3}
+  gameplaySceneName: MainGameplay(Drawing)
 --- !u!1 &812645196
 GameObject:
   m_ObjectHideFlags: 0
@@ -2681,7 +2689,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -509.0564, y: 0}
+  m_AnchoredPosition: {x: -531, y: 0}
   m_SizeDelta: {x: 89, y: 84}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &812645198
@@ -3626,7 +3634,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 494.9436, y: 0}
+  m_AnchoredPosition: {x: 511.71997, y: 0}
   m_SizeDelta: {x: 89, y: 84}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1511718462
@@ -4716,7 +4724,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 18.8317, y: -34.4711}
+  m_AnchoredPosition: {x: 0, y: -30}
   m_SizeDelta: {x: 907.77, y: 603.62}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2061052738
@@ -4802,6 +4810,7 @@ MonoBehaviour:
   scrollRect: {fileID: 2061052738}
   nextButton: {fileID: 1511718462}
   prevButton: {fileID: 812645198}
+  snapSpeed: 10
 --- !u!224 &2090357775 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4041884389098650374, guid: bdb51ed6798a09c4bbadf7380d5a62a4, type: 3}
@@ -5026,9 +5035,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 67993241}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: TapToStart
+      - m_Target: {fileID: 807380744}
+        m_TargetAssemblyTypeName: LevelManager, Assembly-CSharp
+        m_MethodName: ReplaySelectedLevel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

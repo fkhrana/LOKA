@@ -4,54 +4,41 @@ using UnityEngine.UI;
 public class CarouselSnap : MonoBehaviour
 {
     [Header("ScrollRect")]
-    public ScrollRect scrollRect;
+    [SerializeField] private ScrollRect scrollRect;
 
     [Header("Navigation Buttons")]
-    public Button nextButton;   // Drag NextButton di sini
-    public Button prevButton;   // Drag PrevButton di sini
+    [SerializeField] private Button nextButton;
+    [SerializeField] private Button prevButton;
+
+    [Header("Snap Settings")]
+    [SerializeField] private float snapSpeed = 10f;
 
     private RectTransform content;
-    private float[] positions;        // Posisi snap untuk tiap card
-    private int targetIndex = 0;      // Index card yang sedang aktif
-    private bool isSnapping = false;
+    private float[] positions;
+    private int targetIndex;
+    private bool isSnapping;
 
-    void Start()
+    private void Awake()
     {
-        // Cari ScrollRect jika belum diisi
         if (scrollRect == null)
             scrollRect = GetComponent<ScrollRect>();
 
         if (scrollRect == null)
         {
-            Debug.LogError("ScrollRect tidak ditemukan! Pasang script ini di GameObject yang punya ScrollRect.");
+            Debug.LogError("CarouselSnap: ScrollRect tidak ditemukan.");
+            enabled = false;
             return;
         }
 
         content = scrollRect.content;
-        int childCount = content.childCount;
 
-        if (childCount <= 1)
+        if (content == null)
         {
-            // Jika cuma 1 card, disable tombol
-            if (nextButton != null) nextButton.interactable = false;
-            if (prevButton != null) prevButton.interactable = false;
+            Debug.LogError("CarouselSnap: Content belum diisi.");
+            enabled = false;
             return;
         }
 
-        // Hitung posisi snap untuk setiap card
-        positions = new float[childCount];
-        float spacing = 1f / (childCount - 1);
-        for (int i = 0; i < childCount; i++)
-        {
-            positions[i] = spacing * i;
-        }
-
-        // Set posisi awal ke card pertama
-        targetIndex = 0;
-        scrollRect.horizontalNormalizedPosition = 0;
-        UpdateButtonInteractable();
-
-        // Pasang listener untuk tombol
         if (nextButton != null)
             nextButton.onClick.AddListener(NextPage);
 
@@ -59,71 +46,177 @@ public class CarouselSnap : MonoBehaviour
             prevButton.onClick.AddListener(PrevPage);
     }
 
-    void Update()
+    private void Start()
     {
-        if (!isSnapping) return;
+        Invoke(nameof(Refresh), 0.05f);
+    }
 
-        // Smooth snap ke target
-        float targetPos = positions[targetIndex];
+    private void OnDestroy()
+    {
+        if (nextButton != null)
+            nextButton.onClick.RemoveListener(NextPage);
+
+        if (prevButton != null)
+            prevButton.onClick.RemoveListener(PrevPage);
+    }
+
+    public void Refresh()
+    {
+        if (scrollRect == null)
+            return;
+
+        content = scrollRect.content;
+
+        if (content == null)
+            return;
+
+        int childCount = content.childCount;
+
+        if (childCount <= 1)
+        {
+            positions = null;
+            targetIndex = 0;
+            isSnapping = false;
+
+            UpdateButtons();
+            NotifyLevelManager();
+            return;
+        }
+
+        Canvas.ForceUpdateCanvases();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+
+        positions = new float[childCount];
+
+        float spacing = 1f / (childCount - 1);
+
+        for (int i = 0; i < childCount; i++)
+            positions[i] = spacing * i;
+
+        targetIndex = 0;
+        isSnapping = false;
+
+        scrollRect.horizontalNormalizedPosition = 0f;
+
+        UpdateButtons();
+        NotifyLevelManager();
+
+        Debug.Log("CarouselSnap: " + childCount + " card ditemukan.");
+    }
+
+    private void Update()
+    {
+        if (!isSnapping || positions == null || positions.Length == 0)
+            return;
+
+        float targetPosition = positions[targetIndex];
+
         scrollRect.horizontalNormalizedPosition = Mathf.Lerp(
             scrollRect.horizontalNormalizedPosition,
-            targetPos,
-            Time.deltaTime * 10f
+            targetPosition,
+            Time.unscaledDeltaTime * snapSpeed
         );
 
-        // Jika sudah hampir sampai, langsung set ke posisi pasti
-        if (Mathf.Abs(scrollRect.horizontalNormalizedPosition - targetPos) < 0.001f)
+        if (Mathf.Abs(
+            scrollRect.horizontalNormalizedPosition - targetPosition
+        ) < 0.001f)
         {
-            scrollRect.horizontalNormalizedPosition = targetPos;
+            scrollRect.horizontalNormalizedPosition = targetPosition;
             isSnapping = false;
-            UpdateButtonInteractable();
+            UpdateButtons();
         }
     }
 
-    // Dipanggil saat drag selesai (hubungkan ke event OnEndDrag ScrollRect)
+    public void NextPage()
+    {
+        if (positions == null || targetIndex >= positions.Length - 1)
+            return;
+
+        targetIndex++;
+        isSnapping = true;
+
+        UpdateButtons();
+        NotifyLevelManager();
+
+        Debug.Log("Carousel → Level " + (targetIndex + 1));
+    }
+
+    public void PrevPage()
+    {
+        if (positions == null || targetIndex <= 0)
+            return;
+
+        targetIndex--;
+        isSnapping = true;
+
+        UpdateButtons();
+        NotifyLevelManager();
+
+        Debug.Log("Carousel → Level " + (targetIndex + 1));
+    }
+
+    public int GetCurrentIndex()
+    {
+        return targetIndex;
+    }
+
+    private void UpdateButtons()
+    {
+        bool hasMultipleCards =
+            positions != null &&
+            positions.Length > 1;
+
+        if (nextButton != null)
+        {
+            nextButton.interactable =
+                hasMultipleCards &&
+                targetIndex < positions.Length - 1;
+        }
+
+        if (prevButton != null)
+        {
+            prevButton.interactable =
+                hasMultipleCards &&
+                targetIndex > 0;
+        }
+    }
+
+    private void NotifyLevelManager()
+    {
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.UpdateReplayButton();
+    }
+
     public void OnEndDrag()
     {
-        if (positions == null || positions.Length == 0) return;
+        if (positions == null || positions.Length == 0)
+            return;
 
-        float currentPos = scrollRect.horizontalNormalizedPosition;
-        float closestDist = Mathf.Infinity;
+        float currentPosition =
+            scrollRect.horizontalNormalizedPosition;
+
+        float closestDistance = Mathf.Infinity;
+        int closestIndex = 0;
 
         for (int i = 0; i < positions.Length; i++)
         {
-            float dist = Mathf.Abs(currentPos - positions[i]);
-            if (dist < closestDist)
+            float distance = Mathf.Abs(
+                currentPosition - positions[i]
+            );
+
+            if (distance < closestDistance)
             {
-                closestDist = dist;
-                targetIndex = i;
+                closestDistance = distance;
+                closestIndex = i;
             }
         }
 
+        targetIndex = closestIndex;
         isSnapping = true;
-    }
 
-    // Tombol Next
-    public void NextPage()
-    {
-        if (positions == null || targetIndex >= positions.Length - 1) return;
-        targetIndex++;
-        isSnapping = true;
-    }
+        UpdateButtons();
+        NotifyLevelManager();
 
-    // Tombol Prev
-    public void PrevPage()
-    {
-        if (positions == null || targetIndex <= 0) return;
-        targetIndex--;
-        isSnapping = true;
-    }
-
-    // Aktif/nonaktifkan tombol sesuai posisi
-    private void UpdateButtonInteractable()
-    {
-        if (nextButton != null)
-            nextButton.interactable = (targetIndex < positions.Length - 1);
-
-        if (prevButton != null)
-            prevButton.interactable = (targetIndex > 0);
+        Debug.Log("Carousel Drag → Level " + (targetIndex + 1));
     }
 }

@@ -371,5 +371,8 @@ MonoBehaviour:
   backgroundImage: {fileID: 5099157805247592576}
   lockOverlay: {fileID: 786446442239032648}
   lockIcon: {fileID: 2274610639108710580}
+  unlockedLevelIcon: {fileID: 7028842072390148906, guid: ce8b0fd1e4c0df54babac1ceb00e033c, type: 3}
+  lockedLevelIcon: {fileID: -3571278149730965589, guid: 72925e4a5a5c4404384e15dffd511b5a, type: 3}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
+  gameplaySceneName: MainGameplay(Drawing)

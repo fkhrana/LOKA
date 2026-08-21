@@ -1,56 +1,96 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LevelUI : MonoBehaviour, IPointerClickHandler
 {
-    // === Komponen UI ===
-    public Image levelIconImage;     // Gambar angka/bintang level
-    public Image backgroundImage;    // Background card (opsional, untuk warna kuning/abu)
-    public GameObject lockOverlay;   // Overlay gelap (aktif jika locked)
-    public GameObject lockIcon;      // Gambar gembok (aktif jika locked)
+    [Header("UI")]
+    [SerializeField] private Image levelIconImage;
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private GameObject lockOverlay;
+    [SerializeField] private GameObject lockIcon;
 
-    // === Warna (hanya dipakai jika backgroundImage diisi) ===
-    public Color unlockedColor = new Color(1f, 0.84f, 0f); // Kuning
-    public Color lockedColor = new Color(0.5f, 0.5f, 0.5f); // Abu-abu
+    [Header("Colors")]
+    [SerializeField] private Color unlockedColor =
+        new Color(1f, 0.84f, 0f);
 
-    private LevelData currentData;
+    [SerializeField] private Color lockedColor =
+        new Color(0.5f, 0.5f, 0.5f);
 
-    // Dipanggil oleh LevelManager untuk mengisi data
-    public void Setup(LevelData data)
+    [Header("Scene")]
+    [SerializeField] private string gameplaySceneName =
+        "MainGameplay(Drawing)";
+
+    private int levelIndex;
+    private bool isUnlocked;
+
+    public void Setup(int index, bool unlocked, Sprite icon)
     {
-        currentData = data;
+        levelIndex = index;
+        isUnlocked = unlocked;
 
-        // Set icon level
-        if (data.levelIcon != null && levelIconImage != null)
-            levelIconImage.sprite = data.levelIcon;
-
-        // Atur warna background (jika ada)
-        if (backgroundImage != null)
-        {
-            backgroundImage.color = data.isUnlocked ? unlockedColor : lockedColor;
-        }
-
-        // Tampilkan/sembunyikan lock
-        bool isLocked = !data.isUnlocked;
-        if (lockOverlay != null) lockOverlay.SetActive(isLocked);
-        if (lockIcon != null) lockIcon.SetActive(isLocked);
+        UpdateIcon(icon);
+        UpdateVisual();
     }
 
-    // Saat card diklik (karena IPointerClickHandler)
+    private void UpdateIcon(Sprite icon)
+    {
+        if (levelIconImage != null)
+            levelIconImage.sprite = icon;
+    }
+
+    private void UpdateVisual()
+    {
+        if (backgroundImage != null)
+        {
+            backgroundImage.color =
+                isUnlocked
+                    ? unlockedColor
+                    : lockedColor;
+        }
+
+        if (lockOverlay != null)
+            lockOverlay.SetActive(!isUnlocked);
+
+        if (lockIcon != null)
+            lockIcon.SetActive(!isUnlocked);
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (currentData == null || !currentData.isUnlocked) return;
+        if (!isUnlocked)
+        {
+            Debug.Log(
+                "Level " +
+                (levelIndex + 1) +
+                " masih terkunci."
+            );
 
-        // Langsung main (tanpa popup)
+            return;
+        }
+
         PlayLevel();
     }
 
-    // Fungsi untuk memulai level
-    void PlayLevel()
+    private void PlayLevel()
     {
-        Debug.Log("Memulai " + currentData.levelName);
-        // Ganti scene atau panggil sistem game
-        // SceneManager.LoadScene("Level_" + currentData.levelIndex);
+        if (LevelManager.Instance == null)
+        {
+            Debug.LogError(
+                "LevelUI: LevelManager tidak ditemukan."
+            );
+
+            return;
+        }
+
+        LevelManager.Instance.SetCurrentLevel(levelIndex);
+
+        Debug.Log(
+            "Memulai Level " +
+            (levelIndex + 1)
+        );
+
+        SceneManager.LoadScene(gameplaySceneName);
     }
 }
