@@ -20,7 +20,7 @@ public class MainMenu : MonoBehaviour
 
     [Space]
     [Header("Scene Settings")]
-    [SerializeField] private int nextSceneIndex = 1;
+    [SerializeField] private int nextSceneIndex = 2;
 
     [Space]
     [Header("SFX")]

@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Nayla/MainMenu.unity
     guid: bf48aac0e66471345b834d3df2f5fc91
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Nayla/ChooseHero.unity
     guid: 6449ecd16aebf344fbbfd4ef26c79093
   - enabled: 1
