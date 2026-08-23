@@ -344,6 +344,10 @@ public class EnemyWaveSpawner : MonoBehaviour
             enemy.ConfigureChallenge(GetGestureForIndex(spawnIndex), requiredCorrectGestures);
         }
 
+        KeepEnemyInsideSpawnArea(enemy);
+        enemy.SyncSpawnPosition();
+        if (usedPositions.Count > 0)
+            usedPositions[usedPositions.Count - 1] = enemy.transform.position;
         enemy.IssueCommand();
         spawnedEnemies.Add(enemy);
         currentWaveEnemies.Add(enemy);
@@ -352,6 +356,39 @@ public class EnemyWaveSpawner : MonoBehaviour
         {
             enemy.gameObject.AddComponent<EnemyVisibilityNotifier>();
         }
+    }
+
+    private void KeepEnemyInsideSpawnArea(EnemyGestureCommand enemy)
+    {
+        if (!useSpawnArea || enemy == null)
+            return;
+
+        Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
+        if (enemyCollider == null)
+            enemyCollider = enemy.GetComponentInChildren<Collider2D>(true);
+
+        if (enemyCollider == null)
+            return;
+
+        Bounds areaBounds = new Bounds(
+            new Vector3(spawnAreaCenter.x, spawnAreaCenter.y, enemy.transform.position.z),
+            new Vector3(spawnAreaSize.x, spawnAreaSize.y, 0f));
+        Bounds enemyBounds = enemyCollider.bounds;
+
+        float minX = areaBounds.min.x + (enemy.transform.position.x - enemyBounds.min.x);
+        float maxX = areaBounds.max.x - (enemyBounds.max.x - enemy.transform.position.x);
+        float minY = areaBounds.min.y + (enemy.transform.position.y - enemyBounds.min.y);
+        float maxY = areaBounds.max.y - (enemyBounds.max.y - enemy.transform.position.y);
+
+        Vector3 correctedPosition = enemy.transform.position;
+        correctedPosition.x = minX <= maxX
+            ? Mathf.Clamp(correctedPosition.x, minX, maxX)
+            : areaBounds.center.x;
+        correctedPosition.y = minY <= maxY
+            ? Mathf.Clamp(correctedPosition.y, minY, maxY)
+            : areaBounds.center.y;
+
+        enemy.transform.position = correctedPosition;
     }
 
     private IEnumerator WaitForPuzzleCompletionRoutine()

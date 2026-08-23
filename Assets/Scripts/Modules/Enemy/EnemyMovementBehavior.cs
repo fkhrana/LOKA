@@ -125,6 +125,22 @@ public class EnemyMovementBehavior : MonoBehaviour
         heightAdjustSpeed = Random.Range(heightAdjustSpeedMin, heightAdjustSpeedMax);
         knockbackForce = Random.Range(knockbackForceMin, knockbackForceMax);
     }
+    public void SetSpawnPosition(Vector2 position)
+    {
+        baseY = position.y;
+        if (rb != null)
+            rb.position = position;
+    }
+
+    public void SetSpeedFromData(float speed)
+    {
+        moveSpeed = speed;
+    }
+
+    public void SetDamageFromData(int damage)
+    {
+        damageOnContact = damage;
+    }
 
     public void SetActive(bool active)
     {
@@ -186,9 +202,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         MoveToPosition(targetPosition);
 
         if (spriteRenderer != null)
-        {
             spriteRenderer.flipX = moveDirection > 0f;
-        }
 
         if (isActive)
             TryDamagePlayerOnContact();
@@ -246,13 +260,9 @@ public class EnemyMovementBehavior : MonoBehaviour
     private void MoveToPosition(Vector2 position)
     {
         if (rb != null)
-        {
             rb.MovePosition(position);
-        }
         else
-        {
             transform.position = position;
-        }
     }
 
     public float PlayKnockback(bool strong = false)
@@ -266,9 +276,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         Vector2 away = Vector2.right * -moveDirection;
         if (playerTransform != null)
-        {
             away = ((Vector2)rb.position - (Vector2)playerTransform.position).normalized;
-        }
 
         away.y *= 0.35f;
         away.Normalize();

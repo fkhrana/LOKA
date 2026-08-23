@@ -32,36 +32,32 @@ public class Enemy : MonoBehaviour
     {
         enemyData = newEnemyData;
         aksaraData = newAksaraData;
-
-        Debug.Log($"[Enemy] Configure() called on {name}. enemyData={(enemyData != null ? enemyData.name : "null")}, aksaraData={(aksaraData != null ? aksaraData.name : "null")}, bodyRenderer={(bodyRenderer != null)}, aksaraIconRenderer={(aksaraIconRenderer != null)}");
-
         ApplyEnemyData();
     }
 
     private void ApplyEnemyData()
     {
-        Debug.Log($"[Enemy] ApplyEnemyData() called on {name}. enemyData={(enemyData != null ? enemyData.name : "null")}, aksaraData={(aksaraData != null ? aksaraData.name : "null")}, bodyRenderer={(bodyRenderer != null)}, aksaraIconRenderer={(aksaraIconRenderer != null)}");
-
         if (enemyData == null)
         {
             Debug.LogWarning($"[Enemy] ApplyEnemyData() skipped because enemyData is null.");
             return;
         }
 
+        // kalau shielded (requiredCorrectGestures > 1) dan ada shieldedSprite, pakai itu
+        // kalau tidak, pakai enemySprite biasa
         if (bodyRenderer != null)
         {
-            bodyRenderer.sprite = enemyData.EnemySprite;
-            Debug.Log($"[Enemy] bodyRenderer sprite set to {(enemyData.EnemySprite != null ? enemyData.EnemySprite.name : "null")}");
+            bool isShielded = enemyData.RequiredCorrectGestures > 1 && enemyData.ShieldedSprite != null;
+            bodyRenderer.sprite = isShielded ? enemyData.ShieldedSprite : enemyData.EnemySprite;
         }
 
         if (aksaraData != null && aksaraIconRenderer != null)
-        {
             aksaraIconRenderer.sprite = aksaraData.IconSprite;
-            Debug.Log($"[Enemy] aksaraIconRenderer sprite set to {(aksaraData.IconSprite != null ? aksaraData.IconSprite.name : "null")}");
-        }
 
         if (movementBehavior != null)
         {
+            movementBehavior.SetSpeedFromData(enemyData.MoveSpeed);
+            movementBehavior.SetDamageFromData(enemyData.DamageOnContact);
             movementBehavior.SetActive(false);
         }
 
@@ -70,12 +66,24 @@ public class Enemy : MonoBehaviour
             gestureCommand.ConfigureChallenge(
                 aksaraData.GestureShape,
                 enemyData.RequiredCorrectGestures);
-
-            Debug.Log($"[Enemy] gestureCommand configured with gesture={aksaraData.GestureShape} and requiredGestures={enemyData.RequiredCorrectGestures}");
         }
         else if (gestureCommand != null)
         {
             Debug.LogWarning("[Enemy] gestureCommand exists but aksaraData is null; challenge was not configured.");
+        }
+    }
+
+    // dipanggil dari EnemyGestureCommand saat kena hit tapi belum mati
+    public void OnHit(int remainingGestures)
+    {
+        if (enemyData == null || bodyRenderer == null)
+            return;
+
+        // shield hilang, ganti ke sprite normal
+        if (remainingGestures > 0 && enemyData.EnemySprite != null)
+        {
+            bodyRenderer.sprite = enemyData.EnemySprite;
+            Debug.Log($"[Enemy] {name} shield broken, switching to normal sprite.");
         }
     }
 
@@ -100,25 +108,18 @@ public class Enemy : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning($"Enemy {name} is configured to drop a fragment but aksaraIconFragment is null.");
+                        Debug.LogWarning($"Enemy {name} fragment prefab null.");
                     }
                 }
                 else
                 {
-                    Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} already dropped this wave; skipping.");
+                    Debug.Log($"Enemy {name} fragment {aksaraData.AksaraName} already dropped this wave.");
                 }
             }
-            else
-            {
-                Debug.LogWarning("[Enemy] CollectedAksaraManager.Instance is null; cannot register drop.");
-            }
-
             return;
         }
 
         if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData == null)
-        {
-            Debug.LogWarning($"Enemy {name} is set to drop a fragment, but no AksaraData is assigned.");
-        }
+            Debug.LogWarning($"Enemy {name} set to drop fragment but AksaraData null.");
     }
 }

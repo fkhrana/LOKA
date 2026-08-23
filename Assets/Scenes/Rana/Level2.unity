@@ -1157,7 +1157,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3824595535668656808, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a575c17cd15f98e4da584b226ef60a8b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2795,28 +2795,52 @@ MonoBehaviour:
     delayBeforeSpawn: 0
     groups:
     - groupName: NA
-      enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
       aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
       enemyCount: 2
     - groupName: DA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
       aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
-      enemyCount: 2
+      enemyCount: 1
+    - groupName: DA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+      enemyCount: 1
   - waveName: Wave2
     delayBeforeSpawn: 0
     groups:
     - groupName: WA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
       aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-      enemyCount: 3
+      enemyCount: 1
     - groupName: LA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
       aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
-      enemyCount: 3
+      enemyCount: 1
     - groupName: MA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
       aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
-      enemyCount: 3
+      enemyCount: 2
+    - groupName: WA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+      enemyCount: 1
+    - groupName: LA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+      enemyCount: 1
+    - groupName: MA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+      enemyCount: 1
+    - groupName: WA
+      enemyData: {fileID: 11400000, guid: a7e623bda2e50e44aa4abe33f2900a07, type: 2}
+      aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+      enemyCount: 1
+    - groupName: LA
+      enemyData: {fileID: 11400000, guid: a7e623bda2e50e44aa4abe33f2900a07, type: 2}
+      aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+      enemyCount: 1
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
@@ -6445,7 +6469,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Texture: {fileID: 2800000, guid: b5bd9d29fe5267e45b7326ebb1a7c0df, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -7039,7 +7063,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3824595535668656808, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a575c17cd15f98e4da584b226ef60a8b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7761,7 +7785,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3824595535668656808, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: a575c17cd15f98e4da584b226ef60a8b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8243,7 +8267,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -7443756053782179069, guid: 1c8777f9645acd9419d755147b687efe, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c605f81a96895d743ab3eaeb4c32954c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -8329,8 +8353,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: a575c17cd15f98e4da584b226ef60a8b, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -8404,7 +8428,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Texture: {fileID: 2800000, guid: b5bd9d29fe5267e45b7326ebb1a7c0df, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -8603,8 +8627,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   mainMenuScene: MainMenu
-  gameplayScene: MainGameplay(Drawing)
-  nextScene: Level2
+  gameplayScene: Level2
+  nextScene: MainMenu
 --- !u!225 &1902292278
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -9645,8 +9669,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: a575c17cd15f98e4da584b226ef60a8b, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4

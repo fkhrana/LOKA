@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a69a2e11d1084084ab3f83e2c5eaa3f4, type: 3}
-  m_Name: Enemy 1
+  m_Name: Shielded Enemy
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Enemy
-  moveSpeed: 1.5
+  moveSpeed: 1.8
   damageOnContact: 20
   contactCooldown: 0.35
-  requiredCorrectGestures: 1
-  enemySprite: {fileID: -7708458740652960053, guid: 0cc4326725378354f8f794c5c39019a1, type: 3}
+  requiredCorrectGestures: 2
+  enemySprite: {fileID: 21300000, guid: 1a0da8966c6e3074f919bdbcbabbc240, type: 3}
   dropsAksaraFragment: 1
   dropForce: 1
+  shieldedSprite: {fileID: 21300000, guid: f48d29d4ed9cf614bb223c5f4b256af1, type: 3}

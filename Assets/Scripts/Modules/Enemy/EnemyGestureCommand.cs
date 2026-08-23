@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class EnemyGestureCommand : MonoBehaviour
 {
+    public void SyncSpawnPosition()
+    {
+        if (movementBehavior != null)
+            movementBehavior.SetSpawnPosition(transform.position);
+    }
     [SerializeField] private bool autoIssueOnStart = true;
     [SerializeField] private GestureShape gestureToCommand = GestureShape.Circle;
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
@@ -29,7 +34,6 @@ public class EnemyGestureCommand : MonoBehaviour
             if (activeEnemies[i] != null && activeEnemies[i].challengeActive)
                 return true;
         }
-
         return false;
     }
 
@@ -41,7 +45,6 @@ public class EnemyGestureCommand : MonoBehaviour
             if (enemy != null && enemy.challengeActive && enemy.gestureToCommand == gestureShape)
                 return true;
         }
-
         return false;
     }
 
@@ -183,15 +186,11 @@ public class EnemyGestureCommand : MonoBehaviour
         }
 
         if (!result.IsRecognized)
-        {
             return;
-        }
 
         var target = FindNearestActiveEnemyMatchingGesture(points, result.DetectedShape);
         if (target == null)
-        {
             return;
-        }
 
         if (target != this)
             return;
@@ -206,12 +205,16 @@ public class EnemyGestureCommand : MonoBehaviour
 
         remainingCorrectGestures--;
 
+        // notify Enemy untuk ganti sprite (shield hilang)
+        var enemy = GetComponent<Enemy>();
+        if (enemy != null)
+            enemy.OnHit(remainingCorrectGestures);
+
         if (movementBehavior != null)
         {
             float knockbackDuration = movementBehavior.PlayKnockback(remainingCorrectGestures <= 0);
             if (remainingCorrectGestures <= 0)
             {
-                var enemy = GetComponent<Enemy>();
                 if (enemy != null)
                     enemy.OnDefeated();
 
@@ -343,23 +346,19 @@ public class EnemyGestureCommand : MonoBehaviour
         }
 
         Vector3 viewportPoint = cam.WorldToViewportPoint(transform.position);
-        return viewportPoint.z >= 0f && viewportPoint.x >= 0f && viewportPoint.x <= 1f && viewportPoint.y >= 0f && viewportPoint.y <= 1f;
+        return viewportPoint.z >= 0f && viewportPoint.x >= 0f && viewportPoint.x <= 1f &&
+               viewportPoint.y >= 0f && viewportPoint.y <= 1f;
     }
 
     private string GetGestureLabel(GestureShape gestureShape)
     {
         switch (gestureShape)
         {
-            case GestureShape.Circle:
-                return "LINGKARAN";
-            case GestureShape.Square:
-                return "KOTAK";
-            case GestureShape.Na:
-                return "NA";
-            case GestureShape.Ka:
-                return "KA";
-            default:
-                return gestureShape.ToString();
+            case GestureShape.Circle: return "LINGKARAN";
+            case GestureShape.Square: return "KOTAK";
+            case GestureShape.Na: return "NA";
+            case GestureShape.Ka: return "KA";
+            default: return gestureShape.ToString();
         }
     }
 }

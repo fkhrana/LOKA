@@ -6,6 +6,7 @@ public class ResultButton : MonoBehaviour
     [Header("Scene")]
     [SerializeField] private string mainMenuScene = "MainMenu";
     [SerializeField] private string gameplayScene = "MainGameplay(Drawing)";
+    [SerializeField] private string nextScene = "Level2";
 
     // HOME
     public void Home()
@@ -22,9 +23,8 @@ public class ResultButton : MonoBehaviour
     // NEXT
     public void Next()
     {
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().buildIndex + 1
-        );
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(nextScene);
     }
 
     // BACK

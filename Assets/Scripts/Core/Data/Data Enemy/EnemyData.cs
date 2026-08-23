@@ -12,6 +12,9 @@ public class EnemyData : ScriptableObject
     [SerializeField] private bool dropsAksaraFragment = true;
     [SerializeField] private float dropForce = 2f;
 
+    [Header("Shield")]
+    [SerializeField] private Sprite shieldedSprite;
+
     public string EnemyName => enemyName;
     public float MoveSpeed => moveSpeed;
     public int DamageOnContact => damageOnContact;
@@ -20,4 +23,5 @@ public class EnemyData : ScriptableObject
     public Sprite EnemySprite => enemySprite;
     public bool DropsAksaraFragment => dropsAksaraFragment;
     public float DropForce => dropForce;
+    public Sprite ShieldedSprite => shieldedSprite;
 }
