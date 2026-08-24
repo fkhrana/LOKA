@@ -7,24 +7,14 @@ public class AksaraFragmentItem : MonoBehaviour
 {
     [SerializeField] private float fallDistance = 1.5f;
     [SerializeField] private float fallDuration = 0.4f;
-    [SerializeField] private GameObject dropVfx;
 
     private SpriteRenderer spriteRenderer;
     private AksaraData aksaraData;
     private Coroutine fallCoroutine;
-    private ParticleSystem[] dropVfxParticles;
 
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        if (dropVfx != null)
-        {
-            dropVfxParticles = dropVfx.GetComponentsInChildren<ParticleSystem>(true);
-
-            foreach (ParticleSystem particles in dropVfxParticles)
-                particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        }
     }
 
     public void Initialize(AksaraData data, Vector2 spawnPosition)
@@ -38,15 +28,6 @@ public class AksaraFragmentItem : MonoBehaviour
             spriteRenderer.sprite = data.IconSprite;
 
         transform.position = spawnPosition;
-
-        if (dropVfx != null)
-            dropVfx.SetActive(true);
-
-        if (dropVfxParticles != null)
-        {
-            foreach (ParticleSystem particles in dropVfxParticles)
-                particles.Play(true);
-        }
 
         if (fallCoroutine != null)
             StopCoroutine(fallCoroutine);
