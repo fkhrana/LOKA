@@ -1,0 +1,5343 @@
+fileFormatVersion: 2
+guid: 138acb20cdaf486478ecf3737bb90dca
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -4593902892099740064
+    second: GoldenTrail_0
+  - first:
+      213: -3203252709054729030
+    second: GoldenTrail_1
+  - first:
+      213: -8978470714969669906
+    second: GoldenTrail_2
+  - first:
+      213: 6570765376238386111
+    second: GoldenTrail_3
+  - first:
+      213: -1070016425387938428
+    second: GoldenTrail_4
+  - first:
+      213: 4338928492477389264
+    second: GoldenTrail_5
+  - first:
+      213: 2584442071178772231
+    second: GoldenTrail_6
+  - first:
+      213: -2856667030955296346
+    second: GoldenTrail_7
+  - first:
+      213: 7477718264240861492
+    second: GoldenTrail_8
+  - first:
+      213: 3239346712280301690
+    second: GoldenTrail_9
+  - first:
+      213: -8577739630660196222
+    second: GoldenTrail_10
+  - first:
+      213: 7275681086473525484
+    second: GoldenTrail_11
+  - first:
+      213: -8392094016479567733
+    second: GoldenTrail_12
+  - first:
+      213: 4358429517304750470
+    second: GoldenTrail_13
+  - first:
+      213: 5162129863662734713
+    second: GoldenTrail_14
+  - first:
+      213: 701474021978184212
+    second: GoldenTrail_15
+  - first:
+      213: -3074962375676642808
+    second: GoldenTrail_16
+  - first:
+      213: -195408111952891493
+    second: GoldenTrail_17
+  - first:
+      213: -2087261108377893915
+    second: GoldenTrail_18
+  - first:
+      213: 2202147740271401801
+    second: GoldenTrail_19
+  - first:
+      213: -753518240722734285
+    second: GoldenTrail_20
+  - first:
+      213: 1263436198479481712
+    second: GoldenTrail_21
+  - first:
+      213: 2403459349345715115
+    second: GoldenTrail_22
+  - first:
+      213: 749836445172831293
+    second: GoldenTrail_23
+  - first:
+      213: 7126824217225162702
+    second: GoldenTrail_24
+  - first:
+      213: -2789895489811883625
+    second: GoldenTrail_25
+  - first:
+      213: -76584914496888789
+    second: GoldenTrail_26
+  - first:
+      213: 2060710270421915056
+    second: GoldenTrail_27
+  - first:
+      213: -1318222269027707687
+    second: GoldenTrail_28
+  - first:
+      213: -693548995500175926
+    second: GoldenTrail_29
+  - first:
+      213: 5488547795803204736
+    second: GoldenTrail_30
+  - first:
+      213: -1444183509847972605
+    second: GoldenTrail_31
+  - first:
+      213: -5472537253804888131
+    second: GoldenTrail_32
+  - first:
+      213: 1694403226525584969
+    second: GoldenTrail_33
+  - first:
+      213: -6248397373534468206
+    second: GoldenTrail_34
+  - first:
+      213: 763406845915620896
+    second: GoldenTrail_35
+  - first:
+      213: -267989683163398502
+    second: GoldenTrail_36
+  - first:
+      213: 6442525313385956212
+    second: GoldenTrail_37
+  - first:
+      213: 3757297282298073389
+    second: GoldenTrail_38
+  - first:
+      213: 3294244619880446172
+    second: GoldenTrail_39
+  - first:
+      213: -525443948664893672
+    second: GoldenTrail_40
+  - first:
+      213: 4686578880638171618
+    second: GoldenTrail_41
+  - first:
+      213: 9152624149025368899
+    second: GoldenTrail_42
+  - first:
+      213: 7511667457687519683
+    second: GoldenTrail_43
+  - first:
+      213: -7060689839961706557
+    second: GoldenTrail_44
+  - first:
+      213: 5185526048019250968
+    second: GoldenTrail_45
+  - first:
+      213: 3422318461664360478
+    second: GoldenTrail_46
+  - first:
+      213: 4412545659681178871
+    second: GoldenTrail_47
+  - first:
+      213: 6824626348811299212
+    second: GoldenTrail_48
+  - first:
+      213: -3531781124388239481
+    second: GoldenTrail_49
+  - first:
+      213: 2019492636428921228
+    second: GoldenTrail_50
+  - first:
+      213: 5039670286890518835
+    second: GoldenTrail_51
+  - first:
+      213: -2724877890750521067
+    second: GoldenTrail_52
+  - first:
+      213: -3688338573668898073
+    second: GoldenTrail_53
+  - first:
+      213: -6484892030959021854
+    second: GoldenTrail_54
+  - first:
+      213: 8628934130611078668
+    second: GoldenTrail_55
+  - first:
+      213: 1405839661131085961
+    second: GoldenTrail_56
+  - first:
+      213: 509436695548850726
+    second: GoldenTrail_57
+  - first:
+      213: -3078051469574470567
+    second: GoldenTrail_58
+  - first:
+      213: 5407430209416775453
+    second: GoldenTrail_59
+  - first:
+      213: -2946752127003692887
+    second: GoldenTrail_60
+  - first:
+      213: -4082571200355479277
+    second: GoldenTrail_61
+  - first:
+      213: 5205973310857673656
+    second: GoldenTrail_62
+  - first:
+      213: -9050124481812341564
+    second: GoldenTrail_63
+  - first:
+      213: 14508079641745908
+    second: GoldenTrail_64
+  - first:
+      213: 560937601661499100
+    second: GoldenTrail_65
+  - first:
+      213: -4715026433102913653
+    second: GoldenTrail_66
+  - first:
+      213: -1505962845097512261
+    second: GoldenTrail_67
+  - first:
+      213: -2024738698703257026
+    second: GoldenTrail_68
+  - first:
+      213: 5662873306500728
+    second: GoldenTrail_69
+  - first:
+      213: -6767050676973736164
+    second: GoldenTrail_70
+  - first:
+      213: -2704303242800684631
+    second: GoldenTrail_71
+  - first:
+      213: -2544991297371456199
+    second: GoldenTrail_72
+  - first:
+      213: -490940347186493261
+    second: GoldenTrail_73
+  - first:
+      213: -3293026251247156200
+    second: GoldenTrail_74
+  - first:
+      213: -8331964862115302569
+    second: GoldenTrail_75
+  - first:
+      213: 8665119342929959161
+    second: GoldenTrail_76
+  - first:
+      213: -5969812767748639785
+    second: GoldenTrail_77
+  - first:
+      213: -904238633595495653
+    second: GoldenTrail_78
+  - first:
+      213: -7713266283161317238
+    second: GoldenTrail_79
+  - first:
+      213: 1394104756837743910
+    second: GoldenTrail_80
+  - first:
+      213: -217520295029419630
+    second: GoldenTrail_81
+  - first:
+      213: -8246889488334434135
+    second: GoldenTrail_82
+  - first:
+      213: 6875152413121627974
+    second: GoldenTrail_83
+  - first:
+      213: -7887077918777895236
+    second: GoldenTrail_84
+  - first:
+      213: -3906881416095493140
+    second: GoldenTrail_85
+  - first:
+      213: -9070115311698372512
+    second: GoldenTrail_86
+  - first:
+      213: -316657391547849149
+    second: GoldenTrail_87
+  - first:
+      213: -2348462155624298608
+    second: GoldenTrail_88
+  - first:
+      213: -7189140279419875782
+    second: GoldenTrail_89
+  - first:
+      213: -7634355284776812565
+    second: GoldenTrail_90
+  - first:
+      213: 2620575655339077989
+    second: GoldenTrail_91
+  - first:
+      213: 2548831417771197062
+    second: GoldenTrail_92
+  - first:
+      213: 2534862375437547144
+    second: GoldenTrail_93
+  - first:
+      213: -279302303064540909
+    second: GoldenTrail_94
+  - first:
+      213: -8583142918464153396
+    second: GoldenTrail_95
+  - first:
+      213: 11973149927428232
+    second: GoldenTrail_96
+  - first:
+      213: -3056694443492878763
+    second: GoldenTrail_97
+  - first:
+      213: -5223220583076104419
+    second: GoldenTrail_98
+  - first:
+      213: 4900408127640150473
+    second: GoldenTrail_99
+  - first:
+      213: -4939265341386647122
+    second: GoldenTrail_100
+  - first:
+      213: 6021326867507998692
+    second: GoldenTrail_101
+  - first:
+      213: 8106245324785785715
+    second: GoldenTrail_102
+  - first:
+      213: -7659710517559583917
+    second: GoldenTrail_103
+  - first:
+      213: 7665016893493317387
+    second: GoldenTrail_104
+  - first:
+      213: -8995729088441082529
+    second: GoldenTrail_105
+  - first:
+      213: 1837479816410339954
+    second: GoldenTrail_106
+  - first:
+      213: 6519347710492766316
+    second: GoldenTrail_107
+  - first:
+      213: -2794302573483902321
+    second: GoldenTrail_108
+  - first:
+      213: 2927735181413976094
+    second: GoldenTrail_109
+  - first:
+      213: 962720366209446572
+    second: GoldenTrail_110
+  - first:
+      213: -1299520449058317085
+    second: GoldenTrail_111
+  - first:
+      213: 411930408385301986
+    second: GoldenTrail_112
+  - first:
+      213: 6888216788671889666
+    second: GoldenTrail_113
+  - first:
+      213: -7575399251997342931
+    second: GoldenTrail_114
+  - first:
+      213: 781064483854187168
+    second: GoldenTrail_115
+  - first:
+      213: -1628718489706465060
+    second: GoldenTrail_116
+  - first:
+      213: 4318840967773898208
+    second: GoldenTrail_117
+  - first:
+      213: -3391496548107869622
+    second: GoldenTrail_118
+  - first:
+      213: -6178192168508850859
+    second: GoldenTrail_119
+  - first:
+      213: -5946638525559859649
+    second: GoldenTrail_120
+  - first:
+      213: -1737716474802329576
+    second: GoldenTrail_121
+  - first:
+      213: -8984167093827715586
+    second: GoldenTrail_122
+  - first:
+      213: -8092368923133883773
+    second: GoldenTrail_123
+  - first:
+      213: 2800052522828243732
+    second: GoldenTrail_124
+  - first:
+      213: 4651733982300649085
+    second: GoldenTrail_125
+  - first:
+      213: 2064795475298300211
+    second: GoldenTrail_126
+  - first:
+      213: 614860731427419245
+    second: GoldenTrail_127
+  - first:
+      213: -1996916315416685813
+    second: GoldenTrail_128
+  - first:
+      213: -1360952743012524919
+    second: GoldenTrail_129
+  - first:
+      213: 4658126880504462620
+    second: GoldenTrail_130
+  - first:
+      213: -8043041033851698004
+    second: GoldenTrail_131
+  - first:
+      213: -6681388762867470582
+    second: GoldenTrail_132
+  - first:
+      213: 6565945276282293955
+    second: GoldenTrail_133
+  - first:
+      213: -8896513428744766316
+    second: GoldenTrail_134
+  - first:
+      213: -7246390910079645179
+    second: GoldenTrail_135
+  - first:
+      213: -2425546992477278494
+    second: GoldenTrail_136
+  - first:
+      213: 7568362468228352556
+    second: GoldenTrail_137
+  - first:
+      213: -5185710742558295340
+    second: GoldenTrail_138
+  - first:
+      213: 9116072884571474494
+    second: GoldenTrail_139
+  - first:
+      213: 2123145710368434848
+    second: GoldenTrail_140
+  - first:
+      213: 3284876951404724915
+    second: GoldenTrail_141
+  - first:
+      213: -3548645736316489791
+    second: GoldenTrail_142
+  - first:
+      213: -8411604407067641952
+    second: GoldenTrail_143
+  - first:
+      213: 1880398768127982197
+    second: GoldenTrail_144
+  - first:
+      213: -8044736342348313178
+    second: GoldenTrail_145
+  - first:
+      213: 414676464275867022
+    second: GoldenTrail_146
+  - first:
+      213: 2497228771620806471
+    second: GoldenTrail_147
+  - first:
+      213: 8209705403721596747
+    second: GoldenTrail_148
+  - first:
+      213: 2777563922204988204
+    second: GoldenTrail_149
+  - first:
+      213: -7528262470312814379
+    second: GoldenTrail_150
+  - first:
+      213: -7126751453480973745
+    second: GoldenTrail_151
+  - first:
+      213: 6270807223615423229
+    second: GoldenTrail_152
+  - first:
+      213: -5199968296038885887
+    second: GoldenTrail_153
+  - first:
+      213: 7344155570012510692
+    second: GoldenTrail_154
+  - first:
+      213: -8477382702566952666
+    second: GoldenTrail_155
+  - first:
+      213: -622692010312794343
+    second: GoldenTrail_156
+  - first:
+      213: -5837765903118966249
+    second: GoldenTrail_157
+  - first:
+      213: 5536952028625549791
+    second: GoldenTrail_158
+  - first:
+      213: -8161718114706992743
+    second: GoldenTrail_159
+  - first:
+      213: 3328951467227140106
+    second: GoldenTrail_160
+  - first:
+      213: -2027449330471719495
+    second: GoldenTrail_161
+  - first:
+      213: 3907852645840730643
+    second: GoldenTrail_162
+  - first:
+      213: -5150535898518154792
+    second: GoldenTrail_163
+  - first:
+      213: 7426678770794267849
+    second: GoldenTrail_164
+  - first:
+      213: -625583739486957124
+    second: GoldenTrail_165
+  - first:
+      213: 7113844196269915708
+    second: GoldenTrail_166
+  - first:
+      213: 4431435260436860886
+    second: GoldenTrail_167
+  - first:
+      213: -7950378776017000671
+    second: GoldenTrail_168
+  - first:
+      213: 3609930530845518887
+    second: GoldenTrail_169
+  - first:
+      213: -4871814621424253323
+    second: GoldenTrail_170
+  - first:
+      213: 2719243949317402879
+    second: GoldenTrail_171
+  - first:
+      213: 1852757568288242434
+    second: GoldenTrail_172
+  - first:
+      213: 4275266224825014420
+    second: GoldenTrail_173
+  - first:
+      213: -7441027406262614323
+    second: GoldenTrail_174
+  - first:
+      213: -179005496653019673
+    second: GoldenTrail_175
+  - first:
+      213: -4267861237772681689
+    second: GoldenTrail_176
+  - first:
+      213: -1519585411629883355
+    second: GoldenTrail_177
+  - first:
+      213: 8015565105742602720
+    second: GoldenTrail_178
+  - first:
+      213: -4268606463950538568
+    second: GoldenTrail_179
+  - first:
+      213: -6849092427980850943
+    second: GoldenTrail_180
+  - first:
+      213: -8938710965639386083
+    second: GoldenTrail_181
+  - first:
+      213: -5058351425133979971
+    second: GoldenTrail_182
+  - first:
+      213: -8000048697280370812
+    second: GoldenTrail_183
+  - first:
+      213: 6515280872635930833
+    second: GoldenTrail_184
+  - first:
+      213: 5493921649841762958
+    second: GoldenTrail_185
+  - first:
+      213: -6664826871501841211
+    second: GoldenTrail_186
+  - first:
+      213: 5916059752803718836
+    second: GoldenTrail_187
+  - first:
+      213: 8356334443423134653
+    second: GoldenTrail_188
+  - first:
+      213: -7812919136222176294
+    second: GoldenTrail_189
+  - first:
+      213: -7207125183866137783
+    second: GoldenTrail_190
+  - first:
+      213: 1699843154787118367
+    second: GoldenTrail_191
+  - first:
+      213: 7293713770436842473
+    second: GoldenTrail_192
+  - first:
+      213: 1973137341970899954
+    second: GoldenTrail_193
+  - first:
+      213: 2168058700626131985
+    second: GoldenTrail_194
+  - first:
+      213: -543568568340852989
+    second: GoldenTrail_195
+  - first:
+      213: -4101657396272730898
+    second: GoldenTrail_196
+  - first:
+      213: 8325005580155113992
+    second: GoldenTrail_197
+  - first:
+      213: -2526223318585877162
+    second: GoldenTrail_198
+  - first:
+      213: -4461450037276160657
+    second: GoldenTrail_199
+  - first:
+      213: -498399104540314258
+    second: GoldenTrail_200
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GoldenTrail_0
+      rect:
+        serializedVersion: 2
+        x: 653
+        y: 707
+        width: 20
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06e51cfb8ad2f30c0800000000000000
+      internalID: -4593902892099740064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_1
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 709
+        width: 32
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab43cf6f1a2cb83d0800000000000000
+      internalID: -3203252709054729030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_2
+      rect:
+        serializedVersion: 2
+        x: 800
+        y: 714
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eee3cf76470166380800000000000000
+      internalID: -8978470714969669906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_3
+      rect:
+        serializedVersion: 2
+        x: 787
+        y: 701
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fbbff19db4c003b50800000000000000
+      internalID: 6570765376238386111
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_4
+      rect:
+        serializedVersion: 2
+        x: 867
+        y: 703
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48d2be4fab98621f0800000000000000
+      internalID: -1070016425387938428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_5
+      rect:
+        serializedVersion: 2
+        x: 969
+        y: 707
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d99feba978f63c30800000000000000
+      internalID: 4338928492477389264
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_6
+      rect:
+        serializedVersion: 2
+        x: 665
+        y: 698
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70f7f2bee58cdd320800000000000000
+      internalID: 2584442071178772231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_7
+      rect:
+        serializedVersion: 2
+        x: 776
+        y: 695
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6a9f65a78741b58d0800000000000000
+      internalID: -2856667030955296346
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_8
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 697
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 431f686842136c760800000000000000
+      internalID: 7477718264240861492
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_9
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 694
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a700cc90ca874fc20800000000000000
+      internalID: 3239346712280301690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_10
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 686
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28865b2b04fb5f880800000000000000
+      internalID: -8577739630660196222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_11
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 686
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce85842666968f460800000000000000
+      internalID: 7275681086473525484
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_12
+      rect:
+        serializedVersion: 2
+        x: 652
+        y: 679
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b80ed0a84fa498b80800000000000000
+      internalID: -8392094016479567733
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_13
+      rect:
+        serializedVersion: 2
+        x: 674
+        y: 684
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 681e685dd804c7c30800000000000000
+      internalID: 4358429517304750470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_14
+      rect:
+        serializedVersion: 2
+        x: 705
+        y: 684
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97d8d08c2c193a740800000000000000
+      internalID: 5162129863662734713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_15
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 684
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 41a9c2b08e22cb900800000000000000
+      internalID: 701474021978184212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_16
+      rect:
+        serializedVersion: 2
+        x: 720
+        y: 686
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80a3a1cd20a8355d0800000000000000
+      internalID: -3074962375676642808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_17
+      rect:
+        serializedVersion: 2
+        x: 804
+        y: 689
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9171d48b55c94df0800000000000000
+      internalID: -195408111952891493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_18
+      rect:
+        serializedVersion: 2
+        x: 873
+        y: 685
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e3c5a9a41f8803e0800000000000000
+      internalID: -2087261108377893915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_19
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 681
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94b5ec9c3b99f8e10800000000000000
+      internalID: 2202147740271401801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_20
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 128
+        width: 1110
+        height: 552
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 333b1f10727fa85f0800000000000000
+      internalID: -753518240722734285
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_21
+      rect:
+        serializedVersion: 2
+        x: 463
+        y: 674
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 07b4dbe4780a88110800000000000000
+      internalID: 1263436198479481712
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_22
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 678
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba3c7dd4b8dca5120800000000000000
+      internalID: 2403459349345715115
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_23
+      rect:
+        serializedVersion: 2
+        x: 504
+        y: 678
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d341b2a2644f76a00800000000000000
+      internalID: 749836445172831293
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_24
+      rect:
+        serializedVersion: 2
+        x: 679
+        y: 671
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecf6b54bdd097e260800000000000000
+      internalID: 7126824217225162702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_25
+      rect:
+        serializedVersion: 2
+        x: 706
+        y: 676
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7995c4165dc4849d0800000000000000
+      internalID: -2789895489811883625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_26
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 675
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b2062401d6aefeef0800000000000000
+      internalID: -76584914496888789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_27
+      rect:
+        serializedVersion: 2
+        x: 771
+        y: 676
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b55f75a21d199c10800000000000000
+      internalID: 2060710270421915056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_28
+      rect:
+        serializedVersion: 2
+        x: 778
+        y: 669
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9d4189f94dbb4bde0800000000000000
+      internalID: -1318222269027707687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_29
+      rect:
+        serializedVersion: 2
+        x: 826
+        y: 670
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: acd02e8fcd40066f0800000000000000
+      internalID: -693548995500175926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_30
+      rect:
+        serializedVersion: 2
+        x: 841
+        y: 673
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08c6a95042d3b2c40800000000000000
+      internalID: 5488547795803204736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_31
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 679
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 305e809dfba35fbe0800000000000000
+      internalID: -1444183509847972605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_32
+      rect:
+        serializedVersion: 2
+        x: 917
+        y: 678
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dbf2ed6cc54ad04b0800000000000000
+      internalID: -5472537253804888131
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_33
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 679
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94e4557d1cab38710800000000000000
+      internalID: 1694403226525584969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_34
+      rect:
+        serializedVersion: 2
+        x: 986
+        y: 673
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2978ef6b1bb3949a0800000000000000
+      internalID: -6248397373534468206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_35
+      rect:
+        serializedVersion: 2
+        x: 501
+        y: 665
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 026e6ed4b7a289a00800000000000000
+      internalID: 763406845915620896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_36
+      rect:
+        serializedVersion: 2
+        x: 539
+        y: 666
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a9e73939dc8e74cf0800000000000000
+      internalID: -267989683163398502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_37
+      rect:
+        serializedVersion: 2
+        x: 555
+        y: 668
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47305d873a2786950800000000000000
+      internalID: 6442525313385956212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_38
+      rect:
+        serializedVersion: 2
+        x: 570
+        y: 664
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d21dae2a8f9942430800000000000000
+      internalID: 3757297282298073389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_39
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 666
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd83733370287bd20800000000000000
+      internalID: 3294244619880446172
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_40
+      rect:
+        serializedVersion: 2
+        x: 625
+        y: 669
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81f437a338f35b8f0800000000000000
+      internalID: -525443948664893672
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_41
+      rect:
+        serializedVersion: 2
+        x: 668
+        y: 671
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e9394059a21a0140800000000000000
+      internalID: 4686578880638171618
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_42
+      rect:
+        serializedVersion: 2
+        x: 724
+        y: 667
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34ba15dbb27a40f70800000000000000
+      internalID: 9152624149025368899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_43
+      rect:
+        serializedVersion: 2
+        x: 803
+        y: 669
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c1835611cdce3860800000000000000
+      internalID: 7511667457687519683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_44
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 667
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cf6fdbeff3630e90800000000000000
+      internalID: -7060689839961706557
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_45
+      rect:
+        serializedVersion: 2
+        x: 884
+        y: 663
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81ff8b17770b6f740800000000000000
+      internalID: 5185526048019250968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_46
+      rect:
+        serializedVersion: 2
+        x: 901
+        y: 671
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e18f3c732848e7f20800000000000000
+      internalID: 3422318461664360478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_47
+      rect:
+        serializedVersion: 2
+        x: 911
+        y: 663
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f40d7816e28c3d30800000000000000
+      internalID: 4412545659681178871
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_48
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 666
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c892bad7181f5be50800000000000000
+      internalID: 6824626348811299212
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_49
+      rect:
+        serializedVersion: 2
+        x: 931
+        y: 665
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 787c86097c79cfec0800000000000000
+      internalID: -3531781124388239481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_50
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 664
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c89ecd46adda60c10800000000000000
+      internalID: 2019492636428921228
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_51
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 661
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3394333bc6180f540800000000000000
+      internalID: 5039670286890518835
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_52
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 664
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 511ef71def94f2ad0800000000000000
+      internalID: -2724877890750521067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_53
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 545
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ea2811eb9360dcc0800000000000000
+      internalID: -3688338573668898073
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_54
+      rect:
+        serializedVersion: 2
+        x: 85
+        y: 484
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e01de76e090106a0800000000000000
+      internalID: -6484892030959021854
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_55
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 490
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c06415dafd120c770800000000000000
+      internalID: 8628934130611078668
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_56
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 495
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 988bfdc29bb828310800000000000000
+      internalID: 1405839661131085961
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_57
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 492
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 622fcb9b9f1e11700800000000000000
+      internalID: 509436695548850726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_58
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 484
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95405a32f709845d0800000000000000
+      internalID: -3078051469574470567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_59
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 472
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d17c00c202d0b0b40800000000000000
+      internalID: 5407430209416775453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_60
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 482
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a071d49d880b17d0800000000000000
+      internalID: -2946752127003692887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_61
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 472
+        width: 19
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3115298af1bc757c0800000000000000
+      internalID: -4082571200355479277
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_62
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 464
+        width: 13
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8bbf5dfc4255f3840800000000000000
+      internalID: 5205973310857673656
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_63
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 473
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4cc5280cbbf776280800000000000000
+      internalID: -9050124481812341564
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_64
+      rect:
+        serializedVersion: 2
+        x: 1220
+        y: 459
+        width: 17
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4f95b65850b833000800000000000000
+      internalID: 14508079641745908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_65
+      rect:
+        serializedVersion: 2
+        x: 3
+        y: 459
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd67138d6c9d8c700800000000000000
+      internalID: 560937601661499100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_66
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 412
+        width: 33
+        height: 50
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8fd25cb07cd09eb0800000000000000
+      internalID: -4715026433102913653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_67
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 446
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bb2b60575ceb91be0800000000000000
+      internalID: -1505962845097512261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_68
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 447
+        width: 12
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e324ecc81eea6e3e0800000000000000
+      internalID: -2024738698703257026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_69
+      rect:
+        serializedVersion: 2
+        x: 93
+        y: 440
+        width: 11
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87e87df6a5e141000800000000000000
+      internalID: 5662873306500728
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_70
+      rect:
+        serializedVersion: 2
+        x: 1209
+        y: 451
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1fe9ed334b9612a0800000000000000
+      internalID: -6767050676973736164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_71
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 440
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a1ade75782687ad0800000000000000
+      internalID: -2704303242800684631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_72
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 420
+        width: 18
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93db6b326ef5eacd0800000000000000
+      internalID: -2544991297371456199
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_73
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 436
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b8ca08fa54df29f0800000000000000
+      internalID: -490940347186493261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_74
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 425
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 814806a5212dc42d0800000000000000
+      internalID: -3293026251247156200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_75
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 416
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 753b4904a1aee5c80800000000000000
+      internalID: -8331964862115302569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_76
+      rect:
+        serializedVersion: 2
+        x: 34
+        y: 419
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f8d4b3f120b04870800000000000000
+      internalID: 8665119342929959161
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_77
+      rect:
+        serializedVersion: 2
+        x: 47
+        y: 425
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d330cacae6f62da0800000000000000
+      internalID: -5969812767748639785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_78
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 422
+        width: 12
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b1b1b5ce0cf7373f0800000000000000
+      internalID: -904238633595495653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_79
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 420
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a801c2e9e29f4f490800000000000000
+      internalID: -7713266283161317238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_80
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 422
+        width: 20
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62dfefad3ead85310800000000000000
+      internalID: 1394104756837743910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_81
+      rect:
+        serializedVersion: 2
+        x: 1229
+        y: 422
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2915553b1763bfcf0800000000000000
+      internalID: -217520295029419630
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_82
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 404
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9a05ce944b92d8d80800000000000000
+      internalID: -8246889488334434135
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_83
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 417
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 647c8c091b2796f50800000000000000
+      internalID: 6875152413121627974
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_84
+      rect:
+        serializedVersion: 2
+        x: 55
+        y: 409
+        width: 8
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb69a6f9b687b8290800000000000000
+      internalID: -7887077918777895236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_85
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 404
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce39d063d08f7c9c0800000000000000
+      internalID: -3906881416095493140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_86
+      rect:
+        serializedVersion: 2
+        x: 44
+        y: 409
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0681366fd2a702280800000000000000
+      internalID: -9070115311698372512
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_87
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 406
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 346e945b7c10b9bf0800000000000000
+      internalID: -316657391547849149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_88
+      rect:
+        serializedVersion: 2
+        x: 1233
+        y: 404
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 097c095bc16986fd0800000000000000
+      internalID: -2348462155624298608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_89
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 400
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3ec9bc610b0b3c90800000000000000
+      internalID: -7189140279419875782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_90
+      rect:
+        serializedVersion: 2
+        x: 92
+        y: 394
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bef70c921525d0690800000000000000
+      internalID: -7634355284776812565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_91
+      rect:
+        serializedVersion: 2
+        x: 1202
+        y: 395
+        width: 12
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 561b5839ca72e5420800000000000000
+      internalID: 2620575655339077989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_92
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 399
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6828b909ba44f5320800000000000000
+      internalID: 2548831417771197062
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_93
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 387
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 886357276e3ad2320800000000000000
+      internalID: 2534862375437547144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_94
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 383
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 319b3e00908bf1cf0800000000000000
+      internalID: -279302303064540909
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_95
+      rect:
+        serializedVersion: 2
+        x: 1216
+        y: 389
+        width: 12
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cc8d888bdfc82e880800000000000000
+      internalID: -8583142918464153396
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_96
+      rect:
+        serializedVersion: 2
+        x: 1229
+        y: 385
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 880544434898a2000800000000000000
+      internalID: 11973149927428232
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_97
+      rect:
+        serializedVersion: 2
+        x: 13
+        y: 376
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55652b449907495d0800000000000000
+      internalID: -3056694443492878763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_98
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 370
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d177d32bd846387b0800000000000000
+      internalID: -5223220583076104419
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_99
+      rect:
+        serializedVersion: 2
+        x: 1222
+        y: 374
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c1ad668a3fb10440800000000000000
+      internalID: 4900408127640150473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_100
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 362
+        width: 7
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea910436754347bb0800000000000000
+      internalID: -4939265341386647122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_101
+      rect:
+        serializedVersion: 2
+        x: 1209
+        y: 366
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4ef645632ec009350800000000000000
+      internalID: 6021326867507998692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_102
+      rect:
+        serializedVersion: 2
+        x: 1222
+        y: 360
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37b17069c2b2f7070800000000000000
+      internalID: 8106245324785785715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_103
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 362
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b998efddd33b590800000000000000
+      internalID: -7659710517559583917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_104
+      rect:
+        serializedVersion: 2
+        x: 1180
+        y: 317
+        width: 35
+        height: 40
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0f890ee04c9f5a60800000000000000
+      internalID: 7665016893493317387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_105
+      rect:
+        serializedVersion: 2
+        x: 1208
+        y: 343
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5d12d33e00c82380800000000000000
+      internalID: -8995729088441082529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_106
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 341
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27a961b582a008910800000000000000
+      internalID: 1837479816410339954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_107
+      rect:
+        serializedVersion: 2
+        x: 1259
+        y: 336
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c607d23a330697a50800000000000000
+      internalID: 6519347710492766316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_108
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 334
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f8a38804d94a839d0800000000000000
+      internalID: -2794302573483902321
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_109
+      rect:
+        serializedVersion: 2
+        x: 1227
+        y: 332
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e18089cb2a761a820800000000000000
+      internalID: 2927735181413976094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_110
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 330
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca2b2f582154c5d00800000000000000
+      internalID: 962720366209446572
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_111
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 333
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ecd587690d27fde0800000000000000
+      internalID: -1299520449058317085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_112
+      rect:
+        serializedVersion: 2
+        x: 1256
+        y: 327
+        width: 11
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2edccff168877b500800000000000000
+      internalID: 411930408385301986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_113
+      rect:
+        serializedVersion: 2
+        x: 1209
+        y: 300
+        width: 33
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2018ba88cacd79f50800000000000000
+      internalID: 6888216788671889666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_114
+      rect:
+        serializedVersion: 2
+        x: 1216
+        y: 320
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2340f83486ced690800000000000000
+      internalID: -7575399251997342931
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_115
+      rect:
+        serializedVersion: 2
+        x: 1229
+        y: 320
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aa7dc28206e6da00800000000000000
+      internalID: 781064483854187168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_116
+      rect:
+        serializedVersion: 2
+        x: 1246
+        y: 320
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd87fe5b921a569e0800000000000000
+      internalID: -1628718489706465060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_117
+      rect:
+        serializedVersion: 2
+        x: 1204
+        y: 285
+        width: 10
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e5419d5afa9feb30800000000000000
+      internalID: 4318840967773898208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_118
+      rect:
+        serializedVersion: 2
+        x: 1214
+        y: 293
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a422111cbdbfee0d0800000000000000
+      internalID: -3391496548107869622
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_119
+      rect:
+        serializedVersion: 2
+        x: 1225
+        y: 290
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55dfde9c4f6a24aa0800000000000000
+      internalID: -6178192168508850859
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_120
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 274
+        width: 22
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f361a5484cb497da0800000000000000
+      internalID: -5946638525559859649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_121
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 279
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 818201fa21462e7e0800000000000000
+      internalID: -1737716474802329576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_122
+      rect:
+        serializedVersion: 2
+        x: 1218
+        y: 267
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: efd35a9d0a3d15380800000000000000
+      internalID: -8984167093827715586
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_123
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 264
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 38ac131f65122bf80800000000000000
+      internalID: -8092368923133883773
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_124
+      rect:
+        serializedVersion: 2
+        x: 1213
+        y: 256
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4132d972fe8cbd620800000000000000
+      internalID: 2800052522828243732
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_125
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 254
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d76b4a439674e8040800000000000000
+      internalID: 4651733982300649085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_126
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 250
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3313df68b80a7ac10800000000000000
+      internalID: 2064795475298300211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_127
+      rect:
+        serializedVersion: 2
+        x: 1205
+        y: 244
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d64711bd39c688800800000000000000
+      internalID: 614860731427419245
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_128
+      rect:
+        serializedVersion: 2
+        x: 1216
+        y: 247
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b031865f0378944e0800000000000000
+      internalID: -1996916315416685813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_129
+      rect:
+        serializedVersion: 2
+        x: 1224
+        y: 248
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 98c15acd0bcec1de0800000000000000
+      internalID: -1360952743012524919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_130
+      rect:
+        serializedVersion: 2
+        x: 1219
+        y: 228
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1dba2fc7bdf4a040800000000000000
+      internalID: 4658126880504462620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_131
+      rect:
+        serializedVersion: 2
+        x: 1238
+        y: 220
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ca401672bc0616090800000000000000
+      internalID: -8043041033851698004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_132
+      rect:
+        serializedVersion: 2
+        x: 1204
+        y: 218
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0f6ff6d150f643a0800000000000000
+      internalID: -6681388762867470582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_133
+      rect:
+        serializedVersion: 2
+        x: 1216
+        y: 203
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3cec57fd07cee1b50800000000000000
+      internalID: 6565945276282293955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_134
+      rect:
+        serializedVersion: 2
+        x: 889
+        y: 154
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49cfc2c1c2c398480800000000000000
+      internalID: -8896513428744766316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_135
+      rect:
+        serializedVersion: 2
+        x: 956
+        y: 158
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50a451d3cd5af6b90800000000000000
+      internalID: -7246390910079645179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_136
+      rect:
+        serializedVersion: 2
+        x: 1030
+        y: 147
+        width: 26
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2eeef578cd9b65ed0800000000000000
+      internalID: -2425546992477278494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_137
+      rect:
+        serializedVersion: 2
+        x: 1056
+        y: 155
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2a4622e099380960800000000000000
+      internalID: 7568362468228352556
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_138
+      rect:
+        serializedVersion: 2
+        x: 1063
+        y: 151
+        width: 15
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4dab2e10e87a808b0800000000000000
+      internalID: -5185710742558295340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_139
+      rect:
+        serializedVersion: 2
+        x: 1096
+        y: 155
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e3a047f4dfbc28e70800000000000000
+      internalID: 9116072884571474494
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_140
+      rect:
+        serializedVersion: 2
+        x: 1128
+        y: 157
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0aaa7e056cde67d10800000000000000
+      internalID: 2123145710368434848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_141
+      rect:
+        serializedVersion: 2
+        x: 1206
+        y: 166
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b2c85bee2a369d20800000000000000
+      internalID: 3284876951404724915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_142
+      rect:
+        serializedVersion: 2
+        x: 801
+        y: 156
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1cfa62d118da0cec0800000000000000
+      internalID: -3548645736316489791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_143
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 152
+        width: 15
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a77f9dbb5af34b80800000000000000
+      internalID: -8411604407067641952
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_144
+      rect:
+        serializedVersion: 2
+        x: 930
+        y: 155
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 57ab95287b4881a10800000000000000
+      internalID: 1880398768127982197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_145
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 155
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ad47a26bea5b5090800000000000000
+      internalID: -8044736342348313178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_146
+      rect:
+        serializedVersion: 2
+        x: 951
+        y: 149
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e85c0e51c0a31c500800000000000000
+      internalID: 414676464275867022
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_147
+      rect:
+        serializedVersion: 2
+        x: 998
+        y: 149
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 74fd75f3650f7a220800000000000000
+      internalID: 2497228771620806471
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_148
+      rect:
+        serializedVersion: 2
+        x: 999
+        y: 156
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4f3e6b519bbee170800000000000000
+      internalID: 8209705403721596747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_149
+      rect:
+        serializedVersion: 2
+        x: 1008
+        y: 147
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c2318fbcba3eb8620800000000000000
+      internalID: 2777563922204988204
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_150
+      rect:
+        serializedVersion: 2
+        x: 1050
+        y: 148
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5d899117b2d368790800000000000000
+      internalID: -7528262470312814379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_151
+      rect:
+        serializedVersion: 2
+        x: 1077
+        y: 143
+        width: 24
+        height: 22
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4a84ccef41b81d90800000000000000
+      internalID: -7126751453480973745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_152
+      rect:
+        serializedVersion: 2
+        x: 1151
+        y: 155
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df20d8a12f1660750800000000000000
+      internalID: 6270807223615423229
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_153
+      rect:
+        serializedVersion: 2
+        x: 769
+        y: 143
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1061f47a26006d7b0800000000000000
+      internalID: -5199968296038885887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_154
+      rect:
+        serializedVersion: 2
+        x: 868
+        y: 144
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e95dc5749eabe560800000000000000
+      internalID: 7344155570012510692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_155
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 147
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 621b47cd8594a5a80800000000000000
+      internalID: -8477382702566952666
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_156
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 136
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91ff4d07ae0cb57f0800000000000000
+      internalID: -622692010312794343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_157
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 146
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 712e4b647d61cfea0800000000000000
+      internalID: -5837765903118966249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_158
+      rect:
+        serializedVersion: 2
+        x: 1070
+        y: 142
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd9ba94b88437dc40800000000000000
+      internalID: 5536952028625549791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_159
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 143
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 991d4080e90cbbe80800000000000000
+      internalID: -8161718114706992743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_160
+      rect:
+        serializedVersion: 2
+        x: 1122
+        y: 144
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a00d69ec8bfc23e20800000000000000
+      internalID: 3328951467227140106
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_161
+      rect:
+        serializedVersion: 2
+        x: 1157
+        y: 136
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bd2129639d0dd3e0800000000000000
+      internalID: -2027449330471719495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_162
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 147
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 31a38e5d64b7b3630800000000000000
+      internalID: 3907852645840730643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_163
+      rect:
+        serializedVersion: 2
+        x: 928
+        y: 138
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d19de593ee9588b0800000000000000
+      internalID: -5150535898518154792
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_164
+      rect:
+        serializedVersion: 2
+        x: 942
+        y: 132
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9c4802a6efcd01760800000000000000
+      internalID: 7426678770794267849
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_165
+      rect:
+        serializedVersion: 2
+        x: 966
+        y: 133
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cb19e9647ea7157f0800000000000000
+      internalID: -625583739486957124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_166
+      rect:
+        serializedVersion: 2
+        x: 975
+        y: 137
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3e74221b9379b260800000000000000
+      internalID: 7113844196269915708
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_167
+      rect:
+        serializedVersion: 2
+        x: 1035
+        y: 135
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6dfca7ff3ee9f7d30800000000000000
+      internalID: 4431435260436860886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_168
+      rect:
+        serializedVersion: 2
+        x: 1043
+        y: 130
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 127a3b940a49aa190800000000000000
+      internalID: -7950378776017000671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_169
+      rect:
+        serializedVersion: 2
+        x: 1065
+        y: 133
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72c62ea01bc091230800000000000000
+      internalID: 3609930530845518887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_170
+      rect:
+        serializedVersion: 2
+        x: 1083
+        y: 136
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 576047ee966d36cb0800000000000000
+      internalID: -4871814621424253323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_171
+      rect:
+        serializedVersion: 2
+        x: 1103
+        y: 136
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff0b1b8f6f1bcb520800000000000000
+      internalID: 2719243949317402879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_172
+      rect:
+        serializedVersion: 2
+        x: 1144
+        y: 135
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20bbcb8213156b910800000000000000
+      internalID: 1852757568288242434
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_173
+      rect:
+        serializedVersion: 2
+        x: 1179
+        y: 138
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4989beaeafbc45b30800000000000000
+      internalID: 4275266224825014420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_174
+      rect:
+        serializedVersion: 2
+        x: 809
+        y: 125
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc645cd8ff82cb890800000000000000
+      internalID: -7441027406262614323
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_175
+      rect:
+        serializedVersion: 2
+        x: 1055
+        y: 130
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e5872ff27b048df0800000000000000
+      internalID: -179005496653019673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_176
+      rect:
+        serializedVersion: 2
+        x: 1076
+        y: 127
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72e76ebf0d285c4c0800000000000000
+      internalID: -4267861237772681689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_177
+      rect:
+        serializedVersion: 2
+        x: 1128
+        y: 120
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5206fe58e1959eae0800000000000000
+      internalID: -1519585411629883355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_178
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 128
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e1edc1def10d3f60800000000000000
+      internalID: 8015565105742602720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_179
+      rect:
+        serializedVersion: 2
+        x: 865
+        y: 116
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b8ba4e790dd2c4c0800000000000000
+      internalID: -4268606463950538568
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_180
+      rect:
+        serializedVersion: 2
+        x: 887
+        y: 122
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 109326c89b223f0a0800000000000000
+      internalID: -6849092427980850943
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_181
+      rect:
+        serializedVersion: 2
+        x: 902
+        y: 117
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1cec2f6cb153f380800000000000000
+      internalID: -8938710965639386083
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_182
+      rect:
+        serializedVersion: 2
+        x: 946
+        y: 121
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db65ccbdd202dc9b0800000000000000
+      internalID: -5058351425133979971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_183
+      rect:
+        serializedVersion: 2
+        x: 1033
+        y: 118
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 487e6cc881e1af090800000000000000
+      internalID: -8000048697280370812
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_184
+      rect:
+        serializedVersion: 2
+        x: 1052
+        y: 122
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d89c592f6dea6a50800000000000000
+      internalID: 6515280872635930833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_185
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 122
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8275aae1a45e3c40800000000000000
+      internalID: 5493921649841762958
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_186
+      rect:
+        serializedVersion: 2
+        x: 1071
+        y: 108
+        width: 8
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cc97aaa547c183a0800000000000000
+      internalID: -6664826871501841211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_187
+      rect:
+        serializedVersion: 2
+        x: 1092
+        y: 119
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4b6d9d320011a1250800000000000000
+      internalID: 5916059752803718836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_188
+      rect:
+        serializedVersion: 2
+        x: 829
+        y: 113
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db3f89c07e9a7f370800000000000000
+      internalID: 8356334443423134653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_189
+      rect:
+        serializedVersion: 2
+        x: 875
+        y: 110
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adb10a2b07fe29390800000000000000
+      internalID: -7812919136222176294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_190
+      rect:
+        serializedVersion: 2
+        x: 1027
+        y: 105
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94313eb84d52bfb90800000000000000
+      internalID: -7207125183866137783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_191
+      rect:
+        serializedVersion: 2
+        x: 970
+        y: 103
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1d27f6d75e079710800000000000000
+      internalID: 1699843154787118367
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_192
+      rect:
+        serializedVersion: 2
+        x: 1036
+        y: 100
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e3534cc70a783560800000000000000
+      internalID: 7293713770436842473
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_193
+      rect:
+        serializedVersion: 2
+        x: 1060
+        y: 100
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2f3eb3955fdf16b10800000000000000
+      internalID: 1973137341970899954
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_194
+      rect:
+        serializedVersion: 2
+        x: 1072
+        y: 101
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 11cf30fb6ed761e10800000000000000
+      internalID: 2168058700626131985
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_195
+      rect:
+        serializedVersion: 2
+        x: 1087
+        y: 104
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30fc9fc544bd478f0800000000000000
+      internalID: -543568568340852989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_196
+      rect:
+        serializedVersion: 2
+        x: 1092
+        y: 84
+        width: 17
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eec6fc0645cf317c0800000000000000
+      internalID: -4101657396272730898
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_197
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 92
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8025a46a77c588370800000000000000
+      internalID: 8325005580155113992
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_198
+      rect:
+        serializedVersion: 2
+        x: 1025
+        y: 95
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65d5168b64d01fcd0800000000000000
+      internalID: -2526223318585877162
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_199
+      rect:
+        serializedVersion: 2
+        x: 1051
+        y: 90
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6d400134deb512c0800000000000000
+      internalID: -4461450037276160657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GoldenTrail_200
+      rect:
+        serializedVersion: 2
+        x: 1117
+        y: 93
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e657081b7a45519f0800000000000000
+      internalID: -498399104540314258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      GoldenTrail_0: -4593902892099740064
+      GoldenTrail_1: -3203252709054729030
+      GoldenTrail_10: -8577739630660196222
+      GoldenTrail_100: -4939265341386647122
+      GoldenTrail_101: 6021326867507998692
+      GoldenTrail_102: 8106245324785785715
+      GoldenTrail_103: -7659710517559583917
+      GoldenTrail_104: 7665016893493317387
+      GoldenTrail_105: -8995729088441082529
+      GoldenTrail_106: 1837479816410339954
+      GoldenTrail_107: 6519347710492766316
+      GoldenTrail_108: -2794302573483902321
+      GoldenTrail_109: 2927735181413976094
+      GoldenTrail_11: 7275681086473525484
+      GoldenTrail_110: 962720366209446572
+      GoldenTrail_111: -1299520449058317085
+      GoldenTrail_112: 411930408385301986
+      GoldenTrail_113: 6888216788671889666
+      GoldenTrail_114: -7575399251997342931
+      GoldenTrail_115: 781064483854187168
+      GoldenTrail_116: -1628718489706465060
+      GoldenTrail_117: 4318840967773898208
+      GoldenTrail_118: -3391496548107869622
+      GoldenTrail_119: -6178192168508850859
+      GoldenTrail_12: -8392094016479567733
+      GoldenTrail_120: -5946638525559859649
+      GoldenTrail_121: -1737716474802329576
+      GoldenTrail_122: -8984167093827715586
+      GoldenTrail_123: -8092368923133883773
+      GoldenTrail_124: 2800052522828243732
+      GoldenTrail_125: 4651733982300649085
+      GoldenTrail_126: 2064795475298300211
+      GoldenTrail_127: 614860731427419245
+      GoldenTrail_128: -1996916315416685813
+      GoldenTrail_129: -1360952743012524919
+      GoldenTrail_13: 4358429517304750470
+      GoldenTrail_130: 4658126880504462620
+      GoldenTrail_131: -8043041033851698004
+      GoldenTrail_132: -6681388762867470582
+      GoldenTrail_133: 6565945276282293955
+      GoldenTrail_134: -8896513428744766316
+      GoldenTrail_135: -7246390910079645179
+      GoldenTrail_136: -2425546992477278494
+      GoldenTrail_137: 7568362468228352556
+      GoldenTrail_138: -5185710742558295340
+      GoldenTrail_139: 9116072884571474494
+      GoldenTrail_14: 5162129863662734713
+      GoldenTrail_140: 2123145710368434848
+      GoldenTrail_141: 3284876951404724915
+      GoldenTrail_142: -3548645736316489791
+      GoldenTrail_143: -8411604407067641952
+      GoldenTrail_144: 1880398768127982197
+      GoldenTrail_145: -8044736342348313178
+      GoldenTrail_146: 414676464275867022
+      GoldenTrail_147: 2497228771620806471
+      GoldenTrail_148: 8209705403721596747
+      GoldenTrail_149: 2777563922204988204
+      GoldenTrail_15: 701474021978184212
+      GoldenTrail_150: -7528262470312814379
+      GoldenTrail_151: -7126751453480973745
+      GoldenTrail_152: 6270807223615423229
+      GoldenTrail_153: -5199968296038885887
+      GoldenTrail_154: 7344155570012510692
+      GoldenTrail_155: -8477382702566952666
+      GoldenTrail_156: -622692010312794343
+      GoldenTrail_157: -5837765903118966249
+      GoldenTrail_158: 5536952028625549791
+      GoldenTrail_159: -8161718114706992743
+      GoldenTrail_16: -3074962375676642808
+      GoldenTrail_160: 3328951467227140106
+      GoldenTrail_161: -2027449330471719495
+      GoldenTrail_162: 3907852645840730643
+      GoldenTrail_163: -5150535898518154792
+      GoldenTrail_164: 7426678770794267849
+      GoldenTrail_165: -625583739486957124
+      GoldenTrail_166: 7113844196269915708
+      GoldenTrail_167: 4431435260436860886
+      GoldenTrail_168: -7950378776017000671
+      GoldenTrail_169: 3609930530845518887
+      GoldenTrail_17: -195408111952891493
+      GoldenTrail_170: -4871814621424253323
+      GoldenTrail_171: 2719243949317402879
+      GoldenTrail_172: 1852757568288242434
+      GoldenTrail_173: 4275266224825014420
+      GoldenTrail_174: -7441027406262614323
+      GoldenTrail_175: -179005496653019673
+      GoldenTrail_176: -4267861237772681689
+      GoldenTrail_177: -1519585411629883355
+      GoldenTrail_178: 8015565105742602720
+      GoldenTrail_179: -4268606463950538568
+      GoldenTrail_18: -2087261108377893915
+      GoldenTrail_180: -6849092427980850943
+      GoldenTrail_181: -8938710965639386083
+      GoldenTrail_182: -5058351425133979971
+      GoldenTrail_183: -8000048697280370812
+      GoldenTrail_184: 6515280872635930833
+      GoldenTrail_185: 5493921649841762958
+      GoldenTrail_186: -6664826871501841211
+      GoldenTrail_187: 5916059752803718836
+      GoldenTrail_188: 8356334443423134653
+      GoldenTrail_189: -7812919136222176294
+      GoldenTrail_19: 2202147740271401801
+      GoldenTrail_190: -7207125183866137783
+      GoldenTrail_191: 1699843154787118367
+      GoldenTrail_192: 7293713770436842473
+      GoldenTrail_193: 1973137341970899954
+      GoldenTrail_194: 2168058700626131985
+      GoldenTrail_195: -543568568340852989
+      GoldenTrail_196: -4101657396272730898
+      GoldenTrail_197: 8325005580155113992
+      GoldenTrail_198: -2526223318585877162
+      GoldenTrail_199: -4461450037276160657
+      GoldenTrail_2: -8978470714969669906
+      GoldenTrail_20: -753518240722734285
+      GoldenTrail_200: -498399104540314258
+      GoldenTrail_21: 1263436198479481712
+      GoldenTrail_22: 2403459349345715115
+      GoldenTrail_23: 749836445172831293
+      GoldenTrail_24: 7126824217225162702
+      GoldenTrail_25: -2789895489811883625
+      GoldenTrail_26: -76584914496888789
+      GoldenTrail_27: 2060710270421915056
+      GoldenTrail_28: -1318222269027707687
+      GoldenTrail_29: -693548995500175926
+      GoldenTrail_3: 6570765376238386111
+      GoldenTrail_30: 5488547795803204736
+      GoldenTrail_31: -1444183509847972605
+      GoldenTrail_32: -5472537253804888131
+      GoldenTrail_33: 1694403226525584969
+      GoldenTrail_34: -6248397373534468206
+      GoldenTrail_35: 763406845915620896
+      GoldenTrail_36: -267989683163398502
+      GoldenTrail_37: 6442525313385956212
+      GoldenTrail_38: 3757297282298073389
+      GoldenTrail_39: 3294244619880446172
+      GoldenTrail_4: -1070016425387938428
+      GoldenTrail_40: -525443948664893672
+      GoldenTrail_41: 4686578880638171618
+      GoldenTrail_42: 9152624149025368899
+      GoldenTrail_43: 7511667457687519683
+      GoldenTrail_44: -7060689839961706557
+      GoldenTrail_45: 5185526048019250968
+      GoldenTrail_46: 3422318461664360478
+      GoldenTrail_47: 4412545659681178871
+      GoldenTrail_48: 6824626348811299212
+      GoldenTrail_49: -3531781124388239481
+      GoldenTrail_5: 4338928492477389264
+      GoldenTrail_50: 2019492636428921228
+      GoldenTrail_51: 5039670286890518835
+      GoldenTrail_52: -2724877890750521067
+      GoldenTrail_53: -3688338573668898073
+      GoldenTrail_54: -6484892030959021854
+      GoldenTrail_55: 8628934130611078668
+      GoldenTrail_56: 1405839661131085961
+      GoldenTrail_57: 509436695548850726
+      GoldenTrail_58: -3078051469574470567
+      GoldenTrail_59: 5407430209416775453
+      GoldenTrail_6: 2584442071178772231
+      GoldenTrail_60: -2946752127003692887
+      GoldenTrail_61: -4082571200355479277
+      GoldenTrail_62: 5205973310857673656
+      GoldenTrail_63: -9050124481812341564
+      GoldenTrail_64: 14508079641745908
+      GoldenTrail_65: 560937601661499100
+      GoldenTrail_66: -4715026433102913653
+      GoldenTrail_67: -1505962845097512261
+      GoldenTrail_68: -2024738698703257026
+      GoldenTrail_69: 5662873306500728
+      GoldenTrail_7: -2856667030955296346
+      GoldenTrail_70: -6767050676973736164
+      GoldenTrail_71: -2704303242800684631
+      GoldenTrail_72: -2544991297371456199
+      GoldenTrail_73: -490940347186493261
+      GoldenTrail_74: -3293026251247156200
+      GoldenTrail_75: -8331964862115302569
+      GoldenTrail_76: 8665119342929959161
+      GoldenTrail_77: -5969812767748639785
+      GoldenTrail_78: -904238633595495653
+      GoldenTrail_79: -7713266283161317238
+      GoldenTrail_8: 7477718264240861492
+      GoldenTrail_80: 1394104756837743910
+      GoldenTrail_81: -217520295029419630
+      GoldenTrail_82: -8246889488334434135
+      GoldenTrail_83: 6875152413121627974
+      GoldenTrail_84: -7887077918777895236
+      GoldenTrail_85: -3906881416095493140
+      GoldenTrail_86: -9070115311698372512
+      GoldenTrail_87: -316657391547849149
+      GoldenTrail_88: -2348462155624298608
+      GoldenTrail_89: -7189140279419875782
+      GoldenTrail_9: 3239346712280301690
+      GoldenTrail_90: -7634355284776812565
+      GoldenTrail_91: 2620575655339077989
+      GoldenTrail_92: 2548831417771197062
+      GoldenTrail_93: 2534862375437547144
+      GoldenTrail_94: -279302303064540909
+      GoldenTrail_95: -8583142918464153396
+      GoldenTrail_96: 11973149927428232
+      GoldenTrail_97: -3056694443492878763
+      GoldenTrail_98: -5223220583076104419
+      GoldenTrail_99: 4900408127640150473
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
