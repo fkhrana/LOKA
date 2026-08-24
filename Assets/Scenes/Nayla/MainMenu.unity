@@ -290,9 +290,9 @@ MonoBehaviour:
   levelButton: {fileID: 2008569738}
   creditsButton: {fileID: 281792779}
   tutorialButton: {fileID: 881367578}
-  nextSceneIndex: 1
   sfxSource: {fileID: 894455550}
   clickSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
+  nextSceneName: CutScenee
 --- !u!4 &67993242
 Transform:
   m_ObjectHideFlags: 0

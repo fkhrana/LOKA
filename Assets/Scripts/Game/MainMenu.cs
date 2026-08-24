@@ -22,7 +22,7 @@ public class MainMenu : MonoBehaviour
     [Header("SFX")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
-    [SerializeField] private string nextSceneName = "Cutscenee";
+    [SerializeField] private string nextSceneName = "CutScenee";
     private void Awake()
     {
         Time.timeScale = 1f;
