@@ -22,7 +22,7 @@ public class AmbilItem : MonoBehaviour
         rotasiAwal = transform.rotation;
     }
 
-   void OnMouseDown()
+    void OnMouseDown()
     {
         if (!sudahDiklik)
         {
@@ -30,13 +30,12 @@ public class AmbilItem : MonoBehaviour
 
             StopAllCoroutines(); 
 
-            // --- SOLUSI 2: HAPUS VFX DROP SAAT DIKLIK ---
+            // HAPUS VFX DROP SAAT DIKLIK
             AnimasiDrop dropScript = GetComponent<AnimasiDrop>();
             if (dropScript != null)
             {
-                dropScript.MatikanVfxDrop(); // Panggil fungsi pembunuh VFX
+                dropScript.MatikanVfxDrop(); 
             }
-            // ---------------------------------------------
 
             TrailRenderer trail = GetComponent<TrailRenderer>();
             if (trail != null)
@@ -62,22 +61,26 @@ public class AmbilItem : MonoBehaviour
             float jarak = Vector3.Distance(transform.position, targetTas.position);
             if (jarak < 0.5f)
             {
-               // 1. Munculkan Ledakan Tas
+                // 1. Munculkan Ledakan Tas
                 if (vfxTas != null)
                 {
-                    // Kita masukkan kembali ke dalam targetTas agar TIDAK tertimpa layar UI
                     GameObject efekTas = Instantiate(vfxTas, targetTas.position, vfxTas.transform.rotation, targetTas);
-                    
-                    // Kita PAKSA ukurannya 1 (normal) agar bebas dari kutukan skala gepeng UI
                     efekTas.transform.localScale = Vector3.one;
 
-                    // Paksa partikel langsung menyala (Jaga-jaga mengatasi bug Play On Awake)
                     ParticleSystem partikelTas = efekTas.GetComponent<ParticleSystem>();
                     if (partikelTas != null)
                     {
                         partikelTas.Play();
                     }
                 }
+
+                // --- NAMA VARIABEL DIBAWAH INI SUDAH DIGANTI MENJADI 'scriptPop' ---
+                EfekTasPop scriptPop = targetTas.GetComponent<EfekTasPop>();
+                if (scriptPop != null)
+                {
+                    scriptPop.MainkanPop();
+                }
+                // --------------------------------------------------------------------
 
                 // 2. Bersihkan debu-debu partikel di udara
                 ParticleSystem ps = GetComponentInChildren<ParticleSystem>();

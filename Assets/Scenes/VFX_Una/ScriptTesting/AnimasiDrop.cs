@@ -43,7 +43,23 @@ public class AnimasiDrop : MonoBehaviour
         }
 
         Vector3 awal = transform.position;
-        Vector3 tanah = awal + new Vector3(jarakMenyamping, -1f, 0f); 
+   
+        
+        // --- SISTEM PENDETEKSI TANAH (RAYCAST) ---
+        // 1. Tentukan titik X (menyamping) tempat dia akan jatuh
+        Vector3 titikTarget = awal + new Vector3(jarakMenyamping, 0f, 0f);
+        
+        // 2. Beri posisi cadangan (misal jarak jatuhnya 1 meter) kalau-kalau tidak ada tanah
+        Vector3 tanah = titikTarget + new Vector3(0f, -1f, 0f); 
+
+        // 3. Tembakkan laser dari titikTarget lurus ke bawah (Vector3.down) sejauh 100 meter
+        RaycastHit tabrakan;
+        if (Physics.Raycast(titikTarget, Vector3.down, out tabrakan, 100f))
+        {
+            // Jika laser menabrak sesuatu, jadikan titik tabrakan itu sebagai lantai mendaratnya!
+            tanah = tabrakan.point; 
+        }
+        // ------------------------------------------
 
         yield return StartCoroutine(Lompatan(awal, tanah, tinggiLompat, durasiDrop));
         
