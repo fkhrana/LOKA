@@ -19,14 +19,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject tutorialButton;
 
     [Space]
-    [Header("Scene Settings")]
-    [SerializeField] private int nextSceneIndex = 2;
-
-    [Space]
     [Header("SFX")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
-
+    [SerializeField] private string nextSceneName = "Cutscenee";
     private void Awake()
     {
         Time.timeScale = 1f;
@@ -78,11 +74,14 @@ public class MainMenu : MonoBehaviour
 
     // ---------- SCENE ----------
 
-    public void TapToStart()
-    {
-        PlayClickSFX();
-        SceneManager.LoadScene(nextSceneIndex);
-    }
+   public void TapToStart()
+{
+    Debug.Log("TAP TO START BERHASIL!");
+
+    PlayClickSFX();
+
+    TransisiManager.Instance.LoadScene(nextSceneName);
+}
 
     // ---------- SETTING ----------
     public void OpenSetting() => OpenPanel(settingPanel, settingButton);

@@ -6,17 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Nayla/Bootstrap.unity
+    guid: 6d1c3a617b70ac74a83e6aa0f2388d79
+  - enabled: 1
     path: Assets/Scenes/Nayla/MainMenu.unity
     guid: bf48aac0e66471345b834d3df2f5fc91
-  - enabled: 0
-    path: Assets/Scenes/Nayla/ChooseHero.unity
-    guid: 6449ecd16aebf344fbbfd4ef26c79093
   - enabled: 1
     path: Assets/Scenes/Nayla/CutScenee.unity
     guid: 4c8143c97fed1cf4c9367adcacea7258
   - enabled: 1
     path: Assets/Scenes/Rana/MainGameplay(Drawing).unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
+<<<<<<< Updated upstream
   - enabled: 1
     path: Assets/Scenes/Rana/Level2.unity
     guid: b94a2bc8a8a3ae84687e91970218125c
@@ -26,6 +27,8 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Nayla/FinalResult.unity
     guid: 1b472a6fda2b7084f8b239628453bcb6
+=======
+>>>>>>> Stashed changes
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02

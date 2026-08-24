@@ -19,7 +19,10 @@ public class PauseOverlay : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string gameplaySceneName = "Gameplay";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
-    
+
+    [Header("Scene")]
+    [SerializeField] private string nextSceneName = "MainMenu";
+
 
     private bool isPaused = false;
 
@@ -170,7 +173,7 @@ public class PauseOverlay : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuSceneName);
+        TransisiManager.Instance.LoadScene(nextSceneName);
     }
 
 

@@ -8,7 +8,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private VideoPlayer videoPlayer;
 
     [Header("Scene")]
-    [SerializeField] private int nextSceneIndex = 3;
+    [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
 
 
     // =========================
@@ -65,7 +65,7 @@ public class CutsceneManager : MonoBehaviour
             videoPlayer.Stop();
         }
 
-        SceneManager.LoadScene(nextSceneIndex);
+         TransisiManager.Instance.LoadScene(nextSceneName);
     }
 
 
@@ -77,7 +77,7 @@ public class CutsceneManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene(nextSceneIndex);
+         TransisiManager.Instance.LoadScene(nextSceneName);
     }
 
 
