@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: 55165bd21b58f0d4288e1b2822ce4f95
+guid: 51fb9ec2fb830994b913c9522fbe559b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -651557138211273200
-    second: Group 745_0
-  - first:
-      213: -8361507719133315355
-    second: Group 745_1
-  - first:
-      213: -9108306711194474057
-    second: Group 745_2
-  - first:
-      213: 6754197597312537000
-    second: Group 745_3
+      213: 1669097367865418016
+    second: Curtain01-08-128x128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -55,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -105,96 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Group 745_0
-      rect:
-        serializedVersion: 2
-        x: 16
-        y: 105
-        width: 24
-        height: 24
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0160c022c3435f6f0800000000000000
-      internalID: -651557138211273200
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Group 745_1
-      rect:
-        serializedVersion: 2
-        x: 59
-        y: 114
-        width: 12
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5ee3f56d705f5fb80800000000000000
-      internalID: -8361507719133315355
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Group 745_2
+      name: Curtain01-08-128x128_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 75
-        width: 28
-        height: 12
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7b962f5dd4bc89180800000000000000
-      internalID: -9108306711194474057
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Group 745_3
-      rect:
-        serializedVersion: 2
-        x: 45
         y: 0
-        width: 124
-        height: 108
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -203,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8a15c92fdeabbbd50800000000000000
-      internalID: 6754197597312537000
+      spriteID: 021682b7633d92710800000000000000
+      internalID: 1669097367865418016
       vertices: []
       indices: 
       edges: []
@@ -213,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Group 745_0: -651557138211273200
-      Group 745_1: -8361507719133315355
-      Group 745_2: -9108306711194474057
-      Group 745_3: 6754197597312537000
+      Curtain01-08-128x128_0: 1669097367865418016
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

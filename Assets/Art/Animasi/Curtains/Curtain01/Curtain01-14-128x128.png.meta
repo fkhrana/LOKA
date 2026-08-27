@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 75a3c05a11303d04c901e313792fa740
+guid: 3eb828889886b99498d1aa0c36307377
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5167864328757028850
-    second: LevelBar (2)_0
+      213: -2421950645416126674
+    second: Curtain01-14-128x128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: LevelBar (2)_0
+      name: Curtain01-14-128x128_0
       rect:
         serializedVersion: 2
-        x: 1
+        x: 0
         y: 0
-        width: 498
-        height: 82
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f7a9faf931f7b740800000000000000
-      internalID: 5167864328757028850
+      spriteID: e27917458b0836ed0800000000000000
+      internalID: -2421950645416126674
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      LevelBar (2)_0: 5167864328757028850
+      Curtain01-14-128x128_0: -2421950645416126674
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

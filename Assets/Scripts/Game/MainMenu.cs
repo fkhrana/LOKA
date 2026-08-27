@@ -20,8 +20,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject tutorialButton;
 
     [Header("SFX")]
-    [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioClip clickSound;
+    [SerializeField] private AudioClip clickSound; 
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "CutScenee";
@@ -120,7 +119,7 @@ public class MainMenu : MonoBehaviour
     // ---------- SFX ----------
     private void PlayClickSFX()
     {
-        if (sfxSource != null && clickSound != null)
-            sfxSource.PlayOneShot(clickSound);
+        if (clickSound != null && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(clickSound);
     }
 }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 0b163069981224b408bb1657bea96dfb
+guid: 219cb96850531024a9c928da0bdbc92e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8187434231203430806
-    second: Gurumin_0
+      213: -7965198942037217823
+    second: Curtain01-12-128x128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gurumin_0
+      name: Curtain01-12-128x128_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 19
-        width: 536
-        height: 568
+        y: 0
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 69101cced0c9f9170800000000000000
-      internalID: 8187434231203430806
+      spriteID: 1eded8e73cde57190800000000000000
+      internalID: -7965198942037217823
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gurumin_0: 8187434231203430806
+      Curtain01-12-128x128_0: -7965198942037217823
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

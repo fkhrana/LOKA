@@ -3,152 +3,164 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-// Card popup dengan animasi FLIP: saat huruf dipilih, kartu "diputar" dari sisi
-// depan (Front Face, misal desain punggung kartu) ke sisi belakang (Back Face,
-// berisi gambar huruf, nama, dan tombol suara). Suara diambil dari AksaraSoundLibrary
-// (bukan dari AksaraData), karena AksaraData tidak boleh diubah.
 public class AksaraCardPopup : MonoBehaviour
 {
     [Header("Root")]
     [SerializeField] private GameObject root;
-    [SerializeField] private RectTransform cardTransform; // object yang diputar (biasanya = root atau child langsung)
+    [SerializeField] private RectTransform cardTransform;
 
-    [Header("Front Face (sisi sebelum di-flip)")]
+    [Header("Faces")]
     [SerializeField] private GameObject frontFace;
-
-    [Header("Back Face (sisi berisi konten huruf)")]
     [SerializeField] private GameObject backFace;
+
+    [Header("Back Content")]
     [SerializeField] private Image cardImage;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Button soundButton;
     [SerializeField] private Button closeButton;
     [SerializeField] private AudioSource audioSource;
 
-    [Header("Sound Data")]
+    [Header("Sound")]
     [SerializeField] private AksaraSoundLibrary soundLibrary;
 
-    [Header("Flip Animation")]
+    [Header("Animation")]
     [SerializeField] private float flipDuration = 0.35f;
+
+    [Header("Blur Background")]
+    [SerializeField] private CanvasGroup blurOverlay; // overlay untuk efek blur/fade
 
     private AksaraData currentData;
     private Coroutine flipCoroutine;
+    private bool isFlipping;
 
     private void Awake()
     {
-        if (soundButton != null)
-            soundButton.onClick.AddListener(PlayLetterSound);
-
-        if (closeButton != null)
-            closeButton.onClick.AddListener(Hide);
-
-        if (root != null)
-            root.SetActive(false);
+        if (soundButton != null) soundButton.onClick.AddListener(PlayLetterSound);
+        if (closeButton != null) closeButton.onClick.AddListener(Hide);
+        if (root != null) root.SetActive(false);
+        if (blurOverlay != null)
+        {
+            blurOverlay.alpha = 0f;
+            blurOverlay.gameObject.SetActive(false);
+        }
     }
 
     public void Show(AksaraData data)
     {
-        if (data == null)
-            return;
-
+        if (data == null || isFlipping) return;
         currentData = data;
 
-        // Isi konten sisi belakang dulu, walau belum kelihatan
+        // Isi konten belakang
         if (cardImage != null)
         {
             cardImage.sprite = data.FragmentSprite != null ? data.FragmentSprite : data.IconSprite;
             cardImage.enabled = cardImage.sprite != null;
         }
+        if (nameText != null) nameText.text = data.AksaraName;
 
-        if (nameText != null)
-            nameText.text = data.AksaraName;
-
-        // Reset ke kondisi awal: sisi depan aktif, skala normal
+        // Reset posisi & face
         SetFace(showFront: true);
-        if (cardTransform != null)
-            cardTransform.localScale = Vector3.one;
+        cardTransform.localScale = Vector3.one;
+        root.SetActive(true);
 
-        if (root != null)
-            root.SetActive(true);
+        // Tampilkan blur overlay
+        if (blurOverlay != null)
+        {
+            blurOverlay.gameObject.SetActive(true);
+            LeanTween.alphaCanvas(blurOverlay, 1f, 0.2f).setIgnoreTimeScale(true);
+        }
 
-        if (flipCoroutine != null)
-            StopCoroutine(flipCoroutine);
+        // Mulai flip ke belakang
+        if (flipCoroutine != null) StopCoroutine(flipCoroutine);
         flipCoroutine = StartCoroutine(FlipRoutine(toBack: true, hideAfter: false));
     }
 
     public void Hide()
     {
-        if (flipCoroutine != null)
-            StopCoroutine(flipCoroutine);
-        // Balik lagi ke depan sebelum ditutup, biar kelihatan seperti kartu dibalik ulang
+        if (isFlipping) return;
+        if (flipCoroutine != null) StopCoroutine(flipCoroutine);
         flipCoroutine = StartCoroutine(FlipRoutine(toBack: false, hideAfter: true));
     }
 
     private IEnumerator FlipRoutine(bool toBack, bool hideAfter)
     {
-        if (cardTransform == null)
+        isFlipping = true;
+
+        // Efek lift kartu sebelum flip (naik & membesar sedikit)
+        if (toBack)
         {
-            SetFace(showFront: !toBack);
-            if (hideAfter && root != null)
-                root.SetActive(false);
-            yield break;
+            LeanTween.scale(cardTransform, Vector3.one * 1.05f, 0.1f).setEaseOutQuad();
+            LeanTween.moveLocalY(cardTransform.gameObject, cardTransform.localPosition.y + 10f, 0.1f);
+            yield return new WaitForSecondsRealtime(0.1f);
         }
 
+        // Animasi flip (skala X)
         float half = flipDuration / 2f;
         float elapsed = 0f;
 
-        // Tahap 1: pipihkan kartu (scale.x -> 0), simulasi kartu jadi tampak dari samping
+        // Stage 1: Pipihkan (scale.x -> 0)
         while (elapsed < half)
         {
-            float t = Mathf.Clamp01(elapsed / half);
-            float scaleX = Mathf.Lerp(1f, 0f, t);
-            cardTransform.localScale = new Vector3(scaleX, 1f, 1f);
-            elapsed += Time.deltaTime;
+            float t = elapsed / half;
+            float scaleX = Mathf.Lerp(1f, 0f, Mathf.SmoothStep(0f, 1f, t));
+            cardTransform.localScale = new Vector3(scaleX, cardTransform.localScale.y, 1f);
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
-        cardTransform.localScale = new Vector3(0f, 1f, 1f);
+        cardTransform.localScale = new Vector3(0f, cardTransform.localScale.y, 1f);
 
-        // Tepat di titik pipih, tukar wajah kartu yang aktif
+        // Tukar muka
         SetFace(showFront: !toBack);
 
-        // Tahap 2: lebarkan lagi kartu (scale.x -> 1), sisi baru mulai kelihatan
+        // Stage 2: Lebarkan (scale.x -> 1)
         elapsed = 0f;
         while (elapsed < half)
         {
-            float t = Mathf.Clamp01(elapsed / half);
-            float scaleX = Mathf.Lerp(0f, 1f, t);
-            cardTransform.localScale = new Vector3(scaleX, 1f, 1f);
-            elapsed += Time.deltaTime;
+            float t = elapsed / half;
+            float scaleX = Mathf.Lerp(0f, 1f, Mathf.SmoothStep(0f, 1f, t));
+            cardTransform.localScale = new Vector3(scaleX, cardTransform.localScale.y, 1f);
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
-        cardTransform.localScale = Vector3.one;
+        cardTransform.localScale = new Vector3(1f, cardTransform.localScale.y, 1f);
 
-        if (hideAfter && root != null)
-            root.SetActive(false);
+        // Efek turun & kembali ke skala normal
+        if (toBack)
+        {
+            LeanTween.scale(cardTransform, Vector3.one, 0.1f).setEaseInQuad();
+            LeanTween.moveLocalY(cardTransform.gameObject, cardTransform.localPosition.y - 10f, 0.1f);
+        }
+
+        isFlipping = false;
+
+        if (hideAfter)
+        {
+            // Fade out blur overlay
+            if (blurOverlay != null)
+            {
+                LeanTween.alphaCanvas(blurOverlay, 0f, 0.2f).setIgnoreTimeScale(true)
+                    .setOnComplete(() => {
+                        blurOverlay.gameObject.SetActive(false);
+                        root.SetActive(false);
+                    });
+            }
+            else
+            {
+                root.SetActive(false);
+            }
+        }
     }
 
     private void SetFace(bool showFront)
     {
-        if (frontFace != null)
-            frontFace.SetActive(showFront);
-
-        if (backFace != null)
-            backFace.SetActive(!showFront);
+        if (frontFace != null) frontFace.SetActive(showFront);
+        if (backFace != null) backFace.SetActive(!showFront);
     }
 
     private void PlayLetterSound()
     {
-        if (currentData == null || audioSource == null || soundLibrary == null)
-            return;
-
+        if (currentData == null || audioSource == null || soundLibrary == null) return;
         AudioClip clip = soundLibrary.GetClip(currentData.GestureShape);
-
-        if (clip != null)
-        {
-            audioSource.PlayOneShot(clip);
-        }
-        else
-        {
-            Debug.LogWarning($"[AksaraCardPopup] Tidak ada AudioClip terdaftar untuk {currentData.AksaraName}.");
-        }
+        if (clip != null) audioSource.PlayOneShot(clip);
     }
 }

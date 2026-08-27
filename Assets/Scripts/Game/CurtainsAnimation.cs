@@ -57,32 +57,31 @@ public class CurtainsAnimation : MonoBehaviour
         instance.StartTransition(sceneName);
     }
 
-    private void Awake()
+ private void Awake()
+{
+    // Cari Image di GameObject yang sama, atau di parent, atau di child
+    image = GetComponent<Image>();
+    if (image == null)
+        image = GetComponentInParent<Image>();
+    if (image == null)
+        image = GetComponentInChildren<Image>();
+
+    if (image == null)
     {
-        // Ambil komponen Image (wajib agar sprite terlihat)
-        image = GetComponent<Image>();
-        if (image == null)
-        {
-            Debug.LogError("[Curtains] Tidak ada komponen Image! Tambahkan Image ke GameObject.");
-            return;
-        }
-
-        if (animator == null)
-            animator = GetComponent<Animator>();
-
-        // Set sprite awal (terbuka)
-        if (defaultSprite != null)
-            image.sprite = defaultSprite;
-        else if (image.sprite == null)
-            Debug.LogWarning("[Curtains] Image tidak memiliki sprite awal.");
-
-        // Pastikan Canvas ada di parent
-        if (GetComponentInParent<Canvas>() == null)
-        {
-            Debug.LogError("[Curtains] Harus berada di dalam Canvas! Tambahkan Canvas sebagai parent.");
-        }
+        Debug.LogError("[Curtains] Tidak ada komponen Image di mana pun dalam hierarchy!");
+        return;
     }
 
+    if (animator == null)
+        animator = GetComponent<Animator>();
+    if (animator == null)
+        animator = GetComponentInParent<Animator>();
+    if (animator == null)
+        animator = GetComponentInChildren<Animator>();
+
+    if (defaultSprite != null)
+        image.sprite = defaultSprite;
+}
     private void StartTransition(string sceneName)
     {
         StartCoroutine(TransitionCoroutine(sceneName));

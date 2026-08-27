@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3929c0fb26db8ef43b63f908a3c9a81a
+guid: 020c39013fd497b4cb266bc56ebcb26d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5691541040728756884
-    second: Basari_0
+      213: -3668992734131721606
+    second: Curtain01-04-128x128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basari_0
+      name: Curtain01-04-128x128_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 19
-        width: 536
-        height: 568
+        y: 0
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 492d135eb6a6cfe40800000000000000
-      internalID: 5691541040728756884
+      spriteID: a7ae6962c8e151dc0800000000000000
+      internalID: -3668992734131721606
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Basari_0: 5691541040728756884
+      Curtain01-04-128x128_0: -3668992734131721606
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

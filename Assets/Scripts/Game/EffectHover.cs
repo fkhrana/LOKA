@@ -13,7 +13,6 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutBack;
 
     [Header("Sound")]
-    [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip hoverSound;
     [SerializeField] private float sfxCooldown = 0.5f;
 
@@ -33,81 +32,65 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (isHovering)
-            return;
-
+        if (isHovering) return;
         isHovering = true;
 
         LeanTween.cancel(targetTransform.gameObject);
 
-        LeanTween.scale(
-            targetTransform,
-            originalScale * hoverScale,
-            animDuration
-        )
-        .setEase(easeType)
-        .setIgnoreTimeScale(true);
+        LeanTween.scale(targetTransform, originalScale * hoverScale, animDuration)
+            .setEase(easeType)
+            .setIgnoreTimeScale(true);
 
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(
-                targetTransform.gameObject,
-                originalPosition.y + hoverMoveY,
-                animDuration
-            )
-            .setEase(easeType)
-            .setIgnoreTimeScale(true);
+            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y + hoverMoveY, animDuration)
+                .setEase(easeType)
+                .setIgnoreTimeScale(true);
         }
 
-        if (sfxSource != null && hoverSound != null)
+        if (hoverSound != null && Time.unscaledTime - lastSFXTime >= sfxCooldown)
         {
-            if (Time.unscaledTime - lastSFXTime >= sfxCooldown)
-            {
-                lastSFXTime = Time.unscaledTime;
-                sfxSource.PlayOneShot(hoverSound);
-            }
+            lastSFXTime = Time.unscaledTime;
+            AudioManager.Instance?.PlayHoverSFX(hoverSound);
         }
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isHovering)
-            return;
-
+        if (!isHovering) return;
         isHovering = false;
 
         LeanTween.cancel(targetTransform.gameObject);
 
-        LeanTween.scale(
-            targetTransform,
-            originalScale,
-            animDuration
-        )
-        .setEase(easeType)
-        .setIgnoreTimeScale(true);
+        LeanTween.scale(targetTransform, originalScale, animDuration)
+            .setEase(easeType)
+            .setIgnoreTimeScale(true);
 
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(
-                targetTransform.gameObject,
-                originalPosition.y,
-                animDuration
-            )
-            .setEase(easeType)
-            .setIgnoreTimeScale(true);
+            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y, animDuration)
+                .setEase(easeType)
+                .setIgnoreTimeScale(true);
         }
+        // Hover sound tidak di‑stop di sini, biar tetap smooth
+    }
+
+    public void StopHoverSound()
+    {
+        AudioManager.Instance?.StopHoverSFX();
+        isHovering = false;
     }
 
     private void OnDisable()
     {
+        StopHoverSound();
+
         if (targetTransform != null)
         {
             targetTransform.localScale = originalScale;
             targetTransform.localPosition = originalPosition;
-
             LeanTween.cancel(targetTransform.gameObject);
         }
-
         isHovering = false;
     }
 }
