@@ -3,224 +3,101 @@ using UnityEngine.SceneManagement;
 
 public class PauseOverlay : MonoBehaviour
 {
-    [Header("Pause Panel")]
-    [SerializeField] private GameObject pausePanel;
+    private enum PanelType { None, Pause, Tutorial, Credits }
 
-    [Header("Retry Button")]
-    [SerializeField] private GameObject retryButton;
+    [Header("Panels")] [SerializeField] private GameObject pausePanel, tutorialPanel, creditPanel;
+    [Header("Buttons")] [SerializeField] private GameObject retryButton;
+    [Header("Cutscene")] [SerializeField] private CutsceneManager cutsceneManager;
+    [Header("Scene Names")] [SerializeField] private string gameplaySceneName = "Gameplay", mainMenuSceneName = "MainMenu";
 
-    [Header("Tutorial & Credits")]
-    [SerializeField] private GameObject tutorialPanel;
-    [SerializeField] private GameObject creditPanel;
-
-    [Header("Cutscene")]
-    [SerializeField] private CutsceneManager cutsceneManager;
-
-    [Header("Scene Names")]
-    [SerializeField] private string gameplaySceneName = "Gameplay";
-    [SerializeField] private string mainMenuSceneName = "MainMenu";
-
-    [Header("Scene")]
-    [SerializeField] private string nextSceneName = "MainMenu";
-
-
-    private bool isPaused = false;
-
-
-    // =========================
-    // START
-    // =========================
+    private PanelType currentPanel = PanelType.None;
+    private bool isClosing = false;
 
     private void Start()
     {
         Time.timeScale = 1f;
-
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
-        if (tutorialPanel != null)
-            tutorialPanel.SetActive(false);
-
-        if (creditPanel != null)
-            creditPanel.SetActive(false);
-
+        CloseAllPanels();
         UpdateRetryButton();
     }
+    private void OnDestroy() => Time.timeScale = 1f;
 
-
-    // =========================
-    // OPEN PAUSE
-    // =========================
-
-    public void OpenPause()
+    private void OpenPanel(PanelType type)
     {
-        if (isPaused)
-            return;
-
-        isPaused = true;
-
-        if (pausePanel != null)
-            pausePanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        // Kalau sedang Cutscene, pause video
-        if (cutsceneManager != null)
-            cutsceneManager.PauseVideo();
+        if (currentPanel == type || isClosing) return;
+        CloseAllPanels();
+        if (type != PanelType.None)
+        {
+            Time.timeScale = 0f;
+            cutsceneManager?.PauseVideo();
+        }
+        switch (type)
+        {
+            case PanelType.Pause:   pausePanel?.SetActive(true); break;
+            case PanelType.Tutorial: tutorialPanel?.SetActive(true); break;
+            case PanelType.Credits: creditPanel?.SetActive(true); break;
+        }
+        currentPanel = type;
     }
 
-
-    // =========================
-    // CLOSE PAUSE
-    // =========================
-
-    public void ClosePause()
+    private void ClosePanel(PanelType type)
     {
-        if (!isPaused)
-            return;
-
-        isPaused = false;
-
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
-        Time.timeScale = 1f;
-
-        // Kalau sedang Cutscene, lanjutkan video
-        if (cutsceneManager != null)
-            cutsceneManager.ResumeVideo();
+        if (currentPanel != type || isClosing) return;
+        isClosing = true;
+        if (type == PanelType.Pause)
+        {
+            CloseAllPanels();
+            Time.timeScale = 1f;
+            cutsceneManager?.ResumeVideo();
+            currentPanel = PanelType.None;
+        }
+        else
+        {
+            CloseAllPanels();
+            pausePanel?.SetActive(true);
+            currentPanel = PanelType.Pause;
+        }
+        isClosing = false;
     }
 
-
-    // =========================
-    // TUTORIAL
-    // =========================
-
-    public void OpenTutorial()
+    private void CloseAllPanels()
     {
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
-        if (creditPanel != null)
-            creditPanel.SetActive(false);
-
-        if (tutorialPanel != null)
-            tutorialPanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        if (cutsceneManager != null)
-            cutsceneManager.PauseVideo();
+        pausePanel?.SetActive(false);
+        tutorialPanel?.SetActive(false);
+        creditPanel?.SetActive(false);
     }
 
-
-    public void CloseTutorial()
+    private void CloseWithEffect(GameObject panel, PanelType type)
     {
-        if (tutorialPanel != null)
-            tutorialPanel.SetActive(false);
-
-        if (pausePanel != null)
-            pausePanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        if (cutsceneManager != null)
-            cutsceneManager.PauseVideo();
+        if (panel == null || currentPanel != type) return;
+        EffectPanel effect = panel.GetComponent<EffectPanel>();
+        if (effect != null)
+            effect.CloseDialog(() => ClosePanel(type));
+        else
+            ClosePanel(type);
     }
 
+    public void OpenPause() => OpenPanel(PanelType.Pause);
+    public void ClosePause() => CloseWithEffect(pausePanel, PanelType.Pause);
 
-    // =========================
-    // CREDITS
-    // =========================
+    public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
+    public void CloseTutorial() => CloseWithEffect(tutorialPanel, PanelType.Tutorial);
 
-    public void OpenCredits()
-    {
-        if (pausePanel != null)
-            pausePanel.SetActive(false);
-
-        if (tutorialPanel != null)
-            tutorialPanel.SetActive(false);
-
-        if (creditPanel != null)
-            creditPanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        if (cutsceneManager != null)
-            cutsceneManager.PauseVideo();
-    }
-
-
-    public void CloseCredits()
-    {
-        if (creditPanel != null)
-            creditPanel.SetActive(false);
-
-        if (pausePanel != null)
-            pausePanel.SetActive(true);
-
-        Time.timeScale = 0f;
-
-        if (cutsceneManager != null)
-            cutsceneManager.PauseVideo();
-    }
-
-
-    // =========================
-    // MAIN MENU
-    // =========================
+    public void OpenCredits() => OpenPanel(PanelType.Credits);
+    public void CloseCredits() => CloseWithEffect(creditPanel, PanelType.Credits);
 
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        TransisiManager.Instance.LoadScene(nextSceneName);
+        CurtainsAnimation.TransitionToScene(mainMenuSceneName);
     }
-
-
-    // =========================
-    // RETRY
-    // =========================
 
     public void Retry()
     {
-        if (!IsGameplayScene())
-            return;
-
+        if (!IsGameplayScene()) return;
         Time.timeScale = 1f;
-
-        SceneManager.LoadScene(
-            SceneManager.GetActiveScene().name
-        );
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-
-    // =========================
-    // CHECK GAMEPLAY
-    // =========================
-
-    private bool IsGameplayScene()
-    {
-        return SceneManager.GetActiveScene().name == gameplaySceneName;
-    }
-
-
-    // =========================
-    // RETRY VISIBILITY
-    // =========================
-
-    private void UpdateRetryButton()
-    {
-        if (retryButton != null)
-            retryButton.SetActive(IsGameplayScene());
-    }
-
-
-    // =========================
-    // CLEANUP
-    // =========================
-
-    private void OnDestroy()
-    {
-        Time.timeScale = 1f;
-    }
+    private bool IsGameplayScene() => SceneManager.GetActiveScene().name == gameplaySceneName;
+    private void UpdateRetryButton() { if (retryButton) retryButton.SetActive(IsGameplayScene()); }
 }

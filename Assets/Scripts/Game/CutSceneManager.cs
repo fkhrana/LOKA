@@ -10,80 +10,49 @@ public class CutsceneManager : MonoBehaviour
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
 
+    private void OnEnable()
+    {
+        videoPlayer.loopPointReached += OnVideoFinished;
+    }
 
-    // =========================
-    // START
-    // =========================
+    private void OnDisable()
+    {
+        videoPlayer.loopPointReached -= OnVideoFinished;
+    }
 
     private void Start()
     {
         Time.timeScale = 1f;
-
-        if (videoPlayer != null)
-        {
-            videoPlayer.Play();
-        }
+        videoPlayer?.Play();
     }
-
-
-    // =========================
-    // PAUSE VIDEO
-    // =========================
 
     public void PauseVideo()
     {
-        if (videoPlayer != null)
-        {
-            videoPlayer.Pause();
-        }
+        videoPlayer?.Pause();
     }
-
-
-    // =========================
-    // RESUME VIDEO
-    // =========================
 
     public void ResumeVideo()
     {
-        if (videoPlayer != null)
-        {
-            videoPlayer.Play();
-        }
+        videoPlayer?.Play();
     }
-
-
-    // =========================
-    // SKIP CUTSCENE
-    // =========================
 
     public void OnSkipClicked()
     {
         Time.timeScale = 1f;
-
-        if (videoPlayer != null)
-        {
-            videoPlayer.Stop();
-        }
-
-         TransisiManager.Instance.LoadScene(nextSceneName);
+        videoPlayer?.Stop();
+        LoadNextScene();
     }
 
-
-    // =========================
-    // VIDEO FINISHED
-    // =========================
-
-    public void OnVideoFinished(VideoPlayer vp)
+    private void OnVideoFinished(VideoPlayer vp)
     {
         Time.timeScale = 1f;
-
-         TransisiManager.Instance.LoadScene(nextSceneName);
+        LoadNextScene();
     }
 
-
-    // =========================
-    // CLEANUP
-    // =========================
+    private void LoadNextScene()
+    {
+        CurtainsAnimation.TransitionToScene(nextSceneName);
+    }
 
     private void OnDestroy()
     {

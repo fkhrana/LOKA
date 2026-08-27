@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    private enum PanelType { None, Setting, Collection, Level, Credits, Tutorial }
+
     [Header("Panels")]
     [SerializeField] private GameObject settingPanel;
     [SerializeField] private GameObject koleksiPanel;
@@ -10,7 +12,6 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private GameObject tutorialPanel;
 
-    [Space]
     [Header("Buttons")]
     [SerializeField] private GameObject settingButton;
     [SerializeField] private GameObject koleksiButton;
@@ -18,23 +19,20 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject creditsButton;
     [SerializeField] private GameObject tutorialButton;
 
-    [Space]
     [Header("SFX")]
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
+
+    [Header("Scene")]
     [SerializeField] private string nextSceneName = "CutScenee";
-    private void Awake()
-    {
-        Time.timeScale = 1f;
-    }
+
+    private PanelType currentPanel = PanelType.None;
+
+    private void Awake() => Time.timeScale = 1f;
 
     private void Start()
     {
-        settingPanel?.SetActive(false);
-        koleksiPanel?.SetActive(false);
-        levelPanel?.SetActive(false);
-        creditsPanel?.SetActive(false);
-        tutorialPanel?.SetActive(false);
+        CloseAllPanels();
 
         if (PlayerPrefs.GetInt("OpenTutorial", 0) == 1)
         {
@@ -43,63 +41,86 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void PlayClickSFX()
-    {
-        if (sfxSource != null && clickSound != null)
-            sfxSource.PlayOneShot(clickSound);
-    }
+    // ---------- PANEL MANAGEMENT ----------
 
-    // ---------- GENERIC OPEN / CLOSE ----------
-
-    private void OpenPanel(GameObject panel, GameObject openButton)
+    private void OpenPanel(GameObject panel, GameObject button, PanelType type)
     {
+        if (currentPanel == type) return; // sudah terbuka
+
         PlayClickSFX();
+        CloseAllPanels(); // tutup semua panel lain
+
         panel?.SetActive(true);
-        openButton?.SetActive(false);
+        button?.SetActive(false);
+        currentPanel = type;
     }
 
-    private void ClosePanel(GameObject panel, GameObject openButton)
+    private void ClosePanel(GameObject panel, GameObject button, PanelType type)
     {
+        if (currentPanel != type) return; // tidak terbuka
+
         PlayClickSFX();
 
-        DialogBox dialog = panel != null ? panel.GetComponent<DialogBox>() : null;
-
+        // Jika ada EffectPanel, gunakan animasi tutup
+        EffectPanel dialog = panel?.GetComponent<EffectPanel>();
         if (dialog != null)
             dialog.CloseDialog();
         else
             panel?.SetActive(false);
 
-        openButton?.SetActive(true);
+        button?.SetActive(true);
+        currentPanel = PanelType.None;
+    }
+
+    private void CloseAllPanels()
+    {
+        settingPanel?.SetActive(false);
+        koleksiPanel?.SetActive(false);
+        levelPanel?.SetActive(false);
+        creditsPanel?.SetActive(false);
+        tutorialPanel?.SetActive(false);
+
+        settingButton?.SetActive(true);
+        koleksiButton?.SetActive(true);
+        levelButton?.SetActive(true);
+        creditsButton?.SetActive(true);
+        tutorialButton?.SetActive(true);
+
+        currentPanel = PanelType.None;
     }
 
     // ---------- SCENE ----------
 
-   public void TapToStart()
-{
-    Debug.Log("TAP TO START BERHASIL!");
-
-    PlayClickSFX();
-
-    TransisiManager.Instance.LoadScene(nextSceneName);
-}
+    public void TapToStart()
+    {
+        PlayClickSFX();
+        CurtainsAnimation.TransitionToScene(nextSceneName);
+    }
 
     // ---------- SETTING ----------
-    public void OpenSetting() => OpenPanel(settingPanel, settingButton);
-    public void CloseSetting() => ClosePanel(settingPanel, settingButton);
+    public void OpenSetting() => OpenPanel(settingPanel, settingButton, PanelType.Setting);
+    public void CloseSetting() => ClosePanel(settingPanel, settingButton, PanelType.Setting);
 
     // ---------- COLLECTION ----------
-    public void OpenCollection() => OpenPanel(koleksiPanel, koleksiButton);
-    public void CloseCollection() => ClosePanel(koleksiPanel, koleksiButton);
+    public void OpenCollection() => OpenPanel(koleksiPanel, koleksiButton, PanelType.Collection);
+    public void CloseCollection() => ClosePanel(koleksiPanel, koleksiButton, PanelType.Collection);
 
     // ---------- LEVEL ----------
-    public void OpenLevel() => OpenPanel(levelPanel, levelButton);
-    public void CloseLevel() => ClosePanel(levelPanel, levelButton);
+    public void OpenLevel() => OpenPanel(levelPanel, levelButton, PanelType.Level);
+    public void CloseLevel() => ClosePanel(levelPanel, levelButton, PanelType.Level);
 
     // ---------- CREDIT ----------
-    public void OpenCredit() => OpenPanel(creditsPanel, creditsButton);
-    public void CloseCredit() => ClosePanel(creditsPanel, creditsButton);
+    public void OpenCredit() => OpenPanel(creditsPanel, creditsButton, PanelType.Credits);
+    public void CloseCredit() => ClosePanel(creditsPanel, creditsButton, PanelType.Credits);
 
     // ---------- TUTORIAL ----------
-    public void OpenTutorial() => OpenPanel(tutorialPanel, tutorialButton);
-    public void CloseTutorial() => ClosePanel(tutorialPanel, tutorialButton);
+    public void OpenTutorial() => OpenPanel(tutorialPanel, tutorialButton, PanelType.Tutorial);
+    public void CloseTutorial() => ClosePanel(tutorialPanel, tutorialButton, PanelType.Tutorial);
+
+    // ---------- SFX ----------
+    private void PlayClickSFX()
+    {
+        if (sfxSource != null && clickSound != null)
+            sfxSource.PlayOneShot(clickSound);
+    }
 }

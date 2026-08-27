@@ -89,8 +89,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProfileHover
+  targetTransform: {fileID: 2020238720362237316}
   hoverScale: 1.1
-  speed: 8
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
   sfxSource: {fileID: 0}
   hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
   sfxCooldown: 0.2
@@ -408,8 +411,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProfileHover
+  targetTransform: {fileID: 5503505393519227621}
   hoverScale: 1.1
-  speed: 8
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
   sfxSource: {fileID: 0}
   hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
   sfxCooldown: 0.2
@@ -562,6 +568,7 @@ GameObject:
   - component: {fileID: 6395091255383489198}
   - component: {fileID: 4208950235924076217}
   - component: {fileID: 3384966464530996715}
+  - component: {fileID: 4267728299083482470}
   m_Layer: 5
   m_Name: Back Button
   m_TagString: Untagged
@@ -585,7 +592,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -263.99963, y: 49.5007}
+  m_AnchoredPosition: {x: -284, y: 57}
   m_SizeDelta: {x: 156, y: 156}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6395091255383489198
@@ -671,8 +678,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
-        m_MethodName: CloseCredit
+        m_TargetAssemblyTypeName: PauseOverlay, Assembly-CSharp
+        m_MethodName: CloseCredits
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -682,6 +689,26 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &4267728299083482470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3396953736605821630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoverEffect
+  targetTransform: {fileID: 5190582514668597107}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
+  sfxSource: {fileID: 0}
+  hoverSound: {fileID: 0}
+  sfxCooldown: 0.5
 --- !u!1 &3866697261761868244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,8 +1072,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProfileHover
+  targetTransform: {fileID: 6456826709362293542}
   hoverScale: 1.1
-  speed: 8
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
   sfxSource: {fileID: 0}
   hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
   sfxCooldown: 0.2
@@ -1448,7 +1478,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1473,7 +1503,8 @@ MonoBehaviour:
   box: {fileID: 4041884389098650374}
   background: {fileID: 482410952747066120}
   slideDistance: 50
-  duration: 0.5
+  fadeDuration: 0.3
+  slideDuration: 0.5
 --- !u!1 &7966341796486969391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,8 +1594,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  targetTransform: {fileID: 9054561369479498475}
   hoverScale: 1.1
-  speed: 8
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
   sfxSource: {fileID: 0}
   hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
   sfxCooldown: 0.2
@@ -1657,8 +1691,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProfileHover
+  targetTransform: {fileID: 4074364521746665430}
   hoverScale: 1.1
-  speed: 8
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
   sfxSource: {fileID: 0}
   hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
   sfxCooldown: 0.2

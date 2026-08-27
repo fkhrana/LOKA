@@ -80,6 +80,7 @@ public class AksaraFragmentItem : MonoBehaviour
         if (aksaraData != null && CollectedAksaraManager.Instance != null)
         {
             CollectedAksaraManager.Instance.RegisterCollect(aksaraData);
+            PermanentCollectionManager.SaveCollected(aksaraData);
         }
         Destroy(gameObject);
     }
