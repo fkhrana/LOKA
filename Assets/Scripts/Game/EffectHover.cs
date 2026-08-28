@@ -19,15 +19,42 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     private Vector3 originalScale;
     private Vector3 originalPosition;
     private bool isHovering;
+    private bool hasCapturedOriginal;
     private float lastSFXTime = -Mathf.Infinity;
 
     private void Awake()
     {
+        // Hanya pastikan referensi target ada. JANGAN capture originalScale/Position
+        // di sini, karena urutan Awake() antar-script tidak dijamin oleh Unity.
+        // Kalau ada Animator di GameObject yang sama dan belum sempat settle,
+        // scale/posisi yang ke-capture bisa salah (misal 0), dan nanti dipakai
+        // lagi di OnDisable() -> tombol jadi invisible/mengecil permanen.
         if (targetTransform == null)
             targetTransform = GetComponent<RectTransform>();
+    }
+
+    private void Start()
+    {
+        // Start() dijamin jalan setelah semua Awake() di scene selesai,
+        // termasuk Animator.Rebind() kalau ada -> nilai yang di-capture di sini aman.
+        CaptureOriginalIfNeeded();
+    }
+
+    private void OnEnable()
+    {
+        // Jaga-jaga: kalau objek ini di-nonaktifkan lalu diaktifkan lagi sebelum
+        // Start() sempat jalan (mis. lewat OpenPanel/CloseAllPanels di frame yang sama),
+        // pastikan tetap ada nilai original yang valid.
+        CaptureOriginalIfNeeded();
+    }
+
+    private void CaptureOriginalIfNeeded()
+    {
+        if (hasCapturedOriginal || targetTransform == null) return;
 
         originalScale = targetTransform.localScale;
         originalPosition = targetTransform.localPosition;
+        hasCapturedOriginal = true;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -72,7 +99,7 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
                 .setEase(easeType)
                 .setIgnoreTimeScale(true);
         }
-        // Hover sound tidak di‑stop di sini, biar tetap smooth
+        // Hover sound tidak di-stop di sini, biar tetap smooth
     }
 
     public void StopHoverSound()
@@ -85,7 +112,7 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     {
         StopHoverSound();
 
-        if (targetTransform != null)
+        if (targetTransform != null && hasCapturedOriginal)
         {
             targetTransform.localScale = originalScale;
             targetTransform.localPosition = originalPosition;

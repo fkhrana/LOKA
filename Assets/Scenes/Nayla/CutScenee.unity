@@ -135,36 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32e6ad30e474f1c40a64a8ffabfc7cca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
---- !u!1 &162214392 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3338635625245793224, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &162214394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 162214392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8268868de537fa47b05ef525674d82b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VolumeSliderController
-  bgmSlider: {fileID: 1905016928}
-  sfxSlider: {fileID: 1448635551}
---- !u!114 &376449527 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 960723439019565280, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_Dropdown
 --- !u!1 &639963810
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,24 +239,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1010952952 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1519434147186723098, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1010952954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1010952952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e488303f75ec70943a3c4b5220553a19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QualityDropdownController
-  graphicsDropdown: {fileID: 376449527}
 --- !u!1 &1034329284
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,6 +386,8 @@ MonoBehaviour:
   videoPlayer: {fileID: 1652985839}
   nextSceneName: MainGameplay(Drawing)
   homeSceneName: MainMenu
+  transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
+  loadDelay: 0.5
 --- !u!4 &1156163499
 Transform:
   m_ObjectHideFlags: 0
@@ -449,17 +403,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1043429658}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1448635551 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8434923308517067571, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
+--- !u!1 &1189531599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1189531601}
+  - component: {fileID: 1189531600}
+  m_Layer: 0
+  m_Name: 'TransitionManager '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1189531600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189531599}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Script: {fileID: 11500000, guid: 61430b0086307cc4da3ccc8d39ae88da, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
+  m_EditorClassIdentifier: Assembly-CSharp::EasyTransition.TransitionManager
+  transitionTemplate: {fileID: 5276914992623515724, guid: 616d511151a6c554caddf1c754e4f91d, type: 3}
+--- !u!4 &1189531601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189531599}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.30164, y: -0.97912, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1506195161
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,17 +588,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1905016928 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4575297756432923135, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
 --- !u!1 &1914638671
 GameObject:
   m_ObjectHideFlags: 0
@@ -1162,18 +1139,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 639963814}
     m_Modifications:
-    - target: {fileID: 1007273121127740501, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1632634196684814949, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 2066169336786429655, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 3450520724091905555, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Name
       value: Pause Overlay
@@ -1182,14 +1147,6 @@ PrefabInstance:
       propertyPath: cutsceneManager
       value: 
       objectReference: {fileID: 1156163498}
-    - target: {fileID: 3848764355343216244, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 3971346205923435046, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1270,56 +1227,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5459908364512923318, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 5699350259151228020, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 5737754486031476854, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 6274314304847393590, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 6568991555097628560, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 7541317591084588701, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 7711316521579216776, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 7862965826952326122, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 8190092381671300389, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
-    - target: {fileID: 9112404989998843444, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3338635625245793224, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 162214394}
-    - targetCorrespondingSourceObject: {fileID: 1519434147186723098, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1010952954}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
@@ -1327,6 +1238,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 2143533457}
   - {fileID: 1043429658}
+  - {fileID: 1189531601}
   - {fileID: 1652985840}
   - {fileID: 1914638675}
   - {fileID: 639963814}

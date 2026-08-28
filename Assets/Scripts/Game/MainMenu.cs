@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EasyTransition;
 
 public class MainMenu : MonoBehaviour
 {
@@ -20,18 +21,69 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject tutorialButton;
 
     [Header("SFX")]
-    [SerializeField] private AudioClip clickSound; 
+    [SerializeField] private AudioClip clickSound;
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "CutScenee";
 
+    [Header("Transition")]
+    [SerializeField] private TransitionSettings transitionSettings;
+    [SerializeField] private float loadDelay = 0.5f;
+
+    [Header("Main Menu Content (Entry Animation)")]
+    [Tooltip("GameObject 'Main Menu Content' yang punya Animator untuk animasi masuk (Buttons, Title, dsb).")]
+    [SerializeField] private GameObject mainMenuContent;
+    [Tooltip("Nama state Animator yang jadi entry animation, misal 'Show' atau 'Enter'. Kosongkan untuk pakai default state layer 0.")]
+    [SerializeField] private string entryStateName = "";
+
     private PanelType currentPanel = PanelType.None;
 
-    private void Awake() => Time.timeScale = 1f;
+    // ============================================
+    //  AWAKE - RESET STATE (SCOPE DIBATASI!)
+    // ============================================
+    private void Awake()
+    {
+        Time.timeScale = 1f;
 
+        // Hanya reset Animator & CanvasGroup DI DALAM PANEL, bukan di Main Menu Content.
+        ResetPanelState(settingPanel);
+        ResetPanelState(koleksiPanel);
+        ResetPanelState(levelPanel);
+        ResetPanelState(creditsPanel);
+        ResetPanelState(tutorialPanel);
+
+        CloseAllPanels();
+    }
+
+    private void ResetPanelState(GameObject panel)
+    {
+        if (panel == null) return;
+
+        Animator[] anims = panel.GetComponentsInChildren<Animator>(true);
+        foreach (var anim in anims)
+        {
+            if (anim == null) continue;
+            anim.Rebind();
+            anim.Update(0f);
+        }
+
+        CanvasGroup[] cgs = panel.GetComponentsInChildren<CanvasGroup>(true);
+        foreach (var cg in cgs)
+        {
+            if (cg == null) continue;
+            cg.alpha = 1f;
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        }
+    }
+
+    // ============================================
+    //  START - INISIALISASI TAMBAHAN
+    // ============================================
     private void Start()
     {
         CloseAllPanels();
+        PlayEntryAnimation();
 
         if (PlayerPrefs.GetInt("OpenTutorial", 0) == 1)
         {
@@ -40,14 +92,46 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    // Paksa restart animasi entry Main Menu Content dari frame 0,
+    // TIDAK mengandalkan auto-play/Culling Mode saja. Ini menghindari kasus
+    // di mana Animator sudah "kepakai" momentumnya duluan sebelum curtain
+    // transisi selesai fade-out (race condition timing).
+    private void PlayEntryAnimation()
+    {
+        if (mainMenuContent == null) return;
+
+        Animator[] anims = mainMenuContent.GetComponentsInChildren<Animator>(true);
+        foreach (var anim in anims)
+        {
+            if (anim == null) continue;
+
+            // Rebind dulu supaya bersih dari state sebelumnya
+            anim.Rebind();
+            anim.Update(0f);
+
+            if (!string.IsNullOrEmpty(entryStateName))
+            {
+                // Paksa play state tertentu dari awal (normalizedTime = 0)
+                anim.Play(entryStateName, 0, 0f);
+            }
+            else
+            {
+                // Kalau nama state tidak diisi, paksa play default state layer 0 dari awal
+                anim.Play(0, 0, 0f);
+            }
+
+            anim.Update(0f);
+        }
+    }
+
     // ---------- PANEL MANAGEMENT ----------
 
     private void OpenPanel(GameObject panel, GameObject button, PanelType type)
     {
-        if (currentPanel == type) return; // sudah terbuka
+        if (currentPanel == type) return;
 
         PlayClickSFX();
-        CloseAllPanels(); // tutup semua panel lain
+        CloseAllPanels();
 
         panel?.SetActive(true);
         button?.SetActive(false);
@@ -56,11 +140,10 @@ public class MainMenu : MonoBehaviour
 
     private void ClosePanel(GameObject panel, GameObject button, PanelType type)
     {
-        if (currentPanel != type) return; // tidak terbuka
+        if (currentPanel != type) return;
 
         PlayClickSFX();
 
-        // Jika ada EffectPanel, gunakan animasi tutup
         EffectPanel dialog = panel?.GetComponent<EffectPanel>();
         if (dialog != null)
             dialog.CloseDialog();
@@ -93,7 +176,17 @@ public class MainMenu : MonoBehaviour
     public void TapToStart()
     {
         PlayClickSFX();
-        CurtainsAnimation.TransitionToScene(nextSceneName);
+
+        var tm = TransitionManager.Instance();
+        if (tm != null && transitionSettings != null)
+        {
+            tm.Transition(nextSceneName, transitionSettings, loadDelay);
+        }
+        else
+        {
+            Debug.LogWarning("[MainMenu] TransitionManager or Settings missing, loading directly.");
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
 
     // ---------- SETTING ----------

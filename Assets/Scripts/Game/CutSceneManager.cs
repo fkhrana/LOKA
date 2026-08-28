@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Video;
+using EasyTransition;
 
 public class CutsceneManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class CutsceneManager : MonoBehaviour
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
     [SerializeField] private string homeSceneName = "MainMenu";
+
+    [Header("Transition")]
+    [SerializeField] private TransitionSettings transitionSettings;
+    [SerializeField] private float loadDelay = 0.5f;
 
     private bool isTransitioning = false;
 
@@ -39,73 +44,44 @@ public class CutsceneManager : MonoBehaviour
         videoPlayer?.Play();
     }
 
-    // Pause video and play button SFX.
     public void PauseVideo()
     {
         if (isTransitioning) return;
-
         PlayButtonClickSFX();
         videoPlayer?.Pause();
     }
 
-    // Resume video and play button SFX.
     public void ResumeVideo()
     {
         if (isTransitioning) return;
-
         PlayButtonClickSFX();
         videoPlayer?.Play();
     }
 
-    // Skip the cutscene and transition to gameplay.
     public void OnSkipClicked()
     {
         if (isTransitioning) return;
 
         PlayButtonClickSFX();
-
         Time.timeScale = 1f;
         videoPlayer?.Stop();
+
+        // Hanya panggil LoadNextScene() – di dalamnya sudah urus transisi
         LoadNextScene();
     }
 
-    // Return to the main menu.
-    public void GoToHome()
-    {
-        if (isTransitioning) return;
-
-        PlayButtonClickSFX();
-
-        Time.timeScale = 1f;
-        videoPlayer?.Stop();
-
-        if (string.IsNullOrEmpty(homeSceneName))
-        {
-            Debug.LogError("homeSceneName is empty! Assign a valid scene name.", this);
-            isTransitioning = false;
-            return;
-        }
-
-        isTransitioning = true;
-        CurtainsAnimation.TransitionToScene(homeSceneName);
-    }
-
-    // Play the button click SFX through the AudioManager.
     private void PlayButtonClickSFX()
     {
         AudioManager.Instance?.PlaySFX("Button Click (1)");
     }
 
-    // Load the next scene when the video finishes.
     private void OnVideoFinished(VideoPlayer vp)
     {
         if (isTransitioning) return;
-
         Time.timeScale = 1f;
         LoadNextScene();
     }
 
-    // Transition to the next scene.
     private void LoadNextScene()
     {
         if (isTransitioning) return;
@@ -114,11 +90,20 @@ public class CutsceneManager : MonoBehaviour
 
         if (string.IsNullOrEmpty(nextSceneName))
         {
-            Debug.LogError("nextSceneName is empty! Assign a valid scene name.", this);
+            Debug.LogError("nextSceneName is empty!", this);
             isTransitioning = false;
             return;
         }
 
-        CurtainsAnimation.TransitionToScene(nextSceneName);
+        var tm = TransitionManager.Instance();
+        if (tm != null && transitionSettings != null)
+        {
+            tm.Transition(nextSceneName, transitionSettings, loadDelay);
+        }
+        else
+        {
+            Debug.LogWarning("TransitionManager or Settings missing, loading scene directly.");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        }
     }
 }

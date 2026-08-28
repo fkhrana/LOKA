@@ -150,8 +150,7 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
   sfxCooldown: 0.5
 --- !u!1 &361130878362050618
 GameObject:
@@ -499,6 +498,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4849572675149441324}
+  - component: {fileID: 5630355732013537798}
   m_Layer: 5
   m_Name: Kualitas
   m_TagString: Untagged
@@ -528,6 +528,19 @@ RectTransform:
   m_AnchoredPosition: {x: -164, y: 206}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5630355732013537798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519434147186723098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e488303f75ec70943a3c4b5220553a19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QualityDropdownController
+  graphicsDropdown: {fileID: 960723439019565280}
 --- !u!1 &1552592913979819889
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,8 +691,7 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
   sfxCooldown: 0.5
 --- !u!1 &1755156277176882901
 GameObject:
@@ -1174,6 +1186,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5809481091149483509}
+  - component: {fileID: 4072606747746564569}
   m_Layer: 5
   m_Name: ContentSettings
   m_TagString: Untagged
@@ -1204,6 +1217,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &4072606747746564569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3338635625245793224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8268868de537fa47b05ef525674d82b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VolumeSliderController
+  bgmSlider: {fileID: 4575297756432923135}
+  sfxSlider: {fileID: 8434923308517067571}
 --- !u!1 &3431255236001908884
 GameObject:
   m_ObjectHideFlags: 0
@@ -1388,6 +1415,8 @@ MonoBehaviour:
   cutsceneManager: {fileID: 0}
   gameplaySceneName: MainGameplay(Drawing)
   mainMenuSceneName: MainMenu
+  transitionSettings: {fileID: 11400000, guid: 013263c83b6a84c4d95beaa8bd163ac8, type: 2}
+  loadDelay: 0.5
 --- !u!1 &3716264845215222332
 GameObject:
   m_ObjectHideFlags: 0
@@ -1538,8 +1567,7 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
   sfxCooldown: 0.5
 --- !u!1 &3932617215680613010
 GameObject:
@@ -1740,7 +1768,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2674305858950287429}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsPanelManager, Assembly-CSharp
         m_MethodName: ChangeMusicVolume
         m_Mode: 1
@@ -2353,8 +2381,7 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
   sfxCooldown: 0.5
 --- !u!1 &5144769261819914554
 GameObject:
@@ -2584,7 +2611,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2674305858950287429}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsPanelManager, Assembly-CSharp
         m_MethodName: ChangeGraphicsQuality
         m_Mode: 1
@@ -2644,7 +2671,6 @@ GameObject:
   - component: {fileID: 2730432893611075015}
   - component: {fileID: 3031712532669733518}
   - component: {fileID: 6634107778333951864}
-  - component: {fileID: 2674305858950287429}
   - component: {fileID: 6233231991179712656}
   m_Layer: 5
   m_Name: PausePanel
@@ -2713,22 +2739,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2674305858950287429
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5521010539138929266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4091313942c8a744811fb1deb4ca84c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SettingsPanelManager
-  graphicsDropdown: {fileID: 960723439019565280}
-  musicSlider: {fileID: 4575297756432923135}
-  sfxSlider: {fileID: 8434923308517067571}
-  mainAudioMixer: {fileID: 24100000, guid: 702cd432c97f06749b221584c75770fd, type: 2}
 --- !u!114 &6233231991179712656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3424,7 +3434,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2674305858950287429}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsPanelManager, Assembly-CSharp
         m_MethodName: ChangeMusicVolume
         m_Mode: 1
@@ -3661,8 +3671,7 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
+  hoverSound: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
   sfxCooldown: 0.5
 --- !u!1 &8807911154911258162
 GameObject:
@@ -3946,6 +3955,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 446
       objectReference: {fileID: 0}
+    - target: {fileID: 6372314664576116309, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
+    - target: {fileID: 6806564301114012215, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
+    - target: {fileID: 8820853419828330955, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3969,6 +3990,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4952868479610292942}
     m_Modifications:
+    - target: {fileID: 629271539277239403, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 3319583882869532253, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4053,10 +4078,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 3498423818391380561}
+    - target: {fileID: 3437128371835576960, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: slideDistance
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 3963568835645602240, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
+    - target: {fileID: 4267728299083482470, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 5190582514668597107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -268
@@ -4065,6 +4102,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 33
       objectReference: {fileID: 0}
+    - target: {fileID: 6159294329191441538, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     - target: {fileID: 6889716651518092404, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -4093,6 +4134,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: CreditPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 7919921704380169891, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8555699527463465107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: hoverSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

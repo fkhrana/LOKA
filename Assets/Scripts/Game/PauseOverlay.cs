@@ -1,14 +1,26 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EasyTransition;
 
 public class PauseOverlay : MonoBehaviour
 {
     private enum PanelType { None, Pause, Tutorial, Credits }
 
-    [Header("Panels")] [SerializeField] private GameObject pausePanel, tutorialPanel, creditPanel;
-    [Header("Buttons")] [SerializeField] private GameObject retryButton;
-    [Header("Cutscene")] [SerializeField] private CutsceneManager cutsceneManager;
-    [Header("Scene Names")] [SerializeField] private string gameplaySceneName = "Gameplay", mainMenuSceneName = "MainMenu";
+    [Header("Panels")]
+    [SerializeField] private GameObject pausePanel, tutorialPanel, creditPanel;
+
+    [Header("Buttons")]
+    [SerializeField] private GameObject retryButton;
+
+    [Header("Cutscene")]
+    [SerializeField] private CutsceneManager cutsceneManager;
+
+    [Header("Scene Names")]
+    [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)", mainMenuSceneName = "MainMenu";
+
+    [Header("Transition")]
+    [SerializeField] private TransitionSettings transitionSettings;
+    [SerializeField] private float loadDelay = 0.5f;
 
     private PanelType currentPanel = PanelType.None;
     private bool isClosing = false;
@@ -19,6 +31,7 @@ public class PauseOverlay : MonoBehaviour
         CloseAllPanels();
         UpdateRetryButton();
     }
+
     private void OnDestroy() => Time.timeScale = 1f;
 
     private void OpenPanel(PanelType type)
@@ -32,7 +45,7 @@ public class PauseOverlay : MonoBehaviour
         }
         switch (type)
         {
-            case PanelType.Pause:   pausePanel?.SetActive(true); break;
+            case PanelType.Pause: pausePanel?.SetActive(true); break;
             case PanelType.Tutorial: tutorialPanel?.SetActive(true); break;
             case PanelType.Credits: creditPanel?.SetActive(true); break;
         }
@@ -85,10 +98,25 @@ public class PauseOverlay : MonoBehaviour
     public void OpenCredits() => OpenPanel(PanelType.Credits);
     public void CloseCredits() => CloseWithEffect(creditPanel, PanelType.Credits);
 
+    // Timing scene-switch sudah dihandle sepenuhnya oleh TransitionManager
+    // (dia load scene baru TEPAT saat cut point / curtain full menutup layar).
+    // Tidak perlu preload manual.
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        CurtainsAnimation.TransitionToScene(mainMenuSceneName);
+        StopAllCoroutines();
+        CloseAllPanels();
+
+        var tm = TransitionManager.Instance();
+        if (tm != null && transitionSettings != null)
+        {
+            tm.Transition(mainMenuSceneName, transitionSettings, loadDelay);
+        }
+        else
+        {
+            Debug.LogWarning("[PauseOverlay] TransitionManager or Settings missing, loading directly.");
+            SceneManager.LoadScene(mainMenuSceneName);
+        }
     }
 
     public void Retry()
