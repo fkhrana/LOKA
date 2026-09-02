@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using EasyTransition;
@@ -6,19 +8,16 @@ public class MainMenu : MonoBehaviour
 {
     private enum PanelType { None, Setting, Collection, Level, Credits, Tutorial }
 
-    [Header("Panels")]
-    [SerializeField] private GameObject settingPanel;
-    [SerializeField] private GameObject koleksiPanel;
-    [SerializeField] private GameObject levelPanel;
-    [SerializeField] private GameObject creditsPanel;
-    [SerializeField] private GameObject tutorialPanel;
+    [Serializable]
+    private class PanelData
+    {
+        public PanelType type;
+        public GameObject panel;
+        public GameObject button;
+    }
 
-    [Header("Buttons")]
-    [SerializeField] private GameObject settingButton;
-    [SerializeField] private GameObject koleksiButton;
-    [SerializeField] private GameObject levelButton;
-    [SerializeField] private GameObject creditsButton;
-    [SerializeField] private GameObject tutorialButton;
+    [Header("Panels")]
+    [SerializeField] private PanelData[] panels;
 
     [Header("SFX")]
     [SerializeField] private AudioClip clickSound;
@@ -30,58 +29,25 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private TransitionSettings transitionSettings;
     [SerializeField] private float loadDelay = 0.5f;
 
-    [Header("Main Menu Content (Entry Animation)")]
-    [Tooltip("GameObject 'Main Menu Content' yang punya Animator untuk animasi masuk (Buttons, Title, dsb).")]
+    [Header("Main Menu Content")]
     [SerializeField] private GameObject mainMenuContent;
-    [Tooltip("Nama state Animator yang jadi entry animation, misal 'Show' atau 'Enter'. Kosongkan untuk pakai default state layer 0.")]
     [SerializeField] private string entryStateName = "";
 
     private PanelType currentPanel = PanelType.None;
+    private bool isTransitioning = false;
+    private bool isPanelAnimating = false;
 
-    // ============================================
-    //  AWAKE - RESET STATE (SCOPE DIBATASI!)
-    // ============================================
     private void Awake()
     {
         Time.timeScale = 1f;
-
-        // Hanya reset Animator & CanvasGroup DI DALAM PANEL, bukan di Main Menu Content.
-        ResetPanelState(settingPanel);
-        ResetPanelState(koleksiPanel);
-        ResetPanelState(levelPanel);
-        ResetPanelState(creditsPanel);
-        ResetPanelState(tutorialPanel);
-
         CloseAllPanels();
     }
 
-    private void ResetPanelState(GameObject panel)
-    {
-        if (panel == null) return;
-
-        Animator[] anims = panel.GetComponentsInChildren<Animator>(true);
-        foreach (var anim in anims)
-        {
-            if (anim == null) continue;
-            anim.Rebind();
-            anim.Update(0f);
-        }
-
-        CanvasGroup[] cgs = panel.GetComponentsInChildren<CanvasGroup>(true);
-        foreach (var cg in cgs)
-        {
-            if (cg == null) continue;
-            cg.alpha = 1f;
-            cg.interactable = true;
-            cg.blocksRaycasts = true;
-        }
-    }
-
-    // ============================================
-    //  START - INISIALISASI TAMBAHAN
-    // ============================================
     private void Start()
     {
+        CleanupAllTransitions();
+        ResetAllCanvases();
+        ForceShowMainMenu();
         CloseAllPanels();
         PlayEntryAnimation();
 
@@ -90,126 +56,216 @@ public class MainMenu : MonoBehaviour
             OpenTutorial();
             PlayerPrefs.SetInt("OpenTutorial", 0);
         }
+
+        StartCoroutine(EnsureMainMenuVisible());
     }
 
-    // Paksa restart animasi entry Main Menu Content dari frame 0,
-    // TIDAK mengandalkan auto-play/Culling Mode saja. Ini menghindari kasus
-    // di mana Animator sudah "kepakai" momentumnya duluan sebelum curtain
-    // transisi selesai fade-out (race condition timing).
-    private void PlayEntryAnimation()
+    private PanelData GetPanelData(PanelType type)
     {
-        if (mainMenuContent == null) return;
+        foreach (var p in panels)
+            if (p.type == type) return p;
+        return null;
+    }
 
-        Animator[] anims = mainMenuContent.GetComponentsInChildren<Animator>(true);
-        foreach (var anim in anims)
+    private void OpenPanel(PanelType type)
+    {
+        if (currentPanel == type || isPanelAnimating) return;
+
+        PlayClickSFX();
+
+        if (currentPanel != PanelType.None)
         {
-            if (anim == null) continue;
-
-            // Rebind dulu supaya bersih dari state sebelumnya
-            anim.Rebind();
-            anim.Update(0f);
-
-            if (!string.IsNullOrEmpty(entryStateName))
+            isPanelAnimating = true;
+            ClosePanel(currentPanel, () =>
             {
-                // Paksa play state tertentu dari awal (normalizedTime = 0)
-                anim.Play(entryStateName, 0, 0f);
-            }
-            else
-            {
-                // Kalau nama state tidak diisi, paksa play default state layer 0 dari awal
-                anim.Play(0, 0, 0f);
-            }
-
-            anim.Update(0f);
+                isPanelAnimating = false;
+                OpenPanelDirect(type);
+            });
+        }
+        else
+        {
+            OpenPanelDirect(type);
         }
     }
 
-    // ---------- PANEL MANAGEMENT ----------
-
-    private void OpenPanel(GameObject panel, GameObject button, PanelType type)
+    private void OpenPanelDirect(PanelType type)
     {
-        if (currentPanel == type) return;
+        var data = GetPanelData(type);
+        if (data == null) return;
 
-        PlayClickSFX();
-        CloseAllPanels();
-
-        panel?.SetActive(true);
-        button?.SetActive(false);
+        data.panel?.SetActive(true);
+        data.button?.SetActive(false);
         currentPanel = type;
     }
 
-    private void ClosePanel(GameObject panel, GameObject button, PanelType type)
+    private void ClosePanel(PanelType type, Action onComplete = null)
     {
-        if (currentPanel != type) return;
+        if (currentPanel != type)
+        {
+            onComplete?.Invoke();
+            return;
+        }
 
         PlayClickSFX();
 
-        EffectPanel dialog = panel?.GetComponent<EffectPanel>();
-        if (dialog != null)
-            dialog.CloseDialog();
-        else
-            panel?.SetActive(false);
+        var data = GetPanelData(type);
+        if (data == null)
+        {
+            currentPanel = PanelType.None;
+            onComplete?.Invoke();
+            return;
+        }
 
-        button?.SetActive(true);
-        currentPanel = PanelType.None;
+        var effect = data.panel?.GetComponent<EffectPanel>();
+        if (effect != null)
+        {
+            effect.CloseDialog(() =>
+            {
+                data.button?.SetActive(true);
+                data.panel?.SetActive(false);
+                currentPanel = PanelType.None;
+                onComplete?.Invoke();
+            });
+        }
+        else
+        {
+            data.button?.SetActive(true);
+            data.panel?.SetActive(false);
+            currentPanel = PanelType.None;
+            onComplete?.Invoke();
+        }
     }
 
     private void CloseAllPanels()
     {
-        settingPanel?.SetActive(false);
-        koleksiPanel?.SetActive(false);
-        levelPanel?.SetActive(false);
-        creditsPanel?.SetActive(false);
-        tutorialPanel?.SetActive(false);
-
-        settingButton?.SetActive(true);
-        koleksiButton?.SetActive(true);
-        levelButton?.SetActive(true);
-        creditsButton?.SetActive(true);
-        tutorialButton?.SetActive(true);
-
+        foreach (var data in panels)
+        {
+            if (data.panel != null) data.panel.SetActive(false);
+            if (data.button != null) data.button.SetActive(true);
+        }
         currentPanel = PanelType.None;
     }
 
-    // ---------- SCENE ----------
+    public void OpenSetting() => OpenPanel(PanelType.Setting);
+    public void CloseSetting() => ClosePanel(PanelType.Setting);
+
+    public void OpenCollection() => OpenPanel(PanelType.Collection);
+    public void CloseCollection() => ClosePanel(PanelType.Collection);
+
+    public void OpenLevel() => OpenPanel(PanelType.Level);
+    public void CloseLevel() => ClosePanel(PanelType.Level);
+
+    public void OpenCredit() => OpenPanel(PanelType.Credits);
+    public void CloseCredit() => ClosePanel(PanelType.Credits);
+
+    public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
+    public void CloseTutorial() => ClosePanel(PanelType.Tutorial);
 
     public void TapToStart()
     {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         PlayClickSFX();
+        AudioManager.Instance?.StopBGM();
 
         var tm = TransitionManager.Instance();
         if (tm != null && transitionSettings != null)
-        {
             tm.Transition(nextSceneName, transitionSettings, loadDelay);
-        }
         else
         {
-            Debug.LogWarning("[MainMenu] TransitionManager or Settings missing, loading directly.");
             SceneManager.LoadScene(nextSceneName);
+            isTransitioning = false;
         }
     }
 
-    // ---------- SETTING ----------
-    public void OpenSetting() => OpenPanel(settingPanel, settingButton, PanelType.Setting);
-    public void CloseSetting() => ClosePanel(settingPanel, settingButton, PanelType.Setting);
+    // ----- Cleaning & UI Force (tidak berubah) -----
+    private void CleanupAllTransitions()
+    {
+        foreach (var t in FindObjectsByType<Transition>(FindObjectsSortMode.None))
+            if (t != null) Destroy(t.gameObject);
 
-    // ---------- COLLECTION ----------
-    public void OpenCollection() => OpenPanel(koleksiPanel, koleksiButton, PanelType.Collection);
-    public void CloseCollection() => ClosePanel(koleksiPanel, koleksiButton, PanelType.Collection);
+        foreach (var obj in FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+        {
+            if (obj == null) continue;
+            string name = obj.name.ToLower();
+            if ((name.Contains("transition") || name.Contains("brush")) && obj.GetComponent<TransitionManager>() == null)
+                Destroy(obj);
+        }
 
-    // ---------- LEVEL ----------
-    public void OpenLevel() => OpenPanel(levelPanel, levelButton, PanelType.Level);
-    public void CloseLevel() => ClosePanel(levelPanel, levelButton, PanelType.Level);
+        foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        {
+            if (canvas != null && canvas.gameObject.scene.name != gameObject.scene.name)
+                canvas.gameObject.SetActive(false);
+        }
+    }
 
-    // ---------- CREDIT ----------
-    public void OpenCredit() => OpenPanel(creditsPanel, creditsButton, PanelType.Credits);
-    public void CloseCredit() => ClosePanel(creditsPanel, creditsButton, PanelType.Credits);
+    private void ResetAllCanvases()
+    {
+        foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
+        {
+            if (canvas == null || canvas.gameObject.scene.name != gameObject.scene.name) continue;
+            canvas.sortingOrder = 0;
+            canvas.gameObject.SetActive(true);
+            var cg = canvas.GetComponent<CanvasGroup>();
+            if (cg != null)
+            {
+                cg.alpha = 1f;
+                cg.interactable = true;
+                cg.blocksRaycasts = true;
+            }
+        }
+    }
 
-    // ---------- TUTORIAL ----------
-    public void OpenTutorial() => OpenPanel(tutorialPanel, tutorialButton, PanelType.Tutorial);
-    public void CloseTutorial() => ClosePanel(tutorialPanel, tutorialButton, PanelType.Tutorial);
+    private void ForceShowMainMenu()
+    {
+        if (mainMenuContent == null)
+        {
+            Debug.LogError("[MainMenu] mainMenuContent tidak di-assign!");
+            return;
+        }
 
-    // ---------- SFX ----------
+        mainMenuContent.SetActive(true);
+        foreach (var cg in mainMenuContent.GetComponentsInChildren<CanvasGroup>(true))
+        {
+            cg.alpha = 1f;
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        }
+        foreach (Transform child in mainMenuContent.GetComponentsInChildren<Transform>(true))
+            child.gameObject.SetActive(true);
+    }
+
+    private IEnumerator EnsureMainMenuVisible()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        if (mainMenuContent == null) yield break;
+
+        foreach (var cg in mainMenuContent.GetComponentsInChildren<CanvasGroup>(true))
+        {
+            cg.alpha = 1f;
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        }
+        mainMenuContent.SetActive(true);
+    }
+
+    private void PlayEntryAnimation()
+    {
+        if (mainMenuContent == null) return;
+        foreach (var anim in mainMenuContent.GetComponentsInChildren<Animator>(true))
+        {
+            if (anim == null) continue;
+            anim.Rebind();
+            anim.Update(0f);
+            if (!string.IsNullOrEmpty(entryStateName))
+                anim.Play(entryStateName, 0, 0f);
+            else
+                anim.Play(0, 0, 0f);
+            anim.Update(0f);
+        }
+    }
+
     private void PlayClickSFX()
     {
         if (clickSound != null && AudioManager.Instance != null)

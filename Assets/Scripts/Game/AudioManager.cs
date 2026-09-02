@@ -5,188 +5,242 @@ using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance { get; private set; }
+public static AudioManager Instance { get; private set; }
 
-    [Header("Mixer")]
-    [SerializeField] private AudioMixer audioMixer;
-    private const string MIXER_BGM = "MusicV";
-    private const string MIXER_SFX = "SFXV";
+[Header("Mixer")]
+[SerializeField] private AudioMixer audioMixer;
+private const string MIXER_BGM = "MusicV";
+private const string MIXER_SFX = "SFXV";
 
-    [Header("Sources")]
-    [SerializeField] private AudioSource bgmSource;
-    [SerializeField] private AudioSource sfxSource;
-    [SerializeField] private AudioSource hoverSource;
+[Header("Sources")]
+[SerializeField] private AudioSource bgmSource;
+[SerializeField] private AudioSource sfxSource;
+[SerializeField] private AudioSource hoverSource;
 
-    [Header("Default Volume")]
-    [Range(0.0001f, 1f)] [SerializeField] private float defaultBgmVolume = 0.75f;
-    [Range(0.0001f, 1f)] [SerializeField] private float defaultSfxVolume = 0.75f;
+[Header("Default Volume")]
+[Range(0.0001f, 1f)] [SerializeField] private float defaultBgmVolume = 0.75f;
+[Range(0.0001f, 1f)] [SerializeField] private float defaultSfxVolume = 0.75f;
 
-    private string currentBgmName;
-    private readonly Dictionary<string, AudioClip> sfxCache = new Dictionary<string, AudioClip>();
-    private float currentBgmVolume;
-    private float currentSfxVolume;
+private string currentBgmName;
+private readonly Dictionary<string, AudioClip> sfxCache = new Dictionary<string, AudioClip>();
+private float currentBgmVolume;
+private float currentSfxVolume;
 
-    private void Awake()
+private void Awake()
+{
+    if (Instance != null)
     {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-
-        // Auto‑buat AudioSource kalau belum di‑assign di Inspector
-        if (bgmSource == null) bgmSource = CreateAudioSource("BGM", true);
-        if (sfxSource == null) sfxSource = CreateAudioSource("SFX", false);
-        if (hoverSource == null) hoverSource = CreateAudioSource("HOVER", false);
+        Destroy(gameObject);
+        return;
     }
 
-    private AudioSource CreateAudioSource(string name, bool loop)
+    Instance = this;
+    DontDestroyOnLoad(gameObject);
+
+    if (bgmSource == null)
+        bgmSource = CreateAudioSource("BGM", true);
+
+    if (sfxSource == null)
+        sfxSource = CreateAudioSource("SFX", false);
+
+    if (hoverSource == null)
+        hoverSource = CreateAudioSource("HOVER", false);
+}
+
+private AudioSource CreateAudioSource(string name, bool loop)
+{
+    GameObject go = new GameObject(name + "_Source");
+    go.transform.SetParent(transform);
+
+    AudioSource src = go.AddComponent<AudioSource>();
+    src.loop = loop;
+    src.playOnAwake = false;
+    src.volume = 1f;
+
+    return src;
+}
+
+private void Start()
+{
+    SetBGMVolume(defaultBgmVolume);
+    SetSFXVolume(defaultSfxVolume);
+}
+
+private void OnEnable()
+{
+    SceneManager.sceneLoaded += OnSceneLoaded;
+}
+
+private void OnDisable()
+{
+    SceneManager.sceneLoaded -= OnSceneLoaded;
+}
+
+private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+{
+    if (Instance == null)
+        return;
+
+    switch (scene.name)
     {
-        GameObject go = new GameObject(name + "_Source");
-        go.transform.SetParent(transform);
-        AudioSource src = go.AddComponent<AudioSource>();
-        src.loop = loop;
-        src.playOnAwake = false;
-        src.volume = 1f;
-        return src;
+        case "MainMenu":
+            PlayBGM("Surat Ajaib Desa");
+            break;
+
+        case "CutScenee":
+           StopBGM();
+            break;
+
+        case "MainGameplay(Drawing)":
+            PlayBGM("Broken Festival Kite");
+            break;
+
+        case "Level2":
+            PlayBGM("Broken Festival Kite");
+            break;
+
+        default:
+            StopBGM();
+            break;
     }
+}
 
-    private void Start()
-    {
-        SetBGMVolume(defaultBgmVolume);
-        SetSFXVolume(defaultSfxVolume);
-    }
+// ========== BGM ==========
 
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-    }
+public void PlayBGM(AudioClip clip)
+{
+    if (clip == null || bgmSource == null || currentBgmName == clip.name)
+        return;
 
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
-    }
+    currentBgmName = clip.name;
+    bgmSource.clip = clip;
+    bgmSource.loop = true;
+    bgmSource.Play();
+}
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (Instance == null) return;
+public void PlayBGM(string resourceName, bool forceRestart = false)
+{
+    if (string.IsNullOrEmpty(resourceName))
+        return;
 
-        switch (scene.name)
-        {
-            case "MainMenu":
-                PlayBGM("Surat Ajaib Desa");
-                break;
-            case "CutScenee":
-                PlayBGM("Surat Ajaib Desa", true);
-                break;
-            case "MainGameplay(Drawing)":
-                PlayBGM("Broken Festival Kite");
-                break;
-            case "Level2":
-                PlayBGM("Broken Festival Kite");
-                break;
-            default:
-                StopBGM();
-                break;
-        }
-    }
+    if (!forceRestart && currentBgmName == resourceName)
+        return;
 
-    // ========== BGM ==========
-    public void PlayBGM(AudioClip clip)
-    {
-        if (clip == null || bgmSource == null || currentBgmName == clip.name) return;
-        currentBgmName = clip.name;
-        bgmSource.clip = clip;
-        bgmSource.loop = true;
-        bgmSource.Play();
-    }
-
-    public void PlayBGM(string resourceName, bool forceRestart = false)
-    {
-        if (string.IsNullOrEmpty(resourceName)) return;
-        if (!forceRestart && currentBgmName == resourceName) return;
-        if (forceRestart) currentBgmName = null;
-
-        AudioClip clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
-        if (clip != null) PlayBGM(clip);
-    }
-
-    public void StopBGM()
-    {
-        if (bgmSource == null) return;
-        bgmSource.Stop();
+    if (forceRestart)
         currentBgmName = null;
+
+    AudioClip clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+
+    if (clip != null)
+        PlayBGM(clip);
+}
+
+public void StopBGM()
+{
+    if (bgmSource == null)
+        return;
+
+    bgmSource.Stop();
+    currentBgmName = null;
+}
+
+// ========== SFX ==========
+
+public void PlaySFX(AudioClip clip)
+{
+    if (clip != null && sfxSource != null)
+        sfxSource.PlayOneShot(clip);
+}
+
+public void PlaySFX(string clipName)
+{
+    if (string.IsNullOrEmpty(clipName))
+        return;
+
+    if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
+    {
+        clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
+
+        if (clip != null)
+            sfxCache[clipName] = clip;
     }
 
-    // ========== SFX (One‑Shot) ==========
-    public void PlaySFX(AudioClip clip)
+    PlaySFX(clip);
+}
+
+// ========== HOVER SFX ==========
+
+public void PlayHoverSFX(AudioClip clip)
+{
+    if (clip == null || hoverSource == null)
+        return;
+
+    hoverSource.clip = clip;
+    hoverSource.Play();
+}
+
+public void PlayHoverSFX(string clipName)
+{
+    if (string.IsNullOrEmpty(clipName))
+        return;
+
+    if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
     {
-        if (clip != null && sfxSource != null)
-            sfxSource.PlayOneShot(clip);
+        clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
+
+        if (clip != null)
+            sfxCache[clipName] = clip;
     }
 
-    public void PlaySFX(string clipName)
-    {
-        if (string.IsNullOrEmpty(clipName)) return;
+    PlayHoverSFX(clip);
+}
 
-        if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
-        {
-            clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
-            if (clip != null) sfxCache[clipName] = clip;
-        }
-        PlaySFX(clip);
+public void StopHoverSFX()
+{
+    if (hoverSource != null)
+        hoverSource.Stop();
+}
+
+// ========== VOLUME ==========
+
+public void SetBGMVolume(float sliderValue)
+{
+    float value = Mathf.Clamp(sliderValue, 0.0001f, 1f);
+    currentBgmVolume = value;
+
+    if (audioMixer != null)
+    {
+        float dB = Mathf.Log10(value) * 20f;
+        audioMixer.SetFloat(MIXER_BGM, dB);
     }
-
-    // ========== HOVER SFX (bisa di‑stop) ==========
-    public void PlayHoverSFX(AudioClip clip)
+    else if (bgmSource != null)
     {
-        if (clip == null || hoverSource == null) return;
-        hoverSource.clip = clip;
-        hoverSource.Play();
+        bgmSource.volume = value;
     }
+}
 
-    public void StopHoverSFX()
+public void SetSFXVolume(float sliderValue)
+{
+    float value = Mathf.Clamp(sliderValue, 0.0001f, 1f);
+    currentSfxVolume = value;
+
+    if (audioMixer != null)
     {
+        float dB = Mathf.Log10(value) * 20f;
+        audioMixer.SetFloat(MIXER_SFX, dB);
+    }
+    else
+    {
+        if (sfxSource != null)
+            sfxSource.volume = value;
+
         if (hoverSource != null)
-            hoverSource.Stop();
+            hoverSource.volume = value;
     }
+}
 
-    // ========== VOLUME ==========
-    public void SetBGMVolume(float sliderValue)
-    {
-        float value = Mathf.Clamp(sliderValue, 0.0001f, 1f);
-        currentBgmVolume = value;
+public float GetCurrentBGMVolume() => currentBgmVolume;
 
-        if (audioMixer != null)
-        {
-            float dB = Mathf.Log10(value) * 20f;
-            audioMixer.SetFloat(MIXER_BGM, dB);
-        }
-        else if (bgmSource != null)
-        {
-            bgmSource.volume = value;
-        }
-    }
+public float GetCurrentSFXVolume() => currentSfxVolume;
 
-    public void SetSFXVolume(float sliderValue)
-    {
-        float value = Mathf.Clamp(sliderValue, 0.0001f, 1f);
-        currentSfxVolume = value;
-
-        if (audioMixer != null)
-        {
-            float dB = Mathf.Log10(value) * 20f;
-            audioMixer.SetFloat(MIXER_SFX, dB);
-        }
-        else
-        {
-            if (sfxSource != null) sfxSource.volume = value;
-            if (hoverSource != null) hoverSource.volume = value;
-        }
-    }
-
-    public float GetCurrentBGMVolume() => currentBgmVolume;
-    public float GetCurrentSFXVolume() => currentSfxVolume;
 }

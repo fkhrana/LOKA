@@ -1,151 +1,225 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using EasyTransition;
 
 public class PuzzleManager : MonoBehaviour
 {
-    public static PuzzleManager Instance;
+public static PuzzleManager Instance;
+[Header("Drag semua slot (RectangleMini) ke sini")]
+public List<DropZone> allSlots;
 
-    [Header("Drag semua slot (RectangleMini) ke sini")]
-    public List<DropZone> allSlots;
+[Header("Referensi UI & VFX")]
+public GameObject puzzlePanel;
+public GameObject rewardPanel;
+public GameObject winPanel;
+public PowerManager powerManager;
+public float delayBeforeWinPanel = 2f;
 
-    [Header("Referensi UI & VFX")]
-    public GameObject puzzlePanel;
-    public GameObject rewardPanel;
-    public GameObject winPanel;
-    public PowerManager powerManager; 
-    public float delayBeforeWinPanel = 2f;
-    [Tooltip("Optional: GestureDrawer yang mengelola input gesture. Dinonaktifkan saat puzzle panel muncul.")]
-    public GestureDrawer gestureDrawer;
+[Tooltip("Optional: GestureDrawer yang mengelola input gesture. Dinonaktifkan saat puzzle panel muncul.")]
+public GestureDrawer gestureDrawer;
 
-    private bool wave1PuzzleShown;
-    private bool puzzleCompleted;
+[Header("Transition")]
+[SerializeField] private TransitionSettings transitionSettings;
+[SerializeField] private float transitionDelay = 0.5f;
 
-    void Awake()
+private TransitionManager transitionManager;
+
+private bool wave1PuzzleShown;
+private bool puzzleCompleted;
+
+void Awake()
+{
+    Instance = this;
+
+    if (gestureDrawer == null)
+        gestureDrawer = FindAnyObjectByType<GestureDrawer>();
+}
+
+public void ShowPuzzleOnce()
+{
+    if (wave1PuzzleShown)
+        return;
+
+    wave1PuzzleShown = true;
+    puzzleCompleted = false;
+
+    if (puzzlePanel != null)
     {
-        Instance = this;
-        if (gestureDrawer == null)
-            gestureDrawer = FindAnyObjectByType<GestureDrawer>();
+        DisableGestureInput();
+
+        transitionManager = TransitionManager.Instance();
+
+        if (transitionManager != null && transitionSettings != null)
+        {
+            transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
+            transitionManager.Transition(transitionSettings, transitionDelay);
+        }
+        else
+        {
+            ActivatePuzzlePanel();
+        }
     }
+}
 
-    public void ShowPuzzleOnce()
+public void ShowPuzzlePanel()
+{
+    if (puzzlePanel != null)
     {
-        if (wave1PuzzleShown)
+        DisableGestureInput();
+
+        transitionManager = TransitionManager.Instance();
+
+        if (transitionManager != null && transitionSettings != null)
+        {
+            transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
+            transitionManager.Transition(transitionSettings, transitionDelay);
+        }
+        else
+        {
+            ActivatePuzzlePanel();
+        }
+    }
+}
+
+private void ActivatePuzzlePanel()
+{
+    if (puzzlePanel != null)
+        puzzlePanel.SetActive(true);
+
+    if (transitionManager != null)
+        transitionManager.onTransitionCutPointReached -= ActivatePuzzlePanel;
+}
+
+private void OnDestroy()
+{
+    if (transitionManager != null)
+    {
+        transitionManager.onTransitionCutPointReached -= ActivatePuzzlePanel;
+        transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
+    }
+}
+
+private void DisableGestureInput()
+{
+    if (gestureDrawer != null)
+    {
+        gestureDrawer.ResetGestureInput();
+        gestureDrawer.enabled = false;
+    }
+}
+
+private void EnableGestureInput()
+{
+    if (gestureDrawer != null)
+        gestureDrawer.enabled = true;
+}
+
+public bool IsPuzzleCompleted()
+{
+    return puzzleCompleted;
+}
+
+public void MarkPuzzleCompleted()
+{
+    puzzleCompleted = true;
+}
+
+public void CheckPuzzleComplete()
+{
+    foreach (DropZone slot in allSlots)
+    {
+        if (!slot.isFilled)
             return;
-
-        wave1PuzzleShown = true;
-        puzzleCompleted = false;
-        if (puzzlePanel != null)
-        {
-            DisableGestureInput();
-            puzzlePanel.SetActive(true);
-        }
     }
 
-    public void ShowPuzzlePanel()
+    OnPuzzleComplete();
+}
+
+void OnPuzzleComplete()
+{
+    if (puzzleCompleted)
+        return;
+
+    Debug.Log("Puzzle selesai!");
+    MarkPuzzleCompleted();
+    StartCoroutine(PuzzleCompleteSequence());
+}
+
+IEnumerator PuzzleCompleteSequence()
+{
+    if (gestureDrawer != null)
+        EnableGestureInput();
+
+    if (powerManager != null)
     {
-        if (puzzlePanel != null)
-        {
-            DisableGestureInput();
-            puzzlePanel.SetActive(true);
-        }
+        powerManager.SetUnlocked();
+        StartCoroutine(PopEffect(powerManager.transform));
     }
 
-    private void DisableGestureInput()
+    yield return new WaitForSeconds(delayBeforeWinPanel);
+
+    transitionManager = TransitionManager.Instance();
+
+    if (transitionManager != null && transitionSettings != null)
     {
-        if (gestureDrawer != null)
-        {
-            gestureDrawer.ResetGestureInput();
-            gestureDrawer.enabled = false;
-        }
+        transitionManager.onTransitionCutPointReached += ActivateRewardPanel;
+        transitionManager.Transition(transitionSettings, transitionDelay);
     }
-
-    private void EnableGestureInput()
+    else
     {
-        if (gestureDrawer != null)
-            gestureDrawer.enabled = true;
+        ActivateRewardPanel();
     }
+}
 
-    public bool IsPuzzleCompleted()
+private void ActivateRewardPanel()
+{
+    if (puzzlePanel != null)
+        puzzlePanel.SetActive(false);
+
+    if (rewardPanel != null)
+        rewardPanel.SetActive(true);
+
+    if (transitionManager != null)
+        transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
+}
+
+IEnumerator PopEffect(Transform target)
+{
+    float duration = 0.4f;
+    float time = 0f;
+
+    Vector3 originalScale = target.localScale;
+    Vector3 punchScale = originalScale * 1.3f;
+
+    while (time < duration / 2)
     {
-        return puzzleCompleted;
+        time += Time.deltaTime;
+
+        target.localScale = Vector3.Lerp(
+            originalScale,
+            punchScale,
+            time / (duration / 2)
+        );
+
+        yield return null;
     }
 
-    public void MarkPuzzleCompleted()
+    time = 0f;
+
+    while (time < duration / 2)
     {
-        puzzleCompleted = true;
+        time += Time.deltaTime;
+
+        target.localScale = Vector3.Lerp(
+            punchScale,
+            originalScale,
+            time / (duration / 2)
+        );
+
+        yield return null;
     }
 
-    public void CheckPuzzleComplete()
-    {
-        foreach (DropZone slot in allSlots)
-        {
-            if (!slot.isFilled) return;
-        }
-
-        OnPuzzleComplete();
-    }
-
-    void OnPuzzleComplete()
-    {
-        if (puzzleCompleted)
-            return;
-
-        Debug.Log("Puzzle selesai!");
-        MarkPuzzleCompleted();
-        StartCoroutine(PuzzleCompleteSequence());
-    }
-
-    IEnumerator PuzzleCompleteSequence()
-    {
-        // Tetap tampilkan puzzle panel selama delay, jangan langsung di-nonaktifkan
-        if (gestureDrawer != null)
-            EnableGestureInput();
-
-        if (powerManager != null)
-        {
-            powerManager.SetUnlocked();          // ganti tampilan jadi unlocked
-            StartCoroutine(PopEffect(powerManager.transform)); // animasi pop
-        }
-
-        yield return new WaitForSeconds(delayBeforeWinPanel);
-
-        // Tutup puzzle panel sebelum menampilkan reward panel
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(false);
-
-        if (rewardPanel != null)
-        {
-            rewardPanel.SetActive(true);
-            Time.timeScale = 0f;
-        }
-    }
-
-    IEnumerator PopEffect(Transform target)
-    {
-        float duration = 0.4f;
-        float time = 0f;
-        Vector3 originalScale = target.localScale;
-        Vector3 punchScale = originalScale * 1.3f; // sedikit membesar dulu
-
-        // Membesar dulu
-        while (time < duration / 2)
-        {
-            time += Time.deltaTime;
-            target.localScale = Vector3.Lerp(originalScale, punchScale, time / (duration / 2));
-            yield return null;
-        }
-
-        time = 0f;
-        // Balik ke ukuran normal
-        while (time < duration / 2)
-        {
-            time += Time.deltaTime;
-            target.localScale = Vector3.Lerp(punchScale, originalScale, time / (duration / 2));
-            yield return null;
-        }
-
-        target.localScale = originalScale;
-    }
-
+    target.localScale = originalScale;
+}
 }

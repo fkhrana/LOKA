@@ -1,22 +1,31 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using EasyTransition;
 
 public class PauseOverlay : MonoBehaviour
 {
-    private enum PanelType { None, Pause, Tutorial, Credits }
+    private enum PanelType { None, Pause, Tutorial }
+
+    [System.Serializable]
+    private class PanelData
+    {
+        public PanelType type;
+        public GameObject panel;
+    }
 
     [Header("Panels")]
-    [SerializeField] private GameObject pausePanel, tutorialPanel, creditPanel;
+    [SerializeField] private PanelData[] panels;
 
     [Header("Buttons")]
-    [SerializeField] private GameObject retryButton;
+    [SerializeField] private Button pauseButton;
 
     [Header("Cutscene")]
     [SerializeField] private CutsceneManager cutsceneManager;
 
     [Header("Scene Names")]
-    [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)", mainMenuSceneName = "MainMenu";
+    [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -24,38 +33,56 @@ public class PauseOverlay : MonoBehaviour
 
     private PanelType currentPanel = PanelType.None;
     private bool isClosing = false;
+    private bool isTransitioning = false;
 
     private void Start()
     {
         Time.timeScale = 1f;
         CloseAllPanels();
-        UpdateRetryButton();
+        CleanupStaleTransitions();
     }
 
-    private void OnDestroy() => Time.timeScale = 1f;
+    private void OnDestroy()
+    {
+        LeanTween.cancel(gameObject);
+        Time.timeScale = 1f;
+    }
+
+    private PanelData GetPanelData(PanelType type)
+    {
+        foreach (var p in panels)
+            if (p.type == type) return p;
+        return null;
+    }
+
+    private GameObject GetPanel(PanelType type) => GetPanelData(type)?.panel;
 
     private void OpenPanel(PanelType type)
     {
-        if (currentPanel == type || isClosing) return;
+        if (currentPanel == type || isClosing || isTransitioning) return;
+
         CloseAllPanels();
+
         if (type != PanelType.None)
         {
             Time.timeScale = 0f;
             cutsceneManager?.PauseVideo();
         }
-        switch (type)
-        {
-            case PanelType.Pause: pausePanel?.SetActive(true); break;
-            case PanelType.Tutorial: tutorialPanel?.SetActive(true); break;
-            case PanelType.Credits: creditPanel?.SetActive(true); break;
-        }
+
+        GetPanel(type)?.SetActive(true);
         currentPanel = type;
     }
 
-    private void ClosePanel(PanelType type)
+    private void ClosePanel(PanelType type, System.Action onComplete = null)
     {
-        if (currentPanel != type || isClosing) return;
+        if (currentPanel != type || isClosing || isTransitioning)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
         isClosing = true;
+
         if (type == PanelType.Pause)
         {
             CloseAllPanels();
@@ -63,49 +90,77 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.ResumeVideo();
             currentPanel = PanelType.None;
         }
-        else
+        else // Tutorial → kembali ke Pause dengan fade-in
         {
             CloseAllPanels();
-            pausePanel?.SetActive(true);
+            var pausePanel = GetPanel(PanelType.Pause);
+            if (pausePanel != null)
+            {
+                pausePanel.SetActive(true);
+                FadeIn(pausePanel);
+            }
             currentPanel = PanelType.Pause;
         }
+
         isClosing = false;
+        onComplete?.Invoke();
     }
 
     private void CloseAllPanels()
     {
-        pausePanel?.SetActive(false);
-        tutorialPanel?.SetActive(false);
-        creditPanel?.SetActive(false);
+        foreach (var data in panels)
+            if (data.panel != null) data.panel.SetActive(false);
     }
 
-    private void CloseWithEffect(GameObject panel, PanelType type)
+    private void CloseWithEffect(PanelType type)
     {
+        var panel = GetPanel(type);
         if (panel == null || currentPanel != type) return;
-        EffectPanel effect = panel.GetComponent<EffectPanel>();
+
+        var effect = panel.GetComponent<EffectPanel>();
         if (effect != null)
             effect.CloseDialog(() => ClosePanel(type));
         else
             ClosePanel(type);
     }
 
+    // Helper fade-in
+    private void FadeIn(GameObject obj)
+    {
+        if (obj == null) return;
+        var cg = obj.GetComponent<CanvasGroup>();
+        if (cg == null) cg = obj.AddComponent<CanvasGroup>();
+        cg.alpha = 0f;
+        LeanTween.alphaCanvas(cg, 1f, 0.25f).setIgnoreTimeScale(true);
+    }
+
     public void OpenPause() => OpenPanel(PanelType.Pause);
-    public void ClosePause() => CloseWithEffect(pausePanel, PanelType.Pause);
+    public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
     public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
-    public void CloseTutorial() => CloseWithEffect(tutorialPanel, PanelType.Tutorial);
+    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
 
-    public void OpenCredits() => OpenPanel(PanelType.Credits);
-    public void CloseCredits() => CloseWithEffect(creditPanel, PanelType.Credits);
-
-    // Timing scene-switch sudah dihandle sepenuhnya oleh TransitionManager
-    // (dia load scene baru TEPAT saat cut point / curtain full menutup layar).
-    // Tidak perlu preload manual.
     public void GoToMainMenu()
     {
+        if (isTransitioning) return;
+
+        isTransitioning = true;
+        if (pauseButton != null) pauseButton.interactable = false;
+
+        LeanTween.cancel(gameObject);
         Time.timeScale = 1f;
         StopAllCoroutines();
         CloseAllPanels();
+
+        if (string.IsNullOrEmpty(mainMenuSceneName))
+        {
+            Debug.LogError("[PauseOverlay] Main Menu Scene Name kosong!", this);
+            isTransitioning = false;
+            if (pauseButton != null) pauseButton.interactable = true;
+            return;
+        }
+
+        CleanupStaleTransitions();
 
         var tm = TransitionManager.Instance();
         if (tm != null && transitionSettings != null)
@@ -114,18 +169,39 @@ public class PauseOverlay : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[PauseOverlay] TransitionManager or Settings missing, loading directly.");
+            Debug.LogWarning("[PauseOverlay] TransitionManager atau TransitionSettings tidak ditemukan. Scene akan dibuka langsung.");
             SceneManager.LoadScene(mainMenuSceneName);
+            isTransitioning = false;
+            if (pauseButton != null) pauseButton.interactable = true;
         }
     }
 
-    public void Retry()
+    private void CleanupStaleTransitions()
     {
-        if (!IsGameplayScene()) return;
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        var oldTransitions = FindObjectsByType<Transition>(FindObjectsSortMode.None);
+        foreach (var t in oldTransitions)
+        {
+            if (t == null) continue;
+            if (IsTransitionStillAnimating(t)) continue;
+            Debug.LogWarning("[PauseOverlay] Menemukan Transition instance lama (selesai), menghapus: " + t.gameObject.name);
+            Destroy(t.gameObject);
+        }
     }
 
-    private bool IsGameplayScene() => SceneManager.GetActiveScene().name == gameplaySceneName;
-    private void UpdateRetryButton() { if (retryButton) retryButton.SetActive(IsGameplayScene()); }
+    private bool IsTransitionStillAnimating(Transition t)
+    {
+        Transform[] panels = { t.transitionPanelIN, t.transitionPanelOUT };
+        foreach (var panel in panels)
+        {
+            if (panel == null || !panel.gameObject.activeInHierarchy) continue;
+            foreach (var anim in panel.GetComponentsInChildren<Animator>(true))
+            {
+                if (anim == null || !anim.isActiveAndEnabled) continue;
+                var state = anim.GetCurrentAnimatorStateInfo(0);
+                if (state.normalizedTime < 1f && !anim.IsInTransition(0))
+                    return true;
+            }
+        }
+        return false;
+    }
 }

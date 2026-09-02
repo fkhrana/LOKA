@@ -1,0 +1,64 @@
+[33mf58c5e4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m audio system
+[33m106c45a[m add panel pause to main game, fix script collection panel scene and fix some bugs
+[33m230c3b0[m vfx item non collectable + vfx bar
+[33m5fd19e1[m vfx item drop n collected demo final
+[33mdf1f807[m vfx item drop, item collect, book triggered
+[33mcb890ab[m Update Aksara NA.asset
+[33m137d5a1[m Reapply "Merge branch 'main' of https://github.com/fkhrana/LOKA"
+[33m5854c2a[m Revert "Merge branch 'main' of https://github.com/fkhrana/LOKA"
+[33mece40c9[m Merge branch 'main' of https://github.com/fkhrana/LOKA
+[33m535e8fa[m fix bugs script
+[33m99dba74[m add VFX to item drops in gameplay
+[33md390d9a[m add transisi
+[33m4a2ecb6[m new scene level 2 + enemy variation
+[33mc1054d7[m vfx brush stroke
+[33m6510a4b[m vfx item drop
+[33m86a1de8[m fix bugs
+[33m627eec8[m leveling updated script
+[33m5350c7b[m fixing viewport size koleksi
+[33ma2f17f6[m inventory updated ui
+[33ma5e616a[m fix bugs on tutorial panel
+[33m26fb5d1[m fixing bugs and add pause overlay
+[33mf7c367c[m updt
+[33m4009e75[m add reward panel + new win panel to gameplay scene
+[33m7350647[m update ui healthBar & levelBar
+[33m96709b8[m updated final result animation
+[33mf610b51[m speed enemy balik normal
+[33m9e3ae4a[m add animation on powerup UI
+[33m6ae6014[m update enemy behaviour
+[33mcd2c933[m polish gameplayloop (minus powerup)
+[33m5e4b738[m add panel endgame in gameplay and fix ui ux for all scene
+[33me2c4786[m add new font
+[33m35f471a[m fixing main menu, cut scene
+[33mbed6575[m update main gameplay + puzzle dalam scene
+[33m35576c5[m fix menu scene
+[33m8717b8a[m tutorial dan settings
+[33m5193a2e[m sistem drop item
+[33m7edcd6f[m buat SO enemy, icon aksara
+[33mea5c7ae[m test masukin ui, rapiin folder
+[33m0374832[m updated scene and add asset
+[33mc39d48a[m add cut scene
+[33md3a0355[m updated scene
+[33m00e9cee[m animasi enemy, update mekanik hp player
+[33mc3ee5c5[m update mini game scene
+[33m5d7a6a4[m updates on mini game scene
+[33m2480ed9[m winscene updates bugs scripts
+[33m3cffb45[m updating winscene
+[33m603dec9[m updt gesture challenge manager
+[33mbc6eeb4[m updt script
+[33m5a9995b[m buat tool record template gesture, fixing gesture&detection
+[33mec3e135[m enemy spawn
+[33m3922c2e[m Update Win.unity
+[33m5da2ddd[m updated leveling and fix bugs
+[33ma6ec6eb[m updated scene leveling
+[33m77a6b6a[m menmabahkan elemen diwin scene
+[33med8a63c[m add HP bar
+[33mf4735e8[m gesture challenge
+[33m9d1ee8a[m add new scene only
+[33mbbdd4c7[m update script, add new scenes and button
+[33m8e1981d[m add button and script
+[33mb399d34[m core mechanic gambar + detection
+[33m7ceadbd[m add folder art, scripts
+[33md2c02c1[m .
+[33m24fa9ff[m clone project unity
+[33m2b3b7d0[m Initial commit

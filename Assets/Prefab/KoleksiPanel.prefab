@@ -243,9 +243,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogBox
   box: {fileID: 8318990986544926984}
   background: {fileID: 4084390519288987058}
+  boxCanvasGroup: {fileID: 0}
   slideDistance: 50
-  fadeDuration: 0.3
+  fadeDuration: 0.5
   slideDuration: 0.5
+  isStacked: 1
 --- !u!1 &3483249621741229200
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,8 +375,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
   - {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
   - {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-  contentParent: {fileID: 5121333952988762634}
+  scrollRect: {fileID: 0}
+  viewport: {fileID: 0}
+  content: {fileID: 0}
   itemPrefab: {fileID: 2719305783349800307, guid: 7a76325fca2c514478661888deface40, type: 3}
+  leftArrowButton: {fileID: 0}
+  rightArrowButton: {fileID: 0}
+  centerScale: 1.15
+  edgeScale: 0.85
+  scaleFalloffDistance: 300
+  snapLerpSpeed: 10
   cardPopup: {fileID: 8552920932162077237}
 --- !u!1 &4046315892237370653
 GameObject:
@@ -1356,9 +1366,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: 
+  clickSound: ButtonClick
 --- !u!1 &8987697429529063821
 GameObject:
   m_ObjectHideFlags: 0
@@ -1603,3 +1612,4 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   soundLibrary: {fileID: 0}
   flipDuration: 0.35
+  blurOverlay: {fileID: 0}

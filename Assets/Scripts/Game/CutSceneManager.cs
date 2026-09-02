@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.SceneManagement;
 using EasyTransition;
 
 public class CutsceneManager : MonoBehaviour
@@ -9,7 +10,6 @@ public class CutsceneManager : MonoBehaviour
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
-    [SerializeField] private string homeSceneName = "MainMenu";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -23,7 +23,10 @@ public class CutsceneManager : MonoBehaviour
             videoPlayer = GetComponent<VideoPlayer>();
 
         if (videoPlayer == null)
-            Debug.LogWarning("VideoPlayer not assigned in CutsceneManager!", this);
+            Debug.LogWarning(
+                "VideoPlayer not assigned in CutsceneManager!",
+                this
+            );
     }
 
     private void OnEnable()
@@ -42,31 +45,41 @@ public class CutsceneManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         videoPlayer?.Play();
+
+        // Jaga-jaga kalau ada Transition instance lama yang masih nyangkut,
+        // tapi HANYA yang animasinya udah selesai — yang masih jalan dibiarin
+        CleanupStaleTransitions();
     }
 
     public void PauseVideo()
     {
-        if (isTransitioning) return;
+        if (isTransitioning)
+            return;
+
         PlayButtonClickSFX();
         videoPlayer?.Pause();
     }
 
     public void ResumeVideo()
     {
-        if (isTransitioning) return;
+        if (isTransitioning)
+            return;
+
         PlayButtonClickSFX();
         videoPlayer?.Play();
     }
 
     public void OnSkipClicked()
     {
-        if (isTransitioning) return;
+        if (isTransitioning)
+            return;
 
         PlayButtonClickSFX();
+
         Time.timeScale = 1f;
+
         videoPlayer?.Stop();
 
-        // Hanya panggil LoadNextScene() – di dalamnya sudah urus transisi
         LoadNextScene();
     }
 
@@ -77,33 +90,107 @@ public class CutsceneManager : MonoBehaviour
 
     private void OnVideoFinished(VideoPlayer vp)
     {
-        if (isTransitioning) return;
+        if (isTransitioning)
+            return;
+
         Time.timeScale = 1f;
+
         LoadNextScene();
     }
 
     private void LoadNextScene()
     {
-        if (isTransitioning) return;
-
-        isTransitioning = true;
+        if (isTransitioning)
+            return;
 
         if (string.IsNullOrEmpty(nextSceneName))
         {
-            Debug.LogError("nextSceneName is empty!", this);
-            isTransitioning = false;
+            Debug.LogError(
+                "nextSceneName is empty!",
+                this
+            );
+
             return;
         }
 
-        var tm = TransitionManager.Instance();
+        isTransitioning = true;
+
+        // Bersihkan instance Transition lama yang SUDAH SELESAI sebelum bikin yang baru
+        CleanupStaleTransitions();
+
+        TransitionManager tm = TransitionManager.Instance();
+
         if (tm != null && transitionSettings != null)
         {
-            tm.Transition(nextSceneName, transitionSettings, loadDelay);
+            tm.Transition(
+                nextSceneName,
+                transitionSettings,
+                loadDelay
+            );
         }
         else
         {
-            Debug.LogWarning("TransitionManager or Settings missing, loading scene directly.");
-            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+            Debug.LogWarning(
+                "TransitionManager or Settings missing, loading scene directly."
+            );
+
+            SceneManager.LoadScene(nextSceneName);
+            isTransitioning = false;
         }
+    }
+
+    // Cari instance Transition lama, tapi HANYA hapus yang animasinya
+    // sudah benar-benar selesai. Yang masih di tengah animasi (OUT belum kelar)
+    // DIBIARKAN, biar Transition.cs sendiri yang beresin via destroyTime-nya.
+    private void CleanupStaleTransitions()
+    {
+        EasyTransition.Transition[] oldTransitions =
+            FindObjectsByType<EasyTransition.Transition>(FindObjectsSortMode.None);
+
+        foreach (var t in oldTransitions)
+        {
+            if (t == null) continue;
+
+            if (IsTransitionStillAnimating(t))
+            {
+                // Animasi masih jalan, jangan diganggu
+                continue;
+            }
+
+            Debug.LogWarning(
+                "[CutsceneManager] Menemukan Transition instance lama (selesai), menghapus: "
+                + t.gameObject.name
+            );
+            Destroy(t.gameObject);
+        }
+    }
+
+    // Cek apakah salah satu Animator di panel IN/OUT transition ini masih
+    // di tengah animasi (normalizedTime < 1). Kalau panelnya nggak aktif
+    // atau nggak ada Animator, dianggap sudah selesai (aman dihapus).
+    private bool IsTransitionStillAnimating(EasyTransition.Transition t)
+    {
+        Transform[] panels = { t.transitionPanelIN, t.transitionPanelOUT };
+
+        foreach (var panel in panels)
+        {
+            if (panel == null || !panel.gameObject.activeInHierarchy)
+                continue;
+
+            Animator[] anims = panel.GetComponentsInChildren<Animator>(true);
+            foreach (var anim in anims)
+            {
+                if (anim == null || !anim.isActiveAndEnabled)
+                    continue;
+
+                var state = anim.GetCurrentAnimatorStateInfo(0);
+
+                // Kalau animasi belum sampai akhir dan bukan looping, berarti masih jalan
+                if (state.normalizedTime < 1f && !anim.IsInTransition(0))
+                    return true;
+            }
+        }
+
+        return false;
     }
 }
