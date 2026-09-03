@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 1d2108467db8f214884f10ea8fbf9396
+guid: 2adca3877482c5a48abaf7a684222967
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -225096028615581113
-    second: QA_AKSARA (1)_0
+      213: -4632678068619573093
+    second: KA_AKSARA_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: QA_AKSARA (1)_0
+      name: KA_AKSARA_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7426406ca5c40ecf0800000000000000
-      internalID: -225096028615581113
+      spriteID: b98003177db65bfb0800000000000000
+      internalID: -4632678068619573093
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      QA_AKSARA (1)_0: -225096028615581113
+      KA_AKSARA_0: -4632678068619573093
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
