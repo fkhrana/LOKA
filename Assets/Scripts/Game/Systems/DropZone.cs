@@ -41,7 +41,8 @@
             var img = draggedItem.GetComponent<UnityEngine.UI.Image>();
             if (img != null) img.raycastTarget = false;
 
-            AudioManager.Instance.PlaySFX(correctSFX);
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(correctSFX);
 
             PuzzleManager.Instance.CheckPuzzleComplete();
 
@@ -52,7 +53,8 @@
             // SALAH
             draggedItem.ReturnToStart();
 
-            AudioManager.Instance.PlaySFX(wrongSFX);
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(wrongSFX);
 
             // trigger shake
             if (rectTransform != null)

@@ -151,6 +151,8 @@ IEnumerator PuzzleCompleteSequence()
     if (gestureDrawer != null)
         EnableGestureInput();
 
+    PowerManager.UnlockPowerUp();
+
     if (powerManager != null)
     {
         powerManager.SetUnlocked();

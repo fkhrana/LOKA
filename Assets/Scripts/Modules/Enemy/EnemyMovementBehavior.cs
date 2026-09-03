@@ -27,6 +27,8 @@ public class EnemyMovementBehavior : MonoBehaviour
     private float contactCooldownTimer;
     private float moveDirection = -1f;
     private bool isActive;
+    private bool isMovementPaused;
+    private static bool allMovementPaused;
     private bool isKnockedBack;
     private float bobTimer;
     private float baseY;
@@ -151,8 +153,21 @@ public class EnemyMovementBehavior : MonoBehaviour
         Debug.Log($"EnemyMovementBehavior.SetActive active={isActive} moveDirection={moveDirection}");
     }
 
+    public void SetMovementPaused(bool paused)
+    {
+        isMovementPaused = paused;
+    }
+
+    public static void SetAllMovementPaused(bool paused)
+    {
+        allMovementPaused = paused;
+    }
+
     public void Tick()
     {
+        if (isMovementPaused || allMovementPaused)
+            return;
+
         Debug.Log($"EnemyMovementBehavior.Tick isActive={isActive} isKnockedBack={isKnockedBack} moveDirection={moveDirection} position={transform.position} localPos={transform.localPosition}");
 
         if (contactCooldownTimer > 0f)

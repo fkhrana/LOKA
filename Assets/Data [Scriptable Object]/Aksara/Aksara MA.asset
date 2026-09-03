@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AksaraData
   gestureShape: 9
   aksaraName: MA
-  iconSprite: {fileID: 21300000, guid: 78859fc0f442a5447bc5d637e4cb8cc0, type: 3}
-  fragmentSprite: {fileID: 21300000, guid: 78859fc0f442a5447bc5d637e4cb8cc0, type: 3}
+  iconSprite: {fileID: 21300000, guid: b5360279332dfc843bb5582e593ad81d, type: 3}
+  fragmentSprite: {fileID: 21300000, guid: b5360279332dfc843bb5582e593ad81d, type: 3}
