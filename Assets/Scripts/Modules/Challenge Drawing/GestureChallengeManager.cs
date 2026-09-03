@@ -94,7 +94,7 @@ public class GestureChallengeManager : MonoBehaviour
         return CurrentRequiredGesture != GestureShape.None;
     }
 
-    private void HandleGestureRecognized(List<Vector2> points, GestureRecognitionResult result)
+    private void HandleGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
         if (EnemyGestureCommand.HasActiveEnemyChallenges())
             return;

@@ -49,6 +49,11 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new WaGestureTemplate());
         templateProviders.Add(new LaGestureTemplate());
         templateProviders.Add(new MaGestureTemplate());
+        templateProviders.Add(new BaGestureTemplate());
+        templateProviders.Add(new FaGestureTemplate());
+        templateProviders.Add(new QaGestureTemplate());
+        templateProviders.Add(new QaSingleStrokeTemplate());
+        templateProviders.Add(new GaGestureTemplate());
 
         foreach (var provider in templateProviders)
         {
@@ -206,7 +211,11 @@ public enum GestureShape
     Da,
     Wa,
     La,
-    Ma
+    Ma,
+    Ba,
+    Fa,
+    Qa,
+    Ga
 }
 
 public struct GestureRecognitionResult

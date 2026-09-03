@@ -63,18 +63,22 @@ public class GestureTemplateRecorder : MonoBehaviour
 #endif
     }
 
-    private void OnGestureRecognized(List<Vector2> points, GestureRecognitionResult result)
+    private void OnGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
-        if (points == null || points.Count == 0)
+        if (strokes == null || strokes.Count == 0)
         {
             Debug.LogWarning("GestureTemplateRecorder: Gesture kosong diterima.");
             return;
         }
 
         recordedStrokes.Clear();
-        recordedStrokes.Add(new List<Vector2>(points));
+        foreach (var stroke in strokes)
+        {
+            if (stroke != null && stroke.Count > 0)
+                recordedStrokes.Add(new List<Vector2>(stroke));
+        }
 
-        Debug.Log($"Gesture direkam | Jumlah titik: {points.Count} | Hasil: {result.DetectedShape}");
+        Debug.Log($"Gesture direkam | Stroke count: {recordedStrokes.Count} | Hasil: {result.DetectedShape}");
     }
 
     [ContextMenu("Save Template")]

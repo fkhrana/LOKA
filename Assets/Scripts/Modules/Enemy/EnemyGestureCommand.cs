@@ -21,6 +21,7 @@ public class EnemyGestureCommand : MonoBehaviour
     private int remainingCorrectGestures;
     private bool isSubscribed;
     private bool challengeActive;
+    private static List<List<Vector2>> cachedStrokes;
     private static List<Vector2> cachedStrokePoints;
     private static bool cachedStrokeHandled;
     private EnemyMovementBehavior movementBehavior;
@@ -168,13 +169,21 @@ public class EnemyGestureCommand : MonoBehaviour
         UpdatePrompt();
     }
 
-    private void HandleGestureRecognized(List<Vector2> points, GestureRecognitionResult result)
+    private void HandleGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
         if (!challengeActive)
             return;
 
-        if (cachedStrokePoints != points)
+        var points = new List<Vector2>();
+        foreach (var stroke in strokes)
         {
+            if (stroke != null)
+                points.AddRange(stroke);
+        }
+
+        if (cachedStrokes != strokes)
+        {
+            cachedStrokes = strokes;
             cachedStrokePoints = points;
             cachedStrokeHandled = false;
         }

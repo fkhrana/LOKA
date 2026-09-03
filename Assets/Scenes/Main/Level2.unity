@@ -2944,72 +2944,57 @@ MonoBehaviour:
   spawnAreaSize: {x: 5, y: 6}
   spawnPoints: []
   spawnedParent: {fileID: 0}
-  spawnEntries:
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
-    weight: 1
+  spawnEntries: []
   waves:
   - waveName: Wave1
     delayBeforeSpawn: 0
     groups:
-    - groupName: NA
+    - groupName: BA
       enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
+      aksaraData: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
       enemyCount: 2
-    - groupName: DA
+    - groupName: FA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+      aksaraData: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
       enemyCount: 1
-    - groupName: DA
+    - groupName: FA
       enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+      aksaraData: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
       enemyCount: 1
   - waveName: Wave2
     delayBeforeSpawn: 0
     groups:
-    - groupName: WA
+    - groupName: KA
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-      enemyCount: 1
-    - groupName: LA
-      enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
-      enemyCount: 1
-    - groupName: MA
-      enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+      aksaraData: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
       enemyCount: 2
-    - groupName: WA
-      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+    - groupName: QA
+      enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
+      aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
       enemyCount: 1
-    - groupName: LA
-      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+    - groupName: GA
+      enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
+      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
       enemyCount: 1
-    - groupName: MA
+    - groupName: KA
       enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+      aksaraData: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
       enemyCount: 1
-    - groupName: WA
+    - groupName: QA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+      enemyCount: 1
+    - groupName: GA
+      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
+      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+      enemyCount: 1
+    - groupName: QA
       enemyData: {fileID: 11400000, guid: a7e623bda2e50e44aa4abe33f2900a07, type: 2}
-      aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+      aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
       enemyCount: 1
-    - groupName: LA
+    - groupName: GA
       enemyData: {fileID: 11400000, guid: a7e623bda2e50e44aa4abe33f2900a07, type: 2}
-      aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
       enemyCount: 1
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3

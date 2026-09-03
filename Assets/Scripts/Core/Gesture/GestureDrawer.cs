@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(LineRenderer))]
 public class GestureDrawer : MonoBehaviour
 {
-    public event Action<List<Vector2>, GestureRecognitionResult> GestureRecognized;
+    public event Action<List<List<Vector2>>, GestureRecognitionResult> GestureRecognized;
 
     public LineRenderer lineRenderer;
     public float minPointDistance = 0.05f;
@@ -209,13 +209,13 @@ public class GestureDrawer : MonoBehaviour
         if (GestureRecognizer.Instance != null)
         {
             result = GestureRecognizer.Instance.Recognize(completedStrokes);
-            var flattenedPoints = new List<Vector2>();
+            var recognizedStrokes = new List<List<Vector2>>(completedStrokes.Count);
             foreach (var stroke in completedStrokes)
             {
-                flattenedPoints.AddRange(stroke);
+                recognizedStrokes.Add(new List<Vector2>(stroke));
             }
 
-            GestureRecognized?.Invoke(flattenedPoints, result);
+            GestureRecognized?.Invoke(recognizedStrokes, result);
         }
         else
         {

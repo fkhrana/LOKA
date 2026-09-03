@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f941ffdb488e01b4aba4932a996f0431, type: 3}
-  m_Name: Aksara KA
+  m_Name: Aksara BA
   m_EditorClassIdentifier: Assembly-CSharp::AksaraData
-  gestureShape: 5
-  aksaraName: KA
-  iconSprite: {fileID: 21300000, guid: 65f1fec544a1e7c488ec11e952e2f712, type: 3}
-  fragmentSprite: {fileID: 21300000, guid: 65f1fec544a1e7c488ec11e952e2f712, type: 3}
+  gestureShape: 10
+  aksaraName: BA
+  iconSprite: {fileID: 21300000, guid: bd1d4c42ffe7a944faec7077896f29d0, type: 3}
+  fragmentSprite: {fileID: 21300000, guid: bd1d4c42ffe7a944faec7077896f29d0, type: 3}
