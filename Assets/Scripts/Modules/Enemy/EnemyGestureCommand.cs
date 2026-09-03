@@ -111,8 +111,6 @@ public class EnemyGestureCommand : MonoBehaviour
     {
         if (!challengeActive)
             return;
-
-        Debug.Log($"EnemyGestureCommand.Update challengeActive={challengeActive} hasMovement={(movementBehavior != null)}");
     }
 
     private void LateUpdate()

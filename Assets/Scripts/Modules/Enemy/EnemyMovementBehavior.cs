@@ -168,8 +168,6 @@ public class EnemyMovementBehavior : MonoBehaviour
         if (isMovementPaused || allMovementPaused)
             return;
 
-        Debug.Log($"EnemyMovementBehavior.Tick isActive={isActive} isKnockedBack={isKnockedBack} moveDirection={moveDirection} position={transform.position} localPos={transform.localPosition}");
-
         if (contactCooldownTimer > 0f)
             contactCooldownTimer -= Time.deltaTime;
 
