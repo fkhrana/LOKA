@@ -113,7 +113,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 440, y: -131}
-  m_SizeDelta: {x: 379, y: 501}
+  m_SizeDelta: {x: 320, y: 430}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8044465963711036853
 MonoBehaviour:
@@ -190,6 +190,7 @@ GameObject:
   - component: {fileID: 1540160388274371608}
   - component: {fileID: 5962044250072265518}
   - component: {fileID: 6088049763795122154}
+  - component: {fileID: 9087786594541810373}
   m_Layer: 5
   m_Name: Sound
   m_TagString: Untagged
@@ -213,8 +214,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -100, y: -160}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -73, y: -144}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1540160388274371608
 CanvasRenderer:
@@ -298,6 +299,25 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9087786594541810373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6487313913584098158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 5238334711057857267}
+  hoverScale: 1.1
+  hoverMoveY: 5
+  animDuration: 0.2
+  easeType: 27
+  hoverSound: ButtonHover
+  clickSound: ButtonClick
 --- !u!1 &8217592054805778766
 GameObject:
   m_ObjectHideFlags: 0
@@ -332,8 +352,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 189.50005, y: -250.5}
-  m_SizeDelta: {x: 379, y: 501}
+  m_AnchoredPosition: {x: 160.00005, y: -215}
+  m_SizeDelta: {x: 320, y: 430}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5811943760407976052
 CanvasRenderer:

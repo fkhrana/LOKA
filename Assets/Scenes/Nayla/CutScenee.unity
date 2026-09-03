@@ -1150,18 +1150,6 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 569073198592301151, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_Spacing
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 569073198592301151, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_ChildAlignment
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2066169336786429655, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: ButtonHover
-      objectReference: {fileID: 0}
     - target: {fileID: 2385814002162030061, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1174,18 +1162,6 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: box
-      value: 
-      objectReference: {fileID: 998958537212148069}
-    - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: fadeDuration
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: boxCanvasGroup
-      value: 
-      objectReference: {fileID: 998958537212148072}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1214,10 +1190,6 @@ PrefabInstance:
       propertyPath: cutsceneManager
       value: 
       objectReference: {fileID: 1156163498}
-    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: panels.Array.data[2].panel
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1298,89 +1270,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5521010539138929266, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6233231991179712656, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: fadeDuration
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6233231991179712656, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: boxCanvasGroup
-      value: 
-      objectReference: {fileID: 998958537212148070}
-    - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8298667164989723405, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8298667164989723405, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8298667164989723405, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8298667164989723405, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9112404989998843444, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      propertyPath: hoverSound
-      value: ButtonHover
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 998958537212148072}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
---- !u!224 &998958537212148069 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 4109953128943622298, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &998958537212148070 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 5598835725131252946, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &998958537212148071 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 998958537212148068}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &998958537212148072
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 998958537212148071}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

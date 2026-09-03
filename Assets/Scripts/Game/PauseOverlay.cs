@@ -19,6 +19,7 @@ public class PauseOverlay : MonoBehaviour
 
     [Header("Buttons")]
     [SerializeField] private Button pauseButton;
+    [SerializeField] private Button playButton; // <-- Tambahan tombol Play/Resume (opsional)
 
     [Header("Cutscene")]
     [SerializeField] private CutsceneManager cutsceneManager;
@@ -40,6 +41,10 @@ public class PauseOverlay : MonoBehaviour
         Time.timeScale = 1f;
         CloseAllPanels();
         CleanupStaleTransitions();
+
+        // Jika tombol play di-assign, pastikan listener-nya
+        if (playButton != null)
+            playButton.onClick.AddListener(ResumeGame);
     }
 
     private void OnDestroy()
@@ -124,7 +129,6 @@ public class PauseOverlay : MonoBehaviour
             ClosePanel(type);
     }
 
-    // Helper fade-in
     private void FadeIn(GameObject obj)
     {
         if (obj == null) return;
@@ -134,11 +138,41 @@ public class PauseOverlay : MonoBehaviour
         LeanTween.alphaCanvas(cg, 1f, 0.25f).setIgnoreTimeScale(true);
     }
 
+    // ===== PUBLIC METHODS UNTUK TOMBOL =====
+
     public void OpenPause() => OpenPanel(PanelType.Pause);
     public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
     public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
     public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
+
+    /// <summary>
+    /// Resume game (unpause) – melanjutkan permainan tanpa reset.
+    /// Tombol Play/Resume panggil method ini.
+    /// </summary>
+    public void ResumeGame()
+    {
+        // Jika sedang dalam keadaan pause, tutup panel pause
+        if (currentPanel == PanelType.Pause)
+        {
+            ClosePause();
+        }
+        // Jika sedang di tutorial, tutup tutorial dan pause (atau langsung resume)
+        else if (currentPanel == PanelType.Tutorial)
+        {
+            // Opsi: langsung resume semua (tutup semua panel, set time scale 1)
+            CloseAllPanels();
+            Time.timeScale = 1f;
+            cutsceneManager?.ResumeVideo();
+            currentPanel = PanelType.None;
+        }
+        else
+        {
+            // Jika tidak ada panel terbuka (misal karena bug), pastikan unpause
+            Time.timeScale = 1f;
+            cutsceneManager?.ResumeVideo();
+        }
+    }
 
     public void GoToMainMenu()
     {

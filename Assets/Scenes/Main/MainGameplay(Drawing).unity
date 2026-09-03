@@ -2283,11 +2283,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330683096}
   m_CullTransparentMesh: 1
---- !u!1 &338320777 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3338635625245793224, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 1975329875}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &340210653
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,11 +2435,6 @@ MonoBehaviour:
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
---- !u!82 &363979625 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 5980546486102890553, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
-  m_PrefabInstance: {fileID: 1962207140}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &372075795
 GameObject:
   m_ObjectHideFlags: 0
@@ -9298,7 +9288,7 @@ PrefabInstance:
     - target: {fileID: 8552920932162077237, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: audioSource
       value: 
-      objectReference: {fileID: 363979625}
+      objectReference: {fileID: 0}
     - target: {fileID: 8552920932162077237, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: soundLibrary
       value: 
@@ -9573,7 +9563,7 @@ PrefabInstance:
     - target: {fileID: 8434923308517067571, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 338320777}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
