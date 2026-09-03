@@ -1,56 +1,46 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using System.Collections;
 
 public class AksaraCardPopup : MonoBehaviour
 {
-    [Header("Root")]
-    [SerializeField] private GameObject root;
-    [SerializeField] private RectTransform cardTransform;
-
-    [Header("Faces")]
+    [Header("UI References")]
+    [SerializeField] private Image cardImage;
+    [SerializeField] private Text nameText;
     [SerializeField] private GameObject frontFace;
     [SerializeField] private GameObject backFace;
+    [SerializeField] private CanvasGroup blurOverlay;
+    [SerializeField] private RectTransform cardTransform;
 
-    [Header("Back Content")]
-    [SerializeField] private Image cardImage;
-    [SerializeField] private TMP_Text nameText;
-    [SerializeField] private Button soundButton;
-    [SerializeField] private Button closeButton;
-    [SerializeField] private AudioSource audioSource;
-
-    [Header("Sound")]
-    [SerializeField] private AksaraSoundLibrary soundLibrary;
-
-    [Header("Animation")]
-    [SerializeField] private float flipDuration = 0.35f;
-
-    [Header("Blur Background")]
-    [SerializeField] private CanvasGroup blurOverlay; // overlay untuk efek blur/fade
+    [Header("Animasi")]
+    [SerializeField] private float flipDuration = 0.5f;
 
     private AksaraData currentData;
+    private bool isFlipping = false;
     private Coroutine flipCoroutine;
-    private bool isFlipping;
+    private bool isShowingFront = true;
 
     private void Awake()
     {
-        if (soundButton != null) soundButton.onClick.AddListener(PlayLetterSound);
-        if (closeButton != null) closeButton.onClick.AddListener(Hide);
-        if (root != null) root.SetActive(false);
-        if (blurOverlay != null)
-        {
-            blurOverlay.alpha = 0f;
-            blurOverlay.gameObject.SetActive(false);
-        }
+        if (cardTransform == null)
+            cardTransform = GetComponent<RectTransform>();
+        gameObject.SetActive(false);
+        if (blurOverlay != null) blurOverlay.gameObject.SetActive(false);
     }
 
+    // OVERLOAD 1: tanpa sourceRect (langsung di tengah)
     public void Show(AksaraData data)
+    {
+        Show(data, null);
+    }
+
+    // OVERLOAD 2: dengan sourceRect (animasi dari posisi card)
+    public void Show(AksaraData data, RectTransform sourceRect)
     {
         if (data == null || isFlipping) return;
         currentData = data;
 
-        // Isi konten belakang
+        // Set gambar & teks
         if (cardImage != null)
         {
             cardImage.sprite = data.FragmentSprite != null ? data.FragmentSprite : data.IconSprite;
@@ -58,20 +48,58 @@ public class AksaraCardPopup : MonoBehaviour
         }
         if (nameText != null) nameText.text = data.AksaraName;
 
-        // Reset posisi & face
         SetFace(showFront: true);
-        cardTransform.localScale = Vector3.one;
-        root.SetActive(true);
+        gameObject.SetActive(true);
 
-        // Tampilkan blur overlay
+        // Tampilkan blur
         if (blurOverlay != null)
         {
             blurOverlay.gameObject.SetActive(true);
             LeanTween.alphaCanvas(blurOverlay, 1f, 0.2f).setIgnoreTimeScale(true);
         }
 
-        // Mulai flip ke belakang
         if (flipCoroutine != null) StopCoroutine(flipCoroutine);
+
+        // ===== ANIMASI DARI POSISI CARD (untuk Canvas Overlay) =====
+        if (sourceRect != null && cardTransform.parent is RectTransform parentRect)
+        {
+            // 🔥 Perbaikan: konversi WorldToScreenPoint dengan kamera null (overlay)
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(null, sourceRect.position);
+
+            // Konversi screen point ke local position di parentRect (Canvas)
+            bool success = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                parentRect,
+                screenPoint,
+                null, // kamera null untuk overlay
+                out Vector2 localPoint
+            );
+
+            if (success)
+            {
+                // Set posisi & skala awal (kecil di posisi card)
+                cardTransform.anchoredPosition = localPoint;
+                cardTransform.localScale = Vector3.one * 0.3f;
+
+                // Animasi membesar & bergerak ke tengah
+                LeanTween.move(cardTransform, Vector2.zero, 0.25f)
+                    .setEaseOutQuad()
+                    .setIgnoreTimeScale(true);
+
+                LeanTween.scale(cardTransform, Vector3.one, 0.25f)
+                    .setEaseOutQuad()
+                    .setIgnoreTimeScale(true)
+                    .setOnComplete(() =>
+                    {
+                        flipCoroutine = StartCoroutine(FlipRoutine(toBack: true, hideAfter: false));
+                    });
+
+                return;
+            }
+        }
+
+        // Fallback: langsung di tengah (tanpa animasi dari card)
+        cardTransform.anchoredPosition = Vector2.zero;
+        cardTransform.localScale = Vector3.one;
         flipCoroutine = StartCoroutine(FlipRoutine(toBack: true, hideAfter: false));
     }
 
@@ -79,88 +107,71 @@ public class AksaraCardPopup : MonoBehaviour
     {
         if (isFlipping) return;
         if (flipCoroutine != null) StopCoroutine(flipCoroutine);
-        flipCoroutine = StartCoroutine(FlipRoutine(toBack: false, hideAfter: true));
-    }
 
-    private IEnumerator FlipRoutine(bool toBack, bool hideAfter)
-    {
-        isFlipping = true;
+        SetFace(showFront: true);
+        isShowingFront = true;
 
-        // Efek lift kartu sebelum flip (naik & membesar sedikit)
-        if (toBack)
+        if (blurOverlay != null)
         {
-            LeanTween.scale(cardTransform, Vector3.one * 1.05f, 0.1f).setEaseOutQuad();
-            LeanTween.moveLocalY(cardTransform.gameObject, cardTransform.localPosition.y + 10f, 0.1f);
-            yield return new WaitForSecondsRealtime(0.1f);
+            LeanTween.alphaCanvas(blurOverlay, 0f, 0.2f)
+                .setIgnoreTimeScale(true)
+                .setOnComplete(() => blurOverlay.gameObject.SetActive(false));
         }
 
-        // Animasi flip (skala X)
-        float half = flipDuration / 2f;
-        float elapsed = 0f;
-
-        // Stage 1: Pipihkan (scale.x -> 0)
-        while (elapsed < half)
-        {
-            float t = elapsed / half;
-            float scaleX = Mathf.Lerp(1f, 0f, Mathf.SmoothStep(0f, 1f, t));
-            cardTransform.localScale = new Vector3(scaleX, cardTransform.localScale.y, 1f);
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-        cardTransform.localScale = new Vector3(0f, cardTransform.localScale.y, 1f);
-
-        // Tukar muka
-        SetFace(showFront: !toBack);
-
-        // Stage 2: Lebarkan (scale.x -> 1)
-        elapsed = 0f;
-        while (elapsed < half)
-        {
-            float t = elapsed / half;
-            float scaleX = Mathf.Lerp(0f, 1f, Mathf.SmoothStep(0f, 1f, t));
-            cardTransform.localScale = new Vector3(scaleX, cardTransform.localScale.y, 1f);
-            elapsed += Time.unscaledDeltaTime;
-            yield return null;
-        }
-        cardTransform.localScale = new Vector3(1f, cardTransform.localScale.y, 1f);
-
-        // Efek turun & kembali ke skala normal
-        if (toBack)
-        {
-            LeanTween.scale(cardTransform, Vector3.one, 0.1f).setEaseInQuad();
-            LeanTween.moveLocalY(cardTransform.gameObject, cardTransform.localPosition.y - 10f, 0.1f);
-        }
-
-        isFlipping = false;
-
-        if (hideAfter)
-        {
-            // Fade out blur overlay
-            if (blurOverlay != null)
+        LeanTween.scale(cardTransform, Vector3.one * 0.8f, 0.15f)
+            .setEaseInQuad()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
             {
-                LeanTween.alphaCanvas(blurOverlay, 0f, 0.2f).setIgnoreTimeScale(true)
-                    .setOnComplete(() => {
-                        blurOverlay.gameObject.SetActive(false);
-                        root.SetActive(false);
-                    });
-            }
-            else
-            {
-                root.SetActive(false);
-            }
-        }
+                gameObject.SetActive(false);
+                cardTransform.localScale = Vector3.one;
+                cardTransform.anchoredPosition = Vector2.zero;
+            });
     }
 
     private void SetFace(bool showFront)
     {
         if (frontFace != null) frontFace.SetActive(showFront);
         if (backFace != null) backFace.SetActive(!showFront);
+        isShowingFront = showFront;
     }
 
-    private void PlayLetterSound()
+    private IEnumerator FlipRoutine(bool toBack, bool hideAfter)
     {
-        if (currentData == null || audioSource == null || soundLibrary == null) return;
-        AudioClip clip = soundLibrary.GetClip(currentData.GestureShape);
-        if (clip != null) audioSource.PlayOneShot(clip);
+        isFlipping = true;
+
+        float elapsed = 0f;
+        Vector3 startScale = cardTransform.localScale;
+        Vector3 midScale = new Vector3(0f, startScale.y, startScale.z);
+
+        // Fase 1: mengecil ke 0 di sumbu X
+        while (elapsed < flipDuration / 2f)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / (flipDuration / 2f);
+            float scaleX = Mathf.Lerp(startScale.x, 0f, t);
+            cardTransform.localScale = new Vector3(scaleX, startScale.y, startScale.z);
+            yield return null;
+        }
+        cardTransform.localScale = midScale;
+
+        // Ganti sisi
+        SetFace(showFront: !toBack);
+
+        // Fase 2: membesar kembali
+        elapsed = 0f;
+        while (elapsed < flipDuration / 2f)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = elapsed / (flipDuration / 2f);
+            float scaleX = Mathf.Lerp(0f, startScale.x, t);
+            cardTransform.localScale = new Vector3(scaleX, startScale.y, startScale.z);
+            yield return null;
+        }
+        cardTransform.localScale = startScale;
+
+        isFlipping = false;
+
+        if (hideAfter) Hide();
     }
 }

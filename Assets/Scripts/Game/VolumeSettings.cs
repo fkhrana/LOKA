@@ -3,8 +3,12 @@ using UnityEngine.UI;
 
 public class VolumeSliderController : MonoBehaviour
 {
+    [Header("Sliders")]
     [SerializeField] private Slider bgmSlider;
     [SerializeField] private Slider sfxSlider;
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip sliderTickSound; // Drag suara "tic" di sini
 
     private void OnEnable()
     {
@@ -49,10 +53,18 @@ public class VolumeSliderController : MonoBehaviour
     private void OnBGMChanged(float value)
     {
         AudioManager.Instance?.SetBGMVolume(value);
+        PlaySliderTick();
     }
 
     private void OnSFXChanged(float value)
     {
         AudioManager.Instance?.SetSFXVolume(value);
+        PlaySliderTick();
+    }
+
+    private void PlaySliderTick()
+    {
+        if (sliderTickSound == null) return;
+        AudioManager.Instance?.PlayUISFX(sliderTickSound);
     }
 }

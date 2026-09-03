@@ -1,75 +1,102 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Ditempel di prefab "AksaraCard" yang di-instantiate ke Content (ScrollRect horizontal).
-// Scale-nya diatur dari luar oleh AksaraCarouselUI tiap frame (makin dekat tengah, makin besar).
+/// <summary>
+/// Represents a single Aksara card in the carousel.
+/// Handles visual setup, lock state, click events, and bounce effect.
+/// Gambar card diambil dari AksaraCardVisualLibrary (BUKAN dari data.FragmentSprite/IconSprite),
+/// supaya carousel bisa pakai gambar card yang beda dari yang dipakai di halaman detail lain.
+/// </summary>
 [RequireComponent(typeof(Button))]
 public class AksaraCarouselItemUI : MonoBehaviour
 {
-    [Header("Card Visual")]
-    [SerializeField] private Image cardBackground;        // sprite dari data.FragmentSprite/IconSprite
+    [Header("Visuals")]
+    [SerializeField] private Image cardBackground;
     [SerializeField] private GameObject lockIcon;
+    [SerializeField] private AksaraCardVisualLibrary cardVisualLibrary;
 
     [Header("Audio")]
     [SerializeField] private Button soundButton;
-    [SerializeField] private AudioSource audioSource;
     [SerializeField] private AksaraSoundLibrary soundLibrary;
 
-    [Header("Warna Status")]
+    [Header("Colors")]
     [SerializeField] private Color collectedTint = Color.white;
     [SerializeField] private Color lockedTint = new Color(0.55f, 0.55f, 0.55f, 1f);
 
-    private AksaraData aksaraData;
-    private AksaraCarouselUI parentCarousel;
-    private Button button;
+    private AksaraData data;
+    private AksaraCarouselUI carousel;
     private bool isCollected;
+    private Button mainButton;
+
+    private bool isAnimating = false;
 
     public RectTransform RectTransform => (RectTransform)transform;
-    public AksaraData Data => aksaraData;
+    public AksaraData Data => data;
 
     private void Awake()
     {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
-        if (soundButton != null) soundButton.onClick.AddListener(PlayLetterSound);
+        mainButton = GetComponent<Button>();
+        mainButton.onClick.AddListener(OnClick);
+        if (soundButton)
+            soundButton.onClick.AddListener(PlayLetterSound);
     }
 
-    public void Setup(AksaraData data, AksaraCarouselUI carousel, bool collected)
+    public void Setup(AksaraData newData, AksaraCarouselUI parent, bool collected)
     {
-        aksaraData = data;
-        parentCarousel = carousel;
+        data = newData;
+        carousel = parent;
         isCollected = collected;
 
         if (data == null) return;
 
-        Sprite fragment = data.FragmentSprite != null ? data.FragmentSprite : data.IconSprite;
-        if (cardBackground != null)
+        Sprite sprite = cardVisualLibrary != null ? cardVisualLibrary.GetCardSprite(data) : null;
+
+        if (cardBackground)
         {
-            cardBackground.sprite = fragment;
-            cardBackground.enabled = fragment != null;
+            cardBackground.sprite = sprite;
+            cardBackground.enabled = sprite != null;
             cardBackground.color = isCollected ? collectedTint : lockedTint;
         }
 
-        if (lockIcon != null) lockIcon.SetActive(!isCollected);
-        if (soundButton != null) soundButton.interactable = isCollected;
+        if (lockIcon) lockIcon.SetActive(!isCollected);
+        if (soundButton) soundButton.interactable = isCollected;
     }
 
-    // Dipanggil AksaraCarouselUI tiap frame berdasar jarak ke tengah viewport.
     public void SetScale(float scale)
     {
-        transform.localScale = Vector3.one * scale;
+        if (!isAnimating)
+            transform.localScale = Vector3.one * scale;
+    }
+
+    public void PlayBounceEffect()
+    {
+        if (!isCollected || data == null) return;
+
+        LeanTween.cancel(gameObject);
+        isAnimating = true;
+
+        Vector3 startScale = transform.localScale;
+        LeanTween.scale(gameObject, startScale * 1.2f, 0.1f)
+            .setEasePunch()
+            .setOnComplete(() =>
+            {
+                LeanTween.scale(gameObject, startScale, 0.1f)
+                    .setEaseOutQuad()
+                    .setOnComplete(() => isAnimating = false);
+            });
     }
 
     private void OnClick()
     {
-        if (!isCollected || aksaraData == null || parentCarousel == null) return;
-        parentCarousel.OnItemSelected(this);
+        if (!isCollected || data == null || carousel == null) return;
+        carousel.OnItemSelected(this);
     }
 
     private void PlayLetterSound()
     {
-        if (!isCollected || aksaraData == null || audioSource == null || soundLibrary == null) return;
-        AudioClip clip = soundLibrary.GetClip(aksaraData.GestureShape);
-        if (clip != null) audioSource.PlayOneShot(clip);
+        if (!isCollected || data == null || soundLibrary == null) return;
+        AudioClip clip = soundLibrary.GetClip(data.GestureShape);
+        if (clip != null)
+            AudioManager.Instance?.PlayUISFX(clip);
     }
 }

@@ -20,64 +20,33 @@ public class CarouselSnap : MonoBehaviour
 
     private void Awake()
     {
-        if (scrollRect == null)
-            scrollRect = GetComponent<ScrollRect>();
-
-        if (scrollRect == null)
-        {
-            Debug.LogError("CarouselSnap: ScrollRect tidak ditemukan.");
-            enabled = false;
-            return;
-        }
-
+        scrollRect = scrollRect ?? GetComponent<ScrollRect>();
+        if (scrollRect == null) { enabled = false; return; }
         content = scrollRect.content;
+        if (content == null) { enabled = false; return; }
 
-        if (content == null)
-        {
-            Debug.LogError("CarouselSnap: Content belum diisi.");
-            enabled = false;
-            return;
-        }
-
-        if (nextButton != null)
-            nextButton.onClick.AddListener(NextPage);
-
-        if (prevButton != null)
-            prevButton.onClick.AddListener(PrevPage);
+        if (nextButton) nextButton.onClick.AddListener(NextPage);
+        if (prevButton) prevButton.onClick.AddListener(PrevPage);
     }
 
-    private void Start()
-    {
-        Invoke(nameof(Refresh), 0.05f);
-    }
+    private void Start() => Invoke(nameof(Refresh), 0.05f);
 
     private void OnDestroy()
     {
-        if (nextButton != null)
-            nextButton.onClick.RemoveListener(NextPage);
-
-        if (prevButton != null)
-            prevButton.onClick.RemoveListener(PrevPage);
+        if (nextButton) nextButton.onClick.RemoveListener(NextPage);
+        if (prevButton) prevButton.onClick.RemoveListener(PrevPage);
     }
 
     public void Refresh()
     {
-        if (scrollRect == null)
-            return;
-
-        content = scrollRect.content;
-
-        if (content == null)
-            return;
+        if (scrollRect == null || content == null) return;
 
         int childCount = content.childCount;
-
         if (childCount <= 1)
         {
             positions = null;
             targetIndex = 0;
             isSnapping = false;
-
             UpdateButtons();
             NotifyLevelManager();
             return;
@@ -87,41 +56,29 @@ public class CarouselSnap : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(content);
 
         positions = new float[childCount];
-
         float spacing = 1f / (childCount - 1);
-
         for (int i = 0; i < childCount; i++)
             positions[i] = spacing * i;
 
         targetIndex = 0;
         isSnapping = false;
-
         scrollRect.horizontalNormalizedPosition = 0f;
 
         UpdateButtons();
         NotifyLevelManager();
-
-        Debug.Log("CarouselSnap: " + childCount + " card ditemukan.");
     }
 
     private void Update()
     {
-        if (!isSnapping || positions == null || positions.Length == 0)
-            return;
+        if (!isSnapping || positions == null || positions.Length == 0) return;
 
-        float targetPosition = positions[targetIndex];
-
+        float target = positions[targetIndex];
         scrollRect.horizontalNormalizedPosition = Mathf.Lerp(
-            scrollRect.horizontalNormalizedPosition,
-            targetPosition,
-            Time.unscaledDeltaTime * snapSpeed
-        );
+            scrollRect.horizontalNormalizedPosition, target, Time.unscaledDeltaTime * snapSpeed);
 
-        if (Mathf.Abs(
-            scrollRect.horizontalNormalizedPosition - targetPosition
-        ) < 0.001f)
+        if (Mathf.Abs(scrollRect.horizontalNormalizedPosition - target) < 0.001f)
         {
-            scrollRect.horizontalNormalizedPosition = targetPosition;
+            scrollRect.horizontalNormalizedPosition = target;
             isSnapping = false;
             UpdateButtons();
         }
@@ -129,94 +86,49 @@ public class CarouselSnap : MonoBehaviour
 
     public void NextPage()
     {
-        if (positions == null || targetIndex >= positions.Length - 1)
-            return;
-
+        if (positions == null || targetIndex >= positions.Length - 1) return;
         targetIndex++;
         isSnapping = true;
-
         UpdateButtons();
         NotifyLevelManager();
-
-        Debug.Log("Carousel → Level " + (targetIndex + 1));
     }
 
     public void PrevPage()
     {
-        if (positions == null || targetIndex <= 0)
-            return;
-
+        if (positions == null || targetIndex <= 0) return;
         targetIndex--;
         isSnapping = true;
-
         UpdateButtons();
         NotifyLevelManager();
-
-        Debug.Log("Carousel → Level " + (targetIndex + 1));
     }
 
-    public int GetCurrentIndex()
-    {
-        return targetIndex;
-    }
+    public int GetCurrentIndex() => targetIndex;
 
     private void UpdateButtons()
     {
-        bool hasMultipleCards =
-            positions != null &&
-            positions.Length > 1;
-
-        if (nextButton != null)
-        {
-            nextButton.interactable =
-                hasMultipleCards &&
-                targetIndex < positions.Length - 1;
-        }
-
-        if (prevButton != null)
-        {
-            prevButton.interactable =
-                hasMultipleCards &&
-                targetIndex > 0;
-        }
+        bool hasMultiple = positions != null && positions.Length > 1;
+        if (nextButton) nextButton.interactable = hasMultiple && targetIndex < positions.Length - 1;
+        if (prevButton) prevButton.interactable = hasMultiple && targetIndex > 0;
     }
 
-    private void NotifyLevelManager()
-    {
-        if (LevelManager.Instance != null)
-            LevelManager.Instance.UpdateReplayButton();
-    }
+    private void NotifyLevelManager() => LevelManager.Instance?.UpdateReplayButton();
 
     public void OnEndDrag()
     {
-        if (positions == null || positions.Length == 0)
-            return;
+        if (positions == null || positions.Length == 0) return;
 
-        float currentPosition =
-            scrollRect.horizontalNormalizedPosition;
-
-        float closestDistance = Mathf.Infinity;
-        int closestIndex = 0;
-
+        float currentPos = scrollRect.horizontalNormalizedPosition;
+        int closest = 0;
+        float closestDist = float.MaxValue;
         for (int i = 0; i < positions.Length; i++)
         {
-            float distance = Mathf.Abs(
-                currentPosition - positions[i]
-            );
-
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestIndex = i;
-            }
+            float dist = Mathf.Abs(currentPos - positions[i]);
+            if (dist < closestDist) { closestDist = dist; closest = i; }
         }
 
-        targetIndex = closestIndex;
+        targetIndex = closest;
         isSnapping = true;
-
         UpdateButtons();
         NotifyLevelManager();
-
-        Debug.Log("Carousel Drag → Level " + (targetIndex + 1));
     }
 }

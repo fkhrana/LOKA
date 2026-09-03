@@ -67,7 +67,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Musik
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: -1402888660297386142, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -792,7 +792,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Kualitas
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: -1402888660297386142, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1130,7 +1130,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Suara
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: -1402888660297386142, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1267,7 +1267,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Rendah
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: -1402888660297386142, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1713,9 +1713,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: 
+  clickSound: ButtonClick
 --- !u!1 &5549678176975839497
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,9 +2329,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: 
+  clickSound: ButtonClick
 --- !u!1 &7437830797407084306
 GameObject:
   m_ObjectHideFlags: 0
@@ -2387,6 +2385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VolumeSliderController
   bgmSlider: {fileID: 1412768078439006465}
   sfxSlider: {fileID: 1704083053184497107}
+  sliderTickSound: {fileID: 8300000, guid: 453d1a6fbbd32854bb56e76d2f034fca, type: 3}
 --- !u!1 &7503381950156411394
 GameObject:
   m_ObjectHideFlags: 0
@@ -2510,6 +2509,7 @@ GameObject:
   - component: {fileID: 1129823884630001380}
   - component: {fileID: 2776601561427903777}
   - component: {fileID: 808412105544275748}
+  - component: {fileID: 1773265879042534457}
   m_Layer: 5
   m_Name: SettingsPanel
   m_TagString: Untagged
@@ -2589,11 +2589,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0daf770376e700944b61c5a3bf0864b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogBox
-  box: {fileID: 1165931382255721370}
+  box: {fileID: 3457060057794946140}
   background: {fileID: 2974076657162020112}
+  boxCanvasGroup: {fileID: 1773265879042534457}
   slideDistance: 50
-  fadeDuration: 0.3
+  fadeDuration: 0.5
   slideDuration: 0.5
+  isStacked: 1
+--- !u!225 &1773265879042534457
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7701617808498086987}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7726885855756419953
 GameObject:
   m_ObjectHideFlags: 0
@@ -2744,9 +2758,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: 
+  clickSound: ButtonClick
 --- !u!1 &7873797722647779060
 GameObject:
   m_ObjectHideFlags: 0
@@ -3320,6 +3333,7 @@ GameObject:
   - component: {fileID: 6530108879408270253}
   - component: {fileID: 4469236030355699906}
   - component: {fileID: 3483777904016958542}
+  - component: {fileID: 5810810601683511187}
   m_Layer: 5
   m_Name: Item Label
   m_TagString: Untagged
@@ -3376,7 +3390,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: Option A
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
+  m_fontAsset: {fileID: 0}
   m_sharedMaterial: {fileID: -1402888660297386142, guid: 791c2ea744314c346a5828ddbb70301e, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3446,3 +3460,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5810810601683511187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9117747343536450301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 6530108879408270253}
+  hoverScale: 1.1
+  hoverMoveY: 0
+  animDuration: 0.2
+  easeType: 27
+  hoverSound: ButtonHover
+  clickSound: ButtonClick

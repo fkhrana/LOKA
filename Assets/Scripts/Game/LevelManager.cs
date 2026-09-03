@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class LevelManager : MonoBehaviour
 {
@@ -13,437 +14,209 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private CarouselSnap carouselSnap;
     [SerializeField] private UnityEngine.UI.Button replayButton;
 
-    [Header("Locked Level Icons")]
+    [Header("Level Icons")]
     [SerializeField] private Sprite[] lockedLevelIcons;
-
-    [Header("Unlocked Level Icons")]
     [SerializeField] private Sprite[] unlockedLevelIcons;
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip failureSound;
+    [SerializeField] private AudioClip successSound;
 
     [Header("Gameplay")]
     [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
 
     private int totalLevels;
-
-    private const string LEVEL_UNLOCKED_KEY = "Level_";
-    private const string LEVEL_COMPLETED_KEY = "LevelCompleted_";
-    private const string CURRENT_LEVEL_KEY = "CurrentLevelIndex";
+    private const string UNLOCKED_KEY = "LevelUnlocked_";
+    private const string COMPLETED_KEY = "LevelCompleted_";
+    private const string CURRENT_KEY = "CurrentLevelIndex";
+    private CanvasGroup replayCanvasGroup;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        CalculateTotalLevels();
-        InitializeLevelOne();
+        totalLevels = Mathf.Max(lockedLevelIcons?.Length ?? 0, unlockedLevelIcons?.Length ?? 0);
+        if (totalLevels <= 0) Debug.LogWarning("LevelManager: Tidak ada level.");
+
+        UnlockLevel(0);
+
+        if (replayButton != null)
+        {
+            replayCanvasGroup = replayButton.GetComponent<CanvasGroup>();
+            if (replayCanvasGroup == null)
+                replayCanvasGroup = replayButton.gameObject.AddComponent<CanvasGroup>();
+            replayCanvasGroup.alpha = 1f;
+
+            replayButton.onClick.RemoveAllListeners();
+            replayButton.onClick.AddListener(ReplayWithShake);
+        }
     }
 
     private void Start()
     {
         GenerateLevels();
-
-        Canvas.ForceUpdateCanvases();
-
-        if (carouselSnap != null)
-            carouselSnap.Refresh();
-
+        if (carouselSnap != null) carouselSnap.Refresh();
         UpdateReplayButton();
     }
 
-    // Menghitung jumlah level berdasarkan jumlah icon.
-    private void CalculateTotalLevels()
-    {
-        int lockedCount = lockedLevelIcons != null
-            ? lockedLevelIcons.Length
-            : 0;
-
-        int unlockedCount = unlockedLevelIcons != null
-            ? unlockedLevelIcons.Length
-            : 0;
-
-        totalLevels = Mathf.Max(lockedCount, unlockedCount);
-
-        if (totalLevels <= 0)
-        {
-            Debug.LogWarning("LevelManager: Tidak ada level icon.");
-        }
-    }
-
-    // Level 1 selalu terbuka.
-    private void InitializeLevelOne()
-    {
-        if (totalLevels <= 0)
-            return;
-
-        PlayerPrefs.SetInt(GetUnlockedKey(0), 1);
-        PlayerPrefs.Save();
-    }
-
-    // Membuat key PlayerPrefs untuk status unlock.
-    private string GetUnlockedKey(int index)
-    {
-        return LEVEL_UNLOCKED_KEY + index;
-    }
-
-    // Membuat key PlayerPrefs untuk status selesai.
-    private string GetCompletedKey(int index)
-    {
-        return LEVEL_COMPLETED_KEY + index;
-    }
-
-    // Mengecek apakah level sudah terbuka.
-    public bool IsLevelUnlocked(int levelIndex)
-    {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
-            return false;
-
-        if (levelIndex == 0)
-            return true;
-
-        return PlayerPrefs.GetInt(
-            GetUnlockedKey(levelIndex),
-            0
-        ) == 1;
-    }
-
-    // Mengecek apakah level sudah selesai.
-    public bool IsLevelCompleted(int levelIndex)
-    {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
-            return false;
-
-        return PlayerPrefs.GetInt(
-            GetCompletedKey(levelIndex),
-            0
-        ) == 1;
-    }
-
-    // Mengambil icon sesuai status level.
-    public Sprite GetLevelIcon(int levelIndex)
-    {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
-            return null;
-
-        if (IsLevelUnlocked(levelIndex))
-        {
-            if (unlockedLevelIcons != null &&
-                levelIndex < unlockedLevelIcons.Length)
-            {
-                return unlockedLevelIcons[levelIndex];
-            }
-        }
-        else
-        {
-            if (lockedLevelIcons != null &&
-                levelIndex < lockedLevelIcons.Length)
-            {
-                return lockedLevelIcons[levelIndex];
-            }
-        }
-
-        return null;
-    }
-
-    // Membuat semua card level.
     private void GenerateLevels()
     {
-        if (contentParent == null)
-        {
-            Debug.LogWarning(
-                "LevelManager: Content Parent belum diisi."
-            );
-            return;
-        }
-
-        if (levelCardPrefab == null)
-        {
-            Debug.LogError(
-                "LevelManager: Level Card Prefab belum diisi."
-            );
-            return;
-        }
-
-        ClearLevelCards();
+        if (contentParent == null || levelCardPrefab == null) return;
+        foreach (Transform child in contentParent) Destroy(child.gameObject);
 
         for (int i = 0; i < totalLevels; i++)
         {
-            GameObject card = Instantiate(
-                levelCardPrefab,
-                contentParent
-            );
-
-            LevelUI levelUI = card.GetComponent<LevelUI>();
-
-            if (levelUI == null)
-            {
-                Debug.LogError(
-                    "Level Card Prefab tidak memiliki LevelUI."
-                );
-                continue;
-            }
-
-            levelUI.Setup(
-                i,
-                IsLevelUnlocked(i),
-                GetLevelIcon(i)
-            );
+            var card = Instantiate(levelCardPrefab, contentParent);
+            var levelUI = card.GetComponent<LevelUI>();
+            if (levelUI != null)
+                levelUI.Setup(i, IsUnlocked(i), GetIcon(i));
         }
     }
 
-    // Menghapus card level lama.
-    private void ClearLevelCards()
+    private string GetKey(string prefix, int index) => prefix + index;
+    public bool IsUnlocked(int index) => index == 0 || PlayerPrefs.GetInt(GetKey(UNLOCKED_KEY, index), 0) == 1;
+    public bool IsCompleted(int index) => PlayerPrefs.GetInt(GetKey(COMPLETED_KEY, index), 0) == 1;
+
+    private void UnlockLevel(int index)
     {
-        for (int i = contentParent.childCount - 1; i >= 0; i--)
-        {
-            Destroy(
-                contentParent.GetChild(i).gameObject
-            );
-        }
+        if (index < 0 || index >= totalLevels) return;
+        PlayerPrefs.SetInt(GetKey(UNLOCKED_KEY, index), 1);
     }
 
-    // Menyimpan level yang sedang dimainkan.
-    public void SetCurrentLevel(int levelIndex)
+    private Sprite GetIcon(int index)
     {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
-        {
-            Debug.LogWarning(
-                "LevelManager: Level index tidak valid: " +
-                levelIndex
-            );
-            return;
-        }
-
-        if (!IsLevelUnlocked(levelIndex))
-        {
-            Debug.LogWarning(
-                "Level " +
-                (levelIndex + 1) +
-                " masih locked."
-            );
-            return;
-        }
-
-        PlayerPrefs.SetInt(
-            CURRENT_LEVEL_KEY,
-            levelIndex
-        );
-
-        PlayerPrefs.Save();
-
-        Debug.Log(
-            "Current Level = " +
-            (levelIndex + 1)
-        );
+        if (IsUnlocked(index) && index < unlockedLevelIcons.Length)
+            return unlockedLevelIcons[index];
+        if (!IsUnlocked(index) && index < lockedLevelIcons.Length)
+            return lockedLevelIcons[index];
+        return null;
     }
 
-    // Mengambil index level yang sedang dimainkan.
-    public int GetCurrentLevelIndex()
+    public void CompleteLevel(int index)
     {
-        int index = PlayerPrefs.GetInt(
-            CURRENT_LEVEL_KEY,
-            0
-        );
-
-        if (index < 0 || index >= totalLevels)
-            return 0;
-
-        return index;
-    }
-
-    // Menyelesaikan level yang sedang dimainkan.
-    public void CompleteCurrentLevel()
-    {
-        CompleteLevel(
-            GetCurrentLevelIndex()
-        );
-    }
-
-    // Menandai level selesai dan membuka level berikutnya.
-    public void CompleteLevel(int levelIndex)
-    {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
-        {
-            Debug.LogWarning(
-                "LevelManager: Level index tidak valid."
-            );
-            return;
-        }
-
-        bool alreadyCompleted =
-            IsLevelCompleted(levelIndex);
-
-        PlayerPrefs.SetInt(
-            GetCompletedKey(levelIndex),
-            1
-        );
-
-        PlayerPrefs.SetInt(
-            GetUnlockedKey(levelIndex),
-            1
-        );
-
-        int nextLevel = levelIndex + 1;
-
-        if (nextLevel < totalLevels)
-        {
-            PlayerPrefs.SetInt(
-                GetUnlockedKey(nextLevel),
-                1
-            );
-
-            if (!alreadyCompleted)
-            {
-                Debug.Log(
-                    "Level " +
-                    (levelIndex + 1) +
-                    " selesai!"
-                );
-
-                Debug.Log(
-                    "Level " +
-                    (nextLevel + 1) +
-                    " berhasil di-unlock!"
-                );
-            }
-        }
-        else
-        {
-            Debug.Log("Level terakhir selesai!");
-        }
-
+        if (index < 0 || index >= totalLevels) return;
+        PlayerPrefs.SetInt(GetKey(COMPLETED_KEY, index), 1);
+        UnlockLevel(index);
+        if (index + 1 < totalLevels) UnlockLevel(index + 1);
         PlayerPrefs.Save();
         RefreshUI();
     }
 
-    // Replay level yang sedang dipilih carousel.
+    public void SetCurrentLevel(int index)
+    {
+        if (index < 0 || index >= totalLevels || !IsUnlocked(index)) return;
+        PlayerPrefs.SetInt(CURRENT_KEY, index);
+        PlayerPrefs.Save();
+    }
+
+    public int GetCurrentLevelIndex() => Mathf.Clamp(PlayerPrefs.GetInt(CURRENT_KEY, 0), 0, totalLevels - 1);
+
     public void ReplaySelectedLevel()
     {
-        if (carouselSnap == null)
+        int index = carouselSnap?.GetCurrentIndex() ?? GetCurrentLevelIndex();
+
+        if (!IsUnlocked(index))
         {
-            Debug.LogError(
-                "LevelManager: CarouselSnap belum diisi."
-            );
+            if (failureSound != null)
+                AudioManager.Instance?.PlayUISFX(failureSound);
+            else
+                AudioManager.Instance?.PlayUISFX("ButtonClick");
+            Debug.Log("Level " + (index + 1) + " terkunci.");
             return;
         }
 
-        int selectedIndex =
-            carouselSnap.GetCurrentIndex();
+        if (successSound != null)
+            AudioManager.Instance?.PlayUISFX(successSound);
+        else
+            AudioManager.Instance?.PlayUISFX("ButtonClick");
 
-        ReplayLevel(selectedIndex);
+        SetCurrentLevel(index);
+        SceneManager.LoadScene(gameplaySceneName);
     }
 
-    // Memulai kembali level tertentu.
-    public void ReplayLevel(int levelIndex)
+    public void ReplayWithShake()
     {
-        if (levelIndex < 0 || levelIndex >= totalLevels)
+        int index = carouselSnap?.GetCurrentIndex() ?? GetCurrentLevelIndex();
+
+        if (!IsUnlocked(index))
         {
-            Debug.LogWarning(
-                "LevelManager: Level tidak valid."
-            );
+            if (failureSound != null)
+                AudioManager.Instance?.PlayUISFX(failureSound);
+            else
+                AudioManager.Instance?.PlayUISFX("ButtonClick");
+            Debug.Log("Level " + (index + 1) + " terkunci.");
             return;
         }
 
-        if (!IsLevelUnlocked(levelIndex))
+        if (successSound != null)
+            AudioManager.Instance?.PlayUISFX(successSound);
+        else
+            AudioManager.Instance?.PlayUISFX("ButtonClick");
+
+        // 🔥 Shake card yang dipilih
+        Transform card = GetCardTransform(index);
+        if (card != null)
         {
-            Debug.Log(
-                "Level " +
-                (levelIndex + 1) +
-                " masih terkunci."
-            );
-            return;
+            ShakeEffect shake = card.GetComponent<ShakeEffect>();
+            if (shake != null)
+                shake.PlayShake();
+            else
+                Debug.LogWarning("LevelManager: Card tidak memiliki ShakeEffect!");
         }
 
-        SetCurrentLevel(levelIndex);
-
-        Debug.Log(
-            "Replay Level " +
-            (levelIndex + 1)
-        );
-
-        SceneManager.LoadScene(
-            gameplaySceneName
-        );
+        StartCoroutine(DelayedReplay());
     }
 
-    // Mengatur tombol replay berdasarkan level yang sedang dipilih.
+    private Transform GetCardTransform(int index)
+    {
+        for (int i = 0; i < contentParent.childCount; i++)
+        {
+            var child = contentParent.GetChild(i);
+            var levelUI = child.GetComponent<LevelUI>();
+            if (levelUI != null && levelUI.GetLevelIndex() == index)
+                return child;
+        }
+        return null;
+    }
+
+    private IEnumerator DelayedReplay()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        int index = carouselSnap?.GetCurrentIndex() ?? GetCurrentLevelIndex();
+        SetCurrentLevel(index);
+        SceneManager.LoadScene(gameplaySceneName);
+    }
+
     public void UpdateReplayButton()
     {
-        if (replayButton == null)
-            return;
-
-        if (carouselSnap == null)
-        {
-            replayButton.interactable = false;
-            return;
-        }
-
-        int selectedIndex =
-            carouselSnap.GetCurrentIndex();
-
-        replayButton.interactable =
-            IsLevelUnlocked(selectedIndex);
+        if (replayButton == null) return;
+        int index = carouselSnap?.GetCurrentIndex() ?? 0;
+        bool unlocked = IsUnlocked(index);
+        replayButton.interactable = unlocked;
+        if (replayCanvasGroup != null) replayCanvasGroup.alpha = 1f;
     }
 
-    // Memperbarui tampilan semua card.
     public void RefreshUI()
     {
-        if (contentParent == null)
-            return;
-
-        LevelUI[] cards =
-            contentParent.GetComponentsInChildren<LevelUI>(
-                true
-            );
-
-        for (int i = 0;
-             i < cards.Length && i < totalLevels;
-             i++)
-        {
-            cards[i].Setup(
-                i,
-                IsLevelUnlocked(i),
-                GetLevelIcon(i)
-            );
-        }
-
+        var cards = contentParent.GetComponentsInChildren<LevelUI>(true);
+        for (int i = 0; i < cards.Length && i < totalLevels; i++)
+            cards[i].Setup(i, IsUnlocked(i), GetIcon(i));
         UpdateReplayButton();
     }
 
-    // Mereset semua progress level.
     public void ResetProgress()
     {
         for (int i = 0; i < totalLevels; i++)
         {
-            PlayerPrefs.DeleteKey(
-                GetUnlockedKey(i)
-            );
-
-            PlayerPrefs.DeleteKey(
-                GetCompletedKey(i)
-            );
+            PlayerPrefs.DeleteKey(GetKey(UNLOCKED_KEY, i));
+            PlayerPrefs.DeleteKey(GetKey(COMPLETED_KEY, i));
         }
-
-        PlayerPrefs.DeleteKey(
-            CURRENT_LEVEL_KEY
-        );
-
+        PlayerPrefs.DeleteKey(CURRENT_KEY);
         PlayerPrefs.Save();
-
-        InitializeLevelOne();
         GenerateLevels();
-
-        if (carouselSnap != null)
-            carouselSnap.Refresh();
-
+        if (carouselSnap != null) carouselSnap.Refresh();
         UpdateReplayButton();
-
-        Debug.Log(
-            "Progress level berhasil di-reset."
-        );
     }
 }

@@ -2,40 +2,49 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages a horizontal scrollable carousel of Aksara cards.
+/// - Builds cards from data on enable.
+/// - Scales cards based on distance to viewport center.
+/// - Snaps to the nearest card with smooth lerp.
+/// - Handles card selection (sound feedback, bounce effect, snap).
+/// - Applies centering padding so first/last cards can reach viewport center.
+/// </summary>
 public class AksaraCarouselUI : MonoBehaviour
 {
-    [Header("Data Huruf")]
+    [Header("Data")]
     [SerializeField] private List<AksaraData> allAksaraData;
 
-    [Header("Scroll Setup")]
+    [Header("Scroll Settings")]
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private RectTransform viewport;
     [SerializeField] private RectTransform content;
     [SerializeField] private AksaraCarouselItemUI itemPrefab;
+    [SerializeField] private HorizontalLayoutGroup contentLayoutGroup;
 
-    [Header("Navigasi (opsional, buat snap 1 langkah)")]
+    [Header("Navigation")]
     [SerializeField] private Button leftArrowButton;
     [SerializeField] private Button rightArrowButton;
 
-    [Header("Scaling berdasar jarak ke tengah")]
+    [Header("Scaling")]
     [SerializeField] private float centerScale = 1.15f;
     [SerializeField] private float edgeScale = 0.85f;
-    [SerializeField] private float scaleFalloffDistance = 300f; // px, jarak sampai scale minimum tercapai
+    [SerializeField] private float scaleFalloffDistance = 300f;
 
     [Header("Snap")]
     [SerializeField] private float snapLerpSpeed = 10f;
 
-    [Header("Popup Detail")]
-    [SerializeField] private AksaraCardPopup cardPopup;
+    [Header("Audio")]
+    [SerializeField] private AksaraSoundLibrary soundLibrary;
 
-    private readonly List<AksaraCarouselItemUI> spawnedItems = new List<AksaraCarouselItemUI>();
+    private readonly List<AksaraCarouselItemUI> spawnedItems = new();
     private bool isSnapping;
     private float snapTargetNormalized;
 
     private void Awake()
     {
-        if (leftArrowButton != null) leftArrowButton.onClick.AddListener(() => SnapStep(-1));
-        if (rightArrowButton != null) rightArrowButton.onClick.AddListener(() => SnapStep(1));
+        if (leftArrowButton) leftArrowButton.onClick.AddListener(() => SnapStep(-1));
+        if (rightArrowButton) rightArrowButton.onClick.AddListener(() => SnapStep(1));
     }
 
     private void OnEnable() => BuildList();
@@ -44,7 +53,7 @@ public class AksaraCarouselUI : MonoBehaviour
     {
         if (content == null || itemPrefab == null || allAksaraData == null)
         {
-            Debug.LogWarning("[AksaraCarouselUI] content/itemPrefab/allAksaraData belum lengkap.");
+            Debug.LogWarning("[AksaraCarouselUI] Missing references.");
             return;
         }
 
@@ -52,14 +61,35 @@ public class AksaraCarouselUI : MonoBehaviour
             Destroy(child.gameObject);
         spawnedItems.Clear();
 
-        foreach (AksaraData data in allAksaraData)
+        foreach (var data in allAksaraData)
         {
             if (data == null) continue;
-            bool isCollected = PermanentCollectionManager.IsCollected(data);
-            AksaraCarouselItemUI item = Instantiate(itemPrefab, content);
-            item.Setup(data, this, isCollected);
+            bool collected = PermanentCollectionManager.IsCollected(data);
+            var item = Instantiate(itemPrefab, content);
+            item.Setup(data, this, collected);
             spawnedItems.Add(item);
         }
+
+        ApplyCenteringPadding();
+    }
+
+    // Menambahkan padding kiri-kanan di Content, supaya card pertama & terakhir
+    // tetap bisa digeser sampai benar-benar di tengah viewport.
+    private void ApplyCenteringPadding()
+    {
+        if (contentLayoutGroup == null || viewport == null || itemPrefab == null) return;
+
+        Canvas.ForceUpdateCanvases();
+
+        float viewportWidth = viewport.rect.width;
+        float itemWidth = ((RectTransform)itemPrefab.transform).rect.width;
+
+        int padding = Mathf.Max(0, Mathf.RoundToInt((viewportWidth - itemWidth) * 0.5f));
+
+        contentLayoutGroup.padding.left = padding;
+        contentLayoutGroup.padding.right = padding;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
     }
 
     private void Update()
@@ -69,7 +99,10 @@ public class AksaraCarouselUI : MonoBehaviour
         if (isSnapping && scrollRect != null)
         {
             scrollRect.horizontalNormalizedPosition = Mathf.Lerp(
-                scrollRect.horizontalNormalizedPosition, snapTargetNormalized, Time.unscaledDeltaTime * snapLerpSpeed);
+                scrollRect.horizontalNormalizedPosition,
+                snapTargetNormalized,
+                Time.unscaledDeltaTime * snapLerpSpeed
+            );
 
             if (Mathf.Abs(scrollRect.horizontalNormalizedPosition - snapTargetNormalized) < 0.001f)
             {
@@ -79,7 +112,6 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Scale tiap card berdasar seberapa dekat dia ke tengah viewport.
     private void UpdateScales()
     {
         if (viewport == null || spawnedItems.Count == 0) return;
@@ -102,15 +134,15 @@ public class AksaraCarouselUI : MonoBehaviour
 
         float viewportCenterX = viewport.rect.center.x;
         AksaraCarouselItemUI nearest = null;
-        float minDistance = float.MaxValue;
+        float minDist = float.MaxValue;
 
         foreach (var item in spawnedItems)
         {
             Vector3 localPos = viewport.InverseTransformPoint(item.RectTransform.position);
-            float distance = Mathf.Abs(localPos.x - viewportCenterX);
-            if (distance < minDistance)
+            float dist = Mathf.Abs(localPos.x - viewportCenterX);
+            if (dist < minDist)
             {
-                minDistance = distance;
+                minDist = dist;
                 nearest = item;
             }
         }
@@ -119,7 +151,7 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private void SnapStep(int direction)
     {
-        AksaraCarouselItemUI current = GetNearestCenterItem();
+        var current = GetNearestCenterItem();
         if (current == null) return;
 
         int index = spawnedItems.IndexOf(current);
@@ -128,35 +160,42 @@ public class AksaraCarouselUI : MonoBehaviour
     }
 
     private void ScrollToItem(AksaraCarouselItemUI item)
-{
-    if (scrollRect == null || content == null || viewport == null) return;
+    {
+        if (scrollRect == null || content == null || viewport == null) return;
 
-    Canvas.ForceUpdateCanvases(); // <-- fix di sini
+        Canvas.ForceUpdateCanvases();
 
-    float contentWidth = content.rect.width;
-    float viewportWidth = viewport.rect.width;
-    if (contentWidth <= viewportWidth) return; // gak ada yang perlu di-scroll
+        float contentWidth = content.rect.width;
+        float viewportWidth = viewport.rect.width;
+        if (contentWidth <= viewportWidth) return;
 
-    RectTransform itemRect = item.RectTransform;
-    float itemCenterX = itemRect.anchoredPosition.x + itemRect.rect.width * (0.5f - itemRect.pivot.x);
+        RectTransform itemRect = item.RectTransform;
+        float itemCenterX = itemRect.anchoredPosition.x + itemRect.rect.width * (0.5f - itemRect.pivot.x);
 
-    float targetX = Mathf.Clamp(itemCenterX - viewportWidth * 0.5f, 0f, contentWidth - viewportWidth);
-    snapTargetNormalized = targetX / (contentWidth - viewportWidth);
-    isSnapping = true;
-}
+        float targetX = Mathf.Clamp(itemCenterX - viewportWidth * 0.5f, 0f, contentWidth - viewportWidth);
+        snapTargetNormalized = targetX / (contentWidth - viewportWidth);
+        isSnapping = true;
+    }
 
-    // Dipanggil AksaraCarouselItemUI saat card yang sudah kekumpul diklik.
     public void OnItemSelected(AksaraCarouselItemUI item)
     {
-        AksaraCarouselItemUI nearestCenter = GetNearestCenterItem();
+        if (!PermanentCollectionManager.IsCollected(item.Data))
+        {
+            Debug.Log($"[AksaraCarouselUI] {item.Data.name} locked.");
+            return;
+        }
 
-        if (item == nearestCenter)
+        if (soundLibrary != null)
         {
-            if (cardPopup != null) cardPopup.Show(item.Data);
+            AudioClip clip = soundLibrary.GetClip(item.Data.GestureShape);
+            if (clip != null)
+                AudioManager.Instance?.PlayUISFX(clip);
         }
-        else
-        {
+
+        item.PlayBounceEffect();
+
+        var centerItem = GetNearestCenterItem();
+        if (item != centerItem)
             ScrollToItem(item);
-        }
     }
 }

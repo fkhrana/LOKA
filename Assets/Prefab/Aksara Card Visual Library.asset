@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed060f2dc8f1f9543a2a22b945e60d0e, type: 3}
+  m_Name: Aksara Card Visual Library
+  m_EditorClassIdentifier: Assembly-CSharp::AksaraCardVisualLibrary
+  entries:
+  - aksaraData: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
+    cardSprite: {fileID: -5882730321181924612, guid: 76f44f6ca778e7e4ea962dfaaf1af826, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+    cardSprite: {fileID: -7045301190152576076, guid: 7c9b07745e99eb6499870c34205c548e, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+    cardSprite: {fileID: -3437391101998309388, guid: d628dc5a3ec5ac74e85dd3087c78a6bc, type: 3}
+  - aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+    cardSprite: {fileID: -17218701099712491, guid: 2e44a3b3dc5f04944947ada261306405, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
+    cardSprite: {fileID: 6479408913757833188, guid: 35ec88636502a6c43b85e274b134444b, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+    cardSprite: {fileID: -1504093385147679355, guid: 068cc125a13a46e40a865e78adc89504, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+    cardSprite: {fileID: 7065823437053446903, guid: cbfd209a10dc15b4f9dcb1cd0390ca13, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
+    cardSprite: {fileID: 84964131503272013, guid: f6170f4d60cb4bb46aac8c110a364ef7, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+    cardSprite: {fileID: 3763845592647528114, guid: 1261b7a0ac614b5449f6031bdd18b60f, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+    cardSprite: {fileID: -2572346599395726949, guid: 46fd065cf366489479518c2282127e0a, type: 3}
