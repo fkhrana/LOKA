@@ -49,6 +49,22 @@ public class EnemyGestureCommand : MonoBehaviour
         return false;
     }
 
+    public static bool TryGetActiveChallengeShape(out GestureShape gestureShape)
+    {
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var enemy = activeEnemies[i];
+            if (enemy != null && enemy.challengeActive)
+            {
+                gestureShape = enemy.gestureToCommand;
+                return true;
+            }
+        }
+
+        gestureShape = GestureShape.None;
+        return false;
+    }
+
     public static bool HasHandledStroke(List<Vector2> points)
     {
         return cachedStrokePoints == points && cachedStrokeHandled;

@@ -216,7 +216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureTemplateRecorder
   drawer: {fileID: 1392741719}
-  gestureName: TA
+  gestureName: SA
+  targetStrokeCount: 4
 --- !u!1 &1368193397
 GameObject:
   m_ObjectHideFlags: 0

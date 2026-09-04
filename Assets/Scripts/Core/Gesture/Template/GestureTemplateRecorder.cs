@@ -10,6 +10,7 @@ public class GestureTemplateRecorder : MonoBehaviour
 {
     [SerializeField] private GestureDrawer drawer;
     [SerializeField] private string gestureName = "NewGesture";
+    [SerializeField, Min(0)] private int targetStrokeCount;
 
     private List<List<Vector2>> recordedStrokes = new List<List<Vector2>>();
 
@@ -26,6 +27,7 @@ public class GestureTemplateRecorder : MonoBehaviour
             }
         }
 
+        drawer.SetRecordingStrokeCount(targetStrokeCount);
         drawer.GestureRecognized += OnGestureRecognized;
     }
 

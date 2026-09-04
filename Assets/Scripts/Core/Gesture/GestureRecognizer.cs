@@ -60,6 +60,8 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new TaGestureTemplate());
         templateProviders.Add(new TaAlternativeTwoStrokeTemplate());
         templateProviders.Add(new TaSingleStrokeTemplate());
+        templateProviders.Add(new SaGestureTemplate());
+        templateProviders.Add(new SaAlternativeGestureTemplate());
 
         foreach (var provider in templateProviders)
         {
@@ -193,6 +195,28 @@ public class GestureRecognizer : MonoBehaviour
         return GestureNormalizationHelper.ProcessPoints(points, sampleCount, squareSize);
     }
 
+    public bool HasTemplateForStrokeCount(GestureShape shape, int strokeCount)
+    {
+        foreach (var template in templates)
+        {
+            if (template.Shape == shape && template.Strokes.Count == strokeCount)
+                return true;
+        }
+
+        return false;
+    }
+
+    public bool HasTemplateWithMoreStrokes(GestureShape shape, int strokeCount)
+    {
+        foreach (var template in templates)
+        {
+            if (template.Shape == shape && template.Strokes.Count > strokeCount)
+                return true;
+        }
+
+        return false;
+    }
+
     private class GestureTemplate
     {
         public GestureShape Shape { get; }
@@ -225,7 +249,8 @@ public enum GestureShape
     Ha,
     Pa,
     Za,
-    Ta
+    Ta,
+    Sa
 }
 
 public struct GestureRecognitionResult

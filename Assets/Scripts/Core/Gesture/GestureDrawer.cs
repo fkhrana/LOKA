@@ -14,6 +14,8 @@ public class GestureDrawer : MonoBehaviour
     public float minPointDistance = 0.05f;
     public float firstStrokeGracePeriod = 0.35f;
 
+    private int recordingStrokeCount;
+
     private readonly List<Vector3> currentStrokePoints = new List<Vector3>();
     private readonly List<List<Vector2>> completedStrokes = new List<List<Vector2>>();
     private readonly List<LineRenderer> completedStrokeRenderers = new List<LineRenderer>();
@@ -175,6 +177,44 @@ public class GestureDrawer : MonoBehaviour
         completedStrokes.Add(points2D);
         PersistStroke(currentStrokePoints);
 
+        if (recordingStrokeCount > 0)
+        {
+            if (completedStrokes.Count < recordingStrokeCount)
+            {
+                isAwaitingNextStroke = true;
+                pendingRecognitionTime = float.PositiveInfinity;
+                return;
+            }
+
+            if (completedStrokes.Count == recordingStrokeCount)
+            {
+                FinalizeRecognition();
+                return;
+            }
+        }
+
+        GestureShape expectedShape = GetExpectedShape();
+        if (expectedShape != GestureShape.None && GestureRecognizer.Instance != null)
+        {
+            bool hasMatchingTemplate = GestureRecognizer.Instance.HasTemplateForStrokeCount(expectedShape, completedStrokes.Count);
+            bool hasLongerTemplate = GestureRecognizer.Instance.HasTemplateWithMoreStrokes(expectedShape, completedStrokes.Count);
+
+            if (hasLongerTemplate)
+            {
+                isAwaitingNextStroke = true;
+                pendingRecognitionTime = hasMatchingTemplate
+                    ? Time.unscaledTime + firstStrokeGracePeriod
+                    : float.PositiveInfinity;
+                return;
+            }
+
+            if (hasMatchingTemplate)
+            {
+                FinalizeRecognition();
+                return;
+            }
+        }
+
         if (completedStrokes.Count == 1)
         {
             isAwaitingNextStroke = true;
@@ -186,7 +226,7 @@ public class GestureDrawer : MonoBehaviour
         {
             if (GestureRecognizer.Instance != null)
             {
-                GestureRecognizer.Instance.Recognize(completedStrokes);
+                GestureRecognizer.Instance.Recognize(completedStrokes, GetExpectedShape());
             }
 
             FinalizeRecognition();
@@ -208,7 +248,7 @@ public class GestureDrawer : MonoBehaviour
         GestureRecognitionResult result = default;
         if (GestureRecognizer.Instance != null)
         {
-            result = GestureRecognizer.Instance.Recognize(completedStrokes);
+            result = GestureRecognizer.Instance.Recognize(completedStrokes, GetExpectedShape());
             var recognizedStrokes = new List<List<Vector2>>(completedStrokes.Count);
             foreach (var stroke in completedStrokes)
             {
@@ -226,6 +266,21 @@ public class GestureDrawer : MonoBehaviour
         ClearCurrentStrokePreview();
         isAwaitingNextStroke = false;
         pendingRecognitionTime = 0f;
+    }
+
+    public void SetRecordingStrokeCount(int strokeCount)
+    {
+        recordingStrokeCount = Mathf.Max(0, strokeCount);
+    }
+
+    private GestureShape GetExpectedShape()
+    {
+        if (GestureChallengeManager.Instance != null && GestureChallengeManager.Instance.HasActiveChallenge())
+            return GestureChallengeManager.Instance.CurrentRequiredGesture;
+
+        return EnemyGestureCommand.TryGetActiveChallengeShape(out GestureShape gestureShape)
+            ? gestureShape
+            : GestureShape.None;
     }
 
     private void PersistStroke(List<Vector3> points)
