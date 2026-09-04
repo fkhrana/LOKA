@@ -2867,22 +2867,7 @@ MonoBehaviour:
   spawnAreaSize: {x: 5, y: 6}
   spawnPoints: []
   spawnedParent: {fileID: 0}
-  spawnEntries:
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
-    weight: 1
-  - enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-    aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
-    weight: 1
+  spawnEntries: []
   waves:
   - waveName: Wave1
     delayBeforeSpawn: 0
@@ -9254,7 +9239,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3698834626103247541, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3698834626103247541, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -9312,6 +9297,10 @@ PrefabInstance:
       propertyPath: boxCanvasGroup
       value: 
       objectReference: {fileID: 1962207143}
+    - target: {fileID: 7908010246914549157, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 26.18335
+      objectReference: {fileID: 0}
     - target: {fileID: 8552920932162077237, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: audioSource
       value: 

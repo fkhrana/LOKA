@@ -21,6 +21,7 @@ public class EnemyGestureCommand : MonoBehaviour
     private int remainingCorrectGestures;
     private bool isSubscribed;
     private bool challengeActive;
+    private bool hasReportedProcessed;
     private static List<List<Vector2>> cachedStrokes;
     private static List<Vector2> cachedStrokePoints;
     private static bool cachedStrokeHandled;
@@ -281,6 +282,7 @@ public class EnemyGestureCommand : MonoBehaviour
             float knockbackDuration = movementBehavior.PlayKnockback(remainingCorrectGestures <= 0);
             if (remainingCorrectGestures <= 0)
             {
+                ReportProcessed();
                 if (enemy != null)
                     enemy.OnDefeated();
 
@@ -307,6 +309,7 @@ public class EnemyGestureCommand : MonoBehaviour
         if (movementBehavior != null)
             movementBehavior.SetActive(false);
         UpdatePrompt();
+        ReportProcessed();
         Destroy(gameObject);
     }
 
@@ -325,10 +328,20 @@ public class EnemyGestureCommand : MonoBehaviour
 
             nearbyEnemy.challengeActive = false;
             nearbyEnemy.movementBehavior?.SetActive(false);
+            nearbyEnemy.ReportProcessed();
             nearbyEnemy.GetComponent<Enemy>()?.OnDefeated();
             nearbyEnemy.UpdatePrompt();
             Destroy(nearbyEnemy.gameObject);
         }
+    }
+
+    public void ReportProcessed()
+    {
+        if (hasReportedProcessed)
+            return;
+
+        hasReportedProcessed = true;
+        LevelProgressManager.Instance?.OnEnemyProcessed();
     }
 
     private void SubscribeToGestureDrawer()

@@ -20,7 +20,7 @@ public class LevelProgressManager : MonoBehaviour
     public UnityEvent OnReachedLevelComplete; // invoked when full level complete (100%)
 
     private int totalEnemies = 1;
-    private int processedEnemies = 0; // number of enemies spawned/processed
+    private int processedEnemies = 0;
     private HashSet<int> triggeredMilestones = new HashSet<int>();
     private List<int> milestones = new List<int>();
     private Coroutine progressAnimation;
@@ -49,15 +49,8 @@ public class LevelProgressManager : MonoBehaviour
         UpdateUI();
     }
 
-    public void OnEnemySpawned()
+    public void OnEnemyProcessed()
     {
-        processedEnemies = Mathf.Min(totalEnemies, processedEnemies + 1);
-        UpdateUI();
-    }
-
-    public void OnEnemyProcessed() // for future use if needed (e.g., defeated)
-    {
-        // Could track processed differently; for now treat same as spawn
         processedEnemies = Mathf.Min(totalEnemies, processedEnemies + 1);
         UpdateUI();
     }

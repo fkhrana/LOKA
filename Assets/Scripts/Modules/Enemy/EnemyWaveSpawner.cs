@@ -351,11 +351,6 @@ public class EnemyWaveSpawner : MonoBehaviour
         enemy.IssueCommand();
         spawnedEnemies.Add(enemy);
         currentWaveEnemies.Add(enemy);
-        // attach visibility notifier so progress increments only when enemy becomes visible on camera
-        if (enemy != null && enemy.gameObject != null)
-        {
-            enemy.gameObject.AddComponent<EnemyVisibilityNotifier>();
-        }
     }
 
     private void KeepEnemyInsideSpawnArea(EnemyGestureCommand enemy)

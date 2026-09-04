@@ -267,6 +267,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         playerHealth.TakeDamage(damageOnContact);
         Debug.Log("EnemyMovementBehavior: Player hit, enemy destroyed after contact.");
+        GetComponent<EnemyGestureCommand>()?.ReportProcessed();
         Destroy(gameObject);
     }
 
