@@ -1,19 +1,24 @@
-    using System.Collections;
-    using UnityEngine;
-    using UnityEngine.EventSystems;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-    public class DropZone : MonoBehaviour, IDropHandler
-    {
-    public string zoneTag; // isi "NA" atau "DA"
-    [HideInInspector] public bool isFilled = false;
+public class DropZone : MonoBehaviour, IDropHandler
+{
+    [Header("Drop Zone")]
+    public string zoneTag;
+
+    [HideInInspector]
+    public bool isFilled = false;
 
     [Header("SFX")]
     [SerializeField] private AudioClip correctSFX;
     [SerializeField] private AudioClip wrongSFX;
 
-    // === TAMBAHAN UNTUK SHAKE ===
-    public float shakeDuration = 0.3f;
-    public float shakeMagnitude = 15f;
+    [Header("Shake")]
+    [SerializeField] private float shakeDuration = 0.3f;
+    [SerializeField] private float shakeMagnitude = 15f;
+
     private RectTransform rectTransform;
     private Vector2 originalAnchoredPos;
     private Coroutine shakeRoutine;
@@ -27,59 +32,76 @@
 
     public void OnDrop(PointerEventData eventData)
     {
+        if (eventData.pointerDrag == null) return;
+
         DragItem draggedItem = eventData.pointerDrag.GetComponent<DragItem>();
         if (draggedItem == null) return;
 
+        // ===== BENAR =====
         if (draggedItem.correctTargetTag == zoneTag)
         {
-            // BENAR
+            if (isFilled)
+            {
+                draggedItem.ReturnToStart();
+                return;
+            }
+
             draggedItem.transform.SetParent(transform);
             draggedItem.transform.localPosition = Vector3.zero;
 
             isFilled = true;
 
-            var img = draggedItem.GetComponent<UnityEngine.UI.Image>();
-            if (img != null) img.raycastTarget = false;
+            Image img = draggedItem.GetComponent<Image>();
+            if (img != null)
+                img.raycastTarget = false;
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(correctSFX);
 
-            PuzzleManager.Instance.CheckPuzzleComplete();
+            // 🔥 LANGSUNG CEK PUZZLE (tanpa VFX bintang)
+            if (PuzzleManager.Instance != null)
+                PuzzleManager.Instance.CheckPuzzleComplete();
 
-            Debug.Log("Benar! Item masuk ke " + zoneTag);
+            Debug.Log("✅ Benar! Item masuk ke " + zoneTag);
         }
+
+        // ===== SALAH =====
         else
         {
-            // SALAH
             draggedItem.ReturnToStart();
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
 
-            // trigger shake
-            if (rectTransform != null)
-            {
-                if (shakeRoutine != null) StopCoroutine(shakeRoutine);
-                shakeRoutine = StartCoroutine(ShakePanel());
-            }
-            // ================================
+            PlayWrongEffect();
 
-            Debug.Log("Salah, kembali ke posisi awal");
+            Debug.Log("❌ Salah, kembali ke posisi awal");
         }
     }
 
-    // coroutine shake
+    private void PlayWrongEffect()
+    {
+        if (rectTransform == null) return;
+
+        if (shakeRoutine != null)
+            StopCoroutine(shakeRoutine);
+
+        shakeRoutine = StartCoroutine(ShakePanel());
+    }
+
     private IEnumerator ShakePanel()
     {
         float elapsed = 0f;
+
         while (elapsed < shakeDuration)
         {
             float offsetX = Random.Range(-1f, 1f) * shakeMagnitude;
             rectTransform.anchoredPosition = originalAnchoredPos + new Vector2(offsetX, 0f);
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
-        rectTransform.anchoredPosition = originalAnchoredPos;
-    }
 
+        rectTransform.anchoredPosition = originalAnchoredPos;
+        shakeRoutine = null;
     }
+}

@@ -18,8 +18,8 @@ public class EffectPanel : MonoBehaviour
 
     [Header("Sound")]
     [SerializeField] private bool useSound = true;
-    [SerializeField] private string openSound = "PanelOpen";
-    [SerializeField] private string closeSound = "PanelClose";
+    [SerializeField] private string openSound = "Panel";
+    [SerializeField] private string closeSound = "Panel";
 
     [Range(0f, 1f)]
     [SerializeField] private float panelSoundVolume = 0.6f;

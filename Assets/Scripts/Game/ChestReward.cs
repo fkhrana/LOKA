@@ -1,87 +1,137 @@
 using UnityEngine;
+using System.Collections;
 
 public class ChestReward : MonoBehaviour
 {
-[Header("Chest")]
-[SerializeField] private Animator chestAnimator;
-[SerializeField] private RectTransform chestTransform;
+    [Header("Chest")]
+    [SerializeField] private RectTransform chestTransform;
+    [SerializeField] private float shakeAngle = 8f;
+    [SerializeField] private float shakeSpeed = 25f;
 
-[Header("Shake")]
-[SerializeField] private float shakeAngle = 8f;
-[SerializeField] private float shakeSpeed = 25f;
+    [Header("Reward")]
+    [SerializeField] private RectTransform powerUp;
+    [SerializeField] private float powerUpMoveDuration = 2f;
+    [SerializeField] private float powerUpMoveHeight = 300f;
+    [SerializeField] private float powerUpRotateAngle = 12f;
+    [SerializeField] private float powerUpRotateSpeed = 5f;
 
-[Header("Reward")]
-[SerializeField] private GameObject powerUp;
-[SerializeField] private Animator powerUpAnimator;
+    [Header("SFX")]
+    [SerializeField] private AudioClip chestOpenSFX;
 
-[Header("SFX")]
-[SerializeField] private AudioClip chestOpenSFX;
+    [Header("Panels")]
+    [SerializeField] private GameObject rewardPanel;
+    [SerializeField] private GameObject winPanel;
 
-[Header("Panels")]
-[SerializeField] private GameObject rewardPanel;
-[SerializeField] private GameObject winPanel;
+    private bool isOpened = false;
+    private Quaternion originalRotation;
+    private Vector2 powerUpOriginalPosition;
 
-private bool isOpened = false;
-private Quaternion originalRotation;
+    private void Start()
+    {
+        if (chestTransform != null)
+            originalRotation = chestTransform.localRotation;
 
-private void Start()
-{
-    if (chestAnimator != null)
-        chestAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+        if (powerUp != null)
+        {
+            powerUpOriginalPosition = powerUp.anchoredPosition;
+            powerUp.gameObject.SetActive(false);
+        }
+    }
 
-    if (powerUpAnimator != null)
-        powerUpAnimator.updateMode = AnimatorUpdateMode.UnscaledTime;
+    private void Update()
+    {
+        if (isOpened || chestTransform == null)
+            return;
 
-    if (powerUp != null)
-        powerUp.SetActive(false);
+        float angle =
+            Mathf.Sin(Time.unscaledTime * shakeSpeed) * shakeAngle;
 
-    if (chestTransform != null)
-        originalRotation = chestTransform.localRotation;
-}
+        chestTransform.localRotation =
+            originalRotation *
+            Quaternion.Euler(0f, 0f, angle);
+    }
 
-private void Update()
-{
-    if (isOpened || chestTransform == null)
-        return;
+    public void OpenChest()
+    {
+        if (isOpened)
+            return;
 
-    float angle = Mathf.Sin(Time.unscaledTime * shakeSpeed) * shakeAngle;
+        isOpened = true;
 
-    chestTransform.localRotation =
-        originalRotation * Quaternion.Euler(0f, 0f, angle);
-}
+        if (chestTransform != null)
+            chestTransform.localRotation = originalRotation;
 
-public void OpenChest()
-{
-    if (isOpened)
-        return;
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(chestOpenSFX);
 
-    isOpened = true;
+        StartCoroutine(OpenChestEffect());
+    }
 
-    if (chestTransform != null)
-        chestTransform.localRotation = originalRotation;
+    private IEnumerator OpenChestEffect()
+    {
+        yield return new WaitForSecondsRealtime(0.15f);
 
-    // SFX chest dibuka
-    if (AudioManager.Instance != null)
-        AudioManager.Instance.PlaySFX(chestOpenSFX);
+        if (powerUp == null)
+            yield break;
 
-    // Chest membuka
-    if (chestAnimator != null)
-        chestAnimator.SetTrigger("Open");
+        powerUp.gameObject.SetActive(true);
 
-    // PowerUp langsung muncul setelah chest diklik
-    if (powerUp != null)
-        powerUp.SetActive(true);
+        powerUp.anchoredPosition = powerUpOriginalPosition;
+        powerUp.localRotation = Quaternion.identity;
 
-    if (powerUpAnimator != null)
-        powerUpAnimator.Play("PowerUpAppear", 0, 0f);
-}
+        Vector2 targetPosition =
+            powerUpOriginalPosition +
+            new Vector2(0f, powerUpMoveHeight);
 
-public void GoFinalResult()
-{
-    if (rewardPanel != null)
-        rewardPanel.SetActive(false);
+        float elapsed = 0f;
 
-    if (winPanel != null)
-        winPanel.SetActive(true);
-}
+        while (elapsed < powerUpMoveDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+
+            float t = Mathf.Clamp01(
+                elapsed / powerUpMoveDuration
+            );
+
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            powerUp.anchoredPosition =
+                Vector2.Lerp(
+                    powerUpOriginalPosition,
+                    targetPosition,
+                    t
+                );
+
+            yield return null;
+        }
+
+        powerUp.anchoredPosition = targetPosition;
+
+        StartCoroutine(PowerUpRotateLoop());
+    }
+
+    private IEnumerator PowerUpRotateLoop()
+    {
+        while (isOpened && powerUp != null)
+        {
+            float angle =
+                Mathf.Sin(
+                    Time.unscaledTime * powerUpRotateSpeed
+                ) * powerUpRotateAngle;
+
+            powerUp.localRotation =
+                Quaternion.Euler(0f, 0f, angle);
+
+            yield return null;
+        }
+    }
+
+    public void GoFinalResult()
+    {
+        if (rewardPanel != null)
+            rewardPanel.SetActive(false);
+
+        if (winPanel != null)
+            winPanel.SetActive(true);
+    }
 }

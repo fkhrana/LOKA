@@ -29,6 +29,9 @@ public class AksaraCarouselUI : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private AksaraSoundLibrary soundLibrary;
 
+    [Range(0f, 1f)]
+    [SerializeField] private float aksaraSoundVolume = 1f;
+
     private readonly List<AksaraCarouselItemUI> spawnedItems = new();
 
     private bool isSnapping;
@@ -82,7 +85,6 @@ public class AksaraCarouselUI : MonoBehaviour
         ApplyCenteringPadding();
     }
 
-    // Menambahkan padding agar item pertama dan terakhir bisa berada di tengah
     private void ApplyCenteringPadding()
     {
         if (
@@ -276,7 +278,12 @@ public class AksaraCarouselUI : MonoBehaviour
                 );
 
             if (clip != null)
-                AudioManager.Instance?.PlayUISFX(clip);
+            {
+                AudioManager.Instance?.PlayUISFX(
+                    clip,
+                    aksaraSoundVolume
+                );
+            }
         }
 
         item.PlayBounceEffect();
@@ -290,7 +297,6 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Mengupdate status tombol navigasi
     private void UpdateButtons()
     {
         if (spawnedItems.Count == 0)
@@ -314,7 +320,6 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Dipanggil saat user selesai melakukan drag
     public void OnEndDrag()
     {
         UpdateButtons();

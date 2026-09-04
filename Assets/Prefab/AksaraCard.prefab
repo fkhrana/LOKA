@@ -316,8 +316,8 @@ MonoBehaviour:
   hoverMoveY: 5
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &8217592054805778766
 GameObject:
   m_ObjectHideFlags: 0

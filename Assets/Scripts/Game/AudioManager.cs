@@ -35,6 +35,7 @@ public class AudioManager : MonoBehaviour
     private float currentSfxVolume;
 
     private float lastUISFXTime;
+
     [SerializeField] private float uiSFXCooldown = 0.05f;
 
     private void Awake()
@@ -176,12 +177,36 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
+    public void PlaySFX(AudioClip clip, float volumeMultiplier)
+    {
+        if (clip == null || sfxSource == null)
+            return;
+
+        StopHoverSFX();
+
+        sfxSource.PlayOneShot(
+            clip,
+            Mathf.Clamp01(volumeMultiplier)
+        );
+    }
+
     public void PlaySFX(string clipName)
     {
         if (string.IsNullOrEmpty(clipName))
             return;
 
         PlaySFX(GetSFXClip(clipName));
+    }
+
+    public void PlaySFX(string clipName, float volumeMultiplier)
+    {
+        if (string.IsNullOrEmpty(clipName))
+            return;
+
+        PlaySFX(
+            GetSFXClip(clipName),
+            volumeMultiplier
+        );
     }
 
     // Hover
@@ -212,7 +237,7 @@ public class AudioManager : MonoBehaviour
             hoverSource.Stop();
     }
 
-    // UI SFX - tidak overlap
+    // UI SFX
     public void PlayUISFX(AudioClip clip, float volumeMultiplier = 1f)
     {
         if (clip == null || uiSource == null)
@@ -226,7 +251,9 @@ public class AudioManager : MonoBehaviour
         if (uiSource.isPlaying)
             uiSource.Stop();
 
-        uiSource.volume = currentSfxVolume * Mathf.Clamp01(volumeMultiplier);
+        uiSource.volume =
+            currentSfxVolume * Mathf.Clamp01(volumeMultiplier);
+
         uiSource.clip = clip;
         uiSource.Play();
     }
@@ -236,7 +263,10 @@ public class AudioManager : MonoBehaviour
         if (string.IsNullOrEmpty(clipName))
             return;
 
-        PlayUISFX(GetSFXClip(clipName), volumeMultiplier);
+        PlayUISFX(
+            GetSFXClip(clipName),
+            volumeMultiplier
+        );
     }
 
     public void StopUISFX()
