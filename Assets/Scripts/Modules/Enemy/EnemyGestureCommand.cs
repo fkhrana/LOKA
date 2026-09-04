@@ -284,6 +284,12 @@ public class EnemyGestureCommand : MonoBehaviour
                 if (enemy != null)
                     enemy.OnDefeated();
 
+                if (PowerManager.IsComboActive)
+                {
+                    DefeatNearbyEnemies(this, PowerManager.ActiveComboRadius);
+                    PowerManager.EndComboPowerUp();
+                }
+
                 challengeActive = false;
                 UpdatePrompt();
                 StartCoroutine(DestroyAfter(knockbackDuration));
@@ -302,6 +308,27 @@ public class EnemyGestureCommand : MonoBehaviour
             movementBehavior.SetActive(false);
         UpdatePrompt();
         Destroy(gameObject);
+    }
+
+    private static void DefeatNearbyEnemies(EnemyGestureCommand defeatedTarget, float radius)
+    {
+        float radiusSqr = radius * radius;
+
+        for (int i = activeEnemies.Count - 1; i >= 0; i--)
+        {
+            EnemyGestureCommand nearbyEnemy = activeEnemies[i];
+            if (nearbyEnemy == null || nearbyEnemy == defeatedTarget)
+                continue;
+
+            if (((Vector2)nearbyEnemy.transform.position - (Vector2)defeatedTarget.transform.position).sqrMagnitude > radiusSqr)
+                continue;
+
+            nearbyEnemy.challengeActive = false;
+            nearbyEnemy.movementBehavior?.SetActive(false);
+            nearbyEnemy.GetComponent<Enemy>()?.OnDefeated();
+            nearbyEnemy.UpdatePrompt();
+            Destroy(nearbyEnemy.gameObject);
+        }
     }
 
     private void SubscribeToGestureDrawer()

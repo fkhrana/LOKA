@@ -6019,7 +6019,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PowerManager
   powerUpImage: {fileID: 1180215104}
+  powerUpType: 1
   freezeDuration: 8
+  comboRadius: 2.5
+  unlockOnStartForTesting: 1
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   consumedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
