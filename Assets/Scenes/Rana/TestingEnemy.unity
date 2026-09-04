@@ -1138,16 +1138,8 @@ MonoBehaviour:
     groups:
     - groupName: test1
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
-      enemyCount: 2
-    - groupName: test2
-      enemyData: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
-      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
-      enemyCount: 2
-    - groupName: test3
-      enemyData: {fileID: 11400000, guid: a7e623bda2e50e44aa4abe33f2900a07, type: 2}
-      aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
-      enemyCount: 2
+      aksaraData: {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+      enemyCount: 8
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
@@ -2046,11 +2038,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1180215100}
   m_CullTransparentMesh: 1
---- !u!225 &1240722219 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 4948632133871454179, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 1836577841}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1415337698
 GameObject:
   m_ObjectHideFlags: 0
@@ -2576,7 +2563,7 @@ PrefabInstance:
     - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: boxCanvasGroup
       value: 
-      objectReference: {fileID: 1240722219}
+      objectReference: {fileID: 0}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -2879,6 +2866,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EasyTransition.TransitionManager
   transitionTemplate: {fileID: 5276914992623515724, guid: 616d511151a6c554caddf1c754e4f91d, type: 3}
+  useTransitionSound: 1
+  transitionSound: Brush
+  transitionSoundVolume: 2
 --- !u!4 &1890490153
 Transform:
   m_ObjectHideFlags: 0
