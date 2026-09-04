@@ -150,8 +150,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: 
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &361130878362050618
 GameObject:
   m_ObjectHideFlags: 0
@@ -692,8 +692,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &1755156277176882901
 GameObject:
   m_ObjectHideFlags: 0
@@ -1743,8 +1743,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -30.354, y: -288}
-  m_SizeDelta: {x: 367.2911, y: 125.1655}
+  m_AnchoredPosition: {x: 41.54, y: -316.05646}
+  m_SizeDelta: {x: 511.081, y: 153.222}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &569073198592301151
 MonoBehaviour:
@@ -2232,8 +2232,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &5144769261819914554
 GameObject:
   m_ObjectHideFlags: 0
@@ -2622,6 +2622,10 @@ MonoBehaviour:
   fadeDuration: 0.5
   slideDuration: 0.5
   isStacked: 1
+  useSound: 1
+  openSound: Panel
+  closeSound: Panel
+  panelSoundVolume: 0.6
 --- !u!1 &5661279772628915890
 GameObject:
   m_ObjectHideFlags: 0
@@ -2883,8 +2887,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &6824516807908366720
 GameObject:
   m_ObjectHideFlags: 0
@@ -3843,11 +3847,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6372314664576116309, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: 
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 6806564301114012215, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: 
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 7654518452060896949, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_SizeDelta.x
@@ -3855,7 +3859,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8820853419828330955, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: 
+      value: Hover
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

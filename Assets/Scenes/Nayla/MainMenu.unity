@@ -293,7 +293,7 @@ MonoBehaviour:
   - type: 5
     panel: {fileID: 1455421459}
     button: {fileID: 806033508}
-  clickSound: {fileID: 8300000, guid: 3b15b28522111574da73bc53d99909f7, type: 3}
+  clickSound: {fileID: 8300000, guid: 453d1a6fbbd32854bb56e76d2f034fca, type: 3}
   nextSceneName: CutScenee
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.1
@@ -435,8 +435,20 @@ PrefabInstance:
       value: ButtonHover
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: box
+      value: 
+      objectReference: {fileID: 1635363523}
+    - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: openSound
+      value: MenuOpen
+      objectReference: {fileID: 0}
+    - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: closeSound
+      value: MenuClose
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: fadeDuration
@@ -878,8 +890,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &491237725
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,6 +1113,10 @@ MonoBehaviour:
   fadeDuration: 0.5
   slideDuration: 0.5
   isStacked: 1
+  useSound: 1
+  openSound: Panel
+  closeSound: Panel
+  panelSoundVolume: 0.6
 --- !u!225 &511750233
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1178,6 +1194,7 @@ MonoBehaviour:
   uiSource: {fileID: 0}
   defaultBgmVolume: 1
   defaultSfxVolume: 1
+  uiSFXCooldown: 0.3
 --- !u!1 &590408712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7701617808498086987, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
@@ -1355,8 +1372,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &766249909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1816,8 +1833,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &807380742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1879,7 +1896,7 @@ MonoBehaviour:
   - {fileID: -3002448445795776205, guid: d728b46ca7798d64e8526f1db36322a9, type: 3}
   - {fileID: -5472879786514868279, guid: 043c056ef9963e848a5a19bb5a4d08f0, type: 3}
   failureSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
-  successSound: {fileID: 8300000, guid: 3b15b28522111574da73bc53d99909f7, type: 3}
+  successSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   gameplaySceneName: MainGameplay(Drawing)
 --- !u!1 &812645196
 GameObject:
@@ -2019,8 +2036,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &827892002
 GameObject:
   m_ObjectHideFlags: 0
@@ -2170,6 +2187,8 @@ MonoBehaviour:
   scaleAmount: 1.05
   moveAmount: 8
   duration: 0.8
+  hoverSFXName: Hover
+  clickSFXName: ButtonHover
 --- !u!1 &859136435
 GameObject:
   m_ObjectHideFlags: 0
@@ -2222,7 +2241,6 @@ GameObject:
   - component: {fileID: 862399346}
   - component: {fileID: 862399345}
   - component: {fileID: 862399344}
-  - component: {fileID: 862399347}
   - component: {fileID: 862399348}
   m_Layer: 5
   m_Name: SettingsButton
@@ -2344,52 +2362,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862399342}
   m_CullTransparentMesh: 1
---- !u!61 &862399347
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862399342}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
 --- !u!114 &862399348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2407,8 +2379,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &1215382106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2683,8 +2655,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1001 &1366283601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2774,8 +2746,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1586514977889044699, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: box
+      value: 
+      objectReference: {fileID: 1455421460}
+    - target: {fileID: 1586514977889044699, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1586514977889044699, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: openSound
+      value: Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 1586514977889044699, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: closeSound
+      value: Panel
       objectReference: {fileID: 0}
     - target: {fileID: 1586514977889044699, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: fadeDuration
@@ -2851,7 +2835,7 @@ PrefabInstance:
       objectReference: {fileID: 1633464359}
     - target: {fileID: 6372314664576116309, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 6806564301114012215, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: sfxSource
@@ -2859,7 +2843,7 @@ PrefabInstance:
       objectReference: {fileID: 1633464359}
     - target: {fileID: 6806564301114012215, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 7654518452060896949, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_SizeDelta.x
@@ -2871,7 +2855,7 @@ PrefabInstance:
       objectReference: {fileID: 1633464359}
     - target: {fileID: 8820853419828330955, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2971,8 +2955,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: 
 --- !u!1 &1455421459 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2381823958426288633, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
@@ -3133,8 +3117,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &1569412103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7700509207193498279, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
@@ -3197,7 +3181,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: -6862950419629258594, guid: 702cd432c97f06749b221584c75770fd, type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 6a1da997a43c6764ab07caf45667d0e6, type: 3}
+  m_Resource: {fileID: 8300000, guid: 9d8c161ae5b6c034982bde41b2e0800e, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -3715,8 +3699,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &2061052736
 GameObject:
   m_ObjectHideFlags: 0
@@ -3991,8 +3975,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: 
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &2122410756
 GameObject:
   m_ObjectHideFlags: 0
@@ -4163,6 +4147,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 808412105544275748, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: useSound
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 808412105544275748, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: openSound
+      value: Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 808412105544275748, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: closeSound
+      value: Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 808412105544275748, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
       propertyPath: fadeDuration
       value: 0.5
       objectReference: {fileID: 0}
@@ -4170,6 +4166,10 @@ PrefabInstance:
       propertyPath: boxCanvasGroup
       value: 
       objectReference: {fileID: 590408714}
+    - target: {fileID: 808412105544275748, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: panelSoundVolume
+      value: 0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 1172834488068846636, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
       propertyPath: m_fontAsset
       value: 
@@ -4371,24 +4371,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 4797030782128323541, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
-      propertyPath: hoverSound
+      propertyPath: clickSound
       value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 4797030782128323541, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: hoverSound
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 4869725553484433806, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
       propertyPath: sfxSource
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 4869725553484433806, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
-      propertyPath: hoverSound
+      propertyPath: clickSound
       value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 4869725553484433806, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: hoverSound
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 5170434106126318179, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
       propertyPath: sfxSource
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 5170434106126318179, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
-      propertyPath: hoverSound
+      propertyPath: clickSound
       value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170434106126318179, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
+      propertyPath: hoverSound
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 5321287450982446621, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
       propertyPath: m_fontAsset
@@ -4576,6 +4588,50 @@ PrefabInstance:
     - target: {fileID: 4557913686833596545, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_SizeDelta.y
       value: 590
+      objectReference: {fileID: 0}
+    - target: {fileID: 4774959158347550006, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 4774959158347550006, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: hoverSound
+      value: Hover
+      objectReference: {fileID: 0}
+    - target: {fileID: 6451394534333072162, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 6451394534333072162, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: hoverSound
+      value: Hover
+      objectReference: {fileID: 0}
+    - target: {fileID: 6595942278403981709, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 6595942278403981709, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: hoverSound
+      value: Hover
+      objectReference: {fileID: 0}
+    - target: {fileID: 7796128020917884101, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: box
+      value: 
+      objectReference: {fileID: 274872207}
+    - target: {fileID: 7796128020917884101, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: useSound
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7796128020917884101, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: openSound
+      value: Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7796128020917884101, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: closeSound
+      value: Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7796128020917884101, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: panelSoundVolume
+      value: 0.6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

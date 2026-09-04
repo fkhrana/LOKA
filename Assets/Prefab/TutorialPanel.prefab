@@ -168,9 +168,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &495725743830005926
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,9 +395,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &1864176468335699288
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,11 +661,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0daf770376e700944b61c5a3bf0864b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogBox
-  box: {fileID: 93074985529345396}
+  box: {fileID: 898647578145821989}
   background: {fileID: 4272020892688906490}
+  boxCanvasGroup: {fileID: 0}
   slideDistance: 50
   fadeDuration: 0.3
   slideDuration: 0.5
+  isStacked: 1
+  useSound: 1
+  openSound: Panel
+  closeSound: Panel
+  panelSoundVolume: 0.6
 --- !u!1 &3411368689914502583
 GameObject:
   m_ObjectHideFlags: 0
@@ -836,9 +840,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &6125171362642284567
 GameObject:
   m_ObjectHideFlags: 0

@@ -94,9 +94,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
-  sfxCooldown: 0.2
+  hoverSound: 
+  clickSound: Hover
 --- !u!1 &1615859727969870225
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,9 +415,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
-  sfxCooldown: 0.2
+  hoverSound: 
+  clickSound: Hover
 --- !u!1 &2983956819525242022
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,9 +704,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 0}
-  sfxCooldown: 0.5
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &3866697261761868244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,9 +1074,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
-  sfxCooldown: 0.2
+  hoverSound: 
+  clickSound: Hover
 --- !u!1 &6381417107665594017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1500,11 +1496,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0daf770376e700944b61c5a3bf0864b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogBox
-  box: {fileID: 4041884389098650374}
+  box: {fileID: 3319583882869532253}
   background: {fileID: 482410952747066120}
+  boxCanvasGroup: {fileID: 0}
   slideDistance: 50
   fadeDuration: 0.3
   slideDuration: 0.5
+  isStacked: 1
+  useSound: 1
+  openSound: Panel
+  closeSound: Panel
+  panelSoundVolume: 0.6
 --- !u!1 &7966341796486969391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1599,9 +1601,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
-  sfxCooldown: 0.2
+  hoverSound: 
+  clickSound: Hover
 --- !u!1 &8813013236961087226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1696,6 +1697,5 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  sfxSource: {fileID: 0}
-  hoverSound: {fileID: 8300000, guid: a398abcc4f13087458c4e4f9c63ec14d, type: 3}
-  sfxCooldown: 0.2
+  hoverSound: 
+  clickSound: Hover

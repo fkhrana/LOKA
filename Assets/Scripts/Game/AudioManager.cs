@@ -9,6 +9,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("Mixer")]
     [SerializeField] private AudioMixer audioMixer;
+
     private const string MIXER_BGM = "MusicV";
     private const string MIXER_SFX = "SFXV";
 
@@ -16,20 +17,25 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource bgmSource;
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource hoverSource;
-    [SerializeField] private AudioSource uiSource; 
+    [SerializeField] private AudioSource uiSource;
 
     [Header("Default Volume")]
-    [Range(0.0001f, 1f)] [SerializeField] private float defaultBgmVolume = 0.75f;
-    [Range(0.0001f, 1f)] [SerializeField] private float defaultSfxVolume = 0.75f;
+    [Range(0.0001f, 1f)]
+    [SerializeField] private float defaultBgmVolume = 0.75f;
+
+    [Range(0.0001f, 1f)]
+    [SerializeField] private float defaultSfxVolume = 0.75f;
 
     private string currentBgmName;
-    private readonly Dictionary<string, AudioClip> sfxCache = new Dictionary<string, AudioClip>();
+
+    private readonly Dictionary<string, AudioClip> sfxCache =
+        new Dictionary<string, AudioClip>();
+
     private float currentBgmVolume;
     private float currentSfxVolume;
 
-    // Cooldown untuk UI SFX (cegah spam)
-    private float lastUISFXTime = 0f;
-    private float uiSFXCooldown = 0.1f;
+    private float lastUISFXTime;
+    [SerializeField] private float uiSFXCooldown = 0.05f;
 
     private void Awake()
     {
@@ -42,7 +48,6 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Buat semua AudioSource jika belum di-assign
         if (bgmSource == null)
             bgmSource = CreateAudioSource("BGM", true);
 
@@ -56,17 +61,17 @@ public class AudioManager : MonoBehaviour
             uiSource = CreateAudioSource("UI", false);
     }
 
-    private AudioSource CreateAudioSource(string name, bool loop)
+    private AudioSource CreateAudioSource(string sourceName, bool loop)
     {
-        GameObject go = new GameObject(name + "_Source");
+        GameObject go = new GameObject(sourceName + "_Source");
         go.transform.SetParent(transform);
 
-        AudioSource src = go.AddComponent<AudioSource>();
-        src.loop = loop;
-        src.playOnAwake = false;
-        src.volume = 1f;
+        AudioSource source = go.AddComponent<AudioSource>();
+        source.loop = loop;
+        source.playOnAwake = false;
+        source.volume = 1f;
 
-        return src;
+        return source;
     }
 
     private void Start()
@@ -87,30 +92,37 @@ public class AudioManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (Instance == null) return;
+        if (Instance == null)
+            return;
 
         switch (scene.name)
         {
             case "MainMenu":
                 PlayBGM("Surat Ajaib Desa");
                 break;
+
             case "CutScenee":
                 StopBGM();
                 break;
+
             case "MainGameplay(Drawing)":
             case "Level2":
                 PlayBGM("Broken Festival Kite");
                 break;
+
             default:
                 StopBGM();
                 break;
         }
     }
 
-    // ========== BGM ==========
+    // BGM
     public void PlayBGM(AudioClip clip)
     {
-        if (clip == null || bgmSource == null || currentBgmName == clip.name)
+        if (clip == null || bgmSource == null)
+            return;
+
+        if (currentBgmName == clip.name)
             return;
 
         currentBgmName = clip.name;
@@ -130,27 +142,38 @@ public class AudioManager : MonoBehaviour
         if (forceRestart)
             currentBgmName = null;
 
-        AudioClip clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+        AudioClip clip =
+            Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+
         if (clip != null)
+        {
             PlayBGM(clip);
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"BGM tidak ditemukan: Audio/BGM/{resourceName}"
+            );
+        }
     }
 
     public void StopBGM()
     {
         if (bgmSource == null)
             return;
+
         bgmSource.Stop();
         currentBgmName = null;
     }
 
-    // ========== SFX (Klik & Tombol) ==========
+    // SFX
     public void PlaySFX(AudioClip clip)
     {
-        if (clip != null && sfxSource != null)
-        {
-            StopHoverSFX(); // Hentikan hover agar tidak overlap
-            sfxSource.PlayOneShot(clip);
-        }
+        if (clip == null || sfxSource == null)
+            return;
+
+        StopHoverSFX();
+        sfxSource.PlayOneShot(clip);
     }
 
     public void PlaySFX(string clipName)
@@ -158,22 +181,20 @@ public class AudioManager : MonoBehaviour
         if (string.IsNullOrEmpty(clipName))
             return;
 
-        if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
-        {
-            clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
-            if (clip != null)
-                sfxCache[clipName] = clip;
-        }
-        PlaySFX(clip);
+        PlaySFX(GetSFXClip(clipName));
     }
 
-    // ========== HOVER ==========
+    // Hover
     public void PlayHoverSFX(AudioClip clip)
     {
         if (clip == null || hoverSource == null)
             return;
 
+        if (hoverSource.isPlaying)
+            hoverSource.Stop();
+
         hoverSource.clip = clip;
+        hoverSource.volume = currentSfxVolume;
         hoverSource.Play();
     }
 
@@ -182,50 +203,74 @@ public class AudioManager : MonoBehaviour
         if (string.IsNullOrEmpty(clipName))
             return;
 
-        if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
-        {
-            clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
-            if (clip != null)
-                sfxCache[clipName] = clip;
-        }
-        PlayHoverSFX(clip);
+        PlayHoverSFX(GetSFXClip(clipName));
     }
 
     public void StopHoverSFX()
     {
-        if (hoverSource != null)
+        if (hoverSource != null && hoverSource.isPlaying)
             hoverSource.Stop();
     }
 
-    // ========== UI SFX (Panel, Aksara, Notifikasi) ==========
-    public void PlayUISFX(AudioClip clip)
+    // UI SFX - tidak overlap
+    public void PlayUISFX(AudioClip clip, float volumeMultiplier = 1f)
     {
         if (clip == null || uiSource == null)
             return;
 
-        // Cooldown cegah spam
         if (Time.unscaledTime - lastUISFXTime < uiSFXCooldown)
             return;
 
         lastUISFXTime = Time.unscaledTime;
-        uiSource.PlayOneShot(clip);
+
+        if (uiSource.isPlaying)
+            uiSource.Stop();
+
+        uiSource.volume = currentSfxVolume * Mathf.Clamp01(volumeMultiplier);
+        uiSource.clip = clip;
+        uiSource.Play();
     }
 
-    public void PlayUISFX(string clipName)
+    public void PlayUISFX(string clipName, float volumeMultiplier = 1f)
     {
         if (string.IsNullOrEmpty(clipName))
             return;
 
-        if (!sfxCache.TryGetValue(clipName, out AudioClip clip))
-        {
-            clip = Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
-            if (clip != null)
-                sfxCache[clipName] = clip;
-        }
-        PlayUISFX(clip);
+        PlayUISFX(GetSFXClip(clipName), volumeMultiplier);
     }
 
-    // ========== VOLUME ==========
+    public void StopUISFX()
+    {
+        if (uiSource != null && uiSource.isPlaying)
+            uiSource.Stop();
+    }
+
+    private AudioClip GetSFXClip(string clipName)
+    {
+        if (string.IsNullOrEmpty(clipName))
+            return null;
+
+        if (sfxCache.TryGetValue(clipName, out AudioClip cachedClip))
+            return cachedClip;
+
+        AudioClip clip =
+            Resources.Load<AudioClip>($"Audio/SFX/{clipName}");
+
+        if (clip != null)
+        {
+            sfxCache[clipName] = clip;
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"SFX tidak ditemukan: Audio/SFX/{clipName}"
+            );
+        }
+
+        return clip;
+    }
+
+    // Volume
     public void SetBGMVolume(float sliderValue)
     {
         float value = Mathf.Clamp(sliderValue, 0.0001f, 1f);
@@ -265,6 +310,13 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public float GetCurrentBGMVolume() => currentBgmVolume;
-    public float GetCurrentSFXVolume() => currentSfxVolume;
+    public float GetCurrentBGMVolume()
+    {
+        return currentBgmVolume;
+    }
+
+    public float GetCurrentSFXVolume()
+    {
+        return currentSfxVolume;
+    }
 }

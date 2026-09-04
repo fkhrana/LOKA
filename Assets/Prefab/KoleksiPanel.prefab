@@ -215,8 +215,8 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &2872305146258497815
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,6 +328,10 @@ MonoBehaviour:
   fadeDuration: 0.5
   slideDuration: 0.5
   isStacked: 1
+  useSound: 1
+  openSound: Panel
+  closeSound: Panel
+  panelSoundVolume: 0.6
 --- !u!1 &3869846513166266731
 GameObject:
   m_ObjectHideFlags: 0
@@ -466,8 +470,8 @@ MonoBehaviour:
   hoverMoveY: 0
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
 --- !u!1 &5374515458296329197
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,5 +1036,5 @@ MonoBehaviour:
   hoverMoveY: 10
   animDuration: 0.2
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
