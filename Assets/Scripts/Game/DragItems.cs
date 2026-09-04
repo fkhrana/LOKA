@@ -3,26 +3,36 @@ using UnityEngine.EventSystems;
 
 public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    public string correctTargetTag; // isi "NA", "DA", atau "NONE" kalau pengecoh
+    public string correctTargetTag;
+
+    public bool IsDragging { get; private set; }
 
     private Vector3 startPosition;
     private Transform startParent;
     private CanvasGroup canvasGroup;
 
-    void Awake()
+    private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        IsDragging = true;
+
         startPosition = transform.position;
         startParent = transform.parent;
 
         canvasGroup.alpha = 0.6f;
-        canvasGroup.blocksRaycasts = false; // biar raycast tembus ke slot di bawahnya
+        canvasGroup.blocksRaycasts = false;
+
+        EffectHover hover = GetComponent<EffectHover>();
+
+        if (hover != null)
+            hover.StopHoverEffect();
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -32,13 +42,13 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        IsDragging = false;
+
         canvasGroup.alpha = 1f;
         canvasGroup.blocksRaycasts = true;
 
         if (transform.parent == startParent)
-        {
             ReturnToStart();
-        }
     }
 
     public void ReturnToStart()

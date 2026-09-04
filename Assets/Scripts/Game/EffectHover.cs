@@ -13,8 +13,8 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
     [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutBack;
 
     [Header("Sound")]
-    [SerializeField] private string hoverSound = "ButtonHover";
-    [SerializeField] private string clickSound = "ButtonClick";
+    [SerializeField] private string hoverSound = "Hover";
+    [SerializeField] private string clickSound = "ButtonHover";
 
     private Vector3 originalScale;
     private Vector3 originalPosition;
@@ -49,6 +49,11 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        DragItem dragItem = GetComponent<DragItem>();
+
+        if (dragItem != null && dragItem.IsDragging)
+            return;
+
         if (isHovering)
             return;
 
@@ -56,15 +61,23 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         LeanTween.cancel(targetTransform.gameObject);
 
-        LeanTween.scale(targetTransform, originalScale * hoverScale, animDuration)
-            .setEase(easeType)
-            .setIgnoreTimeScale(true);
+        LeanTween.scale(
+            targetTransform,
+            originalScale * hoverScale,
+            animDuration
+        )
+        .setEase(easeType)
+        .setIgnoreTimeScale(true);
 
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y + hoverMoveY, animDuration)
-                .setEase(easeType)
-                .setIgnoreTimeScale(true);
+            LeanTween.moveLocalY(
+                targetTransform.gameObject,
+                originalPosition.y + hoverMoveY,
+                animDuration
+            )
+            .setEase(easeType)
+            .setIgnoreTimeScale(true);
         }
 
         AudioManager.Instance?.StopHoverSFX();
@@ -73,6 +86,11 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        DragItem dragItem = GetComponent<DragItem>();
+
+        if (dragItem != null && dragItem.IsDragging)
+            return;
+
         if (!isHovering)
             return;
 
@@ -80,26 +98,49 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
         LeanTween.cancel(targetTransform.gameObject);
 
-        LeanTween.scale(targetTransform, originalScale, animDuration)
-            .setEase(easeType)
-            .setIgnoreTimeScale(true);
+        LeanTween.scale(
+            targetTransform,
+            originalScale,
+            animDuration
+        )
+        .setEase(easeType)
+        .setIgnoreTimeScale(true);
 
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y, animDuration)
-                .setEase(easeType)
-                .setIgnoreTimeScale(true);
+            LeanTween.moveLocalY(
+                targetTransform.gameObject,
+                originalPosition.y,
+                animDuration
+            )
+            .setEase(easeType)
+            .setIgnoreTimeScale(true);
         }
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnClick(); // panggil method yang sama
+        OnClick();
     }
 
     public void OnClick()
     {
         AudioManager.Instance?.PlaySFX(clickSound);
+    }
+
+    public void StopHoverEffect()
+    {
+        isHovering = false;
+
+        if (targetTransform == null || !hasCapturedOriginal)
+            return;
+
+        LeanTween.cancel(targetTransform.gameObject);
+
+        targetTransform.localScale = originalScale;
+        targetTransform.localPosition = originalPosition;
+
+        AudioManager.Instance?.StopHoverSFX();
     }
 
     public void StopHoverSound()
@@ -116,6 +157,7 @@ public class EffectHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         {
             targetTransform.localScale = originalScale;
             targetTransform.localPosition = originalPosition;
+
             LeanTween.cancel(targetTransform.gameObject);
         }
 

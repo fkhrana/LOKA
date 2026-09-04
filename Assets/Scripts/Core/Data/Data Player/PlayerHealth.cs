@@ -6,6 +6,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int startHealth = 100;
 
+    [Header("Hurt SFX")]
+    [SerializeField] private bool useHurtSFX = true;
+    [SerializeField] private string hurtSFXName = "Hurt";
+
     public int MaxHealth => Mathf.Max(1, maxHealth);
     public int CurrentHealth { get; private set; }
     public bool IsDead => CurrentHealth <= 0;
@@ -25,6 +29,10 @@ public class PlayerHealth : MonoBehaviour
             return;
 
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+
+        if (useHurtSFX && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(hurtSFXName);
+
         NotifyHealthChanged();
 
         if (CurrentHealth == 0)

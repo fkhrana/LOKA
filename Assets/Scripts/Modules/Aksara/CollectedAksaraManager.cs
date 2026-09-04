@@ -5,8 +5,18 @@ public class CollectedAksaraManager : MonoBehaviour
 {
     public static CollectedAksaraManager Instance { get; private set; }
 
-    private HashSet<GestureShape> droppedThisWave = new HashSet<GestureShape>();
-    private List<AksaraData> collectedThisWave = new List<AksaraData>();
+    private HashSet<GestureShape> droppedThisWave =
+        new HashSet<GestureShape>();
+
+    private List<AksaraData> collectedThisWave =
+        new List<AksaraData>();
+
+    [Header("Collect SFX")]
+    [SerializeField] private bool useCollectSFX = true;
+    [SerializeField] private string collectSFXName = "CollectAksara";
+
+    [Range(0f, 1f)]
+    [SerializeField] private float collectSFXVolume = 1f;
 
     private void Awake()
     {
@@ -15,6 +25,7 @@ public class CollectedAksaraManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
     }
 
@@ -22,11 +33,19 @@ public class CollectedAksaraManager : MonoBehaviour
     {
         if (droppedThisWave.Contains(shape))
         {
-            Debug.Log($"[CollectedAksaraManager] Drop for {shape} already registered this wave.");
+            Debug.Log(
+                $"[CollectedAksaraManager] Drop for {shape} already registered this wave."
+            );
+
             return false;
         }
+
         droppedThisWave.Add(shape);
-        Debug.Log($"[CollectedAksaraManager] Registered drop for {shape}.");
+
+        Debug.Log(
+            $"[CollectedAksaraManager] Registered drop for {shape}."
+        );
+
         return true;
     }
 
@@ -37,12 +56,26 @@ public class CollectedAksaraManager : MonoBehaviour
 
         if (IsCollected(aksaraData))
         {
-            Debug.Log($"[CollectedAksaraManager] Aksara already collected: {aksaraData.AksaraName}");
+            Debug.Log(
+                $"[CollectedAksaraManager] Aksara already collected: {aksaraData.AksaraName}"
+            );
+
             return;
         }
 
         collectedThisWave.Add(aksaraData);
-        Debug.Log($"[CollectedAksaraManager] Collected aksara: {aksaraData.AksaraName}");
+
+        if (useCollectSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                collectSFXName,
+                collectSFXVolume
+            );
+        }
+
+        Debug.Log(
+            $"[CollectedAksaraManager] Collected aksara: {aksaraData.AksaraName}"
+        );
     }
 
     public bool IsCollected(AksaraData aksaraData)
@@ -63,8 +96,13 @@ public class CollectedAksaraManager : MonoBehaviour
     {
         foreach (var collectedAksara in collectedThisWave)
         {
-            if (collectedAksara != null && collectedAksara.GestureShape == shape)
+            if (
+                collectedAksara != null &&
+                collectedAksara.GestureShape == shape
+            )
+            {
                 return true;
+            }
         }
 
         return false;
@@ -74,8 +112,12 @@ public class CollectedAksaraManager : MonoBehaviour
     {
         droppedThisWave.Clear();
         collectedThisWave.Clear();
-        Debug.Log("[CollectedAksaraManager] Wave reset.");
+
+        Debug.Log(
+            "[CollectedAksaraManager] Wave reset."
+        );
     }
 
-    public IReadOnlyList<AksaraData> CollectedAksara => collectedThisWave.AsReadOnly();
+    public IReadOnlyList<AksaraData> CollectedAksara =>
+        collectedThisWave.AsReadOnly();
 }
