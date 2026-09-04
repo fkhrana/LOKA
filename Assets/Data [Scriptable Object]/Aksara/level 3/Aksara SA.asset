@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f941ffdb488e01b4aba4932a996f0431, type: 3}
   m_Name: Aksara SA
   m_EditorClassIdentifier: Assembly-CSharp::AksaraData
-  gestureShape: 0
-  aksaraName: Aksara
-  iconSprite: {fileID: 0}
-  fragmentSprite: {fileID: 0}
+  gestureShape: 18
+  aksaraName: SA
+  iconSprite: {fileID: 21300000, guid: 58f9e944151a13a45b5e64ad5b012d88, type: 3}
+  fragmentSprite: {fileID: 21300000, guid: 58f9e944151a13a45b5e64ad5b012d88, type: 3}

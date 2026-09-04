@@ -65,6 +65,49 @@ public class EnemyGestureCommand : MonoBehaviour
         return false;
     }
 
+    public static bool HasActiveEnemyWithMoreStrokes(int strokeCount)
+    {
+        if (GestureRecognizer.Instance == null)
+            return false;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var enemy = activeEnemies[i];
+            if (enemy != null && enemy.challengeActive &&
+                GestureRecognizer.Instance.HasTemplateWithMoreStrokes(enemy.gestureToCommand, strokeCount))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool HasMultipleActiveEnemyShapes()
+    {
+        GestureShape firstShape = GestureShape.None;
+        bool foundShape = false;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var enemy = activeEnemies[i];
+            if (enemy == null || !enemy.challengeActive)
+                continue;
+
+            if (!foundShape)
+            {
+                firstShape = enemy.gestureToCommand;
+                foundShape = true;
+            }
+            else if (enemy.gestureToCommand != firstShape)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static bool HasHandledStroke(List<Vector2> points)
     {
         return cachedStrokePoints == points && cachedStrokeHandled;

@@ -215,6 +215,20 @@ public class GestureDrawer : MonoBehaviour
             }
         }
 
+        if (expectedShape == GestureShape.None && EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(completedStrokes.Count))
+        {
+            isAwaitingNextStroke = true;
+            pendingRecognitionTime = Time.unscaledTime + firstStrokeGracePeriod;
+            return;
+        }
+
+        if (completedStrokes.Count == 1 && expectedShape == GestureShape.None &&
+            !EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(completedStrokes.Count))
+        {
+            FinalizeRecognition();
+            return;
+        }
+
         if (completedStrokes.Count == 1)
         {
             isAwaitingNextStroke = true;
@@ -278,9 +292,12 @@ public class GestureDrawer : MonoBehaviour
         if (GestureChallengeManager.Instance != null && GestureChallengeManager.Instance.HasActiveChallenge())
             return GestureChallengeManager.Instance.CurrentRequiredGesture;
 
-        return EnemyGestureCommand.TryGetActiveChallengeShape(out GestureShape gestureShape)
-            ? gestureShape
-            : GestureShape.None;
+        if (!EnemyGestureCommand.TryGetActiveChallengeShape(out GestureShape gestureShape))
+            return GestureShape.None;
+
+        return EnemyGestureCommand.HasActiveEnemyChallenges() && EnemyGestureCommand.HasMultipleActiveEnemyShapes()
+            ? GestureShape.None
+            : gestureShape;
     }
 
     private void PersistStroke(List<Vector3> points)

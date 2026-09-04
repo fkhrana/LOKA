@@ -6459,11 +6459,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!225 &1240722219 stripped
-CanvasGroup:
-  m_CorrespondingSourceObject: {fileID: 4948632133871454179, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 1836577841}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1336740405
 GameObject:
   m_ObjectHideFlags: 0
@@ -8515,7 +8510,7 @@ PrefabInstance:
     - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: boxCanvasGroup
       value: 
-      objectReference: {fileID: 1240722219}
+      objectReference: {fileID: 0}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -9044,6 +9039,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EasyTransition.TransitionManager
   transitionTemplate: {fileID: 5276914992623515724, guid: 616d511151a6c554caddf1c754e4f91d, type: 3}
+  useTransitionSound: 1
+  transitionSound: Brush
+  transitionSoundVolume: 2
 --- !u!4 &1890490153
 Transform:
   m_ObjectHideFlags: 0
@@ -9169,7 +9167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   mainMenuScene: MainMenu
   gameplayScene: Level2
-  nextScene: MainMenu
+  nextScene: Level3
 --- !u!225 &1902292278
 CanvasGroup:
   m_ObjectHideFlags: 0
