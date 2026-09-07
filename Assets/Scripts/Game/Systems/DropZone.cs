@@ -15,6 +15,9 @@ public class DropZone : MonoBehaviour, IDropHandler
     [SerializeField] private AudioClip correctSFX;
     [SerializeField] private AudioClip wrongSFX;
 
+    [Header("VFX")]
+    [SerializeField] private GameObject correctVFX;
+
     [Header("Shake")]
     [SerializeField] private float shakeDuration = 0.3f;
     [SerializeField] private float shakeMagnitude = 15f;
@@ -26,6 +29,7 @@ public class DropZone : MonoBehaviour, IDropHandler
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+
         if (rectTransform != null)
             originalAnchoredPos = rectTransform.anchoredPosition;
     }
@@ -34,7 +38,9 @@ public class DropZone : MonoBehaviour, IDropHandler
     {
         if (eventData.pointerDrag == null) return;
 
-        DragItem draggedItem = eventData.pointerDrag.GetComponent<DragItem>();
+        DragItem draggedItem =
+            eventData.pointerDrag.GetComponent<DragItem>();
+
         if (draggedItem == null) return;
 
         // ===== BENAR =====
@@ -52,13 +58,18 @@ public class DropZone : MonoBehaviour, IDropHandler
             isFilled = true;
 
             Image img = draggedItem.GetComponent<Image>();
+
             if (img != null)
                 img.raycastTarget = false;
 
+            // SFX BENAR
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(correctSFX);
 
-            // 🔥 LANGSUNG CEK PUZZLE (tanpa VFX bintang)
+            // VFX BENAR
+            PlayCorrectEffect();
+
+            // CEK PUZZLE
             if (PuzzleManager.Instance != null)
                 PuzzleManager.Instance.CheckPuzzleComplete();
 
@@ -70,14 +81,57 @@ public class DropZone : MonoBehaviour, IDropHandler
         {
             draggedItem.ReturnToStart();
 
+            // SFX SALAH
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
 
+            // SHAKE
             PlayWrongEffect();
 
             Debug.Log("❌ Salah, kembali ke posisi awal");
         }
     }
+
+    // =========================================================
+    // VFX BENAR
+    // =========================================================
+
+    private void PlayCorrectEffect()
+    {
+        if (correctVFX == null)
+        {
+            Debug.LogWarning(
+                "⚠️ Correct VFX belum di-assign pada "
+                + gameObject.name
+            );
+
+            return;
+        }
+
+        GameObject vfx = Instantiate(
+            correctVFX,
+            transform.position,
+            Quaternion.identity
+        );
+
+        ParticleSystem[] particles =
+            vfx.GetComponentsInChildren<ParticleSystem>(true);
+
+        foreach (ParticleSystem ps in particles)
+        {
+            ps.Play(true);
+        }
+
+        Destroy(vfx, 2f);
+
+        Debug.Log(
+            "✨ VFX dimainkan pada " + gameObject.name
+        );
+    }
+
+    // =========================================================
+    // EFFECT SALAH
+    // =========================================================
 
     private void PlayWrongEffect()
     {
@@ -95,13 +149,21 @@ public class DropZone : MonoBehaviour, IDropHandler
 
         while (elapsed < shakeDuration)
         {
-            float offsetX = Random.Range(-1f, 1f) * shakeMagnitude;
-            rectTransform.anchoredPosition = originalAnchoredPos + new Vector2(offsetX, 0f);
+            float offsetX =
+                Random.Range(-1f, 1f) * shakeMagnitude;
+
+            rectTransform.anchoredPosition =
+                originalAnchoredPos +
+                new Vector2(offsetX, 0f);
+
             elapsed += Time.unscaledDeltaTime;
+
             yield return null;
         }
 
-        rectTransform.anchoredPosition = originalAnchoredPos;
+        rectTransform.anchoredPosition =
+            originalAnchoredPos;
+
         shakeRoutine = null;
     }
 }

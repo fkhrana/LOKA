@@ -33,3 +33,11 @@ MonoBehaviour:
     cardSprite: {fileID: 3763845592647528114, guid: 1261b7a0ac614b5449f6031bdd18b60f, type: 3}
   - aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
     cardSprite: {fileID: -2572346599395726949, guid: 46fd065cf366489479518c2282127e0a, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
+    cardSprite: {fileID: 5715660181463132073, guid: 061d368059486dd40bc6c97e9d1ffaa1, type: 3}
+  - aksaraData: {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
+    cardSprite: {fileID: -5220128171035123156, guid: 27a43980ecbd15648914c0e6d9caa028, type: 3}
+  - aksaraData: {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+    cardSprite: {fileID: 2641385032643809114, guid: 94331880c87119a4bac22b6aa59f9e61, type: 3}
+  - aksaraData: {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+    cardSprite: {fileID: 2641385032643809114, guid: 94331880c87119a4bac22b6aa59f9e61, type: 3}

@@ -31,5 +31,11 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 7dca8a1bc13d89b429b2ff761c678ace, type: 3}
   - gestureShape: 12
     clip: {fileID: 8300000, guid: bd037149707282947920d4c7fa091f9c, type: 3}
+  - gestureShape: 16
+    clip: {fileID: 8300000, guid: f9ecf5b1f3d2fc646bb2b6d63f6bb8d3, type: 3}
   - gestureShape: 13
+    clip: {fileID: 8300000, guid: c15bc12c0cb5ab5469a2d69efc2544a9, type: 3}
+  - gestureShape: 17
+    clip: {fileID: 8300000, guid: 99e451dec7a25734388b6e5fe174debc, type: 3}
+  - gestureShape: 17
     clip: {fileID: 8300000, guid: c15bc12c0cb5ab5469a2d69efc2544a9, type: 3}
