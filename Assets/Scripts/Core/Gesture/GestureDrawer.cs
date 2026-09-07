@@ -11,6 +11,7 @@ public class GestureDrawer : MonoBehaviour
     public event Action<List<List<Vector2>>, GestureRecognitionResult> GestureRecognized;
 
     public LineRenderer lineRenderer;
+    [SerializeField] private GameObject brushPrefab;
     public float minPointDistance = 0.05f;
     public float firstStrokeGracePeriod = 0.35f;
 
@@ -19,6 +20,8 @@ public class GestureDrawer : MonoBehaviour
     private readonly List<Vector3> currentStrokePoints = new List<Vector3>();
     private readonly List<List<Vector2>> completedStrokes = new List<List<Vector2>>();
     private readonly List<LineRenderer> completedStrokeRenderers = new List<LineRenderer>();
+    private readonly List<GameObject> brushInstances = new List<GameObject>();
+    private GameObject activeBrush;
     private bool isDrawing;
     private bool isAwaitingNextStroke;
     private float pendingRecognitionTime;
@@ -46,6 +49,7 @@ public class GestureDrawer : MonoBehaviour
         lineRenderer.numCornerVertices = 8;
         lineRenderer.startColor = Color.green;
         lineRenderer.endColor = Color.green;
+        lineRenderer.enabled = brushPrefab == null;
 
         if (lineRenderer.material == null)
             lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
@@ -147,7 +151,9 @@ public class GestureDrawer : MonoBehaviour
 
         ClearCurrentStrokePreview();
         isDrawing = true;
-        AddPoint(GetMouseWorldPosition());
+        Vector3 startPoint = GetMouseWorldPosition();
+        StartBrush(startPoint);
+        AddPoint(startPoint);
     }
 
     private void UpdateStroke()
@@ -162,6 +168,7 @@ public class GestureDrawer : MonoBehaviour
     private void EndStroke()
     {
         isDrawing = false;
+        activeBrush = null;
         if (currentStrokePoints.Count < 2)
         {
             Debug.Log("Stroke terlalu pendek untuk dikenali.");
@@ -302,7 +309,7 @@ public class GestureDrawer : MonoBehaviour
 
     private void PersistStroke(List<Vector3> points)
     {
-        if (points == null || points.Count == 0)
+        if (brushPrefab != null || points == null || points.Count == 0)
             return;
 
         var renderer = new GameObject("GestureStroke").AddComponent<LineRenderer>();
@@ -325,11 +332,34 @@ public class GestureDrawer : MonoBehaviour
         completedStrokeRenderers.Add(renderer);
     }
 
+    private void StartBrush(Vector3 startPoint)
+    {
+        if (brushPrefab == null)
+            return;
+
+        activeBrush = Instantiate(brushPrefab, transform);
+        activeBrush.name = "GestureBrush";
+        activeBrush.transform.position = startPoint;
+
+        var brushController = activeBrush.GetComponent<TesKuas>();
+        if (brushController != null)
+            brushController.enabled = false;
+
+        var trail = activeBrush.GetComponent<TrailRenderer>();
+        if (trail != null)
+            trail.Clear();
+
+        brushInstances.Add(activeBrush);
+    }
+
     private void AddPoint(Vector3 point)
     {
         currentStrokePoints.Add(point);
         lineRenderer.positionCount = currentStrokePoints.Count;
         lineRenderer.SetPosition(currentStrokePoints.Count - 1, point);
+
+        if (activeBrush != null)
+            activeBrush.transform.position = point;
     }
 
     private void ClearCurrentStrokePreview()
@@ -349,6 +379,15 @@ public class GestureDrawer : MonoBehaviour
         }
 
         completedStrokeRenderers.Clear();
+
+        foreach (var brush in brushInstances)
+        {
+            if (brush != null)
+                Destroy(brush);
+        }
+
+        brushInstances.Clear();
+        activeBrush = null;
     }
 
     private void ResetGesture()

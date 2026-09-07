@@ -1952,6 +1952,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureDrawer
   lineRenderer: {fileID: 256010450}
+  brushPrefab: {fileID: 6222970725460223712, guid: de27dc7e0bad1f841ac581e8172ec81b, type: 3}
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
 --- !u!120 &256010450
