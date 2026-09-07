@@ -5,8 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public class AksaraFragmentItem : MonoBehaviour
 {
-    [SerializeField] private float fallDistance = 1.5f;
-    [SerializeField] private float fallDuration = 0.4f;
+    [SerializeField] private float jumpHeight = 1.5f;
+    [SerializeField] private float sideDistance = -1.5f;
+    [SerializeField] private float dropDuration = 0.4f;
     [SerializeField] private GameObject dropVfx;
 
     private SpriteRenderer spriteRenderer;
@@ -50,29 +51,47 @@ public class AksaraFragmentItem : MonoBehaviour
 
         if (fallCoroutine != null)
             StopCoroutine(fallCoroutine);
-        fallCoroutine = StartCoroutine(FallCoroutine(spawnPosition));
+        fallCoroutine = StartCoroutine(DropCoroutine(spawnPosition));
     }
 
-    private IEnumerator FallCoroutine(Vector2 startPos)
+    private IEnumerator DropCoroutine(Vector2 startPos)
     {
         Camera cam = Camera.main;
-        float camBottomY = cam.transform.position.y - cam.orthographicSize;
-    
-        float padding = 0.5f;
-        float minY = camBottomY + padding;
-    
-        Vector2 endPos = startPos + Vector2.down * fallDistance;
-        endPos.y = Mathf.Max(endPos.y, minY);
-    
-        float elapsed = 0f;
-        while (elapsed < fallDuration)
+        float minY = startPos.y - 1.5f;
+
+        if (cam != null)
         {
-            float t = Mathf.Clamp01(elapsed / fallDuration);
-            transform.position = Vector2.Lerp(startPos, endPos, t);
+            float camBottomY = cam.transform.position.y - cam.orthographicSize;
+            minY = camBottomY + 0.5f;
+        }
+
+        Vector2 firstLanding = startPos + new Vector2(sideDistance, -1.5f);
+        firstLanding.y = Mathf.Max(firstLanding.y, minY);
+
+        yield return StartCoroutine(JumpCoroutine(startPos, firstLanding, jumpHeight, dropDuration));
+
+        Vector2 finalLanding = firstLanding + new Vector2(sideDistance * 0.2f, 0f);
+        yield return StartCoroutine(JumpCoroutine(
+            firstLanding,
+            finalLanding,
+            jumpHeight * 0.3f,
+            dropDuration * 0.5f));
+    }
+
+    private IEnumerator JumpCoroutine(Vector2 from, Vector2 to, float height, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            float progress = Mathf.Clamp01(elapsed / duration);
+            float arc = Mathf.Sin(progress * Mathf.PI) * height;
+            transform.position = Vector2.Lerp(from, to, progress) + Vector2.up * arc;
             elapsed += Time.deltaTime;
             yield return null;
         }
-        transform.position = endPos;
+
+        transform.position = to;
     }
 
     private void OnMouseDown()
