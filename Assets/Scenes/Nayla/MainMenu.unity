@@ -892,6 +892,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &491237725
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,7 +1050,6 @@ RectTransform:
   m_Children:
   - {fileID: 791794527}
   - {fileID: 1970124525}
-  - {fileID: 807380743}
   m_Father: {fileID: 491237729}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1194,7 +1195,7 @@ MonoBehaviour:
   uiSource: {fileID: 0}
   defaultBgmVolume: 1
   defaultSfxVolume: 1
-  uiSFXCooldown: 0.3
+  uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7701617808498086987, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
@@ -1374,6 +1375,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &766249909
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,8 +1411,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.00036621094, y: 316.96002}
-  m_SizeDelta: {x: 2, y: 633.92}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &766249911
 MonoBehaviour:
@@ -1438,12 +1441,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
   m_Padding:
-    m_Left: 2
+    m_Left: 0
     m_Right: 0
-    m_Top: 600
-    m_Bottom: 0
+    m_Top: 0
+    m_Bottom: 55
   m_ChildAlignment: 4
-  m_Spacing: 30
+  m_Spacing: 0
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -1835,6 +1838,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &807380742
 GameObject:
   m_ObjectHideFlags: 0
@@ -1859,16 +1864,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807380742}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 511750229}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 990, y: 530.3247}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &807380744
@@ -1934,7 +1939,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -511, y: 0}
+  m_AnchoredPosition: {x: -450, y: -23}
   m_SizeDelta: {x: 89, y: 84}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &812645198
@@ -2038,6 +2043,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &827892002
 GameObject:
   m_ObjectHideFlags: 0
@@ -2381,6 +2388,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1215382106
 GameObject:
   m_ObjectHideFlags: 0
@@ -2505,6 +2514,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EasyTransition.TransitionManager
   transitionTemplate: {fileID: 5276914992623515724, guid: 616d511151a6c554caddf1c754e4f91d, type: 3}
+  useTransitionSound: 1
+  transitionSound: Brush
+  transitionSoundVolume: 2
 --- !u!1 &1269608371
 GameObject:
   m_ObjectHideFlags: 0
@@ -2657,6 +2669,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1001 &1366283601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2957,6 +2971,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1455421459 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2381823958426288633, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
@@ -3015,7 +3031,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 511.71997, y: 0}
+  m_AnchoredPosition: {x: 439, y: -23}
   m_SizeDelta: {x: 89, y: 84}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1511718462
@@ -3119,6 +3135,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1569412103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7700509207193498279, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
@@ -3183,7 +3201,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 9d8c161ae5b6c034982bde41b2e0800e, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3303,8 +3321,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 3, y: 0}
-  m_SizeDelta: {x: -6, y: 22}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1632229668
 MonoBehaviour:
@@ -3701,6 +3719,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &2061052736
 GameObject:
   m_ObjectHideFlags: 0
@@ -3738,8 +3758,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 18, y: 0}
-  m_SizeDelta: {x: 910, y: 603.62}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 800, y: 550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2061052738
 MonoBehaviour:
@@ -3977,6 +3997,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &2122410756
 GameObject:
   m_ObjectHideFlags: 0
@@ -4644,6 +4666,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 2122410759}
   - {fileID: 67993242}
+  - {fileID: 807380743}
   - {fileID: 584587054}
   - {fileID: 491237729}
   - {fileID: 1215382109}
