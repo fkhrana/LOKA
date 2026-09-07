@@ -2955,7 +2955,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &372075796
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6820,7 +6820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1096968999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7660,6 +7660,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   collectionPanel: {fileID: 83091949}
   collectionPanel2: {fileID: 1334498015}
+  collectBookTarget: {fileID: 375499978}
+  collectionBookVfx: {fileID: 872456707504311595, guid: 0b7c4b4b28eb7514589d8bc83e8ef570, type: 3}
+  collectionBookVfxLifetime: 2
+  collectionBookVfxOffset: {x: -0.1, y: -0.1, z: 0}
 --- !u!1 &1415337698
 GameObject:
   m_ObjectHideFlags: 0

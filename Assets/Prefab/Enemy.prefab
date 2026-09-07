@@ -655,9 +655,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7707a271b1e414b4f9cd2a039eadc430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AksaraFragmentItem
-  fallDistance: 1.5
-  fallDuration: 0.4
+  jumpHeight: 1.5
+  sideDistance: -1.5
+  dropDuration: 0.4
   dropVfx: {fileID: 7863991665977017088}
+  collectBookTarget: {fileID: 0}
+  collectTrailVfx: {fileID: 8757289190187547843, guid: 326b0c52804065b4ca11216e0e64c235, type: 3}
+  collectFlightSpeed: 5
+  collectRotationSpeed: 1000
+  collectArrivalDistance: 0.5
 --- !u!1001 &8943843379216120835
 PrefabInstance:
   m_ObjectHideFlags: 0

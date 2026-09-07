@@ -7592,6 +7592,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CollectionPanel
   collectionPanel: {fileID: 1888406626}
   collectionPanel2: {fileID: 0}
+  collectBookTarget: {fileID: 375499978}
+  collectionBookVfx: {fileID: 872456707504311595, guid: 0b7c4b4b28eb7514589d8bc83e8ef570, type: 3}
+  collectionBookVfxLifetime: 2
+  collectionBookVfxOffset: {x: -0.1, y: -0.1, z: 0}
 --- !u!1 &1590443630
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,10 +10,19 @@ public class AksaraFragmentItem : MonoBehaviour
     [SerializeField] private float dropDuration = 0.4f;
     [SerializeField] private GameObject dropVfx;
 
+    [Header("Collect Animation")]
+    [SerializeField] private GameObject collectTrailVfx;
+    [SerializeField] private float collectFlightSpeed = 5f;
+    [SerializeField] private float collectRotationSpeed = 1000f;
+    [SerializeField] private float collectArrivalDistance = 0.5f;
+    [SerializeField] private float collectTrailScale = 2f;
+
     private SpriteRenderer spriteRenderer;
     private AksaraData aksaraData;
     private Coroutine fallCoroutine;
     private ParticleSystem[] dropVfxParticles;
+    private bool isCollecting;
+    private GameObject activeCollectTrail;
 
     private void Awake()
     {
@@ -96,11 +105,112 @@ public class AksaraFragmentItem : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if (isCollecting || aksaraData == null)
+            return;
+
+        Transform target = CollectionPanel.CollectBookTarget;
+
+        if (target == null)
+        {
+            CompleteCollect();
+            return;
+        }
+
+        isCollecting = true;
+
+        if (fallCoroutine != null)
+            StopCoroutine(fallCoroutine);
+
+        Collider2D itemCollider = GetComponent<Collider2D>();
+        if (itemCollider != null)
+            itemCollider.enabled = false;
+
+        if (dropVfx != null)
+            dropVfx.SetActive(false);
+
+        if (collectTrailVfx != null)
+        {
+            activeCollectTrail = Instantiate(
+                collectTrailVfx,
+                transform.position,
+                collectTrailVfx.transform.rotation);
+            activeCollectTrail.transform.localScale = Vector3.one * collectTrailScale;
+        }
+
+        StartCoroutine(FlyToCollectBook(target));
+    }
+
+    private IEnumerator FlyToCollectBook(Transform target)
+    {
+        Vector3 initialScale = transform.localScale;
+
+        while (target != null)
+        {
+            Vector3 targetWorldPosition = GetWorldTargetPosition(target);
+
+            if (Vector3.Distance(transform.position, targetWorldPosition) <= collectArrivalDistance)
+                break;
+
+            transform.Rotate(0f, 0f, collectRotationSpeed * Time.deltaTime);
+            transform.position = Vector3.Lerp(
+                transform.position,
+                targetWorldPosition,
+                collectFlightSpeed * Time.deltaTime);
+
+            if (activeCollectTrail != null)
+                activeCollectTrail.transform.position = transform.position;
+
+            transform.localScale = Vector3.Lerp(
+                transform.localScale,
+                initialScale * 0.4f,
+                collectFlightSpeed * Time.deltaTime);
+
+            yield return null;
+        }
+
+        CompleteCollect();
+    }
+
+    private Vector3 GetWorldTargetPosition(Transform target)
+    {
+        RectTransform targetRect = target as RectTransform;
+        Camera worldCamera = Camera.main;
+
+        if (targetRect == null || worldCamera == null)
+            return target.position;
+
+        Canvas canvas = targetRect.GetComponentInParent<Canvas>();
+        Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+
+        Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(
+            canvasCamera,
+            targetRect.position);
+
+        float cameraDistance = Mathf.Abs(
+            worldCamera.transform.position.z - transform.position.z);
+
+        Vector3 worldPosition = worldCamera.ScreenToWorldPoint(
+            new Vector3(screenPosition.x, screenPosition.y, cameraDistance));
+        worldPosition.z = transform.position.z;
+
+        return worldPosition;
+    }
+
+    private void CompleteCollect()
+    {
+        if (activeCollectTrail != null)
+            Destroy(activeCollectTrail);
+
+        CollectionPanel.PlayCollectionBookVfx();
+
         if (aksaraData != null && CollectedAksaraManager.Instance != null)
         {
             CollectedAksaraManager.Instance.RegisterCollect(aksaraData);
             PermanentCollectionManager.SaveCollected(aksaraData);
         }
+
         Destroy(gameObject);
     }
 }
