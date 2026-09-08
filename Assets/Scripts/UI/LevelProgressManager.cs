@@ -15,6 +15,17 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private TMP_Text progressText;
     [SerializeField] private float progressAnimationDuration = 0.25f;
 
+    [Header("Non-Collectible Item VFX")]
+    [SerializeField] private Transform levelBarStarTarget;
+    [SerializeField] private GameObject barItemTrailVfx;
+    [SerializeField] private GameObject trailCollectItemVfx;
+    [SerializeField] private Vector3 barItemTrailSpawnOffset = new Vector3(0f, 0f, 0.2f);
+    [SerializeField] private float barItemTrailDuration = 0.8f;
+    [SerializeField] private float trailCollectItemScale = 0.5f;
+    [SerializeField] private float trailCollectItemSpeed = 8f;
+    [SerializeField] private float trailCollectItemArrivalDistance = 0.15f;
+    [SerializeField] private float trailCollectItemEndDelay = 0.15f;
+
     [Header("Optional Events")]
     public UnityEvent OnReachedWaveMilestone; // invoked when reaching a milestone (e.g., show puzzle)
     public UnityEvent OnReachedLevelComplete; // invoked when full level complete (100%)
@@ -53,6 +64,92 @@ public class LevelProgressManager : MonoBehaviour
     {
         processedEnemies = Mathf.Min(totalEnemies, processedEnemies + 1);
         UpdateUI();
+    }
+
+    public void PlayNonCollectibleItemVfx(Vector3 itemPosition)
+    {
+        Transform target = levelBarStarTarget != null
+            ? levelBarStarTarget
+            : progressBar != null
+                ? progressBar.transform
+                : null;
+
+        if (target == null || barItemTrailVfx == null || trailCollectItemVfx == null)
+            return;
+
+        StartCoroutine(PlayNonCollectibleItemVfxRoutine(itemPosition, target));
+    }
+
+    private IEnumerator PlayNonCollectibleItemVfxRoutine(Vector3 itemPosition, Transform target)
+    {
+        Vector3 spawnPosition = itemPosition + barItemTrailSpawnOffset;
+        GameObject barTrail = Instantiate(
+            barItemTrailVfx,
+            spawnPosition,
+            barItemTrailVfx.transform.rotation);
+        PlayParticleSystems(barTrail);
+
+        yield return new WaitForSeconds(barItemTrailDuration);
+
+        if (barTrail != null)
+            Destroy(barTrail);
+
+        GameObject collectTrail = Instantiate(
+            trailCollectItemVfx,
+            spawnPosition,
+            trailCollectItemVfx.transform.rotation);
+        collectTrail.transform.localScale *= trailCollectItemScale;
+
+        while (collectTrail != null && target != null)
+        {
+            Vector3 targetPosition = GetWorldTargetPosition(target, collectTrail.transform.position.z);
+            collectTrail.transform.position = Vector3.MoveTowards(
+                collectTrail.transform.position,
+                targetPosition,
+                trailCollectItemSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(collectTrail.transform.position, targetPosition) <= trailCollectItemArrivalDistance)
+                break;
+
+            yield return null;
+        }
+
+        if (collectTrail != null)
+        {
+            collectTrail.transform.position = GetWorldTargetPosition(
+                target,
+                collectTrail.transform.position.z);
+            yield return new WaitForSeconds(trailCollectItemEndDelay);
+            Destroy(collectTrail);
+        }
+    }
+
+    private void PlayParticleSystems(GameObject effect)
+    {
+        ParticleSystem[] particleSystems = effect.GetComponentsInChildren<ParticleSystem>(true);
+        foreach (ParticleSystem particleSystem in particleSystems)
+            particleSystem.Play(true);
+    }
+
+    private Vector3 GetWorldTargetPosition(Transform target, float sourceZ)
+    {
+        RectTransform targetRect = target as RectTransform;
+        Camera worldCamera = Camera.main;
+
+        if (targetRect == null || worldCamera == null)
+            return target.position;
+
+        Canvas canvas = targetRect.GetComponentInParent<Canvas>();
+        Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+
+        Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(canvasCamera, targetRect.position);
+        float cameraDistance = Mathf.Abs(worldCamera.transform.position.z - sourceZ);
+        Vector3 worldPosition = worldCamera.ScreenToWorldPoint(
+            new Vector3(screenPosition.x, screenPosition.y, cameraDistance));
+        worldPosition.z = sourceZ;
+        return worldPosition;
     }
 
     private void UpdateUI()

@@ -96,30 +96,41 @@ public class Enemy : MonoBehaviour
 
         if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData != null)
         {
-            if (CollectedAksaraManager.Instance != null)
+            bool registeredDrop = CollectedAksaraManager.Instance != null
+                && CollectedAksaraManager.Instance.TryRegisterDrop(aksaraData.GestureShape);
+
+            if (registeredDrop)
             {
-                if (CollectedAksaraManager.Instance.TryRegisterDrop(aksaraData.GestureShape))
+                if (aksaraIconFragment != null)
                 {
-                    if (aksaraIconFragment != null)
-                    {
-                        aksaraIconFragment.transform.SetParent(null);
-                        aksaraIconFragment.Initialize(aksaraData, aksaraIconFragment.transform.position);
-                        Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped.");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Enemy {name} fragment prefab null.");
-                    }
+                    aksaraIconFragment.transform.SetParent(null);
+                    aksaraIconFragment.Initialize(aksaraData, aksaraIconFragment.transform.position);
+                    Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped.");
                 }
                 else
                 {
-                    Debug.Log($"Enemy {name} fragment {aksaraData.AksaraName} already dropped this wave.");
+                    Debug.LogWarning($"Enemy {name} fragment prefab null.");
                 }
             }
+
+            if (!registeredDrop)
+            {
+                PlayNonCollectibleItemVfx();
+                Debug.Log($"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped.");
+            }
+
             return;
         }
 
         if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData == null)
             Debug.LogWarning($"Enemy {name} set to drop fragment but AksaraData null.");
+
+        PlayNonCollectibleItemVfx();
+    }
+
+    private void PlayNonCollectibleItemVfx()
+    {
+        if (aksaraIconRenderer != null)
+            LevelProgressManager.Instance?.PlayNonCollectibleItemVfx(aksaraIconRenderer.transform.position);
     }
 }
