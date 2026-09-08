@@ -16,7 +16,7 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private float progressAnimationDuration = 0.25f;
 
     [Header("Non-Collectible Item VFX")]
-    [SerializeField] private Transform levelBarStarTarget;
+    [SerializeField] private Transform[] levelBarStarTargetsByWave;
     [SerializeField] private GameObject barItemTrailVfx;
     [SerializeField] private GameObject trailCollectItemVfx;
     [SerializeField] private Vector3 barItemTrailSpawnOffset = new Vector3(0f, 0f, 0.2f);
@@ -35,6 +35,7 @@ public class LevelProgressManager : MonoBehaviour
     private HashSet<int> triggeredMilestones = new HashSet<int>();
     private List<int> milestones = new List<int>();
     private Coroutine progressAnimation;
+    private Transform activeLevelBarStarTarget;
 
     private void Awake()
     {
@@ -66,10 +67,21 @@ public class LevelProgressManager : MonoBehaviour
         UpdateUI();
     }
 
+    public void SetLevelBarTargetForWave(int waveIndex)
+    {
+        if (levelBarStarTargetsByWave == null ||
+            waveIndex < 0 ||
+            waveIndex >= levelBarStarTargetsByWave.Length ||
+            levelBarStarTargetsByWave[waveIndex] == null)
+            return;
+
+        activeLevelBarStarTarget = levelBarStarTargetsByWave[waveIndex];
+    }
+
     public void PlayNonCollectibleItemVfx(Vector3 itemPosition)
     {
-        Transform target = levelBarStarTarget != null
-            ? levelBarStarTarget
+        Transform target = activeLevelBarStarTarget != null
+            ? activeLevelBarStarTarget
             : progressBar != null
                 ? progressBar.transform
                 : null;

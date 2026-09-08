@@ -173,6 +173,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         for (int waveIndex = 0; waveIndex < waves.Count; waveIndex++)
         {
             currentWaveIndex = waveIndex;
+            LevelProgressManager.Instance?.SetLevelBarTargetForWave(waveIndex);
             EnemyWaveDefinition wave = waves[waveIndex];
 
             if (wave != null && wave.delayBeforeSpawn > 0f)
