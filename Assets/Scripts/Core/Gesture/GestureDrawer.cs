@@ -21,15 +21,24 @@ public class GestureDrawer : MonoBehaviour
     private readonly List<List<Vector2>> completedStrokes = new List<List<Vector2>>();
     private readonly List<LineRenderer> completedStrokeRenderers = new List<LineRenderer>();
     private readonly List<GameObject> brushInstances = new List<GameObject>();
+
     private GameObject activeBrush;
     private bool isDrawing;
     private bool isAwaitingNextStroke;
     private float pendingRecognitionTime;
     private Camera mainCamera;
 
+    [Header("SFX")]
+    [SerializeField] private bool useBrushSFX = true;
+    [SerializeField] private string brushSFXName = "BrushDraw";
+
+    [Range(0f, 1f)]
+    [SerializeField] private float brushSFXVolume = 1f;
+
     private void Awake()
     {
         mainCamera = Camera.main;
+
         if (mainCamera == null)
         {
             Debug.LogError("GestureDrawer membutuhkan Main Camera di scene.");
@@ -63,7 +72,7 @@ public class GestureDrawer : MonoBehaviour
             return;
         }
 
-        if ((IsConfirmPressed()) && completedStrokes.Count > 0 && !isDrawing)
+        if (IsConfirmPressed() && completedStrokes.Count > 0 && !isDrawing)
         {
             FinalizeRecognition();
             return;
@@ -82,7 +91,9 @@ public class GestureDrawer : MonoBehaviour
             EndStroke();
         }
 
-        if (isAwaitingNextStroke && !isDrawing && Time.unscaledTime >= pendingRecognitionTime)
+        if (isAwaitingNextStroke &&
+            !isDrawing &&
+            Time.unscaledTime >= pendingRecognitionTime)
         {
             FinalizeRecognition();
             isAwaitingNextStroke = false;
@@ -93,7 +104,9 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerDown()
     {
 #if ENABLE_INPUT_SYSTEM
-        return Mouse.current != null ? Mouse.current.leftButton.wasPressedThisFrame : false;
+        return Mouse.current != null
+            ? Mouse.current.leftButton.wasPressedThisFrame
+            : false;
 #else
         return Input.GetMouseButtonDown(0);
 #endif
@@ -102,7 +115,9 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerHeld()
     {
 #if ENABLE_INPUT_SYSTEM
-        return Mouse.current != null ? Mouse.current.leftButton.isPressed : false;
+        return Mouse.current != null
+            ? Mouse.current.leftButton.isPressed
+            : false;
 #else
         return Input.GetMouseButton(0);
 #endif
@@ -111,7 +126,9 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerUp()
     {
 #if ENABLE_INPUT_SYSTEM
-        return Mouse.current != null ? Mouse.current.leftButton.wasReleasedThisFrame : false;
+        return Mouse.current != null
+            ? Mouse.current.leftButton.wasReleasedThisFrame
+            : false;
 #else
         return Input.GetMouseButtonUp(0);
 #endif
@@ -120,7 +137,9 @@ public class GestureDrawer : MonoBehaviour
     private bool IsEscapePressed()
     {
 #if ENABLE_INPUT_SYSTEM
-        return Keyboard.current != null && (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.escapeKey.isPressed);
+        return Keyboard.current != null &&
+               (Keyboard.current.escapeKey.wasPressedThisFrame ||
+                Keyboard.current.escapeKey.isPressed);
 #else
         return Input.GetKeyDown(KeyCode.Escape);
 #endif
@@ -132,9 +151,12 @@ public class GestureDrawer : MonoBehaviour
         if (Keyboard.current == null)
             return false;
 
-        return Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.numpadEnterKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame;
+        return Keyboard.current.enterKey.wasPressedThisFrame ||
+               Keyboard.current.numpadEnterKey.wasPressedThisFrame ||
+               Keyboard.current.spaceKey.wasPressedThisFrame;
 #else
-        return Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space);
+        return Input.GetKeyDown(KeyCode.Return) ||
+               Input.GetKeyDown(KeyCode.Space);
 #endif
     }
 
@@ -150,8 +172,19 @@ public class GestureDrawer : MonoBehaviour
         }
 
         ClearCurrentStrokePreview();
+
         isDrawing = true;
+
+        if (useBrushSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                brushSFXName,
+                brushSFXVolume
+            );
+        }
+
         Vector3 startPoint = GetMouseWorldPosition();
+
         StartBrush(startPoint);
         AddPoint(startPoint);
     }
@@ -159,7 +192,12 @@ public class GestureDrawer : MonoBehaviour
     private void UpdateStroke()
     {
         var position = GetMouseWorldPosition();
-        if (currentStrokePoints.Count == 0 || Vector3.Distance(currentStrokePoints[currentStrokePoints.Count - 1], position) > minPointDistance)
+
+        if (currentStrokePoints.Count == 0 ||
+            Vector3.Distance(
+                currentStrokePoints[currentStrokePoints.Count - 1],
+                position
+            ) > minPointDistance)
         {
             AddPoint(position);
         }
@@ -169,6 +207,7 @@ public class GestureDrawer : MonoBehaviour
     {
         isDrawing = false;
         activeBrush = null;
+
         if (currentStrokePoints.Count < 2)
         {
             Debug.Log("Stroke terlalu pendek untuk dikenali.");
@@ -176,6 +215,7 @@ public class GestureDrawer : MonoBehaviour
         }
 
         var points2D = new List<Vector2>(currentStrokePoints.Count);
+
         foreach (var p in currentStrokePoints)
         {
             points2D.Add(new Vector2(p.x, p.y));
@@ -201,17 +241,30 @@ public class GestureDrawer : MonoBehaviour
         }
 
         GestureShape expectedShape = GetExpectedShape();
-        if (expectedShape != GestureShape.None && GestureRecognizer.Instance != null)
+
+        if (expectedShape != GestureShape.None &&
+            GestureRecognizer.Instance != null)
         {
-            bool hasMatchingTemplate = GestureRecognizer.Instance.HasTemplateForStrokeCount(expectedShape, completedStrokes.Count);
-            bool hasLongerTemplate = GestureRecognizer.Instance.HasTemplateWithMoreStrokes(expectedShape, completedStrokes.Count);
+            bool hasMatchingTemplate =
+                GestureRecognizer.Instance.HasTemplateForStrokeCount(
+                    expectedShape,
+                    completedStrokes.Count
+                );
+
+            bool hasLongerTemplate =
+                GestureRecognizer.Instance.HasTemplateWithMoreStrokes(
+                    expectedShape,
+                    completedStrokes.Count
+                );
 
             if (hasLongerTemplate)
             {
                 isAwaitingNextStroke = true;
+
                 pendingRecognitionTime = hasMatchingTemplate
                     ? Time.unscaledTime + firstStrokeGracePeriod
                     : float.PositiveInfinity;
+
                 return;
             }
 
@@ -222,15 +275,21 @@ public class GestureDrawer : MonoBehaviour
             }
         }
 
-        if (expectedShape == GestureShape.None && EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(completedStrokes.Count))
+        if (expectedShape == GestureShape.None &&
+            EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(
+                completedStrokes.Count))
         {
             isAwaitingNextStroke = true;
-            pendingRecognitionTime = Time.unscaledTime + firstStrokeGracePeriod;
+            pendingRecognitionTime =
+                Time.unscaledTime + firstStrokeGracePeriod;
+
             return;
         }
 
-        if (completedStrokes.Count == 1 && expectedShape == GestureShape.None &&
-            !EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(completedStrokes.Count))
+        if (completedStrokes.Count == 1 &&
+            expectedShape == GestureShape.None &&
+            !EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(
+                completedStrokes.Count))
         {
             FinalizeRecognition();
             return;
@@ -239,7 +298,9 @@ public class GestureDrawer : MonoBehaviour
         if (completedStrokes.Count == 1)
         {
             isAwaitingNextStroke = true;
-            pendingRecognitionTime = Time.unscaledTime + firstStrokeGracePeriod;
+            pendingRecognitionTime =
+                Time.unscaledTime + firstStrokeGracePeriod;
+
             return;
         }
 
@@ -247,7 +308,10 @@ public class GestureDrawer : MonoBehaviour
         {
             if (GestureRecognizer.Instance != null)
             {
-                GestureRecognizer.Instance.Recognize(completedStrokes, GetExpectedShape());
+                GestureRecognizer.Instance.Recognize(
+                    completedStrokes,
+                    GetExpectedShape()
+                );
             }
 
             FinalizeRecognition();
@@ -267,24 +331,39 @@ public class GestureDrawer : MonoBehaviour
         pendingRecognitionTime = 0f;
 
         GestureRecognitionResult result = default;
+
         if (GestureRecognizer.Instance != null)
         {
-            result = GestureRecognizer.Instance.Recognize(completedStrokes, GetExpectedShape());
-            var recognizedStrokes = new List<List<Vector2>>(completedStrokes.Count);
+            result = GestureRecognizer.Instance.Recognize(
+                completedStrokes,
+                GetExpectedShape()
+            );
+
+            var recognizedStrokes =
+                new List<List<Vector2>>(completedStrokes.Count);
+
             foreach (var stroke in completedStrokes)
             {
-                recognizedStrokes.Add(new List<Vector2>(stroke));
+                recognizedStrokes.Add(
+                    new List<Vector2>(stroke)
+                );
             }
 
-            GestureRecognized?.Invoke(recognizedStrokes, result);
+            GestureRecognized?.Invoke(
+                recognizedStrokes,
+                result
+            );
         }
         else
         {
-            Debug.LogWarning("GestureRecognizer belum tersedia di scene.");
+            Debug.LogWarning(
+                "GestureRecognizer belum tersedia di scene."
+            );
         }
 
         ClearRecognizedStrokes();
         ClearCurrentStrokePreview();
+
         isAwaitingNextStroke = false;
         pendingRecognitionTime = 0f;
     }
@@ -296,33 +375,55 @@ public class GestureDrawer : MonoBehaviour
 
     private GestureShape GetExpectedShape()
     {
-        if (GestureChallengeManager.Instance != null && GestureChallengeManager.Instance.HasActiveChallenge())
+        if (GestureChallengeManager.Instance != null &&
+            GestureChallengeManager.Instance.HasActiveChallenge())
+        {
             return GestureChallengeManager.Instance.CurrentRequiredGesture;
+        }
 
-        if (!EnemyGestureCommand.TryGetActiveChallengeShape(out GestureShape gestureShape))
+        if (!EnemyGestureCommand.TryGetActiveChallengeShape(
+            out GestureShape gestureShape))
+        {
             return GestureShape.None;
+        }
 
-        return EnemyGestureCommand.HasActiveEnemyChallenges() && EnemyGestureCommand.HasMultipleActiveEnemyShapes()
+        return EnemyGestureCommand.HasActiveEnemyChallenges() &&
+               EnemyGestureCommand.HasMultipleActiveEnemyShapes()
             ? GestureShape.None
             : gestureShape;
     }
 
     private void PersistStroke(List<Vector3> points)
     {
-        if (brushPrefab != null || points == null || points.Count == 0)
+        if (brushPrefab != null ||
+            points == null ||
+            points.Count == 0)
+        {
             return;
+        }
 
-        var renderer = new GameObject("GestureStroke").AddComponent<LineRenderer>();
+        var renderer =
+            new GameObject("GestureStroke")
+            .AddComponent<LineRenderer>();
+
         renderer.transform.SetParent(transform, false);
         renderer.positionCount = points.Count;
         renderer.useWorldSpace = true;
         renderer.loop = false;
-        renderer.widthCurve = AnimationCurve.Constant(0, 1, 0.08f);
+        renderer.widthCurve =
+            AnimationCurve.Constant(0, 1, 0.08f);
+
         renderer.numCapVertices = 8;
         renderer.numCornerVertices = 8;
         renderer.startColor = Color.cyan;
         renderer.endColor = Color.cyan;
-        renderer.material = lineRenderer.material != null ? lineRenderer.material : new Material(Shader.Find("Sprites/Default"));
+
+        renderer.material =
+            lineRenderer.material != null
+                ? lineRenderer.material
+                : new Material(
+                    Shader.Find("Sprites/Default")
+                );
 
         for (int i = 0; i < points.Count; i++)
         {
@@ -337,15 +438,21 @@ public class GestureDrawer : MonoBehaviour
         if (brushPrefab == null)
             return;
 
-        activeBrush = Instantiate(brushPrefab, transform);
+        activeBrush =
+            Instantiate(brushPrefab, transform);
+
         activeBrush.name = "GestureBrush";
         activeBrush.transform.position = startPoint;
 
-        var brushController = activeBrush.GetComponent<TesKuas>();
+        var brushController =
+            activeBrush.GetComponent<TesKuas>();
+
         if (brushController != null)
             brushController.enabled = false;
 
-        var trail = activeBrush.GetComponent<TrailRenderer>();
+        var trail =
+            activeBrush.GetComponent<TrailRenderer>();
+
         if (trail != null)
             trail.Clear();
 
@@ -355,8 +462,14 @@ public class GestureDrawer : MonoBehaviour
     private void AddPoint(Vector3 point)
     {
         currentStrokePoints.Add(point);
-        lineRenderer.positionCount = currentStrokePoints.Count;
-        lineRenderer.SetPosition(currentStrokePoints.Count - 1, point);
+
+        lineRenderer.positionCount =
+            currentStrokePoints.Count;
+
+        lineRenderer.SetPosition(
+            currentStrokePoints.Count - 1,
+            point
+        );
 
         if (activeBrush != null)
             activeBrush.transform.position = point;
@@ -395,6 +508,7 @@ public class GestureDrawer : MonoBehaviour
         isDrawing = false;
         isAwaitingNextStroke = false;
         pendingRecognitionTime = 0f;
+
         ClearCurrentStrokePreview();
         ClearRecognizedStrokes();
     }
@@ -410,12 +524,26 @@ public class GestureDrawer : MonoBehaviour
         if (Mouse.current != null)
         {
             var pos2 = Mouse.current.position.ReadValue();
-            var screenPos = new Vector3(pos2.x, pos2.y, -mainCamera.transform.position.z);
-            return mainCamera.ScreenToWorldPoint(screenPos);
+
+            var screenPos = new Vector3(
+                pos2.x,
+                pos2.y,
+                -mainCamera.transform.position.z
+            );
+
+            return mainCamera.ScreenToWorldPoint(
+                screenPos
+            );
         }
 #endif
+
         var legacyPos = Input.mousePosition;
-        legacyPos.z = -mainCamera.transform.position.z;
-        return mainCamera.ScreenToWorldPoint(legacyPos);
+
+        legacyPos.z =
+            -mainCamera.transform.position.z;
+
+        return mainCamera.ScreenToWorldPoint(
+            legacyPos
+        );
     }
 }

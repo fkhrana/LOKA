@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7c9b07745e99eb6499870c34205c548e
+guid: dd6fc8f4c1fe6034c937404ab4e44f0d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7045301190152576076
-    second: Frame 51 (2)_0
+      213: 1569114733297347428
+    second: DA_AksaraCard (2)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Frame 51 (2)_0
+      name: DA_AksaraCard (2)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 369
-        height: 494
+        width: 379
+        height: 501
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4b3a15925ef0a3e90800000000000000
-      internalID: -7045301190152576076
+      spriteID: 46b2502598d96c510800000000000000
+      internalID: 1569114733297347428
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Frame 51 (2)_0: -7045301190152576076
+      DA_AksaraCard (2)_0: 1569114733297347428
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

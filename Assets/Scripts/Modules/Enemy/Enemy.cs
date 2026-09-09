@@ -10,6 +10,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private SpriteRenderer aksaraIconRenderer;
     [SerializeField] private AksaraFragmentItem aksaraIconFragment;
 
+    [Header("Aksara Drop SFX")]
+    [SerializeField] private bool useAksaraDropSFX = true;
+    [SerializeField] private string aksaraDropSFXName = "AksaraDrop";
+    [Range(0f, 1f)]
+    [SerializeField] private float aksaraDropSFXVolume = 1f;
+
     private EnemyGestureCommand gestureCommand;
     private EnemyMovementBehavior movementBehavior;
     private bool hasBeenDefeated;
@@ -111,6 +117,8 @@ public class Enemy : MonoBehaviour
                 {
                     Debug.LogWarning($"Enemy {name} fragment prefab null.");
                 }
+
+                PlayAksaraDropSFX();
             }
 
             if (!registeredDrop)
@@ -126,6 +134,14 @@ public class Enemy : MonoBehaviour
             Debug.LogWarning($"Enemy {name} set to drop fragment but AksaraData null.");
 
         PlayNonCollectibleItemVfx();
+    }
+
+    private void PlayAksaraDropSFX()
+    {
+        if (useAksaraDropSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(aksaraDropSFXName, aksaraDropSFXVolume);
+        }
     }
 
     private void PlayNonCollectibleItemVfx()

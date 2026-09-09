@@ -1015,7 +1015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneBGM
   bgmClip: {fileID: 8300000, guid: 4f37b1ea266b49b438890a70a533a867, type: 3}
-  bgmName: 
+  bgmName: Surat Ajaib Desa
 --- !u!1 &511750228
 GameObject:
   m_ObjectHideFlags: 0
@@ -1195,6 +1195,7 @@ MonoBehaviour:
   uiSource: {fileID: 0}
   defaultBgmVolume: 1
   defaultSfxVolume: 1
+  aksaraBgmVolume: 0.5
   uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
 GameObject:
@@ -1903,6 +1904,7 @@ MonoBehaviour:
   failureSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
   successSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   gameplaySceneName: MainGameplay(Drawing)
+  mainMenuSceneName: MainMenu
 --- !u!1 &812645196
 GameObject:
   m_ObjectHideFlags: 0
@@ -4599,6 +4601,70 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: allAksaraData.Array.size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[4]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[5]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[6]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[7]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[8]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[9]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[10]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[11]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[12]'
+      value: 
+      objectReference: {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[13]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: 'allAksaraData.Array.data[14]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
     - target: {fileID: 4522552729020645998, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_SizeDelta.x
       value: -883.98

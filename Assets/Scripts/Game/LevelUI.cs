@@ -16,17 +16,25 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Color lockedColor = new Color(0.5f, 0.5f, 0.5f);
 
     [Header("SFX")]
-    [SerializeField] private AudioClip clickSound;        // suara saat klik level terbuka
-    [SerializeField] private AudioClip lockedSound;       // suara saat klik level terkunci (opsional)
+    [SerializeField] private AudioClip clickSound;
+    [SerializeField] private AudioClip lockedSound;
 
     [Header("Scene")]
     [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
 
-    public int GetLevelIndex() => levelIndex;
     private int levelIndex;
     private bool isUnlocked;
 
-    public void Setup(int index, bool unlocked, Sprite icon)
+    public int GetLevelIndex()
+    {
+        return levelIndex;
+    }
+
+    public void Setup(
+        int index,
+        bool unlocked,
+        Sprite icon
+    )
     {
         levelIndex = index;
         isUnlocked = unlocked;
@@ -35,40 +43,73 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
             levelIconImage.sprite = icon;
 
         if (backgroundImage != null)
-            backgroundImage.color = isUnlocked ? unlockedColor : lockedColor;
+        {
+            backgroundImage.color =
+                isUnlocked
+                    ? unlockedColor
+                    : lockedColor;
+        }
 
-        if (lockOverlay != null) lockOverlay.SetActive(!isUnlocked);
-        if (lockIcon != null) lockIcon.SetActive(!isUnlocked);
+        if (lockOverlay != null)
+            lockOverlay.SetActive(!isUnlocked);
+
+        if (lockIcon != null)
+            lockIcon.SetActive(!isUnlocked);
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerClick(
+        PointerEventData eventData
+    )
     {
         if (!isUnlocked)
         {
-            // Suara terkunci (opsional)
             if (lockedSound != null)
-                AudioManager.Instance?.PlayUISFX(lockedSound);
+                AudioManager.Instance?.PlayUISFX(
+                    lockedSound
+                );
             else
-                AudioManager.Instance?.PlayUISFX("ButtonClick"); // fallback
+                AudioManager.Instance?.PlayUISFX(
+                    "ButtonClick"
+                );
 
-            Debug.Log("Level " + (levelIndex + 1) + " masih terkunci.");
+            Debug.Log(
+                "Level " +
+                (levelIndex + 1) +
+                " masih terkunci."
+            );
+
             return;
         }
 
-        // Suara klik terbuka
         if (clickSound != null)
-            AudioManager.Instance?.PlayUISFX(clickSound);
+            AudioManager.Instance?.PlayUISFX(
+                clickSound
+            );
         else
-            AudioManager.Instance?.PlayUISFX("ButtonClick");
+            AudioManager.Instance?.PlayUISFX(
+                "ButtonClick"
+            );
 
         if (LevelManager.Instance == null)
         {
-            Debug.LogError("LevelUI: LevelManager tidak ditemukan.");
+            Debug.LogError(
+                "LevelUI: LevelManager tidak ditemukan."
+            );
+
             return;
         }
 
-        LevelManager.Instance.SetCurrentLevel(levelIndex);
-        Debug.Log("Memulai Level " + (levelIndex + 1));
-        SceneManager.LoadScene(gameplaySceneName);
+        LevelManager.Instance.SetCurrentLevel(
+            levelIndex
+        );
+
+        Debug.Log(
+            "Memulai Level " +
+            (levelIndex + 1)
+        );
+
+        SceneManager.LoadScene(
+            gameplaySceneName
+        );
     }
 }

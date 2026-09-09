@@ -175,13 +175,16 @@ public class EnemyGestureCommand : MonoBehaviour
     }
 
     private void LateUpdate()
-    {
-        if (!challengeActive)
-            return;
+{
+    if (!challengeActive)
+        return;
 
-        if (movementBehavior != null)
-            movementBehavior.Tick();
-    }
+    if (!CameraIntroManager.GameStarted)
+        return;
+
+    if (movementBehavior != null)
+        movementBehavior.Tick();
+}
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)
     {

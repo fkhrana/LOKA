@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using System.Collections;
 using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
@@ -20,12 +21,15 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource uiSource;
 
     [Header("Default Volume")]
-
     [Range(0.0001f, 1f)]
     [SerializeField] private float defaultBgmVolume = 0.75f;
 
     [Range(0.0001f, 1f)]
     [SerializeField] private float defaultSfxVolume = 0.75f;
+
+    [Header("Aksara Voice Ducking")]
+    [Range(0.0001f, 1f)]
+    [SerializeField] private float aksaraBgmVolume = 0.2f;
 
     private string currentBgmName;
 
@@ -39,6 +43,8 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private float uiSFXCooldown = 0.8f;
 
+    private Coroutine restoreBGMCoroutine;
+
     private void Awake()
     {
         if (Instance != null)
@@ -48,7 +54,6 @@ public class AudioManager : MonoBehaviour
         }
 
         Instance = this;
-
         DontDestroyOnLoad(gameObject);
 
         if (bgmSource == null)
@@ -64,19 +69,12 @@ public class AudioManager : MonoBehaviour
             uiSource = CreateAudioSource("UI", false);
     }
 
-    private AudioSource CreateAudioSource(
-        string sourceName,
-        bool loop
-    )
+    private AudioSource CreateAudioSource(string sourceName, bool loop)
     {
-        GameObject go =
-            new GameObject(sourceName + "_Source");
-
+        GameObject go = new GameObject(sourceName + "_Source");
         go.transform.SetParent(transform);
 
-        AudioSource source =
-            go.AddComponent<AudioSource>();
-
+        AudioSource source = go.AddComponent<AudioSource>();
         source.loop = loop;
         source.playOnAwake = false;
         source.volume = 1f;
@@ -100,10 +98,7 @@ public class AudioManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(
-        Scene scene,
-        LoadSceneMode mode
-    )
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (Instance == null)
             return;
@@ -111,35 +106,23 @@ public class AudioManager : MonoBehaviour
         switch (scene.name)
         {
             case "MainMenu":
-
                 PlayBGM("Surat Ajaib Desa");
-
                 break;
 
             case "CutScenee":
-
                 StopBGM();
-
                 break;
 
             case "MainGameplay(Drawing)":
             case "Level2":
-
                 PlayBGM("Broken Festival Kite");
-
                 break;
 
             default:
-
                 StopBGM();
-
                 break;
         }
     }
-
-    // ==================================================
-    // BGM
-    // ==================================================
 
     public void PlayBGM(AudioClip clip)
     {
@@ -150,34 +133,25 @@ public class AudioManager : MonoBehaviour
             return;
 
         currentBgmName = clip.name;
-
         bgmSource.clip = clip;
         bgmSource.loop = true;
-
         bgmSource.Play();
     }
 
-    public void PlayBGM(
-        string resourceName,
-        bool forceRestart = false
-    )
+    public void PlayBGM(string resourceName, bool forceRestart = false)
     {
         if (string.IsNullOrEmpty(resourceName))
             return;
 
-        if (!forceRestart &&
-            currentBgmName == resourceName)
-        {
+        if (!forceRestart && currentBgmName == resourceName)
             return;
-        }
 
         if (forceRestart)
             currentBgmName = null;
 
-        AudioClip clip =
-            Resources.Load<AudioClip>(
-                $"Audio/BGM/{resourceName}"
-            );
+        AudioClip clip = Resources.Load<AudioClip>(
+            $"Audio/BGM/{resourceName}"
+        );
 
         if (clip != null)
         {
@@ -197,13 +171,8 @@ public class AudioManager : MonoBehaviour
             return;
 
         bgmSource.Stop();
-
         currentBgmName = null;
     }
-
-    // ==================================================
-    // SFX
-    // ==================================================
 
     public void PlaySFX(AudioClip clip)
     {
@@ -211,14 +180,10 @@ public class AudioManager : MonoBehaviour
             return;
 
         StopHoverSFX();
-
         sfxSource.PlayOneShot(clip);
     }
 
-    public void PlaySFX(
-        AudioClip clip,
-        float volumeMultiplier
-    )
+    public void PlaySFX(AudioClip clip, float volumeMultiplier)
     {
         if (clip == null || sfxSource == null)
             return;
@@ -227,7 +192,7 @@ public class AudioManager : MonoBehaviour
 
         sfxSource.PlayOneShot(
             clip,
-            Mathf.Clamp01(volumeMultiplier)
+            Mathf.Clamp(volumeMultiplier, 0f, 2f)
         );
     }
 
@@ -239,10 +204,7 @@ public class AudioManager : MonoBehaviour
         PlaySFX(GetSFXClip(clipName));
     }
 
-    public void PlaySFX(
-        string clipName,
-        float volumeMultiplier
-    )
+    public void PlaySFX(string clipName, float volumeMultiplier)
     {
         if (string.IsNullOrEmpty(clipName))
             return;
@@ -253,9 +215,69 @@ public class AudioManager : MonoBehaviour
         );
     }
 
-    // ==================================================
-    // HOVER SFX
-    // ==================================================
+    public void PlayAksaraVoice(AudioClip clip, float volumeMultiplier = 1f)
+    {
+        if (clip == null || sfxSource == null)
+            return;
+
+        StopHoverSFX();
+
+        if (restoreBGMCoroutine != null)
+        {
+            StopCoroutine(restoreBGMCoroutine);
+            restoreBGMCoroutine = null;
+        }
+
+        float originalVolume = currentBgmVolume;
+
+        if (audioMixer != null)
+        {
+            float duckedVolume = Mathf.Clamp(
+                aksaraBgmVolume,
+                0.0001f,
+                1f
+            );
+
+            float dB = Mathf.Log10(duckedVolume) * 20f;
+
+            audioMixer.SetFloat(
+                MIXER_BGM,
+                dB
+            );
+        }
+        else if (bgmSource != null)
+        {
+            bgmSource.volume = Mathf.Clamp(
+                aksaraBgmVolume,
+                0f,
+                1f
+            );
+        }
+
+        sfxSource.PlayOneShot(
+            clip,
+            Mathf.Clamp(volumeMultiplier, 0f, 2f)
+        );
+
+        restoreBGMCoroutine = StartCoroutine(
+            RestoreBGMVolumeAfter(
+                clip.length,
+                originalVolume
+            )
+        );
+    }
+
+    private IEnumerator RestoreBGMVolumeAfter(
+        float duration,
+        float originalVolume
+    )
+    {
+        yield return new WaitForSeconds(duration);
+
+        SetBGMVolume(originalVolume);
+
+        restoreBGMCoroutine = null;
+    }
 
     public void PlayHoverSFX(AudioClip clip)
     {
@@ -266,18 +288,11 @@ public class AudioManager : MonoBehaviour
             hoverSource.Stop();
 
         hoverSource.clip = clip;
-
         hoverSource.volume = currentSfxVolume;
-
         hoverSource.Play();
     }
 
-    // BARU:
-    // Bisa mengatur volume hover sendiri
-    public void PlayHoverSFX(
-        AudioClip clip,
-        float volumeMultiplier
-    )
+    public void PlayHoverSFX(AudioClip clip, float volumeMultiplier)
     {
         if (clip == null || hoverSource == null)
             return;
@@ -286,7 +301,6 @@ public class AudioManager : MonoBehaviour
             hoverSource.Stop();
 
         hoverSource.clip = clip;
-
         hoverSource.volume =
             currentSfxVolume *
             Mathf.Clamp01(volumeMultiplier);
@@ -302,12 +316,7 @@ public class AudioManager : MonoBehaviour
         PlayHoverSFX(GetSFXClip(clipName));
     }
 
-    // BARU:
-    // Bisa memanggil berdasarkan nama + volume
-    public void PlayHoverSFX(
-        string clipName,
-        float volumeMultiplier
-    )
+    public void PlayHoverSFX(string clipName, float volumeMultiplier)
     {
         if (string.IsNullOrEmpty(clipName))
             return;
@@ -320,30 +329,17 @@ public class AudioManager : MonoBehaviour
 
     public void StopHoverSFX()
     {
-        if (hoverSource != null &&
-            hoverSource.isPlaying)
-        {
+        if (hoverSource != null && hoverSource.isPlaying)
             hoverSource.Stop();
-        }
     }
 
-    // ==================================================
-    // UI SFX
-    // ==================================================
-
-    public void PlayUISFX(
-        AudioClip clip,
-        float volumeMultiplier = 1f
-    )
+    public void PlayUISFX(AudioClip clip, float volumeMultiplier = 1f)
     {
         if (clip == null || uiSource == null)
             return;
 
-        if (Time.unscaledTime - lastUISFXTime <
-            uiSFXCooldown)
-        {
+        if (Time.unscaledTime - lastUISFXTime < uiSFXCooldown)
             return;
-        }
 
         lastUISFXTime = Time.unscaledTime;
 
@@ -355,14 +351,10 @@ public class AudioManager : MonoBehaviour
             Mathf.Clamp01(volumeMultiplier);
 
         uiSource.clip = clip;
-
         uiSource.Play();
     }
 
-    public void PlayUISFX(
-        string clipName,
-        float volumeMultiplier = 1f
-    )
+    public void PlayUISFX(string clipName, float volumeMultiplier = 1f)
     {
         if (string.IsNullOrEmpty(clipName))
             return;
@@ -375,33 +367,21 @@ public class AudioManager : MonoBehaviour
 
     public void StopUISFX()
     {
-        if (uiSource != null &&
-            uiSource.isPlaying)
-        {
+        if (uiSource != null && uiSource.isPlaying)
             uiSource.Stop();
-        }
     }
-
-    // ==================================================
-    // LOAD SFX
-    // ==================================================
 
     private AudioClip GetSFXClip(string clipName)
     {
         if (string.IsNullOrEmpty(clipName))
             return null;
 
-        if (sfxCache.TryGetValue(
-            clipName,
-            out AudioClip cachedClip))
-        {
+        if (sfxCache.TryGetValue(clipName, out AudioClip cachedClip))
             return cachedClip;
-        }
 
-        AudioClip clip =
-            Resources.Load<AudioClip>(
-                $"Audio/SFX/{clipName}"
-            );
+        AudioClip clip = Resources.Load<AudioClip>(
+            $"Audio/SFX/{clipName}"
+        );
 
         if (clip != null)
         {
@@ -417,25 +397,19 @@ public class AudioManager : MonoBehaviour
         return clip;
     }
 
-    // ==================================================
-    // VOLUME
-    // ==================================================
-
     public void SetBGMVolume(float sliderValue)
     {
-        float value =
-            Mathf.Clamp(
-                sliderValue,
-                0.0001f,
-                1f
-            );
+        float value = Mathf.Clamp(
+            sliderValue,
+            0.0001f,
+            1f
+        );
 
         currentBgmVolume = value;
 
         if (audioMixer != null)
         {
-            float dB =
-                Mathf.Log10(value) * 20f;
+            float dB = Mathf.Log10(value) * 20f;
 
             audioMixer.SetFloat(
                 MIXER_BGM,
@@ -450,19 +424,17 @@ public class AudioManager : MonoBehaviour
 
     public void SetSFXVolume(float sliderValue)
     {
-        float value =
-            Mathf.Clamp(
-                sliderValue,
-                0.0001f,
-                1f
-            );
+        float value = Mathf.Clamp(
+            sliderValue,
+            0.0001f,
+            1f
+        );
 
         currentSfxVolume = value;
 
         if (audioMixer != null)
         {
-            float dB =
-                Mathf.Log10(value) * 20f;
+            float dB = Mathf.Log10(value) * 20f;
 
             audioMixer.SetFloat(
                 MIXER_SFX,

@@ -34,6 +34,13 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private bool spawnOnStart = true;
     [SerializeField] private GameObject waveTransitionBanner;
     [SerializeField, Min(0.1f)] private float waveTransitionBannerDuration = 1.5f;
+
+    [Header("Wave Info SFX")]
+    [SerializeField] private bool useWaveInfoSFX = true;
+    [SerializeField] private string waveInfoSFXName = "WaveInfo";
+    [Range(0f, 1f)]
+    [SerializeField] private float waveInfoSFXVolume = 1f;
+
     [SerializeField] private bool useSpawnArea = false;
     [SerializeField] private Vector2 spawnAreaCenter = Vector2.zero;
     [SerializeField] private Vector2 spawnAreaSize = new Vector2(4f, 4f);
@@ -211,6 +218,11 @@ public class EnemyWaveSpawner : MonoBehaviour
         var canvasGroup = waveTransitionBanner.GetComponent<CanvasGroup>();
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
+
+        if (useWaveInfoSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(waveInfoSFXName, waveInfoSFXVolume);
+        }
 
         yield return new WaitForSeconds(waveTransitionBannerDuration);
 

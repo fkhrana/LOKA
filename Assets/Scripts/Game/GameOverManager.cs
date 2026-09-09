@@ -12,6 +12,13 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private GameObject losePanel;
     [SerializeField] private LoseAksaraStatusUI loseAksaraStatusUI;
 
+    [Header("Lose SFX")]
+    [SerializeField] private bool useLoseSFX = true;
+    [SerializeField] private string loseSFXName = "Lose";
+    
+    [Range(0f, 1f)]
+    [SerializeField] private float loseSFXVolume = 1f;
+
     private bool isGameOver;
 
     private void Awake()
@@ -50,7 +57,16 @@ public class GameOverManager : MonoBehaviour
         if (losePanel != null)
             losePanel.SetActive(true);
 
+        if (useLoseSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                loseSFXName,
+                loseSFXVolume
+            );
+        }
+
         Time.timeScale = 0f;
+
         RefreshLoseAksaraStatus();
     }
 
@@ -60,21 +76,18 @@ public class GameOverManager : MonoBehaviour
             loseAksaraStatusUI.RefreshStatus();
     }
 
-    // Tombol "Home"
     public void GoToHome()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(mainMenuScene);
     }
 
-    // Tombol "Again" (main ulang)
     public void PlayAgain()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(gameplayScene);
     }
 
-    // Tombol "Tutorial"
     public void OpenTutorial()
     {
         Time.timeScale = 1f;
