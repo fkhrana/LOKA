@@ -44,7 +44,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c15bc12c0cb5ab5469a2d69efc2544a9, type: 3}
     volume: 2
   - gestureShape: 14
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 05c842a44920cdd408a7b0285c654dd1, type: 3}
     volume: 2
   - gestureShape: 15
     clip: {fileID: 8300000, guid: 158f34a813460df43b7bfcff16f41ce5, type: 3}

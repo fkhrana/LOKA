@@ -6,6 +6,7 @@ public class AksaraCarouselUI : MonoBehaviour
 {
     [Header("Data")]
     [SerializeField] private List<AksaraData> allAksaraData;
+    
 
     [Header("Scroll Settings")]
     [SerializeField] private ScrollRect scrollRect;
@@ -33,6 +34,7 @@ public class AksaraCarouselUI : MonoBehaviour
     [SerializeField] private float aksaraSoundVolume = 1f;
 
     private readonly List<AksaraCarouselItemUI> spawnedItems = new();
+    public List<AksaraData> AllAksaraData => allAksaraData;
 
     private bool isSnapping;
     private float snapTargetNormalized;

@@ -177,7 +177,7 @@ public class GestureDrawer : MonoBehaviour
 
         if (useBrushSFX && AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySFX(
+            AudioManager.Instance.PlayLoopedSFX(
                 brushSFXName,
                 brushSFXVolume
             );
@@ -207,6 +207,11 @@ public class GestureDrawer : MonoBehaviour
     {
         isDrawing = false;
         activeBrush = null;
+
+        if (useBrushSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopLoopedSFX();
+        }
 
         if (currentStrokePoints.Count < 2)
         {
@@ -508,6 +513,11 @@ public class GestureDrawer : MonoBehaviour
         isDrawing = false;
         isAwaitingNextStroke = false;
         pendingRecognitionTime = 0f;
+
+        if (useBrushSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopLoopedSFX();
+        }
 
         ClearCurrentStrokePreview();
         ClearRecognizedStrokes();

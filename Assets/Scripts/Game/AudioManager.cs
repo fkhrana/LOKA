@@ -19,6 +19,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioSource hoverSource;
     [SerializeField] private AudioSource uiSource;
+    [SerializeField] private AudioSource loopedSfxSource;
 
     [Header("Default Volume")]
     [Range(0.0001f, 1f)]
@@ -67,6 +68,9 @@ public class AudioManager : MonoBehaviour
 
         if (uiSource == null)
             uiSource = CreateAudioSource("UI", false);
+
+        if (loopedSfxSource == null)
+            loopedSfxSource = CreateAudioSource("LOOPED_SFX", true);
     }
 
     private AudioSource CreateAudioSource(string sourceName, bool loop)
@@ -213,6 +217,43 @@ public class AudioManager : MonoBehaviour
             GetSFXClip(clipName),
             volumeMultiplier
         );
+    }
+
+    // Dipakai untuk SFX yang perlu terus main selama sebuah aksi berlangsung
+    // (misal: suara kuas selama user menggambar), berbeda dari PlaySFX yang
+    // bersifat one-shot dan tidak bisa dihentikan satu per satu.
+    public void PlayLoopedSFX(AudioClip clip, float volumeMultiplier = 1f)
+    {
+        if (clip == null || loopedSfxSource == null)
+            return;
+
+        if (loopedSfxSource.isPlaying && loopedSfxSource.clip == clip)
+            return;
+
+        loopedSfxSource.clip = clip;
+        loopedSfxSource.volume =
+            currentSfxVolume *
+            Mathf.Clamp(volumeMultiplier, 0f, 2f);
+
+        loopedSfxSource.loop = true;
+        loopedSfxSource.Play();
+    }
+
+    public void PlayLoopedSFX(string clipName, float volumeMultiplier = 1f)
+    {
+        if (string.IsNullOrEmpty(clipName))
+            return;
+
+        PlayLoopedSFX(
+            GetSFXClip(clipName),
+            volumeMultiplier
+        );
+    }
+
+    public void StopLoopedSFX()
+    {
+        if (loopedSfxSource != null && loopedSfxSource.isPlaying)
+            loopedSfxSource.Stop();
     }
 
     public void PlayAksaraVoice(AudioClip clip, float volumeMultiplier = 1f)
@@ -451,6 +492,9 @@ public class AudioManager : MonoBehaviour
 
             if (uiSource != null)
                 uiSource.volume = value;
+
+            if (loopedSfxSource != null)
+                loopedSfxSource.volume = value;
         }
     }
 

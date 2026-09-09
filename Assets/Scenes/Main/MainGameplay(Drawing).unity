@@ -1956,7 +1956,7 @@ MonoBehaviour:
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
   useBrushSFX: 1
-  brushSFXName: Brushing
+  brushSFXName: Brush
   brushSFXVolume: 1
 --- !u!120 &256010450
 LineRenderer:
@@ -3336,6 +3336,55 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &423558672
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 423558673}
+  - component: {fileID: 423558674}
+  m_Layer: 0
+  m_Name: ProgressManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &423558673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423558672}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 703000920}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &423558674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423558672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64214f0e3b6e52e4f87f06127c2430dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveCurrentProgress
+  canvas2: {fileID: 2079893224}
+  puzzlePanel: {fileID: 1665822008}
+  rewardPanel: {fileID: 1504385821}
+  enemyWaveSpawner: {fileID: 441064577}
+  cameraIntroManager: {fileID: 1167486402}
 --- !u!1 &434995828
 GameObject:
   m_ObjectHideFlags: 0
@@ -4313,6 +4362,7 @@ Transform:
   - {fileID: 1399707196}
   - {fileID: 1253794670}
   - {fileID: 1167486401}
+  - {fileID: 423558673}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &727570667
@@ -6203,6 +6253,7 @@ MonoBehaviour:
   allSlots:
   - {fileID: 2113629586}
   - {fileID: 231917909}
+  canvas2: {fileID: 2079893224}
   puzzlePanel: {fileID: 1665822008}
   rewardPanel: {fileID: 1504385821}
   powerManager: {fileID: 0}
@@ -6726,6 +6777,9 @@ MonoBehaviour:
   trailCollectItemSpeed: 5
   trailCollectItemArrivalDistance: 0.15
   trailCollectItemEndDelay: 0.15
+  useNonCollectibleVfxSFX: 1
+  nonCollectibleVfxSFXName: Success
+  nonCollectibleVfxSFXVolume: 1
   OnReachedWaveMilestone:
     m_PersistentCalls:
       m_Calls: []
@@ -7072,6 +7126,7 @@ MonoBehaviour:
   gambar2: {fileID: 4721568734584305323, guid: dee7d0b9942eda9458ad9d82611e31d4, type: 3}
   gambar1: {fileID: -5167311714789541325, guid: 3bb6495a292f8644b8c7d586a2155910, type: 3}
   gambarMulai: {fileID: 8642235437496502386, guid: e296a6d9384063c4b9646e4616bc6feb, type: 3}
+  countdownSFX: {fileID: 8300000, guid: 299d1b1898ab6a34383378dd94173b1b, type: 3}
 --- !u!1 &1183816723
 GameObject:
   m_ObjectHideFlags: 0

@@ -16,6 +16,10 @@ public class PowerManager : MonoBehaviour
     [SerializeField] private float comboRadius = 2.5f;
     [SerializeField] private bool unlockOnStartForTesting;
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip freezeSFX;
+    [SerializeField] private AudioClip comboSFX;
+
     [Header("Warna saat masih terkunci")]
     [SerializeField] private Color lockedColor = new Color(0.3f, 0.3f, 0.3f, 1f);
     [SerializeField] private Color unlockedColor = Color.white;
@@ -25,6 +29,7 @@ public class PowerManager : MonoBehaviour
     private const string ConsumedKey = "PowerUp_Freeze_Consumed";
     private const string ComboUnlockedKey = "PowerUp_Combo_Unlocked";
     private const string ComboConsumedKey = "PowerUp_Combo_Consumed";
+
     private bool isFrozen;
     private static bool isComboActive;
 
@@ -44,6 +49,7 @@ public class PowerManager : MonoBehaviour
         PlayerPrefs.SetInt(GetUnlockedKey(), 0);
         PlayerPrefs.SetInt(GetConsumedKey(), 0);
         PlayerPrefs.Save();
+
         RefreshVisual();
     }
 
@@ -67,7 +73,20 @@ public class PowerManager : MonoBehaviour
 
         PlayerPrefs.SetInt(GetConsumedKey(), 1);
         PlayerPrefs.Save();
+
         RefreshVisual();
+
+        // SFX Power Up
+        if (powerUpType == PowerUpType.Freeze)
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(freezeSFX);
+        }
+        else if (powerUpType == PowerUpType.Combo)
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(comboSFX);
+        }
 
         if (powerUpType == PowerUpType.Combo)
         {
@@ -101,12 +120,16 @@ public class PowerManager : MonoBehaviour
 
     private string GetUnlockedKey()
     {
-        return powerUpType == PowerUpType.Combo ? ComboUnlockedKey : UnlockedKey;
+        return powerUpType == PowerUpType.Combo
+            ? ComboUnlockedKey
+            : UnlockedKey;
     }
 
     private string GetConsumedKey()
     {
-        return powerUpType == PowerUpType.Combo ? ComboConsumedKey : ConsumedKey;
+        return powerUpType == PowerUpType.Combo
+            ? ComboConsumedKey
+            : ConsumedKey;
     }
 
     private void RefreshVisual()
@@ -125,11 +148,13 @@ public class PowerManager : MonoBehaviour
     private IEnumerator FreezeEnemies()
     {
         isFrozen = true;
+
         EnemyMovementBehavior.SetAllMovementPaused(true);
 
         yield return new WaitForSeconds(freezeDuration);
 
         EnemyMovementBehavior.SetAllMovementPaused(false);
+
         isFrozen = false;
     }
 }

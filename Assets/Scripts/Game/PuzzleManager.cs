@@ -11,6 +11,7 @@ public class PuzzleManager : MonoBehaviour
     public List<DropZone> allSlots;
 
     [Header("Referensi UI")]
+    public GameObject canvas2;
     public GameObject puzzlePanel;
     public GameObject rewardPanel;
     public PowerManager powerManager;
@@ -53,7 +54,10 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(transitionSettings, transitionDelay);
+                transitionManager.Transition(
+                    transitionSettings,
+                    transitionDelay
+                );
             }
             else
             {
@@ -73,7 +77,10 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(transitionSettings, transitionDelay);
+                transitionManager.Transition(
+                    transitionSettings,
+                    transitionDelay
+                );
             }
             else
             {
@@ -84,8 +91,20 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivatePuzzlePanel()
     {
+        // Canvas 2 ON
+        if (canvas2 != null)
+            canvas2.SetActive(true);
+
+        // Puzzle ON
         if (puzzlePanel != null)
             puzzlePanel.SetActive(true);
+
+        // Reward OFF
+        if (rewardPanel != null)
+            rewardPanel.SetActive(false);
+
+        // Save state resume
+        GameProgressManager.SaveGameState("Puzzle");
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= ActivatePuzzlePanel;
@@ -115,16 +134,24 @@ public class PuzzleManager : MonoBehaviour
             gestureDrawer.enabled = true;
     }
 
-    public bool IsPuzzleCompleted() => puzzleCompleted;
+    public bool IsPuzzleCompleted()
+    {
+        return puzzleCompleted;
+    }
 
-    public void MarkPuzzleCompleted() => puzzleCompleted = true;
+    public void MarkPuzzleCompleted()
+    {
+        puzzleCompleted = true;
+    }
 
     public void CheckPuzzleComplete()
     {
         foreach (DropZone slot in allSlots)
         {
             if (slot == null) continue;
-            if (!slot.isFilled) return;
+
+            if (!slot.isFilled)
+                return;
         }
 
         OnPuzzleComplete();
@@ -132,13 +159,14 @@ public class PuzzleManager : MonoBehaviour
 
     private void OnPuzzleComplete()
     {
-        if (puzzleCompleted) return;
+        if (puzzleCompleted)
+            return;
 
         Debug.Log("✅ Puzzle selesai!");
 
         MarkPuzzleCompleted();
 
-        // 🔥 LANGSUNG KE SEQUENCE SELESAI (tanpa VFX)
+        // Jalankan sequence selesai
         StartCoroutine(PuzzleCompleteSequence());
     }
 
@@ -152,17 +180,25 @@ public class PuzzleManager : MonoBehaviour
         if (powerManager != null)
         {
             powerManager.SetUnlocked();
-            StartCoroutine(PopEffect(powerManager.transform));
+            StartCoroutine(
+                PopEffect(powerManager.transform)
+            );
         }
 
-        yield return new WaitForSeconds(delayBeforeWinPanel);
+        yield return new WaitForSeconds(
+            delayBeforeWinPanel
+        );
 
         transitionManager = TransitionManager.Instance();
 
         if (transitionManager != null && transitionSettings != null)
         {
             transitionManager.onTransitionCutPointReached += ActivateRewardPanel;
-            transitionManager.Transition(transitionSettings, transitionDelay);
+
+            transitionManager.Transition(
+                transitionSettings,
+                transitionDelay
+            );
         }
         else
         {
@@ -172,11 +208,20 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivateRewardPanel()
     {
+        // Canvas 2 ON
+        if (canvas2 != null)
+            canvas2.SetActive(true);
+
+        // Puzzle OFF
         if (puzzlePanel != null)
             puzzlePanel.SetActive(false);
 
+        // Reward ON
         if (rewardPanel != null)
             rewardPanel.SetActive(true);
+
+        // Save state resume
+        GameProgressManager.SaveGameState("Reward");
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
@@ -193,15 +238,28 @@ public class PuzzleManager : MonoBehaviour
         while (time < duration / 2)
         {
             time += Time.unscaledDeltaTime;
-            target.localScale = Vector3.Lerp(originalScale, punchScale, time / (duration / 2));
+
+            target.localScale = Vector3.Lerp(
+                originalScale,
+                punchScale,
+                time / (duration / 2)
+            );
+
             yield return null;
         }
 
         time = 0f;
+
         while (time < duration / 2)
         {
             time += Time.unscaledDeltaTime;
-            target.localScale = Vector3.Lerp(punchScale, originalScale, time / (duration / 2));
+
+            target.localScale = Vector3.Lerp(
+                punchScale,
+                originalScale,
+                time / (duration / 2)
+            );
+
             yield return null;
         }
 

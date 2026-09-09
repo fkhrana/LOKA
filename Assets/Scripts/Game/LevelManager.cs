@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using System.Collections;
 
 public class LevelManager : MonoBehaviour
@@ -8,11 +9,10 @@ public class LevelManager : MonoBehaviour
 
     [Header("Level UI")]
     [SerializeField] private GameObject levelCardPrefab;
-    [SerializeField] private Transform contentParent;
 
     [Header("Carousel")]
     [SerializeField] private CarouselSnap carouselSnap;
-    [SerializeField] private UnityEngine.UI.Button replayButton;
+    [SerializeField] private Button replayButton;
 
     [Header("Level Icons")]
     [SerializeField] private Sprite[] lockedLevelIcons;
@@ -23,10 +23,12 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private AudioClip successSound;
 
     [Header("Gameplay")]
-    [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
+    [SerializeField] private string[] gameplaySceneNames;
 
     [Header("Main Menu")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+
+    private Transform contentParent;
 
     private int totalLevels;
 
@@ -45,17 +47,29 @@ public class LevelManager : MonoBehaviour
         }
 
         Instance = this;
+
         DontDestroyOnLoad(gameObject);
 
         totalLevels = Mathf.Max(
-            lockedLevelIcons != null ? lockedLevelIcons.Length : 0,
-            unlockedLevelIcons != null ? unlockedLevelIcons.Length : 0
+            lockedLevelIcons != null
+                ? lockedLevelIcons.Length
+                : 0,
+
+            unlockedLevelIcons != null
+                ? unlockedLevelIcons.Length
+                : 0,
+
+            gameplaySceneNames != null
+                ? gameplaySceneNames.Length
+                : 0
         );
 
         if (totalLevels <= 0)
-            Debug.LogWarning("LevelManager: Tidak ada level.");
-
-        UnlockLevel(0);
+        {
+            Debug.LogWarning(
+                "LevelManager: Tidak ada level."
+            );
+        }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -68,20 +82,28 @@ public class LevelManager : MonoBehaviour
     private void OnDestroy()
     {
         if (Instance == this)
+        {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(
+        Scene scene,
+        LoadSceneMode mode
+    )
     {
         if (scene.name != mainMenuSceneName)
             return;
 
-        StartCoroutine(SetupMainMenuDelayed());
+        StartCoroutine(
+            SetupMainMenuDelayed()
+        );
     }
 
     private IEnumerator SetupMainMenuDelayed()
     {
         yield return null;
+
         SetupMainMenu();
     }
 
@@ -92,54 +114,98 @@ public class LevelManager : MonoBehaviour
 
         FindMainMenuReferences();
 
+        if (carouselSnap == null)
+        {
+            Debug.LogError(
+                "LevelManager: CarouselSnap tidak ditemukan di MainMenu."
+            );
+
+            return;
+        }
+
+        contentParent =
+            carouselSnap.GetContentParent();
+
         if (contentParent == null)
         {
-            Debug.LogError("LevelManager: Content Parent tidak ditemukan.");
+            Debug.LogError(
+                "LevelManager: Content dari CarouselSnap tidak ditemukan. " +
+                "Pastikan field 'Content' pada CarouselSnap sudah di-assign di Inspector."
+            );
+
             return;
         }
 
         if (levelCardPrefab == null)
         {
-            Debug.LogError("LevelManager: Level Card Prefab belum diisi.");
+            Debug.LogError(
+                "LevelManager: Level Card Prefab belum diisi."
+            );
+
             return;
         }
 
         GenerateLevels();
 
-        if (carouselSnap != null)
-            carouselSnap.Refresh();
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            contentParent as RectTransform
+        );
+
+        carouselSnap.Refresh();
 
         SetupReplayButton();
+
         UpdateReplayButton();
     }
 
     private void FindMainMenuReferences()
     {
-        CarouselSnap foundCarousel = FindFirstObjectByType<CarouselSnap>();
+        carouselSnap = null;
+        replayButton = null;
+        contentParent = null;
+        replayCanvasGroup = null;
 
-        if (foundCarousel != null)
-            carouselSnap = foundCarousel;
+        CarouselSnap[] carousels =
+            FindObjectsByType<CarouselSnap>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
 
-        LevelUI levelUI = FindFirstObjectByType<LevelUI>();
-
-        if (levelUI != null)
-            contentParent = levelUI.transform.parent;
-
-        if (replayButton == null)
+        foreach (CarouselSnap carousel in carousels)
         {
-            UnityEngine.UI.Button[] buttons =
-                FindObjectsByType<UnityEngine.UI.Button>(
-                    FindObjectsInactive.Include,
-                    FindObjectsSortMode.None
-                );
+            if (carousel == null)
+                continue;
 
-            foreach (UnityEngine.UI.Button button in buttons)
+            carouselSnap = carousel;
+            break;
+        }
+
+        if (carouselSnap == null)
+        {
+            Debug.LogWarning(
+                "LevelManager: Tidak ada CarouselSnap ditemukan di scene (termasuk yang inactive)."
+            );
+        }
+
+        Button[] buttons =
+            FindObjectsByType<Button>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+
+        foreach (Button button in buttons)
+        {
+            if (button == null)
+                continue;
+
+            if (button.gameObject.name
+                .ToLower()
+                .Contains("replay"))
             {
-                if (button.gameObject.name.ToLower().Contains("replay"))
-                {
-                    replayButton = button;
-                    break;
-                }
+                replayButton = button;
+                break;
             }
         }
     }
@@ -147,7 +213,13 @@ public class LevelManager : MonoBehaviour
     private void SetupReplayButton()
     {
         if (replayButton == null)
+        {
+            Debug.LogWarning(
+                "LevelManager: Replay Button tidak ditemukan."
+            );
+
             return;
+        }
 
         replayCanvasGroup =
             replayButton.GetComponent<CanvasGroup>();
@@ -161,21 +233,30 @@ public class LevelManager : MonoBehaviour
         replayCanvasGroup.alpha = 1f;
 
         replayButton.onClick.RemoveAllListeners();
-        replayButton.onClick.AddListener(ReplayWithShake);
+
+        replayButton.onClick.AddListener(
+            ReplayWithShake
+        );
     }
 
     private void GenerateLevels()
     {
-        if (contentParent == null || levelCardPrefab == null)
+        if (contentParent == null ||
+            levelCardPrefab == null)
             return;
 
         foreach (Transform child in contentParent)
+        {
             Destroy(child.gameObject);
+        }
 
         for (int i = 0; i < totalLevels; i++)
         {
             GameObject card =
-                Instantiate(levelCardPrefab, contentParent);
+                Instantiate(
+                    levelCardPrefab,
+                    contentParent
+                );
 
             LevelUI levelUI =
                 card.GetComponent<LevelUI>();
@@ -191,37 +272,55 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private string GetKey(string prefix, int index)
+    private string GetKey(
+        string prefix,
+        int index
+    )
     {
         return prefix + index;
     }
 
     public bool IsUnlocked(int index)
     {
-        if (index == 0)
-            return true;
+        if (index < 0 ||
+            index >= totalLevels)
+            return false;
 
         return PlayerPrefs.GetInt(
-            GetKey(UNLOCKED_KEY, index),
+            GetKey(
+                UNLOCKED_KEY,
+                index
+            ),
             0
         ) == 1;
     }
 
     public bool IsCompleted(int index)
     {
+        if (index < 0 ||
+            index >= totalLevels)
+            return false;
+
         return PlayerPrefs.GetInt(
-            GetKey(COMPLETED_KEY, index),
+            GetKey(
+                COMPLETED_KEY,
+                index
+            ),
             0
         ) == 1;
     }
 
     private void UnlockLevel(int index)
     {
-        if (index < 0 || index >= totalLevels)
+        if (index < 0 ||
+            index >= totalLevels)
             return;
 
         PlayerPrefs.SetInt(
-            GetKey(UNLOCKED_KEY, index),
+            GetKey(
+                UNLOCKED_KEY,
+                index
+            ),
             1
         );
     }
@@ -250,11 +349,15 @@ public class LevelManager : MonoBehaviour
 
     public void CompleteLevel(int index)
     {
-        if (index < 0 || index >= totalLevels)
+        if (index < 0 ||
+            index >= totalLevels)
             return;
 
         PlayerPrefs.SetInt(
-            GetKey(COMPLETED_KEY, index),
+            GetKey(
+                COMPLETED_KEY,
+                index
+            ),
             1
         );
 
@@ -268,9 +371,12 @@ public class LevelManager : MonoBehaviour
         PlayerPrefs.Save();
 
         Debug.Log(
-            "Level " + (index + 1) +
+            "Level " +
+            (index + 1) +
             " selesai. Level berikutnya dibuka."
         );
+
+        RefreshUI();
     }
 
     public void SetCurrentLevel(int index)
@@ -278,9 +384,7 @@ public class LevelManager : MonoBehaviour
         if (index < 0 ||
             index >= totalLevels ||
             !IsUnlocked(index))
-        {
             return;
-        }
 
         PlayerPrefs.SetInt(
             CURRENT_KEY,
@@ -288,6 +392,11 @@ public class LevelManager : MonoBehaviour
         );
 
         PlayerPrefs.Save();
+
+        Debug.Log(
+            "[LevelManager] Current Level: " +
+            (index + 1)
+        );
     }
 
     public int GetCurrentLevelIndex()
@@ -296,7 +405,10 @@ public class LevelManager : MonoBehaviour
             return 0;
 
         return Mathf.Clamp(
-            PlayerPrefs.GetInt(CURRENT_KEY, 0),
+            PlayerPrefs.GetInt(
+                CURRENT_KEY,
+                0
+            ),
             0,
             totalLevels - 1
         );
@@ -304,16 +416,18 @@ public class LevelManager : MonoBehaviour
 
     public void ReplaySelectedLevel()
     {
-        int index = carouselSnap != null
-            ? carouselSnap.GetCurrentIndex()
-            : GetCurrentLevelIndex();
+        int index =
+            carouselSnap != null
+                ? carouselSnap.GetCurrentIndex()
+                : GetCurrentLevelIndex();
 
         if (!IsUnlocked(index))
         {
             PlayFailureSound();
 
             Debug.Log(
-                "Level " + (index + 1) +
+                "Level " +
+                (index + 1) +
                 " terkunci."
             );
 
@@ -324,23 +438,25 @@ public class LevelManager : MonoBehaviour
 
         SetCurrentLevel(index);
 
-        SceneManager.LoadScene(
-            gameplaySceneName
-        );
+        GameProgressManager.ClearGameState();
+
+        LoadGameplayScene(index);
     }
 
     public void ReplayWithShake()
     {
-        int index = carouselSnap != null
-            ? carouselSnap.GetCurrentIndex()
-            : GetCurrentLevelIndex();
+        int index =
+            carouselSnap != null
+                ? carouselSnap.GetCurrentIndex()
+                : GetCurrentLevelIndex();
 
         if (!IsUnlocked(index))
         {
             PlayFailureSound();
 
             Debug.Log(
-                "Level " + (index + 1) +
+                "Level " +
+                (index + 1) +
                 " terkunci."
             );
 
@@ -366,18 +482,67 @@ public class LevelManager : MonoBehaviour
         );
     }
 
-    private IEnumerator DelayedReplay(int index)
+    private IEnumerator DelayedReplay(
+        int index
+    )
     {
-        yield return new WaitForSecondsRealtime(0.5f);
+        yield return new WaitForSecondsRealtime(
+            0.5f
+        );
 
         SetCurrentLevel(index);
 
-        SceneManager.LoadScene(
-            gameplaySceneName
-        );
+        GameProgressManager.ClearGameState();
+
+        LoadGameplayScene(index);
     }
 
-    private Transform GetCardTransform(int index)
+    private bool LoadGameplayScene(int index)
+    {
+        if (gameplaySceneNames == null ||
+            index < 0 ||
+            index >= gameplaySceneNames.Length)
+        {
+            Debug.LogError(
+                "LevelManager: Scene untuk Level " +
+                (index + 1) +
+                " belum diatur."
+            );
+
+            return false;
+        }
+
+        string sceneName =
+            gameplaySceneNames[index];
+
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError(
+                "LevelManager: Nama scene Level " +
+                (index + 1) +
+                " kosong."
+            );
+
+            return false;
+        }
+
+        Debug.Log(
+            "[LevelManager] Loading Level " +
+            (index + 1) +
+            ": " +
+            sceneName
+        );
+
+        SceneManager.LoadScene(
+            sceneName
+        );
+
+        return true;
+    }
+
+    private Transform GetCardTransform(
+        int index
+    )
     {
         if (contentParent == null)
             return null;
@@ -407,9 +572,10 @@ public class LevelManager : MonoBehaviour
         if (replayButton == null)
             return;
 
-        int index = carouselSnap != null
-            ? carouselSnap.GetCurrentIndex()
-            : 0;
+        int index =
+            carouselSnap != null
+                ? carouselSnap.GetCurrentIndex()
+                : GetCurrentLevelIndex();
 
         bool unlocked =
             IsUnlocked(index);
@@ -424,7 +590,10 @@ public class LevelManager : MonoBehaviour
     public void RefreshUI()
     {
         if (contentParent == null)
+        {
+            SetupMainMenu();
             return;
+        }
 
         LevelUI[] cards =
             contentParent.GetComponentsInChildren<LevelUI>(
@@ -442,6 +611,9 @@ public class LevelManager : MonoBehaviour
             );
         }
 
+        if (carouselSnap != null)
+            carouselSnap.Refresh();
+
         UpdateReplayButton();
     }
 
@@ -452,44 +624,64 @@ public class LevelManager : MonoBehaviour
              i++)
         {
             PlayerPrefs.DeleteKey(
-                GetKey(UNLOCKED_KEY, i)
+                GetKey(
+                    UNLOCKED_KEY,
+                    i
+                )
             );
 
             PlayerPrefs.DeleteKey(
-                GetKey(COMPLETED_KEY, i)
+                GetKey(
+                    COMPLETED_KEY,
+                    i
+                )
             );
         }
 
-        PlayerPrefs.DeleteKey(CURRENT_KEY);
+        PlayerPrefs.DeleteKey(
+            CURRENT_KEY
+        );
+
+        GameProgressManager.ResetProgress();
 
         PlayerPrefs.Save();
 
-        UnlockLevel(0);
-
         SetupMainMenu();
+
+        Debug.Log(
+            "[LevelManager] Semua progress level berhasil di-reset."
+        );
     }
 
     private void PlayFailureSound()
     {
         if (failureSound != null)
+        {
             AudioManager.Instance?.PlayUISFX(
                 failureSound
             );
+        }
         else
+        {
             AudioManager.Instance?.PlayUISFX(
-                "ButtonClick"
+                "Failure"
             );
+        }
     }
 
     private void PlaySuccessSound()
     {
         if (successSound != null)
+        {
             AudioManager.Instance?.PlayUISFX(
                 successSound
             );
+        }
         else
+        {
             AudioManager.Instance?.PlayUISFX(
-                "ButtonClick"
+                "ButtonHover"
             );
+        }
     }
 }

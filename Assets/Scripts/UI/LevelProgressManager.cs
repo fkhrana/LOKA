@@ -26,6 +26,12 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private float trailCollectItemArrivalDistance = 0.15f;
     [SerializeField] private float trailCollectItemEndDelay = 0.15f;
 
+    [Header("Non-Collectible Item VFX SFX")]
+    [SerializeField] private bool useNonCollectibleVfxSFX = true;
+    [SerializeField] private string nonCollectibleVfxSFXName = "Success";
+    [Range(0f, 1f)]
+    [SerializeField] private float nonCollectibleVfxSFXVolume = 1f;
+
     [Header("Optional Events")]
     public UnityEvent OnReachedWaveMilestone; // invoked when reaching a milestone (e.g., show puzzle)
     public UnityEvent OnReachedLevelComplete; // invoked when full level complete (100%)
@@ -89,7 +95,21 @@ public class LevelProgressManager : MonoBehaviour
         if (target == null || barItemTrailVfx == null || trailCollectItemVfx == null)
             return;
 
+        // SFX ditambahkan tanpa mengubah logic VFX sebelumnya
+        PlayNonCollectibleVfxSFX();
+
         StartCoroutine(PlayNonCollectibleItemVfxRoutine(itemPosition, target));
+    }
+
+    private void PlayNonCollectibleVfxSFX()
+    {
+        if (useNonCollectibleVfxSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                nonCollectibleVfxSFXName,
+                nonCollectibleVfxSFXVolume
+            );
+        }
     }
 
     private IEnumerator PlayNonCollectibleItemVfxRoutine(Vector3 itemPosition, Transform target)

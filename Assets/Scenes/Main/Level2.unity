@@ -1500,6 +1500,9 @@ MonoBehaviour:
   brushPrefab: {fileID: 6222970725460223712, guid: de27dc7e0bad1f841ac581e8172ec81b, type: 3}
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
+  useBrushSFX: 1
+  brushSFXName: BrushDraw
+  brushSFXVolume: 1
 --- !u!120 &256010450
 LineRenderer:
   serializedVersion: 3
@@ -2964,6 +2967,9 @@ MonoBehaviour:
   spawnOnStart: 1
   waveTransitionBanner: {fileID: 1415337698}
   waveTransitionBannerDuration: 3
+  useWaveInfoSFX: 1
+  waveInfoSFXName: WaveInfo
+  waveInfoSFXVolume: 1
   useSpawnArea: 1
   spawnAreaCenter: {x: 11.5, y: -1.9}
   spawnAreaSize: {x: 5, y: 6}
@@ -3249,11 +3255,12 @@ MonoBehaviour:
   jedaAwal: 0.5
   durasiPan: 2.5
   jedaLihatMusuh: 1.5
-  countdownImage: {fileID: 0}
-  gambar3: {fileID: 0}
-  gambar2: {fileID: 0}
-  gambar1: {fileID: 0}
-  gambarMulai: {fileID: 0}
+  countdownImage: {fileID: 2145473332}
+  gambar3: {fileID: -1429612346996333452, guid: f6bb0c5efb289ce4b88ee26265d70e1f, type: 3}
+  gambar2: {fileID: 4721568734584305323, guid: dee7d0b9942eda9458ad9d82611e31d4, type: 3}
+  gambar1: {fileID: -5167311714789541325, guid: 3bb6495a292f8644b8c7d586a2155910, type: 3}
+  gambarMulai: {fileID: 8642235437496502386, guid: e296a6d9384063c4b9646e4616bc6feb, type: 3}
+  countdownSFX: {fileID: 8300000, guid: 299d1b1898ab6a34383378dd94173b1b, type: 3}
 --- !u!114 &497076175 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1562345173170563925, guid: 1d696eed676647b469b18301c42f2753, type: 3}
@@ -3715,6 +3722,7 @@ Transform:
   - {fileID: 1527717620}
   - {fileID: 1187938916}
   - {fileID: 496284079}
+  - {fileID: 1606926656}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &727570667
@@ -5196,6 +5204,9 @@ MonoBehaviour:
   playerHealth: {fileID: 497076175}
   losePanel: {fileID: 2123425797}
   loseAksaraStatusUI: {fileID: 68544620}
+  useLoseSFX: 1
+  loseSFXName: Lose
+  loseSFXVolume: 1
 --- !u!4 &910368819
 Transform:
   m_ObjectHideFlags: 0
@@ -5469,6 +5480,7 @@ MonoBehaviour:
   allSlots:
   - {fileID: 2113629586}
   - {fileID: 231917909}
+  canvas2: {fileID: 0}
   puzzlePanel: {fileID: 1665822008}
   rewardPanel: {fileID: 1647760247}
   powerManager: {fileID: 1180215102}
@@ -5819,6 +5831,9 @@ MonoBehaviour:
   trailCollectItemSpeed: 8
   trailCollectItemArrivalDistance: 0.15
   trailCollectItemEndDelay: 0.15
+  useNonCollectibleVfxSFX: 1
+  nonCollectibleVfxSFXName: Success
+  nonCollectibleVfxSFXVolume: 1
   OnReachedWaveMilestone:
     m_PersistentCalls:
       m_Calls: []
@@ -6150,6 +6165,8 @@ MonoBehaviour:
   freezeDuration: 8
   comboRadius: 2.5
   unlockOnStartForTesting: 1
+  freezeSFX: {fileID: 8300000, guid: 042230c40d28e814394086572ce12fd6, type: 3}
+  comboSFX: {fileID: 0}
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   unlockedColor: {r: 1, g: 1, b: 1, a: 1}
   consumedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
@@ -7412,6 +7429,55 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.3555}
   m_SizeDelta: {x: -44, y: -6.3976}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1606926655
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1606926656}
+  - component: {fileID: 1606926657}
+  m_Layer: 0
+  m_Name: ProgressManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1606926656
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606926655}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 703000920}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1606926657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606926655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64214f0e3b6e52e4f87f06127c2430dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SaveCurrentProgress
+  canvas2: {fileID: 2079893224}
+  puzzlePanel: {fileID: 1665822008}
+  rewardPanel: {fileID: 1647760247}
+  enemyWaveSpawner: {fileID: 441064577}
+  cameraIntroManager: {fileID: 496284080}
 --- !u!1 &1640242430
 GameObject:
   m_ObjectHideFlags: 0
@@ -7630,6 +7696,7 @@ RectTransform:
   - {fileID: 1180215101}
   - {fileID: 1888406631}
   - {fileID: 666636671}
+  - {fileID: 2145473334}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -10567,6 +10634,81 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123425797}
   m_CullTransparentMesh: 1
+--- !u!1 &2145473331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2145473334}
+  - component: {fileID: 2145473333}
+  - component: {fileID: 2145473332}
+  m_Layer: 5
+  m_Name: Countdown
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2145473332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145473331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &2145473333
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145473331}
+  m_CullTransparentMesh: 1
+--- !u!224 &2145473334
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2145473331}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1648195322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 8, y: 8}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

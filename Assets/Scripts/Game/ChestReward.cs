@@ -133,5 +133,14 @@ public class ChestReward : MonoBehaviour
 
         if (winPanel != null)
             winPanel.SetActive(true);
+
+        // Tandai level saat ini selesai dan buka level berikutnya
+        if (LevelManager.Instance != null)
+        {
+            int currentLevel =
+                LevelManager.Instance.GetCurrentLevelIndex();
+
+            LevelManager.Instance.CompleteLevel(currentLevel);
+        }
     }
 }

@@ -20,44 +20,73 @@ public class CameraIntroManager : MonoBehaviour
     public Sprite gambar1;
     public Sprite gambarMulai;
 
+    [Header("SFX Countdown")]
+    [SerializeField] private AudioClip countdownSFX;
+
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
 
-    void Start()
+   private void Start()
+{
+    string savedState = GameProgressManager.GetGameState();
+
+    // ========================================
+    // RESUME PUZZLE / REWARD
+    // ========================================
+
+    if (savedState == "Puzzle" || savedState == "Reward")
     {
-        GameStarted = false;
-
-        if (mainCamera == null)
-        {
-            Debug.LogError("Main Camera belum diisi!");
-            return;
-        }
-
-        if (targetKanan == null)
-        {
-            Debug.LogError("Target Kanan belum diisi!");
-            return;
-        }
-
-        if (countdownImage == null)
-        {
-            Debug.LogError("Countdown Image belum diisi!");
-            return;
-        }
-
-        countdownImage.gameObject.SetActive(false);
-        countdownImage.preserveAspect = true;
-
-        posisiKiri = mainCamera.transform.position;
-
-        posisiKanan = new Vector3(
-            targetKanan.position.x,
-            posisiKiri.y,
-            posisiKiri.z
+        Debug.Log(
+            "[CameraIntroManager] Resume " + savedState +
+            " → Intro dilewati."
         );
 
-        StartCoroutine(MainkanIntro());
+        GameStarted = true;
+
+        // Pastikan countdown tidak muncul
+        if (countdownImage != null)
+            countdownImage.gameObject.SetActive(false);
+
+        return;
     }
+
+    // ========================================
+    // GAME BARU
+    // ========================================
+
+    GameStarted = false;
+
+    if (mainCamera == null)
+    {
+        Debug.LogError("Main Camera belum diisi!");
+        return;
+    }
+
+    if (targetKanan == null)
+    {
+        Debug.LogError("Target Kanan belum diisi!");
+        return;
+    }
+
+    if (countdownImage == null)
+    {
+        Debug.LogError("Countdown Image belum diisi!");
+        return;
+    }
+
+    countdownImage.gameObject.SetActive(false);
+    countdownImage.preserveAspect = true;
+
+    posisiKiri = mainCamera.transform.position;
+
+    posisiKanan = new Vector3(
+        targetKanan.position.x,
+        posisiKiri.y,
+        posisiKiri.z
+    );
+
+    StartCoroutine(MainkanIntro());
+}
 
     IEnumerator MainkanIntro()
     {
@@ -89,6 +118,17 @@ public class CameraIntroManager : MonoBehaviour
 
         countdownImage.gameObject.SetActive(true);
 
+        // ========================================
+        // PLAY SFX COUNTDOWN SEKALI SAJA
+        // ========================================
+        if (AudioManager.Instance != null && countdownSFX != null)
+        {
+            AudioManager.Instance.PlaySFX(countdownSFX);
+        }
+
+        // ========================================
+        // COUNTDOWN
+        // ========================================
         yield return StartCoroutine(TampilkanEfekPopUp(gambar3));
         yield return StartCoroutine(TampilkanEfekPopUp(gambar2));
         yield return StartCoroutine(TampilkanEfekPopUp(gambar1));
@@ -189,4 +229,3 @@ public class CameraIntroManager : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
     }
 }
-

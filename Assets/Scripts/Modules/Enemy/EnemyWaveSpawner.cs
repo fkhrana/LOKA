@@ -38,6 +38,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     [Header("Wave Info SFX")]
     [SerializeField] private bool useWaveInfoSFX = true;
     [SerializeField] private string waveInfoSFXName = "WaveInfo";
+
     [Range(0f, 1f)]
     [SerializeField] private float waveInfoSFXVolume = 1f;
 
@@ -52,19 +53,31 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField, Min(1)] private int initialConcurrentEnemies = 3;
     [SerializeField, Min(0.1f)] private float staggerSpawnInterval = 0.6f;
     [SerializeField] private GestureCategory gestureCategory = GestureCategory.Shapes;
-    [SerializeField] private GestureShape[] availableShapeGestures = { GestureShape.Circle, GestureShape.Square };
-    [SerializeField] private GestureShape[] availableAksaraGestures = { GestureShape.Na, GestureShape.Ka };
+    [SerializeField] private GestureShape[] availableShapeGestures =
+        { GestureShape.Circle, GestureShape.Square };
+
+    [SerializeField] private GestureShape[] availableAksaraGestures =
+        { GestureShape.Na, GestureShape.Ka };
+
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
     [SerializeField, Min(0.1f)] private float minSpawnDistance = 1f;
     [SerializeField, Min(0.1f)] private float maxSpawnDistance = 3f;
 
-    private readonly List<EnemyGestureCommand> spawnedEnemies = new List<EnemyGestureCommand>();
-    private readonly List<EnemyGestureCommand> currentWaveEnemies = new List<EnemyGestureCommand>();
+    private readonly List<EnemyGestureCommand> spawnedEnemies =
+        new List<EnemyGestureCommand>();
+
+    private readonly List<EnemyGestureCommand> currentWaveEnemies =
+        new List<EnemyGestureCommand>();
+
     private Coroutine waveSequenceCoroutine;
+
     private int currentWaveIndex = -1;
 
-    public IReadOnlyList<EnemyGestureCommand> SpawnedEnemies => spawnedEnemies;
-    public int CurrentWaveIndex => currentWaveIndex;
+    public IReadOnlyList<EnemyGestureCommand> SpawnedEnemies =>
+        spawnedEnemies;
+
+    public int CurrentWaveIndex =>
+        currentWaveIndex;
 
     private void OnValidate()
     {
@@ -74,6 +87,27 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private void Start()
     {
+        string savedState =
+            GameProgressManager.GetGameState();
+
+        if (savedState == "Puzzle" ||
+            savedState == "Reward")
+        {
+            Debug.Log(
+                "[EnemyWaveSpawner] Resume " +
+                savedState +
+                " → wave tidak dijalankan."
+            );
+
+            return;
+        }
+
+        if (savedState == "Gameplay")
+        {
+            ResumeWaveSequence();
+            return;
+        }
+
         if (spawnOnStart)
             StartWaveSequence();
     }
@@ -81,56 +115,226 @@ public class EnemyWaveSpawner : MonoBehaviour
     public void StartWaveSequence()
     {
         StopWaveSequence();
+
         ClearSpawnedEnemies();
 
         if (enemyPrefab == null)
         {
-            Debug.LogWarning("EnemyWaveSpawner: enemyPrefab belum di-assign.");
+            Debug.LogWarning(
+                "EnemyWaveSpawner: enemyPrefab belum di-assign."
+            );
+
             return;
         }
 
-        // Initialize progress manager with total enemies for the level and wave milestones
-        if (waves == null || waves.Count == 0)
+        if (waves == null ||
+            waves.Count == 0)
         {
-            LevelProgressManager.Instance?.Initialize(enemyCount, null);
+            LevelProgressManager.Instance?.Initialize(
+                enemyCount,
+                null
+            );
+
+            currentWaveIndex = 0;
+
+            GameProgressManager.SaveWaveIndex(
+                currentWaveIndex
+            );
+
             SpawnWave();
+
             return;
         }
 
         int totalLevelEnemies = 0;
-        var milestones = new List<int>();
-        for (int w = 0; w < waves.Count; w++)
+
+        var milestones =
+            new List<int>();
+
+        for (int w = 0;
+             w < waves.Count;
+             w++)
         {
             var wave = waves[w];
-            if (wave == null || wave.groups == null)
+
+            if (wave == null ||
+                wave.groups == null)
                 continue;
 
             int waveTotal = 0;
-            for (int gi = 0; gi < wave.groups.Count; gi++)
+
+            for (int gi = 0;
+                 gi < wave.groups.Count;
+                 gi++)
             {
-                var g = wave.groups[gi];
+                var g =
+                    wave.groups[gi];
+
                 if (g != null)
-                    waveTotal += Mathf.Max(0, g.enemyCount);
+                {
+                    waveTotal +=
+                        Mathf.Max(
+                            0,
+                            g.enemyCount
+                        );
+                }
             }
 
-            totalLevelEnemies += waveTotal;
-            milestones.Add(totalLevelEnemies);
+            totalLevelEnemies +=
+                waveTotal;
+
+            milestones.Add(
+                totalLevelEnemies
+            );
         }
 
-        LevelProgressManager.Instance?.Initialize(totalLevelEnemies, milestones);
+        LevelProgressManager.Instance?.Initialize(
+            totalLevelEnemies,
+            milestones
+        );
 
         currentWaveIndex = -1;
+
         currentWaveEnemies.Clear();
-        waveSequenceCoroutine = StartCoroutine(SpawnWaveSequenceRoutine());
+
+        GameProgressManager.SaveWaveIndex(
+            0
+        );
+
+        waveSequenceCoroutine =
+            StartCoroutine(
+                SpawnWaveSequenceRoutine()
+            );
+    }
+
+    public void ResumeWaveSequence()
+    {
+        StopWaveSequence();
+
+        ClearSpawnedEnemies();
+
+        if (enemyPrefab == null)
+        {
+            Debug.LogWarning(
+                "EnemyWaveSpawner: enemyPrefab belum di-assign."
+            );
+
+            return;
+        }
+
+        if (waves == null ||
+            waves.Count == 0)
+        {
+            currentWaveIndex = 0;
+
+            LevelProgressManager.Instance?.Initialize(
+                enemyCount,
+                null
+            );
+
+            SpawnWave();
+
+            return;
+        }
+
+        int totalLevelEnemies = 0;
+
+        var milestones =
+            new List<int>();
+
+        for (int w = 0;
+             w < waves.Count;
+             w++)
+        {
+            var wave =
+                waves[w];
+
+            if (wave == null ||
+                wave.groups == null)
+                continue;
+
+            int waveTotal = 0;
+
+            for (int gi = 0;
+                 gi < wave.groups.Count;
+                 gi++)
+            {
+                var group =
+                    wave.groups[gi];
+
+                if (group != null)
+                {
+                    waveTotal +=
+                        Mathf.Max(
+                            0,
+                            group.enemyCount
+                        );
+                }
+            }
+
+            totalLevelEnemies +=
+                waveTotal;
+
+            milestones.Add(
+                totalLevelEnemies
+            );
+        }
+
+        LevelProgressManager.Instance?.Initialize(
+            totalLevelEnemies,
+            milestones
+        );
+
+        int savedWave =
+            GameProgressManager.GetWaveIndex();
+
+        currentWaveIndex =
+            Mathf.Clamp(
+                savedWave,
+                0,
+                waves.Count - 1
+            );
+
+        Debug.Log(
+            "[EnemyWaveSpawner] Resume → Wave " +
+            (currentWaveIndex + 1)
+        );
+
+        waveSequenceCoroutine =
+            StartCoroutine(
+                ResumeWaveSequenceRoutine()
+            );
     }
 
     public void StopWaveSequence()
     {
         if (waveSequenceCoroutine != null)
         {
-            StopCoroutine(waveSequenceCoroutine);
+            StopCoroutine(
+                waveSequenceCoroutine
+            );
+
             waveSequenceCoroutine = null;
         }
+    }
+
+    public void SaveCurrentWave()
+    {
+        if (currentWaveIndex < 0)
+            return;
+
+        GameProgressManager.SaveWaveIndex(
+            currentWaveIndex
+        );
+
+        GameProgressManager.SaveGameState(
+            "Gameplay"
+        );
+
+        Debug.Log(
+            "[EnemyWaveSpawner] Progress gameplay disimpan → Wave " +
+            (currentWaveIndex + 1)
+        );
     }
 
     public void SpawnWave()
@@ -139,97 +343,262 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         if (enemyPrefab == null)
         {
-            Debug.LogWarning("EnemyWaveSpawner: enemyPrefab belum di-assign.");
+            Debug.LogWarning(
+                "EnemyWaveSpawner: enemyPrefab belum di-assign."
+            );
+
             return;
         }
 
         currentWaveEnemies.Clear();
-        // initialize progress for legacy single-wave usage
-        LevelProgressManager.Instance?.Initialize(enemyCount, null);
-        var usedPositions = new List<Vector3>();
 
-        for (int i = 0; i < enemyCount; i++)
+        LevelProgressManager.Instance?.Initialize(
+            enemyCount,
+            null
+        );
+
+        var usedPositions =
+            new List<Vector3>();
+
+        for (int i = 0;
+             i < enemyCount;
+             i++)
         {
-            SpawnEnemyFromLegacyConfig(i, usedPositions);
+            SpawnEnemyFromLegacyConfig(
+                i,
+                usedPositions
+            );
         }
 
         if (spawnedEnemies.Count != enemyCount)
-            Debug.LogWarning($"EnemyWaveSpawner: expected {enemyCount} enemies but spawned {spawnedEnemies.Count}.");
+        {
+            Debug.LogWarning(
+                $"EnemyWaveSpawner: expected {enemyCount} enemies but spawned {spawnedEnemies.Count}."
+            );
+        }
     }
 
     public void ClearSpawnedEnemies()
     {
-        for (int i = 0; i < spawnedEnemies.Count; i++)
+        for (int i = 0;
+             i < spawnedEnemies.Count;
+             i++)
         {
             if (spawnedEnemies[i] != null)
-                Destroy(spawnedEnemies[i].gameObject);
+            {
+                Destroy(
+                    spawnedEnemies[i].gameObject
+                );
+            }
         }
 
         spawnedEnemies.Clear();
+
         currentWaveEnemies.Clear();
     }
 
     private IEnumerator SpawnWaveSequenceRoutine()
     {
-        if (waves == null || waves.Count == 0)
+        if (waves == null ||
+            waves.Count == 0)
         {
             SpawnWave();
+
             yield break;
         }
 
-        for (int waveIndex = 0; waveIndex < waves.Count; waveIndex++)
+        for (int waveIndex = 0;
+             waveIndex < waves.Count;
+             waveIndex++)
         {
-            currentWaveIndex = waveIndex;
-            LevelProgressManager.Instance?.SetLevelBarTargetForWave(waveIndex);
-            EnemyWaveDefinition wave = waves[waveIndex];
+            currentWaveIndex =
+                waveIndex;
 
-            if (wave != null && wave.delayBeforeSpawn > 0f)
-                yield return new WaitForSeconds(wave.delayBeforeSpawn);
+            GameProgressManager.SaveWaveIndex(
+                waveIndex
+            );
 
-            yield return StartCoroutine(SpawnWaveDefinitionRoutine(wave, waveIndex));
+            LevelProgressManager.Instance?.SetLevelBarTargetForWave(
+                waveIndex
+            );
+
+            EnemyWaveDefinition wave =
+                waves[waveIndex];
+
+            if (wave != null &&
+                wave.delayBeforeSpawn > 0f)
+            {
+                yield return new WaitForSeconds(
+                    wave.delayBeforeSpawn
+                );
+            }
+
+            yield return StartCoroutine(
+                SpawnWaveDefinitionRoutine(
+                    wave,
+                    waveIndex
+                )
+            );
 
             if (waveIndex < waves.Count - 1)
             {
-                yield return StartCoroutine(WaitForWaveToClearRoutine(delayBetweenWaves));
-                yield return StartCoroutine(ShowWaveTransitionBannerRoutine(waveIndex + 2));
+                yield return StartCoroutine(
+                    WaitForWaveToClearRoutine(
+                        delayBetweenWaves
+                    )
+                );
+
+                yield return StartCoroutine(
+                    ShowWaveTransitionBannerRoutine(
+                        waveIndex + 2
+                    )
+                );
             }
             else
             {
-                yield return StartCoroutine(WaitForWaveToClearRoutine(delayBetweenWaves));
+                yield return StartCoroutine(
+                    WaitForWaveToClearRoutine(
+                        delayBetweenWaves
+                    )
+                );
 
-                if (PuzzleManager.Instance != null && !PuzzleManager.Instance.IsPuzzleCompleted())
+                if (PuzzleManager.Instance != null &&
+                    !PuzzleManager.Instance.IsPuzzleCompleted())
                 {
                     PuzzleManager.Instance.ShowPuzzleOnce();
-                    yield return StartCoroutine(WaitForPuzzleCompletionRoutine());
+
+                    yield return StartCoroutine(
+                        WaitForPuzzleCompletionRoutine()
+                    );
                 }
             }
         }
 
-        currentWaveIndex = waves.Count;
+        currentWaveIndex =
+            waves.Count;
+
+        GameProgressManager.SaveWaveIndex(
+            currentWaveIndex
+        );
     }
 
-    private IEnumerator ShowWaveTransitionBannerRoutine(int nextWaveNumber)
+    private IEnumerator ResumeWaveSequenceRoutine()
+    {
+        for (int waveIndex = currentWaveIndex;
+             waveIndex < waves.Count;
+             waveIndex++)
+        {
+            currentWaveIndex =
+                waveIndex;
+
+            GameProgressManager.SaveWaveIndex(
+                waveIndex
+            );
+
+            LevelProgressManager.Instance?.SetLevelBarTargetForWave(
+                waveIndex
+            );
+
+            EnemyWaveDefinition wave =
+                waves[waveIndex];
+
+            Debug.Log(
+                "[EnemyWaveSpawner] Resume spawn → " +
+                wave.waveName
+            );
+
+            if (wave != null &&
+                wave.delayBeforeSpawn > 0f)
+            {
+                yield return new WaitForSeconds(
+                    wave.delayBeforeSpawn
+                );
+            }
+
+            yield return StartCoroutine(
+                SpawnWaveDefinitionRoutine(
+                    wave,
+                    waveIndex
+                )
+            );
+
+            if (waveIndex < waves.Count - 1)
+            {
+                yield return StartCoroutine(
+                    WaitForWaveToClearRoutine(
+                        delayBetweenWaves
+                    )
+                );
+
+                yield return StartCoroutine(
+                    ShowWaveTransitionBannerRoutine(
+                        waveIndex + 2
+                    )
+                );
+            }
+            else
+            {
+                yield return StartCoroutine(
+                    WaitForWaveToClearRoutine(
+                        delayBetweenWaves
+                    )
+                );
+
+                if (PuzzleManager.Instance != null &&
+                    !PuzzleManager.Instance.IsPuzzleCompleted())
+                {
+                    PuzzleManager.Instance.ShowPuzzleOnce();
+
+                    yield return StartCoroutine(
+                        WaitForPuzzleCompletionRoutine()
+                    );
+                }
+            }
+        }
+
+        currentWaveIndex =
+            waves.Count;
+
+        GameProgressManager.SaveWaveIndex(
+            currentWaveIndex
+        );
+    }
+
+    private IEnumerator ShowWaveTransitionBannerRoutine(
+        int nextWaveNumber
+    )
     {
         if (waveTransitionBanner == null)
             yield break;
 
         waveTransitionBanner.SetActive(true);
 
-        var canvasGroup = waveTransitionBanner.GetComponent<CanvasGroup>();
+        var canvasGroup =
+            waveTransitionBanner.GetComponent<CanvasGroup>();
+
         if (canvasGroup != null)
             canvasGroup.alpha = 1f;
 
-        if (useWaveInfoSFX && AudioManager.Instance != null)
+        if (useWaveInfoSFX &&
+            AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySFX(waveInfoSFXName, waveInfoSFXVolume);
+            AudioManager.Instance.PlaySFX(
+                waveInfoSFXName,
+                waveInfoSFXVolume
+            );
         }
 
-        yield return new WaitForSeconds(waveTransitionBannerDuration);
+        yield return new WaitForSeconds(
+            waveTransitionBannerDuration
+        );
 
         waveTransitionBanner.SetActive(false);
     }
 
-    private IEnumerator SpawnWaveDefinitionRoutine(EnemyWaveDefinition wave, int waveIndex)
+    private IEnumerator SpawnWaveDefinitionRoutine(
+        EnemyWaveDefinition wave,
+        int waveIndex
+    )
     {
         if (wave == null)
             yield break;
@@ -237,49 +606,97 @@ public class EnemyWaveSpawner : MonoBehaviour
         currentWaveEnemies.Clear();
 
         int totalEnemiesInWave = 0;
-        var usedPositions = new List<Vector3>();
 
-        if (wave.groups == null || wave.groups.Count == 0)
+        var usedPositions =
+            new List<Vector3>();
+
+        if (wave.groups == null ||
+            wave.groups.Count == 0)
         {
-            Debug.LogWarning($"EnemyWaveSpawner: wave '{wave.waveName}' has no groups configured.");
+            Debug.LogWarning(
+                $"EnemyWaveSpawner: wave '{wave.waveName}' has no groups configured."
+            );
+
             yield break;
         }
 
-        for (int groupIndex = 0; groupIndex < wave.groups.Count; groupIndex++)
+        for (int groupIndex = 0;
+             groupIndex < wave.groups.Count;
+             groupIndex++)
         {
-            EnemyWaveGroup group = wave.groups[groupIndex];
-            if (group == null || group.enemyCount <= 0)
+            EnemyWaveGroup group =
+                wave.groups[groupIndex];
+
+            if (group == null ||
+                group.enemyCount <= 0)
                 continue;
 
-            totalEnemiesInWave += group.enemyCount;
+            totalEnemiesInWave +=
+                group.enemyCount;
         }
 
-        Debug.Log($"[EnemyWaveSpawner] Spawning {wave.waveName} ({waveIndex + 1}/{(waves != null ? waves.Count : 1)})");
+        Debug.Log(
+            $"[EnemyWaveSpawner] Spawning {wave.waveName} ({waveIndex + 1}/{waves.Count})"
+        );
 
         int spawnedCount = 0;
-        int initialBatchSize = Mathf.Min(initialConcurrentEnemies, totalEnemiesInWave);
-        var remainingGroupCounts = new List<int>();
-        for (int groupIndex = 0; groupIndex < wave.groups.Count; groupIndex++)
+
+        int initialBatchSize =
+            Mathf.Min(
+                initialConcurrentEnemies,
+                totalEnemiesInWave
+            );
+
+        var remainingGroupCounts =
+            new List<int>();
+
+        for (int groupIndex = 0;
+             groupIndex < wave.groups.Count;
+             groupIndex++)
         {
-            EnemyWaveGroup group = wave.groups[groupIndex];
-            if (group == null || group.enemyCount <= 0)
+            EnemyWaveGroup group =
+                wave.groups[groupIndex];
+
+            if (group == null ||
+                group.enemyCount <= 0)
+            {
                 remainingGroupCounts.Add(0);
+            }
             else
-                remainingGroupCounts.Add(group.enemyCount);
+            {
+                remainingGroupCounts.Add(
+                    group.enemyCount
+                );
+            }
         }
 
         int nextGroupIndex = 0;
 
-        for (int i = 0; i < initialBatchSize; i++)
+        for (int i = 0;
+             i < initialBatchSize;
+             i++)
         {
             if (spawnedCount >= totalEnemiesInWave)
                 break;
 
-            EnemyWaveGroup selectedGroup = GetNextMixedGroup(wave, remainingGroupCounts, ref nextGroupIndex);
+            EnemyWaveGroup selectedGroup =
+                GetNextMixedGroup(
+                    wave,
+                    remainingGroupCounts,
+                    ref nextGroupIndex
+                );
+
             if (selectedGroup == null)
                 break;
 
-            SpawnEnemy(selectedGroup != null ? selectedGroup.enemyData : null, selectedGroup != null ? selectedGroup.aksaraData : null, spawnedCount, totalEnemiesInWave, usedPositions);
+            SpawnEnemy(
+                selectedGroup.enemyData,
+                selectedGroup.aksaraData,
+                spawnedCount,
+                totalEnemiesInWave,
+                usedPositions
+            );
+
             spawnedCount++;
         }
 
@@ -287,41 +704,87 @@ public class EnemyWaveSpawner : MonoBehaviour
         {
             RefreshCurrentWaveEnemies();
 
-            if (currentWaveEnemies.Count < initialBatchSize)
+            if (currentWaveEnemies.Count <
+                initialBatchSize)
             {
-                EnemyWaveGroup selectedGroup = GetNextMixedGroup(wave, remainingGroupCounts, ref nextGroupIndex);
+                EnemyWaveGroup selectedGroup =
+                    GetNextMixedGroup(
+                        wave,
+                        remainingGroupCounts,
+                        ref nextGroupIndex
+                    );
+
                 if (selectedGroup == null)
                     break;
 
-                SpawnEnemy(selectedGroup != null ? selectedGroup.enemyData : null, selectedGroup != null ? selectedGroup.aksaraData : null, spawnedCount, totalEnemiesInWave, usedPositions);
+                SpawnEnemy(
+                    selectedGroup.enemyData,
+                    selectedGroup.aksaraData,
+                    spawnedCount,
+                    totalEnemiesInWave,
+                    usedPositions
+                );
+
                 spawnedCount++;
 
                 if (staggerSpawnInterval > 0f)
-                    yield return new WaitForSeconds(staggerSpawnInterval);
+                {
+                    yield return new WaitForSeconds(
+                        staggerSpawnInterval
+                    );
+                }
             }
             else
             {
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(
+                    0.2f
+                );
             }
         }
 
-        Debug.Log($"[EnemyWaveSpawner] {wave.waveName} spawned {spawnedCount} enemies.");
+        Debug.Log(
+            $"[EnemyWaveSpawner] {wave.waveName} spawned {spawnedCount} enemies."
+        );
     }
 
-    private EnemyWaveGroup GetNextMixedGroup(EnemyWaveDefinition wave, List<int> remainingGroupCounts, ref int nextGroupIndex)
+    private EnemyWaveGroup GetNextMixedGroup(
+        EnemyWaveDefinition wave,
+        List<int> remainingGroupCounts,
+        ref int nextGroupIndex
+    )
     {
-        if (wave == null || wave.groups == null || wave.groups.Count == 0 || remainingGroupCounts == null)
-            return null;
-
-        int totalGroups = wave.groups.Count;
-        for (int scan = 0; scan < totalGroups; scan++)
+        if (wave == null ||
+            wave.groups == null ||
+            wave.groups.Count == 0 ||
+            remainingGroupCounts == null)
         {
-            int candidateIndex = (nextGroupIndex + scan) % totalGroups;
-            EnemyWaveGroup group = wave.groups[candidateIndex];
-            if (group != null && group.enemyCount > 0 && remainingGroupCounts[candidateIndex] > 0)
+            return null;
+        }
+
+        int totalGroups =
+            wave.groups.Count;
+
+        for (int scan = 0;
+             scan < totalGroups;
+             scan++)
+        {
+            int candidateIndex =
+                (nextGroupIndex + scan) %
+                totalGroups;
+
+            EnemyWaveGroup group =
+                wave.groups[candidateIndex];
+
+            if (group != null &&
+                group.enemyCount > 0 &&
+                remainingGroupCounts[candidateIndex] > 0)
             {
-                nextGroupIndex = (candidateIndex + 1) % totalGroups;
+                nextGroupIndex =
+                    (candidateIndex + 1) %
+                    totalGroups;
+
                 remainingGroupCounts[candidateIndex]--;
+
                 return group;
             }
         }
@@ -329,74 +792,184 @@ public class EnemyWaveSpawner : MonoBehaviour
         return null;
     }
 
-    private void SpawnEnemyFromLegacyConfig(int index, List<Vector3> usedPositions)
+    private void SpawnEnemyFromLegacyConfig(
+        int index,
+        List<Vector3> usedPositions
+    )
     {
-        EnemySpawnEntry selectedEntry = GetRandomEntry();
-        SpawnEnemy(selectedEntry != null ? selectedEntry.enemyData : null, selectedEntry != null ? selectedEntry.aksaraData : null, index, enemyCount, usedPositions);
+        EnemySpawnEntry selectedEntry =
+            GetRandomEntry();
+
+        SpawnEnemy(
+            selectedEntry != null
+                ? selectedEntry.enemyData
+                : null,
+
+            selectedEntry != null
+                ? selectedEntry.aksaraData
+                : null,
+
+            index,
+            enemyCount,
+            usedPositions
+        );
     }
 
-    private void SpawnEnemy(EnemyData enemyData, AksaraData aksaraData, int spawnIndex, int totalEnemiesInWave, List<Vector3> usedPositions)
+    private void SpawnEnemy(
+        EnemyData enemyData,
+        AksaraData aksaraData,
+        int spawnIndex,
+        int totalEnemiesInWave,
+        List<Vector3> usedPositions
+    )
     {
-        Vector3 spawnPosition = GetSpawnPosition(spawnIndex, totalEnemiesInWave, usedPositions);
-        Transform parent = spawnedParent != null ? spawnedParent : transform;
+        Vector3 spawnPosition =
+            GetSpawnPosition(
+                spawnIndex,
+                totalEnemiesInWave,
+                usedPositions
+            );
 
-        EnemyGestureCommand enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, parent);
+        Transform parent =
+            spawnedParent != null
+                ? spawnedParent
+                : transform;
+
+        EnemyGestureCommand enemy =
+            Instantiate(
+                enemyPrefab,
+                spawnPosition,
+                Quaternion.identity,
+                parent
+            );
+
         enemy.SetAutoIssueOnStart(false);
 
-        Enemy enemyComponent = enemy.GetComponent<Enemy>();
+        Enemy enemyComponent =
+            enemy.GetComponent<Enemy>();
+
         if (enemyComponent != null)
         {
-            enemyComponent.Configure(enemyData, aksaraData);
+            enemyComponent.Configure(
+                enemyData,
+                aksaraData
+            );
         }
         else if (aksaraData != null)
         {
-            enemy.ConfigureChallenge(aksaraData.GestureShape, requiredCorrectGestures);
+            enemy.ConfigureChallenge(
+                aksaraData.GestureShape,
+                requiredCorrectGestures
+            );
         }
         else
         {
-            enemy.ConfigureChallenge(GetGestureForIndex(spawnIndex), requiredCorrectGestures);
+            enemy.ConfigureChallenge(
+                GetGestureForIndex(spawnIndex),
+                requiredCorrectGestures
+            );
         }
 
         KeepEnemyInsideSpawnArea(enemy);
+
         enemy.SyncSpawnPosition();
+
         if (usedPositions.Count > 0)
-            usedPositions[usedPositions.Count - 1] = enemy.transform.position;
+        {
+            usedPositions[
+                usedPositions.Count - 1
+            ] = enemy.transform.position;
+        }
+
         enemy.IssueCommand();
+
         spawnedEnemies.Add(enemy);
+
         currentWaveEnemies.Add(enemy);
     }
 
-    private void KeepEnemyInsideSpawnArea(EnemyGestureCommand enemy)
+    private void KeepEnemyInsideSpawnArea(
+        EnemyGestureCommand enemy
+    )
     {
-        if (!useSpawnArea || enemy == null)
+        if (!useSpawnArea ||
+            enemy == null)
             return;
 
-        Collider2D enemyCollider = enemy.GetComponent<Collider2D>();
+        Collider2D enemyCollider =
+            enemy.GetComponent<Collider2D>();
+
         if (enemyCollider == null)
-            enemyCollider = enemy.GetComponentInChildren<Collider2D>(true);
+        {
+            enemyCollider =
+                enemy.GetComponentInChildren<Collider2D>(
+                    true
+                );
+        }
 
         if (enemyCollider == null)
             return;
 
-        Bounds areaBounds = new Bounds(
-            new Vector3(spawnAreaCenter.x, spawnAreaCenter.y, enemy.transform.position.z),
-            new Vector3(spawnAreaSize.x, spawnAreaSize.y, 0f));
-        Bounds enemyBounds = enemyCollider.bounds;
+        Bounds areaBounds =
+            new Bounds(
+                new Vector3(
+                    spawnAreaCenter.x,
+                    spawnAreaCenter.y,
+                    enemy.transform.position.z
+                ),
+                new Vector3(
+                    spawnAreaSize.x,
+                    spawnAreaSize.y,
+                    0f
+                )
+            );
 
-        float minX = areaBounds.min.x + (enemy.transform.position.x - enemyBounds.min.x);
-        float maxX = areaBounds.max.x - (enemyBounds.max.x - enemy.transform.position.x);
-        float minY = areaBounds.min.y + (enemy.transform.position.y - enemyBounds.min.y);
-        float maxY = areaBounds.max.y - (enemyBounds.max.y - enemy.transform.position.y);
+        Bounds enemyBounds =
+            enemyCollider.bounds;
 
-        Vector3 correctedPosition = enemy.transform.position;
-        correctedPosition.x = minX <= maxX
-            ? Mathf.Clamp(correctedPosition.x, minX, maxX)
-            : areaBounds.center.x;
-        correctedPosition.y = minY <= maxY
-            ? Mathf.Clamp(correctedPosition.y, minY, maxY)
-            : areaBounds.center.y;
+        float minX =
+            areaBounds.min.x +
+            (enemy.transform.position.x -
+             enemyBounds.min.x);
 
-        enemy.transform.position = correctedPosition;
+        float maxX =
+            areaBounds.max.x -
+            (enemyBounds.max.x -
+             enemy.transform.position.x);
+
+        float minY =
+            areaBounds.min.y +
+            (enemy.transform.position.y -
+             enemyBounds.min.y);
+
+        float maxY =
+            areaBounds.max.y -
+            (enemyBounds.max.y -
+             enemy.transform.position.y);
+
+        Vector3 correctedPosition =
+            enemy.transform.position;
+
+        correctedPosition.x =
+            minX <= maxX
+                ? Mathf.Clamp(
+                    correctedPosition.x,
+                    minX,
+                    maxX
+                )
+                : areaBounds.center.x;
+
+        correctedPosition.y =
+            minY <= maxY
+                ? Mathf.Clamp(
+                    correctedPosition.y,
+                    minY,
+                    maxY
+                )
+                : areaBounds.center.y;
+
+        enemy.transform.position =
+            correctedPosition;
     }
 
     private IEnumerator WaitForPuzzleCompletionRoutine()
@@ -410,173 +983,331 @@ public class EnemyWaveSpawner : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForWaveToClearRoutine(float extraDelay)
+    private IEnumerator WaitForWaveToClearRoutine(
+        float extraDelay
+    )
     {
         if (currentWaveEnemies.Count == 0)
         {
             if (extraDelay > 0f)
-                yield return new WaitForSeconds(extraDelay);
+            {
+                yield return new WaitForSeconds(
+                    extraDelay
+                );
+            }
+
             yield break;
         }
 
         while (true)
         {
-            for (int i = currentWaveEnemies.Count - 1; i >= 0; i--)
+            for (int i =
+                     currentWaveEnemies.Count - 1;
+                 i >= 0;
+                 i--)
             {
                 if (currentWaveEnemies[i] == null)
+                {
                     currentWaveEnemies.RemoveAt(i);
+                }
             }
 
             if (currentWaveEnemies.Count == 0)
                 break;
 
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(
+                0.2f
+            );
         }
 
         if (extraDelay > 0f)
-            yield return new WaitForSeconds(extraDelay);
+        {
+            yield return new WaitForSeconds(
+                extraDelay
+            );
+        }
     }
 
     private void RefreshCurrentWaveEnemies()
     {
-        for (int i = currentWaveEnemies.Count - 1; i >= 0; i--)
+        for (int i =
+                 currentWaveEnemies.Count - 1;
+             i >= 0;
+             i--)
         {
             if (currentWaveEnemies[i] == null)
+            {
                 currentWaveEnemies.RemoveAt(i);
+            }
         }
     }
 
     private EnemySpawnEntry GetRandomEntry()
     {
-        if (spawnEntries == null || spawnEntries.Length == 0)
+        if (spawnEntries == null ||
+            spawnEntries.Length == 0)
             return null;
 
         float totalWeight = 0f;
+
         foreach (var entry in spawnEntries)
         {
-            if (entry == null || entry.weight <= 0f)
+            if (entry == null ||
+                entry.weight <= 0f)
                 continue;
 
-            totalWeight += entry.weight;
+            totalWeight +=
+                entry.weight;
         }
 
         if (totalWeight <= 0f)
             return null;
 
-        float roll = Random.value * totalWeight;
+        float roll =
+            Random.value *
+            totalWeight;
+
         float currentWeight = 0f;
 
         foreach (var entry in spawnEntries)
         {
-            if (entry == null || entry.weight <= 0f)
+            if (entry == null ||
+                entry.weight <= 0f)
                 continue;
 
-            currentWeight += entry.weight;
+            currentWeight +=
+                entry.weight;
+
             if (roll <= currentWeight)
                 return entry;
         }
 
-        return spawnEntries[spawnEntries.Length - 1];
+        return spawnEntries[
+            spawnEntries.Length - 1
+        ];
     }
 
-    private Vector3 GetSpawnPosition(int index, int totalEnemiesInWave, List<Vector3> usedPositions)
+    private Vector3 GetSpawnPosition(
+        int index,
+        int totalEnemiesInWave,
+        List<Vector3> usedPositions
+    )
     {
         Vector3 position;
 
-        if (spawnPoints != null && spawnPoints.Length > 0)
+        if (spawnPoints != null &&
+            spawnPoints.Length > 0)
         {
             if (index < spawnPoints.Length)
             {
-                Transform spawnPoint = spawnPoints[index];
-                position = spawnPoint != null ? spawnPoint.position : GetAreaSpawnPosition();
+                Transform spawnPoint =
+                    spawnPoints[index];
+
+                position =
+                    spawnPoint != null
+                        ? spawnPoint.position
+                        : GetAreaSpawnPosition();
             }
             else
             {
-                position = GetAreaSpawnPosition();
+                position =
+                    GetAreaSpawnPosition();
             }
         }
         else if (useSpawnArea)
         {
-            position = GetAreaSpawnPosition();
+            position =
+                GetAreaSpawnPosition();
         }
         else
         {
-            position = GetCircularSpawnPosition(index, totalEnemiesInWave);
+            position =
+                GetCircularSpawnPosition(
+                    index,
+                    totalEnemiesInWave
+                );
         }
 
-        position = GetValidSpawnPosition(position, usedPositions);
-        usedPositions.Add(position);
+        position =
+            GetValidSpawnPosition(
+                position,
+                usedPositions
+            );
+
+        usedPositions.Add(
+            position
+        );
+
         return position;
     }
 
     private Vector3 GetAreaSpawnPosition()
     {
-        float x = spawnAreaCenter.x + Random.Range(-spawnAreaSize.x / 2f, spawnAreaSize.x / 2f);
-        float y = spawnAreaCenter.y + Random.Range(-spawnAreaSize.y / 2f, spawnAreaSize.y / 2f);
-        return new Vector3(x, y, 0f);
+        float x =
+            spawnAreaCenter.x +
+            Random.Range(
+                -spawnAreaSize.x / 2f,
+                spawnAreaSize.x / 2f
+            );
+
+        float y =
+            spawnAreaCenter.y +
+            Random.Range(
+                -spawnAreaSize.y / 2f,
+                spawnAreaSize.y / 2f
+            );
+
+        return new Vector3(
+            x,
+            y,
+            0f
+        );
     }
 
-    private bool IsPositionTooClose(Vector3 position, List<Vector3> usedPositions)
+    private bool IsPositionTooClose(
+        Vector3 position,
+        List<Vector3> usedPositions
+    )
     {
-        for (int i = 0; i < usedPositions.Count; i++)
+        for (int i = 0;
+             i < usedPositions.Count;
+             i++)
         {
-            if (Vector3.Distance(position, usedPositions[i]) < minSpawnDistance)
+            if (Vector3.Distance(
+                    position,
+                    usedPositions[i]
+                ) < minSpawnDistance)
+            {
                 return true;
+            }
         }
+
         return false;
     }
 
-    private bool IsPositionTooFar(Vector3 position, List<Vector3> usedPositions)
+    private bool IsPositionTooFar(
+        Vector3 position,
+        List<Vector3> usedPositions
+    )
     {
         if (usedPositions.Count == 0)
             return false;
 
-        float nearestDistance = float.MaxValue;
-        for (int i = 0; i < usedPositions.Count; i++)
+        float nearestDistance =
+            float.MaxValue;
+
+        for (int i = 0;
+             i < usedPositions.Count;
+             i++)
         {
-            float distance = Vector3.Distance(position, usedPositions[i]);
-            nearestDistance = Mathf.Min(nearestDistance, distance);
+            float distance =
+                Vector3.Distance(
+                    position,
+                    usedPositions[i]
+                );
+
+            nearestDistance =
+                Mathf.Min(
+                    nearestDistance,
+                    distance
+                );
         }
 
-        return nearestDistance > maxSpawnDistance;
+        return nearestDistance >
+               maxSpawnDistance;
     }
 
-    private Vector3 GetValidSpawnPosition(Vector3 position, List<Vector3> usedPositions)
+    private Vector3 GetValidSpawnPosition(
+        Vector3 position,
+        List<Vector3> usedPositions
+    )
     {
         if (usedPositions.Count == 0)
             return position;
 
         int attempt = 0;
-        while (IsPositionTooClose(position, usedPositions) && attempt < 40)
+
+        while (
+            IsPositionTooClose(
+                position,
+                usedPositions
+            ) &&
+            attempt < 40
+        )
         {
-            position = GetAreaSpawnPosition();
+            position =
+                GetAreaSpawnPosition();
+
             attempt++;
         }
 
-        if (IsPositionTooClose(position, usedPositions))
+        if (IsPositionTooClose(
+                position,
+                usedPositions
+            ))
         {
-            Vector2 nudge = Random.insideUnitCircle.normalized * minSpawnDistance;
-            position += new Vector3(nudge.x, nudge.y, 0f);
+            Vector2 nudge =
+                Random.insideUnitCircle.normalized *
+                minSpawnDistance;
+
+            position +=
+                new Vector3(
+                    nudge.x,
+                    nudge.y,
+                    0f
+                );
         }
 
         return position;
     }
 
-    private Vector3 GetCircularSpawnPosition(int index, int totalEnemiesInWave)
+    private Vector3 GetCircularSpawnPosition(
+        int index,
+        int totalEnemiesInWave
+    )
     {
-        float angle = (Mathf.PI * 2f * index) / Mathf.Max(1, totalEnemiesInWave);
-        Vector3 offset = new Vector3(Mathf.Cos(angle), 0f, Mathf.Abs(Mathf.Sin(angle))) * 2f;
-        return transform.position + offset;
+        float angle =
+            (Mathf.PI * 2f * index) /
+            Mathf.Max(
+                1,
+                totalEnemiesInWave
+            );
+
+        Vector3 offset =
+            new Vector3(
+                Mathf.Cos(angle),
+                0f,
+                Mathf.Abs(
+                    Mathf.Sin(angle)
+                )
+            ) * 2f;
+
+        return transform.position +
+               offset;
     }
 
-    private GestureShape GetGestureForIndex(int index)
+    private GestureShape GetGestureForIndex(
+        int index
+    )
     {
-        GestureShape[] candidates = GetAvailableGesturesByCategory();
-        if (candidates == null || candidates.Length == 0)
-            return GestureShape.Circle;
+        GestureShape[] candidates =
+            GetAvailableGesturesByCategory();
 
-        int selectedIndex = Random.Range(0, candidates.Length);
-        return candidates[selectedIndex];
+        if (candidates == null ||
+            candidates.Length == 0)
+        {
+            return GestureShape.Circle;
+        }
+
+        int selectedIndex =
+            Random.Range(
+                0,
+                candidates.Length
+            );
+
+        return candidates[
+            selectedIndex
+        ];
     }
 
     private GestureShape[] GetAvailableGesturesByCategory()
@@ -584,20 +1315,48 @@ public class EnemyWaveSpawner : MonoBehaviour
         switch (gestureCategory)
         {
             case GestureCategory.Aksara:
-                return availableAksaraGestures != null && availableAksaraGestures.Length > 0
+                return availableAksaraGestures != null &&
+                       availableAksaraGestures.Length > 0
                     ? availableAksaraGestures
-                    : new[] { GestureShape.Na, GestureShape.Ka };
+                    : new[]
+                    {
+                        GestureShape.Na,
+                        GestureShape.Ka
+                    };
+
             case GestureCategory.Shapes:
-                return availableShapeGestures != null && availableShapeGestures.Length > 0
+                return availableShapeGestures != null &&
+                       availableShapeGestures.Length > 0
                     ? availableShapeGestures
-                    : new[] { GestureShape.Circle, GestureShape.Square };
+                    : new[]
+                    {
+                        GestureShape.Circle,
+                        GestureShape.Square
+                    };
+
             default:
-                var combined = new List<GestureShape>();
+                var combined =
+                    new List<GestureShape>();
+
                 if (availableShapeGestures != null)
-                    combined.AddRange(availableShapeGestures);
+                    combined.AddRange(
+                        availableShapeGestures
+                    );
+
                 if (availableAksaraGestures != null)
-                    combined.AddRange(availableAksaraGestures);
-                return combined.Count > 0 ? combined.ToArray() : new[] { GestureShape.Circle, GestureShape.Square, GestureShape.Na, GestureShape.Ka };
+                    combined.AddRange(
+                        availableAksaraGestures
+                    );
+
+                return combined.Count > 0
+                    ? combined.ToArray()
+                    : new[]
+                    {
+                        GestureShape.Circle,
+                        GestureShape.Square,
+                        GestureShape.Na,
+                        GestureShape.Ka
+                    };
         }
     }
 

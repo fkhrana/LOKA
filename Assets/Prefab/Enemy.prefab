@@ -237,6 +237,12 @@ MonoBehaviour:
   bodyRenderer: {fileID: 5233950752072861356}
   aksaraIconRenderer: {fileID: 8604418189492127069}
   aksaraIconFragment: {fileID: 5508302643624087199}
+  useEnemyDefeatSFX: 1
+  enemyDefeatSFXName: EnemyDefeat
+  enemyDefeatSFXVolume: 0.3
+  useAksaraDropSFX: 1
+  aksaraDropSFXName: AksaraDrop
+  aksaraDropSFXVolume: 1
 --- !u!50 &5015614928917567845
 Rigidbody2D:
   serializedVersion: 5
@@ -659,11 +665,11 @@ MonoBehaviour:
   sideDistance: -1.5
   dropDuration: 0.4
   dropVfx: {fileID: 7863991665977017088}
-  collectBookTarget: {fileID: 0}
   collectTrailVfx: {fileID: 8757289190187547843, guid: 326b0c52804065b4ca11216e0e64c235, type: 3}
   collectFlightSpeed: 5
   collectRotationSpeed: 1000
   collectArrivalDistance: 0.5
+  collectTrailScale: 2
 --- !u!1001 &8943843379216120835
 PrefabInstance:
   m_ObjectHideFlags: 0

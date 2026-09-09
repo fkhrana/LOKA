@@ -63,14 +63,7 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
     {
         if (!isUnlocked)
         {
-            if (lockedSound != null)
-                AudioManager.Instance?.PlayUISFX(
-                    lockedSound
-                );
-            else
-                AudioManager.Instance?.PlayUISFX(
-                    "ButtonClick"
-                );
+            PlaySfxOrFallback(lockedSound);
 
             Debug.Log(
                 "Level " +
@@ -81,14 +74,7 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        if (clickSound != null)
-            AudioManager.Instance?.PlayUISFX(
-                clickSound
-            );
-        else
-            AudioManager.Instance?.PlayUISFX(
-                "ButtonClick"
-            );
+        PlaySfxOrFallback(clickSound);
 
         if (LevelManager.Instance == null)
         {
@@ -111,5 +97,17 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
         SceneManager.LoadScene(
             gameplaySceneName
         );
+    }
+
+    private void PlaySfxOrFallback(AudioClip clip)
+    {
+        if (clip != null)
+        {
+            AudioManager.Instance?.PlayUISFX(clip);
+        }
+        else
+        {
+            AudioManager.Instance?.PlayUISFX("ButtonClick");
+        }
     }
 }

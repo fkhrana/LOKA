@@ -174,41 +174,83 @@ public class PauseOverlay : MonoBehaviour
         }
     }
 
-    public void GoToMainMenu()
+   public void GoToMainMenu()
+{
+    if (isTransitioning)
+        return;
+
+    // Simpan wave terakhir sebelum keluar
+    EnemyWaveSpawner enemyWaveSpawner =
+        FindFirstObjectByType<EnemyWaveSpawner>();
+
+    if (enemyWaveSpawner != null)
     {
-        if (isTransitioning) return;
-
-        isTransitioning = true;
-        if (pauseButton != null) pauseButton.interactable = false;
-
-        LeanTween.cancel(gameObject);
-        Time.timeScale = 1f;
-        StopAllCoroutines();
-        CloseAllPanels();
-
-        if (string.IsNullOrEmpty(mainMenuSceneName))
-        {
-            Debug.LogError("[PauseOverlay] Main Menu Scene Name kosong!", this);
-            isTransitioning = false;
-            if (pauseButton != null) pauseButton.interactable = true;
-            return;
-        }
-
-        CleanupStaleTransitions();
-
-        var tm = TransitionManager.Instance();
-        if (tm != null && transitionSettings != null)
-        {
-            tm.Transition(mainMenuSceneName, transitionSettings, loadDelay);
-        }
-        else
-        {
-            Debug.LogWarning("[PauseOverlay] TransitionManager atau TransitionSettings tidak ditemukan. Scene akan dibuka langsung.");
-            SceneManager.LoadScene(mainMenuSceneName);
-            isTransitioning = false;
-            if (pauseButton != null) pauseButton.interactable = true;
-        }
+        enemyWaveSpawner.SaveCurrentWave();
     }
+
+    // Simpan scene gameplay terakhir
+    GameProgressManager.SaveLastScene(
+        SceneManager.GetActiveScene().name
+    );
+
+    isTransitioning = true;
+
+    if (pauseButton != null)
+        pauseButton.interactable = false;
+
+    LeanTween.cancel(gameObject);
+
+    Time.timeScale = 1f;
+
+    StopAllCoroutines();
+
+    CloseAllPanels();
+
+    if (string.IsNullOrEmpty(mainMenuSceneName))
+    {
+        Debug.LogError(
+            "[PauseOverlay] Main Menu Scene Name kosong!",
+            this
+        );
+
+        isTransitioning = false;
+
+        if (pauseButton != null)
+            pauseButton.interactable = true;
+
+        return;
+    }
+
+    CleanupStaleTransitions();
+
+    var tm =
+        TransitionManager.Instance();
+
+    if (tm != null &&
+        transitionSettings != null)
+    {
+        tm.Transition(
+            mainMenuSceneName,
+            transitionSettings,
+            loadDelay
+        );
+    }
+    else
+    {
+        Debug.LogWarning(
+            "[PauseOverlay] TransitionManager atau TransitionSettings tidak ditemukan. Scene akan dibuka langsung."
+        );
+
+        SceneManager.LoadScene(
+            mainMenuSceneName
+        );
+
+        isTransitioning = false;
+
+        if (pauseButton != null)
+            pauseButton.interactable = true;
+    }
+}
 
     private void CleanupStaleTransitions()
     {

@@ -10,6 +10,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private SpriteRenderer aksaraIconRenderer;
     [SerializeField] private AksaraFragmentItem aksaraIconFragment;
 
+    [Header("Enemy Defeat SFX")]
+    [SerializeField] private bool useEnemyDefeatSFX = true;
+    [SerializeField] private string enemyDefeatSFXName = "EnemyDefeat";
+    [Range(0f, 1f)]
+    [SerializeField] private float enemyDefeatSFXVolume = 1f;
+
     [Header("Aksara Drop SFX")]
     [SerializeField] private bool useAksaraDropSFX = true;
     [SerializeField] private string aksaraDropSFXName = "AksaraDrop";
@@ -53,8 +59,13 @@ public class Enemy : MonoBehaviour
         // kalau tidak, pakai enemySprite biasa
         if (bodyRenderer != null)
         {
-            bool isShielded = enemyData.RequiredCorrectGestures > 1 && enemyData.ShieldedSprite != null;
-            bodyRenderer.sprite = isShielded ? enemyData.ShieldedSprite : enemyData.EnemySprite;
+            bool isShielded =
+                enemyData.RequiredCorrectGestures > 1 &&
+                enemyData.ShieldedSprite != null;
+
+            bodyRenderer.sprite = isShielded
+                ? enemyData.ShieldedSprite
+                : enemyData.EnemySprite;
         }
 
         if (aksaraData != null && aksaraIconRenderer != null)
@@ -71,11 +82,14 @@ public class Enemy : MonoBehaviour
         {
             gestureCommand.ConfigureChallenge(
                 aksaraData.GestureShape,
-                enemyData.RequiredCorrectGestures);
+                enemyData.RequiredCorrectGestures
+            );
         }
         else if (gestureCommand != null)
         {
-            Debug.LogWarning("[Enemy] gestureCommand exists but aksaraData is null; challenge was not configured.");
+            Debug.LogWarning(
+                "[Enemy] gestureCommand exists but aksaraData is null; challenge was not configured."
+            );
         }
     }
 
@@ -89,7 +103,10 @@ public class Enemy : MonoBehaviour
         if (remainingGestures > 0 && enemyData.EnemySprite != null)
         {
             bodyRenderer.sprite = enemyData.EnemySprite;
-            Debug.Log($"[Enemy] {name} shield broken, switching to normal sprite.");
+
+            Debug.Log(
+                $"[Enemy] {name} shield broken, switching to normal sprite."
+            );
         }
     }
 
@@ -100,22 +117,41 @@ public class Enemy : MonoBehaviour
 
         hasBeenDefeated = true;
 
-        if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData != null)
+        // ========================================
+        // PLAY ENEMY DEFEAT SFX
+        // ========================================
+        PlayEnemyDefeatSFX();
+
+        if (enemyData != null &&
+            enemyData.DropsAksaraFragment &&
+            aksaraData != null)
         {
-            bool registeredDrop = CollectedAksaraManager.Instance != null
-                && CollectedAksaraManager.Instance.TryRegisterDrop(aksaraData.GestureShape);
+            bool registeredDrop =
+                CollectedAksaraManager.Instance != null
+                && CollectedAksaraManager.Instance.TryRegisterDrop(
+                    aksaraData.GestureShape
+                );
 
             if (registeredDrop)
             {
                 if (aksaraIconFragment != null)
                 {
                     aksaraIconFragment.transform.SetParent(null);
-                    aksaraIconFragment.Initialize(aksaraData, aksaraIconFragment.transform.position);
-                    Debug.Log($"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped.");
+
+                    aksaraIconFragment.Initialize(
+                        aksaraData,
+                        aksaraIconFragment.transform.position
+                    );
+
+                    Debug.Log(
+                        $"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped."
+                    );
                 }
                 else
                 {
-                    Debug.LogWarning($"Enemy {name} fragment prefab null.");
+                    Debug.LogWarning(
+                        $"Enemy {name} fragment prefab null."
+                    );
                 }
 
                 PlayAksaraDropSFX();
@@ -124,29 +160,56 @@ public class Enemy : MonoBehaviour
             if (!registeredDrop)
             {
                 PlayNonCollectibleItemVfx();
-                Debug.Log($"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped.");
+
+                Debug.Log(
+                    $"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped."
+                );
             }
 
             return;
         }
 
-        if (enemyData != null && enemyData.DropsAksaraFragment && aksaraData == null)
-            Debug.LogWarning($"Enemy {name} set to drop fragment but AksaraData null.");
+        if (enemyData != null &&
+            enemyData.DropsAksaraFragment &&
+            aksaraData == null)
+        {
+            Debug.LogWarning(
+                $"Enemy {name} set to drop fragment but AksaraData null."
+            );
+        }
 
         PlayNonCollectibleItemVfx();
+    }
+
+    private void PlayEnemyDefeatSFX()
+    {
+        if (useEnemyDefeatSFX && AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                enemyDefeatSFXName,
+                enemyDefeatSFXVolume
+            );
+        }
     }
 
     private void PlayAksaraDropSFX()
     {
         if (useAksaraDropSFX && AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlaySFX(aksaraDropSFXName, aksaraDropSFXVolume);
+            AudioManager.Instance.PlaySFX(
+                aksaraDropSFXName,
+                aksaraDropSFXVolume
+            );
         }
     }
 
     private void PlayNonCollectibleItemVfx()
     {
         if (aksaraIconRenderer != null)
-            LevelProgressManager.Instance?.PlayNonCollectibleItemVfx(aksaraIconRenderer.transform.position);
+        {
+            LevelProgressManager.Instance?.PlayNonCollectibleItemVfx(
+                aksaraIconRenderer.transform.position
+            );
+        }
     }
 }
