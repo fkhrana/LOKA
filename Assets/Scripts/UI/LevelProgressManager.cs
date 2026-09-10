@@ -22,7 +22,11 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private Vector3 barItemTrailSpawnOffset = new Vector3(0f, 0f, 0.2f);
     [SerializeField] private float barItemTrailDuration = 0.8f;
     [SerializeField] private float trailCollectItemScale = 0.5f;
-    [SerializeField] private float trailCollectItemSpeed = 8f;
+    [SerializeField] private float trailCollectItemFlightDuration = 1.2f;
+    [SerializeField] private float trailCollectItemArcHeight = 3f;
+    [SerializeField] private float trailCollectItemSideOffset = 1f;
+    [SerializeField] private AnimationCurve trailCollectItemFlightCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     [SerializeField] private float trailCollectItemArrivalDistance = 0.15f;
     [SerializeField] private float trailCollectItemEndDelay = 0.15f;
 
@@ -183,6 +187,10 @@ public class LevelProgressManager : MonoBehaviour
         collectTrail.transform.localScale *=
             trailCollectItemScale;
 
+        Vector3 collectTrailStartPosition =
+            collectTrail.transform.position;
+        float collectTrailElapsed = 0f;
+
         while (
             collectTrail != null &&
             target != null
@@ -194,15 +202,53 @@ public class LevelProgressManager : MonoBehaviour
                     collectTrail.transform.position.z
                 );
 
-            collectTrail.transform.position =
-                Vector3.MoveTowards(
-                    collectTrail.transform.position,
+            collectTrailElapsed += Time.deltaTime;
+
+            float flightProgress =
+                Mathf.Clamp01(
+                    collectTrailElapsed /
+                    Mathf.Max(0.01f, trailCollectItemFlightDuration)
+                );
+
+            float curvedProgress =
+                trailCollectItemFlightCurve.Evaluate(
+                    flightProgress
+                );
+
+            Vector3 midpoint =
+                collectTrailStartPosition +
+                (targetPosition - collectTrailStartPosition) /
+                2f;
+            Vector3 controlPoint =
+                midpoint +
+                new Vector3(
+                    trailCollectItemSideOffset,
+                    trailCollectItemArcHeight,
+                    0f
+                );
+
+            Vector3 firstSegment =
+                Vector3.Lerp(
+                    collectTrailStartPosition,
+                    controlPoint,
+                    curvedProgress
+                );
+            Vector3 secondSegment =
+                Vector3.Lerp(
+                    controlPoint,
                     targetPosition,
-                    trailCollectItemSpeed *
-                    Time.deltaTime
+                    curvedProgress
+                );
+
+            collectTrail.transform.position =
+                Vector3.Lerp(
+                    firstSegment,
+                    secondSegment,
+                    curvedProgress
                 );
 
             if (
+                flightProgress >= 1f ||
                 Vector3.Distance(
                     collectTrail.transform.position,
                     targetPosition

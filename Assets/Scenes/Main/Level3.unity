@@ -7141,11 +7141,37 @@ MonoBehaviour:
   - {fileID: 727570668}
   - {fileID: 1804891773}
   barItemTrailVfx: {fileID: 5279508769069451888, guid: b560ca91eb308794a969b4e6c09bed81, type: 3}
-  trailCollectItemVfx: {fileID: 7244755944003811153, guid: 238d4313be0c1ed41ae140d77f600c1e, type: 3}
+  trailCollectItemVfx: {fileID: 8757289190187547843, guid: 1eebc901001a2e0469d496a343ecde69, type: 3}
   barItemTrailSpawnOffset: {x: 0, y: 0, z: 0.2}
   barItemTrailDuration: 0.8
   trailCollectItemScale: 0.5
-  trailCollectItemSpeed: 8
+  trailCollectItemFlightDuration: 0.8
+  trailCollectItemArcHeight: 6
+  trailCollectItemSideOffset: -4
+  trailCollectItemFlightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   trailCollectItemArrivalDistance: 0.15
   trailCollectItemEndDelay: 0.15
   useNonCollectibleVfxSFX: 1
