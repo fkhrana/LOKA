@@ -237,6 +237,8 @@ MonoBehaviour:
   bodyRenderer: {fileID: 5233950752072861356}
   aksaraIconRenderer: {fileID: 8604418189492127069}
   aksaraIconFragment: {fileID: 5508302643624087199}
+  defeatBlinkDuration: 0.8
+  defeatBlinkInterval: 0.15
   useEnemyDefeatSFX: 1
   enemyDefeatSFXName: EnemyDefeat
   enemyDefeatSFXVolume: 0.3

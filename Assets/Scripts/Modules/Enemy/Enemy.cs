@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyGestureCommand))]
@@ -9,6 +10,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private SpriteRenderer bodyRenderer;
     [SerializeField] private SpriteRenderer aksaraIconRenderer;
     [SerializeField] private AksaraFragmentItem aksaraIconFragment;
+
+    [Header("Enemy Defeat Blink")]
+    [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
+    [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
 
     [Header("Enemy Defeat SFX")]
     [SerializeField] private bool useEnemyDefeatSFX = true;
@@ -28,6 +33,7 @@ public class Enemy : MonoBehaviour
 
     public EnemyData EnemyData => enemyData;
     public AksaraData AksaraData => aksaraData;
+    public float DefeatBlinkDuration => defeatBlinkDuration;
 
     private void Awake()
     {
@@ -117,6 +123,9 @@ public class Enemy : MonoBehaviour
 
         hasBeenDefeated = true;
 
+        if (aksaraIconRenderer != null)
+            aksaraIconRenderer.enabled = false;
+
         // ========================================
         // PLAY ENEMY DEFEAT SFX
         // ========================================
@@ -142,6 +151,9 @@ public class Enemy : MonoBehaviour
                         aksaraData,
                         aksaraIconFragment.transform.position
                     );
+
+                    if (aksaraIconRenderer != null)
+                        aksaraIconRenderer.enabled = true;
 
                     Debug.Log(
                         $"Enemy {name} defeated. Fragment for {aksaraData.AksaraName} dropped."
@@ -179,6 +191,29 @@ public class Enemy : MonoBehaviour
         }
 
         PlayNonCollectibleItemVfx();
+    }
+
+    public void StartDefeatBlink()
+    {
+        if (bodyRenderer != null && defeatBlinkDuration > 0f)
+            StartCoroutine(DefeatBlinkRoutine());
+    }
+
+    private IEnumerator DefeatBlinkRoutine()
+    {
+        float elapsed = 0f;
+        bool isVisible = true;
+        float interval = Mathf.Max(0.01f, defeatBlinkInterval);
+
+        while (elapsed < defeatBlinkDuration)
+        {
+            yield return new WaitForSeconds(interval);
+            elapsed += interval;
+            isVisible = !isVisible;
+            bodyRenderer.enabled = isVisible;
+        }
+
+        bodyRenderer.enabled = true;
     }
 
     private void PlayEnemyDefeatSFX()
