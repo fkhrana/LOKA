@@ -16,6 +16,9 @@ public class PuzzleManager : MonoBehaviour
     public GameObject rewardPanel;
     public PowerManager powerManager;
 
+    [Header("Puzzle Complete VFX")]
+    [SerializeField] private GameObject puzzleCompleteVfx;
+
     [Header("Delay")]
     public float delayBeforeWinPanel = 2f;
 
@@ -165,9 +168,40 @@ public class PuzzleManager : MonoBehaviour
         Debug.Log("✅ Puzzle selesai!");
 
         MarkPuzzleCompleted();
+        PlayPuzzleCompleteVfx();
 
         // Jalankan sequence selesai
         StartCoroutine(PuzzleCompleteSequence());
+    }
+
+    private void PlayPuzzleCompleteVfx()
+    {
+        if (puzzleCompleteVfx == null)
+            return;
+
+        puzzleCompleteVfx.SetActive(true);
+
+        EfekConfetti[] confettiEffects =
+            puzzleCompleteVfx.GetComponentsInChildren<EfekConfetti>(true);
+
+        foreach (EfekConfetti confettiEffect in confettiEffects)
+            confettiEffect.MuntahkanConfetti();
+
+        ParticleSystem[] particles =
+            puzzleCompleteVfx.GetComponentsInChildren<ParticleSystem>(true);
+
+        foreach (ParticleSystem particle in particles)
+        {
+            particle.gameObject.SetActive(true);
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            particle.Play(true);
+        }
+
+        Debug.Log(
+            "✨ Puzzle complete VFX dimainkan: " +
+            confettiEffects.Length + " efek terompet, " +
+            particles.Length + " particle system."
+        );
     }
 
     private IEnumerator PuzzleCompleteSequence()

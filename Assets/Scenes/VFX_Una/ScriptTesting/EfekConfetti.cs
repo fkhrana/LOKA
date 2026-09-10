@@ -6,18 +6,27 @@ public class EfekConfetti : MonoBehaviour
     public ParticleSystem vfxConfetti; // Masukkan partikel anakannya ke sini
 
     private Vector3 skalaAsli;
+    private bool sudahDiinisialisasi;
 
-    void Start()
+    private void Awake()
     {
+        Inisialisasi();
+    }
+
+    private void Inisialisasi()
+    {
+        if (sudahDiinisialisasi)
+            return;
+
         skalaAsli = transform.localScale;
-        
-        // Terompet disembunyikan (skala 0) dari awal sebelum menang
-        transform.localScale = Vector3.zero; 
+        transform.localScale = Vector3.zero;
+        sudahDiinisialisasi = true;
     }
 
     // Fungsi ini akan dipanggil saat puzzle selesai
     public void MuntahkanConfetti()
     {
+        Inisialisasi();
         StartCoroutine(AnimasiMuntahJuicy());
     }
 
