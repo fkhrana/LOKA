@@ -2560,6 +2560,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: gestureDrawer
+      value: 
+      objectReference: {fileID: 256010449}
     - target: {fileID: 4522552729020645998, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_SizeDelta.x
       value: -883.98
@@ -5984,6 +5988,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: gestureDrawer
+      value: 
+      objectReference: {fileID: 256010449}
     - target: {fileID: 4522552729020645998, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_SizeDelta.x
       value: -883.98
@@ -8663,6 +8671,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  bookOpenSFX: {fileID: 8300000, guid: a06ec8f55b97a5949a84bc2d4a0ed569, type: 3}
+  bookOpenSFXVolume: 1
 --- !u!114 &1754572250
 MonoBehaviour:
   m_ObjectHideFlags: 0

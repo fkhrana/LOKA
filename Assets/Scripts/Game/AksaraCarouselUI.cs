@@ -1,12 +1,11 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class AksaraCarouselUI : MonoBehaviour
 {
     [Header("Data")]
     [SerializeField] private List<AksaraData> allAksaraData;
-    
 
     [Header("Scroll Settings")]
     [SerializeField] private ScrollRect scrollRect;
@@ -33,7 +32,11 @@ public class AksaraCarouselUI : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float aksaraSoundVolume = 1f;
 
+    [Header("Gesture")]
+    [SerializeField] private GestureDrawer gestureDrawer;
+
     private readonly List<AksaraCarouselItemUI> spawnedItems = new();
+
     public List<AksaraData> AllAksaraData => allAksaraData;
 
     private bool isSnapping;
@@ -52,13 +55,42 @@ public class AksaraCarouselUI : MonoBehaviour
     {
         BuildList();
         UpdateButtons();
+
+        DisableGestureInput();
+    }
+
+    private void OnDisable()
+    {
+        EnableGestureInput();
+    }
+
+    // =========================
+    // GESTURE
+    // =========================
+
+    private void DisableGestureInput()
+    {
+        if (gestureDrawer != null)
+        {
+            gestureDrawer.ResetGestureInput();
+            gestureDrawer.enabled = false;
+        }
+    }
+
+    private void EnableGestureInput()
+    {
+        if (gestureDrawer != null)
+            gestureDrawer.enabled = true;
     }
 
     private void BuildList()
     {
         if (content == null || itemPrefab == null || allAksaraData == null)
         {
-            Debug.LogWarning("[AksaraCarouselUI] Missing references.");
+            Debug.LogWarning(
+                "[AksaraCarouselUI] Missing references."
+            );
+
             return;
         }
 
@@ -74,12 +106,17 @@ public class AksaraCarouselUI : MonoBehaviour
             if (data == null)
                 continue;
 
-            bool collected = PermanentCollectionManager.IsCollected(data);
+            bool collected =
+                PermanentCollectionManager.IsCollected(data);
 
             AksaraCarouselItemUI item =
                 Instantiate(itemPrefab, content);
 
-            item.Setup(data, this, collected);
+            item.Setup(
+                data,
+                this,
+                collected
+            );
 
             spawnedItems.Add(item);
         }
@@ -100,20 +137,29 @@ public class AksaraCarouselUI : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        float viewportWidth = viewport.rect.width;
+        float viewportWidth =
+            viewport.rect.width;
 
         float itemWidth =
             ((RectTransform)itemPrefab.transform).rect.width;
 
-        int padding = Mathf.Max(
-            0,
-            Mathf.RoundToInt((viewportWidth - itemWidth) * 0.5f)
+        int padding =
+            Mathf.Max(
+                0,
+                Mathf.RoundToInt(
+                    (viewportWidth - itemWidth) * 0.5f
+                )
+            );
+
+        contentLayoutGroup.padding.left =
+            padding;
+
+        contentLayoutGroup.padding.right =
+            padding;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            content
         );
-
-        contentLayoutGroup.padding.left = padding;
-        contentLayoutGroup.padding.right = padding;
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
     }
 
     private void Update()
@@ -122,11 +168,13 @@ public class AksaraCarouselUI : MonoBehaviour
 
         if (isSnapping && scrollRect != null)
         {
-            scrollRect.horizontalNormalizedPosition = Mathf.Lerp(
-                scrollRect.horizontalNormalizedPosition,
-                snapTargetNormalized,
-                Time.unscaledDeltaTime * snapLerpSpeed
-            );
+            scrollRect.horizontalNormalizedPosition =
+                Mathf.Lerp(
+                    scrollRect.horizontalNormalizedPosition,
+                    snapTargetNormalized,
+                    Time.unscaledDeltaTime *
+                    snapLerpSpeed
+                );
 
             if (
                 Mathf.Abs(
@@ -147,12 +195,19 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private void UpdateScales()
     {
-        if (viewport == null || spawnedItems.Count == 0)
+        if (
+            viewport == null ||
+            spawnedItems.Count == 0
+        )
             return;
 
-        float viewportCenterX = viewport.rect.center.x;
+        float viewportCenterX =
+            viewport.rect.center.x;
 
-        foreach (AksaraCarouselItemUI item in spawnedItems)
+        foreach (
+            AksaraCarouselItemUI item
+            in spawnedItems
+        )
         {
             Vector3 localPos =
                 viewport.InverseTransformPoint(
@@ -160,15 +215,23 @@ public class AksaraCarouselUI : MonoBehaviour
                 );
 
             float distance =
-                Mathf.Abs(localPos.x - viewportCenterX);
+                Mathf.Abs(
+                    localPos.x -
+                    viewportCenterX
+                );
 
             float t =
                 Mathf.Clamp01(
-                    distance / scaleFalloffDistance
+                    distance /
+                    scaleFalloffDistance
                 );
 
             float scale =
-                Mathf.Lerp(centerScale, edgeScale, t);
+                Mathf.Lerp(
+                    centerScale,
+                    edgeScale,
+                    t
+                );
 
             item.SetScale(scale);
         }
@@ -176,15 +239,24 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private AksaraCarouselItemUI GetNearestCenterItem()
     {
-        if (viewport == null || spawnedItems.Count == 0)
+        if (
+            viewport == null ||
+            spawnedItems.Count == 0
+        )
             return null;
 
-        float viewportCenterX = viewport.rect.center.x;
+        float viewportCenterX =
+            viewport.rect.center.x;
 
         AksaraCarouselItemUI nearest = null;
-        float minDistance = float.MaxValue;
 
-        foreach (AksaraCarouselItemUI item in spawnedItems)
+        float minDistance =
+            float.MaxValue;
+
+        foreach (
+            AksaraCarouselItemUI item
+            in spawnedItems
+        )
         {
             Vector3 localPos =
                 viewport.InverseTransformPoint(
@@ -192,7 +264,10 @@ public class AksaraCarouselUI : MonoBehaviour
                 );
 
             float distance =
-                Mathf.Abs(localPos.x - viewportCenterX);
+                Mathf.Abs(
+                    localPos.x -
+                    viewportCenterX
+                );
 
             if (distance < minDistance)
             {
@@ -212,18 +287,24 @@ public class AksaraCarouselUI : MonoBehaviour
         if (current == null)
             return;
 
-        int index = spawnedItems.IndexOf(current);
+        int index =
+            spawnedItems.IndexOf(current);
 
-        int targetIndex = Mathf.Clamp(
-            index + direction,
-            0,
-            spawnedItems.Count - 1
+        int targetIndex =
+            Mathf.Clamp(
+                index + direction,
+                0,
+                spawnedItems.Count - 1
+            );
+
+        ScrollToItem(
+            spawnedItems[targetIndex]
         );
-
-        ScrollToItem(spawnedItems[targetIndex]);
     }
 
-    private void ScrollToItem(AksaraCarouselItemUI item)
+    private void ScrollToItem(
+        AksaraCarouselItemUI item
+    )
     {
         if (
             scrollRect == null ||
@@ -236,34 +317,48 @@ public class AksaraCarouselUI : MonoBehaviour
 
         Canvas.ForceUpdateCanvases();
 
-        float contentWidth = content.rect.width;
-        float viewportWidth = viewport.rect.width;
+        float contentWidth =
+            content.rect.width;
+
+        float viewportWidth =
+            viewport.rect.width;
 
         if (contentWidth <= viewportWidth)
             return;
 
-        RectTransform itemRect = item.RectTransform;
+        RectTransform itemRect =
+            item.RectTransform;
 
         float itemCenterX =
             itemRect.anchoredPosition.x +
             itemRect.rect.width *
             (0.5f - itemRect.pivot.x);
 
-        float targetX = Mathf.Clamp(
-            itemCenterX - viewportWidth * 0.5f,
-            0f,
-            contentWidth - viewportWidth
-        );
+        float targetX =
+            Mathf.Clamp(
+                itemCenterX -
+                viewportWidth * 0.5f,
+                0f,
+                contentWidth -
+                viewportWidth
+            );
 
         snapTargetNormalized =
-            targetX / (contentWidth - viewportWidth);
+            targetX /
+            (contentWidth - viewportWidth);
 
         isSnapping = true;
     }
 
-    public void OnItemSelected(AksaraCarouselItemUI item)
+    public void OnItemSelected(
+        AksaraCarouselItemUI item
+    )
     {
-        if (!PermanentCollectionManager.IsCollected(item.Data))
+        if (
+            !PermanentCollectionManager.IsCollected(
+                item.Data
+            )
+        )
         {
             Debug.Log(
                 $"[AksaraCarouselUI] {item.Data.name} locked."
@@ -313,12 +408,14 @@ public class AksaraCarouselUI : MonoBehaviour
             return;
 
         if (leftArrowButton)
-            leftArrowButton.interactable = currentIndex > 0;
+            leftArrowButton.interactable =
+                currentIndex > 0;
 
         if (rightArrowButton)
         {
             rightArrowButton.interactable =
-                currentIndex < spawnedItems.Count - 1;
+                currentIndex <
+                spawnedItems.Count - 1;
         }
     }
 

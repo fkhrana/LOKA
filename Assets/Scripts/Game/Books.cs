@@ -48,6 +48,12 @@ public class BookOpenSlideAnimator : MonoBehaviour
     [SerializeField] private AnimationCurve easeCurve =
         AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    [Header("SFX")]
+    [SerializeField] private AudioClip bookOpenSFX;
+
+    [Range(0f, 1f)]
+    [SerializeField] private float bookOpenSFXVolume = 1f;
+
     private bool isOpened;
 
     private void Awake()
@@ -58,6 +64,18 @@ public class BookOpenSlideAnimator : MonoBehaviour
     private void OnEnable()
     {
         StopAllCoroutines();
+
+        // =====================================================
+        // BOOK PANEL SFX
+        // =====================================================
+
+        if (AudioManager.Instance != null && bookOpenSFX != null)
+        {
+            AudioManager.Instance.PlaySFX(
+                bookOpenSFX,
+                bookOpenSFXVolume
+            );
+        }
 
         // =====================================================
         // HADIAH - POSISI AWAL

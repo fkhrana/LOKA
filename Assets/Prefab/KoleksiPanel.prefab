@@ -217,6 +217,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &2872305146258497815
 GameObject:
   m_ObjectHideFlags: 0
@@ -472,6 +474,8 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &5374515458296329197
 GameObject:
   m_ObjectHideFlags: 0
@@ -597,12 +601,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
   - {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
   - {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+  - {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
   - {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
   - {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
   - {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
   - {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
+  - {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
   - {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+  - {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
+  - {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
   - {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
+  - {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
   scrollRect: {fileID: 5767602969530052714}
   viewport: {fileID: 2572051349738427998}
   content: {fileID: 4522552729020645998}
@@ -615,6 +624,8 @@ MonoBehaviour:
   scaleFalloffDistance: 300
   snapLerpSpeed: 10
   soundLibrary: {fileID: 11400000, guid: bfda3e72ae3f7ec42ae5bebdceb987b6, type: 2}
+  aksaraSoundVolume: 1
+  gestureDrawer: {fileID: 0}
 --- !u!1 &6213464017615318399
 GameObject:
   m_ObjectHideFlags: 0
@@ -1038,3 +1049,5 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1

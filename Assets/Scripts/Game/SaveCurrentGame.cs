@@ -16,103 +16,120 @@ public class SaveCurrentProgress : MonoBehaviour
 
     private void Start()
     {
-        // Simpan scene gameplay
-        string currentScene =
-            SceneManager.GetActiveScene().name;
-
+        // Simpan scene gameplay saat ini
+        string currentScene = SceneManager.GetActiveScene().name;
         GameProgressManager.SaveLastScene(currentScene);
 
         // Ambil state terakhir
-        string savedState =
-            GameProgressManager.GetGameState();
+        string savedState = GameProgressManager.GetGameState();
 
-        // Resume puzzle
         if (savedState == "Puzzle")
         {
             RestorePuzzle();
             return;
         }
 
-        // Resume reward
         if (savedState == "Reward")
         {
             RestoreReward();
             return;
         }
 
-        // Game baru
         StartNewGame();
     }
 
+    // =========================
+    // RESTORE (dipanggil saat scene BARU di-load, tidak perlu save ulang
+    // karena state sudah sesuai dengan yang tersimpan)
+    // =========================
+
     private void RestorePuzzle()
     {
-        Debug.Log(
-            "[SaveCurrentProgress] Resume → Canvas 2 / Puzzle"
-        );
-
-        // Jangan jalankan enemy/wave lagi
-        if (enemyWaveSpawner != null)
-            enemyWaveSpawner.StopWaveSequence();
-
-        // Pastikan intro tidak berjalan
-        if (cameraIntroManager != null)
-            cameraIntroManager.enabled = false;
-
-        // Canvas 2 ON
-        if (canvas2 != null)
-            canvas2.SetActive(true);
-
-        // Puzzle ON
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(true);
-
-        // Reward OFF
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
+        Debug.Log("[SaveCurrentProgress] Resume → Canvas 2 / Puzzle");
+        ApplyPuzzleUI();
     }
 
     private void RestoreReward()
     {
-        Debug.Log(
-            "[SaveCurrentProgress] Resume → Canvas 2 / Reward"
-        );
+        Debug.Log("[SaveCurrentProgress] Resume → Canvas 2 / Reward");
+        ApplyRewardUI();
+    }
 
-        // Jangan jalankan enemy/wave lagi
+    // =========================
+    // PUBLIC ENTRY POINT — panggil ini dari script lain
+    // (misal EnemyWaveSpawner saat wave terakhir selesai,
+    // atau PuzzleManager saat puzzle mulai/menang)
+    // =========================
+
+    public void MarkPuzzleActive()
+    {
+        ApplyPuzzleUI();
+
+        // Ini kuncinya: UI berubah SEKALIGUS state tersimpan
+        GameProgressManager.SaveGameState("Puzzle");
+
+        Debug.Log("[SaveCurrentProgress] State disimpan: Puzzle");
+    }
+
+    public void MarkRewardActive()
+    {
+        ApplyRewardUI();
+
+        GameProgressManager.SaveGameState("Reward");
+
+        Debug.Log("[SaveCurrentProgress] State disimpan: Reward");
+    }
+
+    // =========================
+    // UI HELPERS (murni ubah tampilan, tidak menyentuh PlayerPrefs)
+    // =========================
+
+    private void ApplyPuzzleUI()
+    {
         if (enemyWaveSpawner != null)
             enemyWaveSpawner.StopWaveSequence();
 
-        // Pastikan intro tidak berjalan
         if (cameraIntroManager != null)
             cameraIntroManager.enabled = false;
 
-        // Canvas 2 ON
         if (canvas2 != null)
             canvas2.SetActive(true);
 
-        // Puzzle OFF
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(true);
+
+        if (rewardPanel != null)
+            rewardPanel.SetActive(false);
+    }
+
+    private void ApplyRewardUI()
+    {
+        if (enemyWaveSpawner != null)
+            enemyWaveSpawner.StopWaveSequence();
+
+        if (cameraIntroManager != null)
+            cameraIntroManager.enabled = false;
+
+        if (canvas2 != null)
+            canvas2.SetActive(true);
+
         if (puzzlePanel != null)
             puzzlePanel.SetActive(false);
 
-        // Reward ON
         if (rewardPanel != null)
             rewardPanel.SetActive(true);
     }
 
     private void StartNewGame()
     {
-        Debug.Log(
-            "[SaveCurrentProgress] New Game → Gameplay normal"
-        );
+        Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
-        // Canvas 2 OFF
         if (canvas2 != null)
             canvas2.SetActive(false);
 
-        // Puzzle OFF
         if (puzzlePanel != null)
             puzzlePanel.SetActive(false);
 
-        // Reward OFF
         if (rewardPanel != null)
             rewardPanel.SetActive(false);
     }

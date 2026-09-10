@@ -8034,6 +8034,7 @@ MonoBehaviour:
   powerUpClickSFX: {fileID: 8300000, guid: e5ddd5e433fdceb49ab0628ef2cc6ec8, type: 3}
   rewardPanel: {fileID: 1504385821}
   winPanel: {fileID: 192531130}
+  gestureDrawer: {fileID: 0}
 --- !u!114 &1419550073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9693,6 +9694,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  bookOpenSFX: {fileID: 8300000, guid: a06ec8f55b97a5949a84bc2d4a0ed569, type: 3}
+  bookOpenSFXVolume: 1
 --- !u!114 &1754572250
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10833,6 +10836,10 @@ PrefabInstance:
       propertyPath: m_Alpha
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: gestureDrawer
+      value: 
+      objectReference: {fileID: 256010449}
     - target: {fileID: 5117499204904125976, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_SizeDelta.x
       value: 168.1084
