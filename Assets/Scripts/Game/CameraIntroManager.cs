@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CameraIntroManager : MonoBehaviour
 {
@@ -25,6 +26,17 @@ public class CameraIntroManager : MonoBehaviour
 
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
+
+    [Header("Tutorial")]
+    [SerializeField] private GameObject tutorialPanel;
+
+    [Header("Batasan Level Tutorial")]
+    [Tooltip("Tutorial hanya akan muncul jika nama scene aktif sama dengan ini.")]
+    [SerializeField] private string levelSceneName = "Level1";
+
+    [Header("Pause Button")]
+    [Tooltip("Tombol pause akan di-nonaktifkan (interactable = false) selama panel tutorial muncul.")]
+    [SerializeField] private Button tombolPause;
 
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
@@ -62,6 +74,10 @@ public class CameraIntroManager : MonoBehaviour
             if (countdownImage != null)
                 countdownImage.gameObject.SetActive(false);
 
+            // Tutorial tidak muncul saat resume
+            if (tutorialPanel != null)
+                tutorialPanel.SetActive(false);
+
             return;
         }
 
@@ -73,6 +89,10 @@ public class CameraIntroManager : MonoBehaviour
 
         // Gesture tidak boleh digunakan saat intro
         DisableGesture();
+
+        // Tutorial belum boleh muncul
+        if (tutorialPanel != null)
+            tutorialPanel.SetActive(false);
 
         if (mainCamera == null)
         {
@@ -116,6 +136,25 @@ public class CameraIntroManager : MonoBehaviour
     }
 
     // ========================================
+    // LEVEL CHECK
+    // ========================================
+
+    private bool IsLevelPertama()
+    {
+        string namaSceneAktif = SceneManager.GetActiveScene().name;
+
+        Debug.Log(
+            "[CameraIntroManager] Nama scene aktif = \""
+            + namaSceneAktif
+            + "\", Level Scene Name di Inspector = \""
+            + levelSceneName
+            + "\""
+        );
+
+        return namaSceneAktif == levelSceneName;
+    }
+
+    // ========================================
     // GESTURE
     // ========================================
 
@@ -133,6 +172,18 @@ public class CameraIntroManager : MonoBehaviour
         if (gestureDrawer != null)
         {
             gestureDrawer.enabled = true;
+        }
+    }
+
+    // ========================================
+    // PAUSE BUTTON
+    // ========================================
+
+    private void SetPauseButtonVisible(bool tampil)
+    {
+        if (tombolPause != null)
+        {
+            tombolPause.gameObject.SetActive(tampil);
         }
     }
 
@@ -225,11 +276,65 @@ public class CameraIntroManager : MonoBehaviour
 
         GameStarted = true;
 
-        // Gesture baru boleh digunakan sekarang
+        Debug.Log(
+            "GAME DIMULAI!"
+        );
+
+        // ========================================
+        // TUTORIAL (HANYA MUNCUL DI LEVEL 1)
+        // ========================================
+
+        if (tutorialPanel != null && IsLevelPertama())
+        {
+            tutorialPanel.SetActive(true);
+
+            // Pause button disembunyikan selama tutorial tampil
+            SetPauseButtonVisible(false);
+
+            Debug.Log(
+                "Tutorial Panel aktif (Level 1)."
+            );
+        }
+        else
+        {
+            // Kalau tutorial tidak diisi ATAU bukan level 1,
+            // Gesture langsung aktif
+            EnableGesture();
+
+            if (tutorialPanel != null)
+            {
+                Debug.Log(
+                    "Bukan Level 1. Tutorial dilewati, gesture aktif."
+                );
+            }
+            else
+            {
+                Debug.Log(
+                    "Tutorial tidak diisi. Gesture aktif."
+                );
+            }
+        }
+    }
+
+    // ========================================
+    // CLOSE TUTORIAL
+    // ========================================
+
+    public void CloseTutorial()
+    {
+        if (tutorialPanel != null)
+        {
+            tutorialPanel.SetActive(false);
+        }
+
+        // Gesture baru aktif setelah tutorial ditutup
         EnableGesture();
 
+        // Pause button muncul kembali setelah tutorial ditutup
+        SetPauseButtonVisible(true);
+
         Debug.Log(
-            "GAME DIMULAI! Gesture aktif."
+            "Tutorial ditutup. Gesture aktif, pause button muncul kembali."
         );
     }
 

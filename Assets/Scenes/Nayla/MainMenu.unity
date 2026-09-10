@@ -2113,7 +2113,7 @@ MonoBehaviour:
   moveAmount: 8
   duration: 0.8
   hoverSFXName: Hover
-  hoverSFXVolume: 0.1
+  hoverSFXVolume: 0.3
   clickSFXName: ButtonHover
   clickSFXVolume: 1
   firstLevelScene: CutScenee
@@ -2308,7 +2308,7 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
-  hoverVolume: 0.1
+  hoverVolume: 0.3
   clickVolume: 1
 --- !u!1 &885725102
 GameObject:
@@ -2339,7 +2339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0e1827457649c44a009c363cc20ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoResetProgress
-  resetOnStop: 0
+  resetOnStop: 1
   aksaraCarouselUI: {fileID: 662237689}
 --- !u!224 &885725104
 RectTransform:
@@ -2639,7 +2639,7 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
-  hoverVolume: 0.1
+  hoverVolume: 0.3
   clickVolume: 1
 --- !u!1001 &1366283601
 PrefabInstance:
@@ -3689,7 +3689,7 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
-  hoverVolume: 0.1
+  hoverVolume: 0.3
   clickVolume: 1
 --- !u!1 &2061052736
 GameObject:
