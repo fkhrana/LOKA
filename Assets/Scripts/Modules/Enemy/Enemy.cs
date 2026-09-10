@@ -10,10 +10,14 @@ public class Enemy : MonoBehaviour
     [SerializeField] private SpriteRenderer bodyRenderer;
     [SerializeField] private SpriteRenderer aksaraIconRenderer;
     [SerializeField] private AksaraFragmentItem aksaraIconFragment;
+    [SerializeField] private Animator animator;
 
     [Header("Enemy Defeat Blink")]
     [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
     [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
+    [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
+    [SerializeField, Range(0f, 1f)] private float defeatShrinkTargetScale = 0.1f;
+    [SerializeField] private string defeatAnimationStateName = "enemyDieBlubub";
 
     [Header("Enemy Defeat SFX")]
     [SerializeField] private bool useEnemyDefeatSFX = true;
@@ -34,11 +38,16 @@ public class Enemy : MonoBehaviour
     public EnemyData EnemyData => enemyData;
     public AksaraData AksaraData => aksaraData;
     public float DefeatBlinkDuration => defeatBlinkDuration;
+    public float DefeatSequenceDuration =>
+        defeatBlinkDuration + defeatShrinkDuration + GetDefeatAnimationDuration();
 
     private void Awake()
     {
         gestureCommand = GetComponent<EnemyGestureCommand>();
         movementBehavior = GetComponent<EnemyMovementBehavior>();
+
+        if (animator == null)
+            animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -195,8 +204,7 @@ public class Enemy : MonoBehaviour
 
     public void StartDefeatBlink()
     {
-        if (bodyRenderer != null && defeatBlinkDuration > 0f)
-            StartCoroutine(DefeatBlinkRoutine());
+        StartCoroutine(DefeatBlinkRoutine());
     }
 
     private IEnumerator DefeatBlinkRoutine()
@@ -210,10 +218,70 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(interval);
             elapsed += interval;
             isVisible = !isVisible;
-            bodyRenderer.enabled = isVisible;
+            if (bodyRenderer != null)
+                bodyRenderer.enabled = isVisible;
         }
 
-        bodyRenderer.enabled = true;
+        if (bodyRenderer != null)
+            bodyRenderer.enabled = true;
+
+        yield return ShrinkBodyRoutine();
+
+        if (bodyRenderer != null)
+            bodyRenderer.enabled = false;
+
+        PlayDefeatAnimation();
+    }
+
+    private IEnumerator ShrinkBodyRoutine()
+    {
+        if (bodyRenderer == null || defeatShrinkDuration <= 0f)
+            yield break;
+
+        Transform bodyTransform = bodyRenderer.transform;
+        Vector3 initialScale = bodyTransform.localScale;
+        Vector3 targetScale = initialScale * defeatShrinkTargetScale;
+        float elapsed = 0f;
+
+        while (elapsed < defeatShrinkDuration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / defeatShrinkDuration);
+            progress = 1f - Mathf.Pow(1f - progress, 3f);
+            bodyTransform.localScale = Vector3.Lerp(
+                initialScale,
+                targetScale,
+                progress
+            );
+            yield return null;
+        }
+
+        bodyTransform.localScale = targetScale;
+    }
+
+    private void PlayDefeatAnimation()
+    {
+        if (animator == null || animator.runtimeAnimatorController == null)
+            return;
+
+        int stateHash = Animator.StringToHash(defeatAnimationStateName);
+        if (animator.HasState(0, stateHash))
+            animator.Play(stateHash, 0, 0f);
+    }
+
+    private float GetDefeatAnimationDuration()
+    {
+        if (animator == null || animator.runtimeAnimatorController == null)
+            return 0f;
+
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        for (int i = 0; i < clips.Length; i++)
+        {
+            if (clips[i] != null && clips[i].name == defeatAnimationStateName)
+                return clips[i].length;
+        }
+
+        return 0f;
     }
 
     private void PlayEnemyDefeatSFX()
