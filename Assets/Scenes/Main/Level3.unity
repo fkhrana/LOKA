@@ -6791,13 +6791,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PuzzleManager
   allSlots:
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1701968870}
+  - {fileID: 1973218095}
   canvas2: {fileID: 2079893224}
-  puzzlePanel: {fileID: 0}
+  puzzlePanel: {fileID: 773527640}
   rewardPanel: {fileID: 1414582374}
   powerManager: {fileID: 1180215102}
-  puzzleCompleteVfx: {fileID: 0}
+  puzzleCompleteVfx: {fileID: 1356631361}
   delayBeforeWinPanel: 2
   gestureDrawer: {fileID: 256010449}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
