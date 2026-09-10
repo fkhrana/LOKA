@@ -194,7 +194,6 @@ public class PuzzleManager : MonoBehaviour
         {
             particle.gameObject.SetActive(true);
             particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            particle.Play(true);
         }
 
         Debug.Log(
