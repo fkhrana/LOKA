@@ -280,26 +280,33 @@ public class EnemyGestureCommand : MonoBehaviour
         if (enemy != null)
             enemy.OnHit(remainingCorrectGestures);
 
-        if (movementBehavior != null)
+        if (movementBehavior != null && remainingCorrectGestures > 0)
         {
-            float knockbackDuration = movementBehavior.PlayKnockback(remainingCorrectGestures <= 0);
-            if (remainingCorrectGestures <= 0)
+            movementBehavior.PlayKnockback();
+        }
+
+        if (remainingCorrectGestures <= 0)
+        {
+            if (movementBehavior != null)
+                movementBehavior.SetMovementPaused(true);
+
+            ReportProcessed();
+            if (enemy != null)
             {
-                ReportProcessed();
-                if (enemy != null)
-                    enemy.OnDefeated();
-
-                if (PowerManager.IsComboActive)
-                {
-                    DefeatNearbyEnemies(this, PowerManager.ActiveComboRadius);
-                    PowerManager.EndComboPowerUp();
-                }
-
-                challengeActive = false;
-                UpdatePrompt();
-                StartCoroutine(DestroyAfter(knockbackDuration));
-                return;
+                enemy.OnDefeated();
+                enemy.StartDefeatBlink();
             }
+
+            if (PowerManager.IsComboActive)
+            {
+                DefeatNearbyEnemies(this, PowerManager.ActiveComboRadius);
+                PowerManager.EndComboPowerUp();
+            }
+
+            challengeActive = false;
+            UpdatePrompt();
+            StartCoroutine(DestroyAfter(enemy != null ? enemy.DefeatBlinkDuration : 0f));
+            return;
         }
 
         if (remainingCorrectGestures > 0)
@@ -313,7 +320,13 @@ public class EnemyGestureCommand : MonoBehaviour
             movementBehavior.SetActive(false);
         UpdatePrompt();
         ReportProcessed();
-        Destroy(gameObject);
+        if (enemy != null)
+        {
+            enemy.OnDefeated();
+            enemy.StartDefeatBlink();
+        }
+
+        StartCoroutine(DestroyAfter(enemy != null ? enemy.DefeatBlinkDuration : 0f));
     }
 
     private static void DefeatNearbyEnemies(EnemyGestureCommand defeatedTarget, float radius)
@@ -331,10 +344,15 @@ public class EnemyGestureCommand : MonoBehaviour
 
             nearbyEnemy.challengeActive = false;
             nearbyEnemy.movementBehavior?.SetActive(false);
+            nearbyEnemy.movementBehavior?.SetMovementPaused(true);
             nearbyEnemy.ReportProcessed();
-            nearbyEnemy.GetComponent<Enemy>()?.OnDefeated();
+            Enemy nearbyEnemyData = nearbyEnemy.GetComponent<Enemy>();
+            nearbyEnemyData?.OnDefeated();
+            nearbyEnemyData?.StartDefeatBlink();
             nearbyEnemy.UpdatePrompt();
-            Destroy(nearbyEnemy.gameObject);
+            nearbyEnemy.StartCoroutine(nearbyEnemy.DestroyAfter(
+                nearbyEnemyData != null ? nearbyEnemyData.DefeatBlinkDuration : 0f
+            ));
         }
     }
 
