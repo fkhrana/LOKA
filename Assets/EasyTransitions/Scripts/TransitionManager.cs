@@ -12,7 +12,7 @@ namespace EasyTransition
 
         [Header("Transition Sound")]
         [SerializeField] private bool useTransitionSound = true;
-        [SerializeField] private string transitionSound = "Brush";
+        [SerializeField] private string transitionSound = "BrushTransisi";
 
         [Range(0f, 1f)]
         [SerializeField] private float transitionSoundVolume = 2f;

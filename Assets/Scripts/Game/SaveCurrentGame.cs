@@ -16,63 +16,32 @@ public class SaveCurrentProgress : MonoBehaviour
 
     private void Start()
     {
+        // Simpan scene gameplay
         string currentScene =
             SceneManager.GetActiveScene().name;
 
-        GameProgressManager.SaveLastScene(
-            currentScene
-        );
+        GameProgressManager.SaveLastScene(currentScene);
 
+        // Ambil state terakhir
         string savedState =
             GameProgressManager.GetGameState();
 
+        // Resume puzzle
         if (savedState == "Puzzle")
         {
             RestorePuzzle();
             return;
         }
 
+        // Resume reward
         if (savedState == "Reward")
         {
             RestoreReward();
             return;
         }
 
-        if (savedState == "Gameplay")
-        {
-            RestoreGameplay();
-            return;
-        }
-
+        // Game baru
         StartNewGame();
-    }
-
-    private void RestoreGameplay()
-    {
-        Debug.Log(
-            "[SaveCurrentProgress] Resume → Gameplay / Wave " +
-            (GameProgressManager.GetWaveIndex() + 1)
-        );
-
-        if (cameraIntroManager != null)
-        {
-            cameraIntroManager.enabled = false;
-        }
-
-        if (canvas2 != null)
-        {
-            canvas2.SetActive(false);
-        }
-
-        if (puzzlePanel != null)
-        {
-            puzzlePanel.SetActive(false);
-        }
-
-        if (rewardPanel != null)
-        {
-            rewardPanel.SetActive(false);
-        }
     }
 
     private void RestorePuzzle()
@@ -81,30 +50,25 @@ public class SaveCurrentProgress : MonoBehaviour
             "[SaveCurrentProgress] Resume → Canvas 2 / Puzzle"
         );
 
+        // Jangan jalankan enemy/wave lagi
         if (enemyWaveSpawner != null)
-        {
             enemyWaveSpawner.StopWaveSequence();
-        }
 
+        // Pastikan intro tidak berjalan
         if (cameraIntroManager != null)
-        {
             cameraIntroManager.enabled = false;
-        }
 
+        // Canvas 2 ON
         if (canvas2 != null)
-        {
             canvas2.SetActive(true);
-        }
 
+        // Puzzle ON
         if (puzzlePanel != null)
-        {
             puzzlePanel.SetActive(true);
-        }
 
+        // Reward OFF
         if (rewardPanel != null)
-        {
             rewardPanel.SetActive(false);
-        }
     }
 
     private void RestoreReward()
@@ -113,30 +77,25 @@ public class SaveCurrentProgress : MonoBehaviour
             "[SaveCurrentProgress] Resume → Canvas 2 / Reward"
         );
 
+        // Jangan jalankan enemy/wave lagi
         if (enemyWaveSpawner != null)
-        {
             enemyWaveSpawner.StopWaveSequence();
-        }
 
+        // Pastikan intro tidak berjalan
         if (cameraIntroManager != null)
-        {
             cameraIntroManager.enabled = false;
-        }
 
+        // Canvas 2 ON
         if (canvas2 != null)
-        {
             canvas2.SetActive(true);
-        }
 
+        // Puzzle OFF
         if (puzzlePanel != null)
-        {
             puzzlePanel.SetActive(false);
-        }
 
+        // Reward ON
         if (rewardPanel != null)
-        {
             rewardPanel.SetActive(true);
-        }
     }
 
     private void StartNewGame()
@@ -145,19 +104,16 @@ public class SaveCurrentProgress : MonoBehaviour
             "[SaveCurrentProgress] New Game → Gameplay normal"
         );
 
+        // Canvas 2 OFF
         if (canvas2 != null)
-        {
             canvas2.SetActive(false);
-        }
 
+        // Puzzle OFF
         if (puzzlePanel != null)
-        {
             puzzlePanel.SetActive(false);
-        }
 
+        // Reward OFF
         if (rewardPanel != null)
-        {
             rewardPanel.SetActive(false);
-        }
     }
 }

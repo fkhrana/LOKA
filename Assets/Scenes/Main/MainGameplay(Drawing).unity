@@ -1956,7 +1956,7 @@ MonoBehaviour:
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
   useBrushSFX: 1
-  brushSFXName: Brush
+  brushSFXName: Brushing
   brushSFXVolume: 1
 --- !u!120 &256010450
 LineRenderer:
@@ -7127,6 +7127,7 @@ MonoBehaviour:
   gambar1: {fileID: -5167311714789541325, guid: 3bb6495a292f8644b8c7d586a2155910, type: 3}
   gambarMulai: {fileID: 8642235437496502386, guid: e296a6d9384063c4b9646e4616bc6feb, type: 3}
   countdownSFX: {fileID: 8300000, guid: 299d1b1898ab6a34383378dd94173b1b, type: 3}
+  gestureDrawer: {fileID: 256010449}
 --- !u!1 &1183816723
 GameObject:
   m_ObjectHideFlags: 0
@@ -7566,6 +7567,8 @@ MonoBehaviour:
   maxUsesPerScene: 1
   spawnCooldown: 0.5
   topMargin: 80
+  helperAppearSFX: {fileID: 8300000, guid: fd96d43e39bd97b4994080a4956052d7, type: 3}
+  helperClickSFX: {fileID: 8300000, guid: 8950e812d2686974b8710f32bb9760a2, type: 3}
 --- !u!1 &1305981801
 GameObject:
   m_ObjectHideFlags: 0
@@ -8024,7 +8027,11 @@ MonoBehaviour:
   powerUpMoveHeight: 180
   powerUpRotateAngle: 12
   powerUpRotateSpeed: 5
-  chestOpenSFX: {fileID: 8300000, guid: 9d8c161ae5b6c034982bde41b2e0800e, type: 3}
+  rewardBGM: {fileID: 8300000, guid: f355c49ba48b20c4aa7faa97f177ec3a, type: 3}
+  rewardBGMVolume: 0.5
+  chestOpenSFX: {fileID: 8300000, guid: c5a7b2ab3530f364eae67fdbe1933a20, type: 3}
+  powerUpAppearSFX: {fileID: 8300000, guid: b24bee62ee60fe042a796a08214aa175, type: 3}
+  powerUpClickSFX: {fileID: 8300000, guid: e5ddd5e433fdceb49ab0628ef2cc6ec8, type: 3}
   rewardPanel: {fileID: 1504385821}
   winPanel: {fileID: 192531130}
 --- !u!114 &1419550073
@@ -8664,8 +8671,6 @@ GameObject:
   - component: {fileID: 1582759698}
   - component: {fileID: 1582759697}
   - component: {fileID: 1582759696}
-  - component: {fileID: 1582759695}
-  - component: {fileID: 1582759699}
   m_Layer: 5
   m_Name: Power Up
   m_TagString: Untagged
@@ -8692,28 +8697,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0.0019531, y: -134}
   m_SizeDelta: {x: 182, y: 268}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!95 &1582759695
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582759693}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: cd66e50c2aeda6c4f8fa8eacfa1cf36d, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &1582759696
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8808,27 +8791,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1582759693}
   m_CullTransparentMesh: 1
---- !u!114 &1582759699
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1582759693}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
-  targetTransform: {fileID: 0}
-  hoverScale: 1.1
-  hoverMoveY: 10
-  animDuration: 0.2
-  easeType: 27
-  hoverSound: Hover
-  clickSound: ButtonHover
-  hoverVolume: 0.1
-  clickVolume: 1
 --- !u!1 &1590443630
 GameObject:
   m_ObjectHideFlags: 0
@@ -11082,6 +11044,10 @@ PrefabInstance:
       propertyPath: pauseButton
       value: 
       objectReference: {fileID: 3534892}
+    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: gestureDrawer
+      value: 
+      objectReference: {fileID: 256010449}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

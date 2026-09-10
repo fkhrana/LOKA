@@ -327,8 +327,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 629271539277239403, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 629271539277239403, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 2114622336851405661, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_IsActive
@@ -431,8 +435,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 3437128371835576960, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3437128371835576960, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: box
@@ -444,11 +452,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: openSound
-      value: MenuOpen
+      value: Panel
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: closeSound
-      value: MenuClose
+      value: Panel
       objectReference: {fileID: 0}
     - target: {fileID: 3770591513568890475, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: fadeDuration
@@ -463,8 +471,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 3963568835645602240, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3963568835645602240, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 4267728299083482470, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: sfxSource
@@ -472,7 +484,7 @@ PrefabInstance:
       objectReference: {fileID: 1633464359}
     - target: {fileID: 4267728299083482470, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 5190582514668597107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -487,8 +499,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 6159294329191441538, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6159294329191441538, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     - target: {fileID: 6889716651518092404, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_AnchorMax.x
@@ -539,8 +555,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1633464359}
     - target: {fileID: 8555699527463465107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8555699527463465107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: hoverSound
-      value: ButtonHover
+      value: Hover
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -549,6 +569,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7919921704380169891, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1635363524}
+    - targetCorrespondingSourceObject: {fileID: 6381417107665594017, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 367902026}
   m_SourcePrefab: {fileID: 100100000, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
 --- !u!1 &165104819
 GameObject:
@@ -740,6 +763,32 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6657036032537331333, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
   m_PrefabInstance: {fileID: 4405265163833901324}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &367902022 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6381417107665594017, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+  m_PrefabInstance: {fileID: 72873633}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &367902026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 367902022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 0}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  easeType: 27
+  hoverSound: SenaraiIntrover
+  clickSound: 
+  hoverVolume: 0.5
+  clickVolume: 1
 --- !u!1 &398155366
 GameObject:
   m_ObjectHideFlags: 0
@@ -1194,8 +1243,15 @@ MonoBehaviour:
   hoverSource: {fileID: 1612740816}
   uiSource: {fileID: 0}
   loopedSfxSource: {fileID: 0}
-  defaultBgmVolume: 0.7
+  defaultBgmVolume: 1
   defaultSfxVolume: 1
+  bgmSettings:
+  - bgmName: Surat Ajaib Desa
+    volume: 0.3
+  - bgmName: Broken Festival Kite
+    volume: 0.2
+  - bgmName: Boss Theme
+    volume: 0.3
   aksaraBgmVolume: 1
   uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
@@ -2283,7 +2339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d0e1827457649c44a009c363cc20ce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AutoResetProgress
-  resetOnStart: 0
+  resetOnStop: 0
   aksaraCarouselUI: {fileID: 662237689}
 --- !u!224 &885725104
 RectTransform:
