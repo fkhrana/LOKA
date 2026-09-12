@@ -108,30 +108,11 @@ public class DropZone : MonoBehaviour, IDropHandler
             return;
         }
 
-        GameObject vfx = correctVFX;
-        vfx.SetActive(true);
-
-        ParticleSystem particleSystem =
-            vfx.GetComponentInChildren<ParticleSystem>(true);
-        bool hasUiParticle = false;
-
-        foreach (Transform child in vfx.GetComponentsInChildren<Transform>(true))
-        {
-            if (child.GetComponent("UIParticle") != null)
-            {
-                hasUiParticle = true;
-                break;
-            }
-        }
-
-        if (particleSystem != null && !hasUiParticle)
-        {
-            Debug.LogWarning(
-                "Correct VFX pada " + gameObject.name +
-                " belum memiliki komponen UIParticle. Tambahkan UIParticle pada prefab " +
-                correctVFX.name + " agar tampil di Canvas UI."
-            );
-        }
+        GameObject vfx = Instantiate(
+            correctVFX,
+            transform.position,
+            Quaternion.identity
+        );
 
         ParticleSystem[] particles =
             vfx.GetComponentsInChildren<ParticleSystem>(true);

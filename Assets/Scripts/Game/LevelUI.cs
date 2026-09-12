@@ -94,7 +94,6 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
             (levelIndex + 1)
         );
 
-        GameProgressManager.MarkStartedFromMainMenu();
         SceneManager.LoadScene(
             gameplaySceneName
         );

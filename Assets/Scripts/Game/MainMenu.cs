@@ -165,7 +165,6 @@ public class MainMenu : MonoBehaviour
     {
         if (isTransitioning) return;
         isTransitioning = true;
-        GameProgressManager.MarkStartedFromMainMenu();
 
         PlayClickSFX();
         AudioManager.Instance?.StopBGM();

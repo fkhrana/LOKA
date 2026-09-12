@@ -388,7 +388,6 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("[LevelManager] Loading Level " + (index + 1) + ": " + sceneName);
 
-        GameProgressManager.MarkStartedFromMainMenu();
         SceneManager.LoadScene(sceneName);
         return true;
     }
