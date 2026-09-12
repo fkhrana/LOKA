@@ -124,6 +124,14 @@ public class SaveCurrentProgress : MonoBehaviour
     {
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
+#if UNITY_EDITOR
+        if (!GameProgressManager.StartedFromMainMenu)
+        {
+            Debug.Log("[SaveCurrentProgress] Direct Editor Play → kondisi panel dipertahankan");
+            return;
+        }
+#endif
+
         if (canvas2 != null)
             canvas2.SetActive(false);
 

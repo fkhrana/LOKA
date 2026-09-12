@@ -305,7 +305,7 @@ public class EnemyGestureCommand : MonoBehaviour
 
             challengeActive = false;
             UpdatePrompt();
-            StartCoroutine(DestroyAfter(enemy != null ? enemy.DefeatBlinkDuration : 0f));
+            StartCoroutine(DestroyAfter(enemy));
             return;
         }
 
@@ -326,7 +326,7 @@ public class EnemyGestureCommand : MonoBehaviour
             enemy.StartDefeatBlink();
         }
 
-        StartCoroutine(DestroyAfter(enemy != null ? enemy.DefeatBlinkDuration : 0f));
+        StartCoroutine(DestroyAfter(enemy));
     }
 
     private static void DefeatNearbyEnemies(EnemyGestureCommand defeatedTarget, float radius)
@@ -350,9 +350,7 @@ public class EnemyGestureCommand : MonoBehaviour
             nearbyEnemyData?.OnDefeated();
             nearbyEnemyData?.StartDefeatBlink();
             nearbyEnemy.UpdatePrompt();
-            nearbyEnemy.StartCoroutine(nearbyEnemy.DestroyAfter(
-                nearbyEnemyData != null ? nearbyEnemyData.DefeatBlinkDuration : 0f
-            ));
+            nearbyEnemy.StartCoroutine(nearbyEnemy.DestroyAfter(nearbyEnemyData));
         }
     }
 
@@ -418,8 +416,9 @@ public class EnemyGestureCommand : MonoBehaviour
         isSubscribed = false;
     }
 
-    private IEnumerator DestroyAfter(float seconds)
+    private IEnumerator DestroyAfter(Enemy enemy)
     {
+        float seconds = enemy != null ? enemy.DefeatSequenceDuration : 0f;
         yield return new WaitForSeconds(seconds);
         Destroy(gameObject);
     }

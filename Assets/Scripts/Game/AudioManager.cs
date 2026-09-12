@@ -15,6 +15,16 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void EnsureInstance()
+    {
+        if (Instance != null)
+            return;
+
+        GameObject audioManagerObject = new GameObject("AudioManager");
+        audioManagerObject.AddComponent<AudioManager>();
+    }
+
     [Header("Mixer")]
     [SerializeField] private AudioMixer audioMixer;
 
