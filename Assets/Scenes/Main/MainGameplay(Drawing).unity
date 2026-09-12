@@ -307,6 +307,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2217,6 +2219,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2628,6 +2632,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2782,6 +2788,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2936,6 +2944,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -3227,6 +3237,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -4976,6 +4988,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -5130,6 +5144,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -5907,6 +5923,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -6188,6 +6206,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -6451,6 +6471,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -6562,6 +6584,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -7539,6 +7563,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -7703,6 +7729,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -11867,6 +11895,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover

@@ -449,6 +449,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -3569,6 +3571,7 @@ GameObject:
   - component: {fileID: 375499981}
   - component: {fileID: 375499980}
   - component: {fileID: 375499979}
+  - component: {fileID: 375499982}
   m_Layer: 5
   m_Name: BookButton
   m_TagString: Untagged
@@ -3689,6 +3692,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 375499977}
   m_CullTransparentMesh: 1
+--- !u!114 &375499982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 375499977}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 375499978}
+  hoverScale: 1.1
+  hoverMoveY: 5
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &415459585
 GameObject:
   m_ObjectHideFlags: 0
@@ -5776,6 +5802,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -7639,6 +7667,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -7793,6 +7823,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 5
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -11545,6 +11577,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: ButtonHover
   clickSound: ButtonClick
@@ -11984,6 +12018,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
