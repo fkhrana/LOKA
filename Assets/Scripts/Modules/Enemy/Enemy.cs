@@ -176,6 +176,7 @@ public class Enemy : MonoBehaviour
                 }
 
                 PlayAksaraDropSFX();
+                LevelProgressManager.Instance?.CompletePendingProgress();
             }
 
             if (!registeredDrop)
