@@ -1243,6 +1243,7 @@ MonoBehaviour:
   hoverSource: {fileID: 1612740816}
   uiSource: {fileID: 0}
   loopedSfxSource: {fileID: 0}
+  aksaraVoiceSource: {fileID: 0}
   defaultBgmVolume: 1
   defaultSfxVolume: 1
   bgmSettings:
@@ -1816,6 +1817,14 @@ MonoBehaviour:
   - {fileID: 7028842072390148906, guid: ce8b0fd1e4c0df54babac1ceb00e033c, type: 3}
   - {fileID: -3002448445795776205, guid: d728b46ca7798d64e8526f1db36322a9, type: 3}
   - {fileID: -5472879786514868279, guid: 043c056ef9963e848a5a19bb5a4d08f0, type: 3}
+  lockedLevelBackgrounds:
+  - {fileID: 2155178182265740938, guid: 84bd5acea45bbd249b0dafc4a9a302bf, type: 3}
+  - {fileID: -592246342153662809, guid: 079b4f93f0cf1f947a41a3afbab830a2, type: 3}
+  - {fileID: 21300000, guid: c38a0df97db8dfe42b219ea5cd9040a6, type: 3}
+  unlockedLevelBackgrounds:
+  - {fileID: -6161477142026420901, guid: 8c2e070f68e1bee499593e336fb4e75b, type: 3}
+  - {fileID: -3922444203956005767, guid: 720b737d13746d146b5171867e8300a3, type: 3}
+  - {fileID: 21300000, guid: 82281cec0d2ba7448814c7cf5ea74cc1, type: 3}
   failureSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
   successSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   gameplaySceneNames:
@@ -2118,7 +2127,6 @@ MonoBehaviour:
   hoverSFXVolume: 0.3
   clickSFXName: ButtonHover
   clickSFXVolume: 1
-  firstLevelScene: CutScenee
   mainMenu: {fileID: 67993241}
 --- !u!1 &859136435
 GameObject:
