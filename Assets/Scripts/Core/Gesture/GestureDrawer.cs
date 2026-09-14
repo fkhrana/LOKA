@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -14,6 +15,16 @@ public class GestureDrawer : MonoBehaviour
     [SerializeField] private GameObject brushPrefab;
     public float minPointDistance = 0.05f;
     public float firstStrokeGracePeriod = 0.35f;
+
+    [Header("Gesture Block")]
+    [Tooltip("Blokir gesture kalau pointer di atas UI (button, panel, dll).")]
+    [SerializeField] private bool blockWhenPointerOverUI = true;
+
+    [Tooltip("Blokir gesture kalau pointer di atas fragment aksara (world object).")]
+    [SerializeField] private bool blockWhenPointerOverFragment = true;
+
+    [Tooltip("Layer mask untuk cek fragment. Kosong = semua layer.")]
+    [SerializeField] private LayerMask fragmentCheckMask = ~0;
 
     private int recordingStrokeCount;
 
@@ -101,6 +112,65 @@ public class GestureDrawer : MonoBehaviour
         }
     }
 
+    // ============================================================
+    // GESTURE BLOCK — TAMBAHAN BARU
+    // ============================================================
+    private bool ShouldBlockGesture()
+    {
+        if (blockWhenPointerOverUI && IsPointerOverUI())
+            return true;
+
+        if (blockWhenPointerOverFragment && IsPointerOverFragment())
+            return true;
+
+        return false;
+    }
+
+    private bool IsPointerOverUI()
+    {
+        if (EventSystem.current == null)
+            return false;
+
+#if ENABLE_INPUT_SYSTEM
+        if (Mouse.current != null)
+        {
+            return EventSystem.current.IsPointerOverGameObject(
+                Mouse.current.deviceId
+            );
+        }
+        return false;
+#else
+        return EventSystem.current.IsPointerOverGameObject();
+#endif
+    }
+
+    private bool IsPointerOverFragment()
+    {
+        if (mainCamera == null)
+            return false;
+
+        Vector3 worldPos = GetMouseWorldPosition();
+
+        Collider2D hit2D = Physics2D.OverlapPoint(
+            new Vector2(worldPos.x, worldPos.y),
+            fragmentCheckMask
+        );
+
+        if (hit2D != null)
+        {
+            if (hit2D.GetComponent<AksaraFragmentItem>() != null ||
+                hit2D.GetComponentInParent<AksaraFragmentItem>() != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // ============================================================
+    // INPUT POINTER
+    // ============================================================
     private bool IsPointerDown()
     {
 #if ENABLE_INPUT_SYSTEM
@@ -160,9 +230,16 @@ public class GestureDrawer : MonoBehaviour
 #endif
     }
 
+    // ============================================================
+    // STROKE
+    // ============================================================
     private void StartStroke()
     {
         if (isDrawing)
+            return;
+
+        // === GUARD BARU: blokir kalau klik UI atau fragment ===
+        if (ShouldBlockGesture())
             return;
 
         if (isAwaitingNextStroke)

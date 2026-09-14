@@ -28,6 +28,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource uiSource;
     [SerializeField] private AudioSource loopedSfxSource;
 
+    [Tooltip("Source khusus untuk suara fonetik aksara. Volume-nya fixed 1, tidak terpengaruh slider SFX.")]
+    [SerializeField] private AudioSource aksaraVoiceSource;
+
     [Header("Default Volume")]
     [SerializeField] private float defaultBgmVolume = 1f;
     [SerializeField] private float defaultSfxVolume = 1f;
@@ -40,7 +43,7 @@ public class AudioManager : MonoBehaviour
 
     [Header("BGM Transition")]
     [Tooltip("Durasi default fade in/out BGM (detik) saat pindah scene / state.")]
-    [SerializeField] private float defaultBgmFadeDuration = 0.6f;
+    [SerializeField] private float defaultBgmFadeDuration = 1f;
 
     [Header("SFX Duplicate Guard")]
     [Tooltip("Jarak waktu minimum (detik) sebelum clip SFX yang sama boleh diputar lagi. Mencegah SFX yang tanpa sengaja terpanggil 2x pada frame yang sama/berdekatan (mis. win result SFX).")]
@@ -111,6 +114,17 @@ public class AudioManager : MonoBehaviour
                 "LOOPED_SFX",
                 true
             );
+
+        if (aksaraVoiceSource == null)
+            aksaraVoiceSource = CreateAudioSource(
+                "AKSARA_VOICE",
+                false
+            );
+
+        // Volume source aksara sengaja dipatok di 1 supaya
+        // tidak ikut slider SFX. Clipping tetap aman karena
+        // PlayOneShot pakai volumeMultiplier dari AksaraSoundLibrary.
+        aksaraVoiceSource.volume = 1f;
     }
 
     private AudioSource CreateAudioSource(
@@ -158,6 +172,11 @@ public class AudioManager : MonoBehaviour
             OnSceneLoaded;
     }
 
+    // ============================================================
+    // SCENE → BGM MAPPING
+    // ============================================================
+    // Semua scene pakai fade out + fade in supaya transisi halus.
+    // Tambahkan case baru di sini kalau ada scene baru.
     private void OnSceneLoaded(
         Scene scene,
         LoadSceneMode mode
@@ -175,21 +194,23 @@ public class AudioManager : MonoBehaviour
         switch (scene.name)
         {
             case "MainMenu":
-                PlayBGM(
-                    "Surat Ajaib Desa"
+                PlayBGMWithFade(
+                    "Surat Ajaib Desa",
+                    defaultBgmFadeDuration,
+                    defaultBgmFadeDuration
                 );
                 break;
 
             case "CutScenee":
-                // Dulu: StopBGM() langsung (bikin BGM menu kepotong kasar).
-                // Sekarang: fade out halus supaya transisi menu -> cutscene lebih mulus.
+                // Cutscene tidak punya BGM sendiri — cukup fade out
+                // BGM menu yang masih playing.
                 FadeOutBGM(defaultBgmFadeDuration);
                 break;
 
             case "MainGameplay(Drawing)":
                 PlayBGMWithFade(
                     "Broken Festival Kite",
-                    0f,
+                    defaultBgmFadeDuration,
                     defaultBgmFadeDuration
                 );
                 break;
@@ -211,6 +232,7 @@ public class AudioManager : MonoBehaviour
                 break;
 
             default:
+                // Scene tak dikenal — fade out BGM yang sedang playing.
                 FadeOutBGM(defaultBgmFadeDuration);
                 break;
         }
@@ -313,10 +335,6 @@ public class AudioManager : MonoBehaviour
         currentBgmName = null;
     }
 
-    /// <summary>
-    /// Hentikan BGM yang sedang main dengan fade out halus, bukan potong langsung.
-    /// Pakai ini di titik-titik transisi (menu->mulai, puzzle selesai->win screen, dll).
-    /// </summary>
     public void FadeOutBGM(
         float duration = -1f,
         System.Action onComplete = null
@@ -344,11 +362,6 @@ public class AudioManager : MonoBehaviour
             );
     }
 
-    /// <summary>
-    /// Ganti BGM dengan fade out track lama lalu fade in track baru.
-    /// Pass fadeOutDuration = 0 kalau tidak ada BGM lain yang perlu di-fade dulu
-    /// (mis. masuk gameplay pertama kali dari layar netral).
-    /// </summary>
     public void PlayBGMWithFade(
         string resourceName,
         float fadeOutDuration = -1f,
@@ -361,7 +374,8 @@ public class AudioManager : MonoBehaviour
         if (currentBgmName == resourceName && bgmSource.isPlaying)
             return;
 
-        if (fadeOutDuration < 0f)
+        // Sanity: kalau 0 atau negatif, pakai default biar tidak "cut".
+        if (fadeOutDuration <= 0f)
             fadeOutDuration = defaultBgmFadeDuration;
 
         if (fadeInDuration < 0f)
@@ -409,7 +423,7 @@ public class AudioManager : MonoBehaviour
         float fadeInDuration
     )
     {
-        // Fade out track lama (kalau ada yang sedang main)
+        // ==== Fade out track lama ====
         if (bgmSource.isPlaying && fadeOutDuration > 0f)
         {
             float startVolume = activeBgmVolume;
@@ -447,10 +461,10 @@ public class AudioManager : MonoBehaviour
         float targetVolume = GetBGMVolume(clip.name);
         targetVolume = Mathf.Clamp(targetVolume, 0.0001f, 1f);
 
+        // ==== Fade in track baru ====
         ApplyRawBGMVolume(0.0001f);
         bgmSource.Play();
 
-        // Fade in track baru
         if (fadeInDuration > 0f)
         {
             float t = 0f;
@@ -627,11 +641,6 @@ public class AudioManager : MonoBehaviour
     // SFX
     // =========================
 
-    /// <summary>
-    /// Cek apakah clip ini baru saja diputar dalam jendela waktu sfxDuplicateGuardWindow.
-    /// Dipakai untuk mencegah SFX yang sama terpanggil dobel (mis. win result SFX
-    /// yang kepanggil 2x karena dua listener/dua titik kode yang sama-sama memanggilnya).
-    /// </summary>
     private bool IsDuplicateSfxCall(AudioClip clip)
     {
         if (clip == null)
@@ -734,12 +743,8 @@ public class AudioManager : MonoBehaviour
     }
 
     // =========================
-    // COLLECT / REWARD SFX (named helpers)
+    // COLLECT / REWARD SFX
     // =========================
-    // Pakai method-method ini di titik kode yang sekarang salah manggil
-    // sfx tombol ("bell click") untuk buka harta karun / power up.
-    // Tinggal siapkan asset-nya di Resources/Audio/SFX/ dengan nama di bawah
-    // (boleh diganti namanya asal konsisten dengan nama file asetnya).
 
     public void PlayCollectSFX(float volumeMultiplier = 1f)
     {
@@ -831,7 +836,7 @@ public class AudioManager : MonoBehaviour
     {
         if (
             clip == null ||
-            sfxSource == null
+            aksaraVoiceSource == null
         )
             return;
 
@@ -892,8 +897,10 @@ public class AudioManager : MonoBehaviour
                 duckedVolume;
         }
 
-        // Volume Aksara bisa sampai 500x
-        sfxSource.PlayOneShot(
+        // Pakai aksaraVoiceSource yang volume-nya fixed 1,
+        // jadi suara aksara tidak terpengaruh slider SFX.
+        // Volume tetap dari AksaraSoundLibrary (0-500).
+        aksaraVoiceSource.PlayOneShot(
             clip,
             Mathf.Clamp(
                 volumeMultiplier,
@@ -916,12 +923,6 @@ public class AudioManager : MonoBehaviour
         float originalVolume
     )
     {
-        // FIX: pakai WaitForSecondsRealtime, bukan WaitForSeconds.
-        // WaitForSeconds ikut berhenti kalau Time.timeScale = 0 (mis. saat
-        // CollectionPanel dibuka dan nge-pause game). Kalau PlayAksaraVoice
-        // dipanggil di kondisi itu (mis. dari kartu Aksara Collection), BGM
-        // yang sudah di-duck akan macet di volume rendah sampai timeScale
-        // kembali ke 1 - bukan restore otomatis setelah durasi klip selesai.
         yield return new WaitForSecondsRealtime(
             duration
         );
@@ -1239,6 +1240,9 @@ public class AudioManager : MonoBehaviour
             if (loopedSfxSource != null)
                 loopedSfxSource.volume =
                     value;
+
+            // aksaraVoiceSource SENGAJA TIDAK diikutkan di sini
+            // supaya volume suara aksara tidak terpengaruh slider SFX.
         }
     }
 

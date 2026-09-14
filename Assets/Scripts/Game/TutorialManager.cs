@@ -406,6 +406,9 @@ public class TutorialManager : MonoBehaviour
 
             Debug.Log($"[Tutorial] === Musuh #{enemyIndex} aktif. Target: {currentTarget} ===");
 
+            // === BARU: hanya musuh target yang challenge-nya aktif ===
+            ActivateOnlyTargetChallenge(active, activeAksara);
+
             dotsCenterOverride = null;
 
             Camera cam = Camera.main;
@@ -965,6 +968,60 @@ public class TutorialManager : MonoBehaviour
         Debug.Log("[Tutorial] Semua enemy FROZEN.");
     }
 
+    // ============================================================
+    // TARGET CHALLENGE GATE
+    // ============================================================
+    /// <summary>
+    /// Hanya musuh target yang challenge-nya aktif.
+    /// Musuh lain di-StopCommandMode supaya gesture yang salah tidak
+    /// langsung membunuh mereka via EnemyGestureCommand.
+    /// </summary>
+    private void ActivateOnlyTargetChallenge(
+        EnemyGestureCommand target,
+        AksaraData targetAksara)
+    {
+        if (target == null || targetAksara == null) return;
+
+        for (int i = 0; i < currentEnemies.Count; i++)
+        {
+            var enemy = currentEnemies[i];
+            if (enemy == null) continue;
+
+            if (enemy == target)
+            {
+                enemy.ConfigureChallenge(targetAksara.GestureShape, 1);
+
+                // ConfigureChallenge mengaktifkan movement — re-freeze supaya
+                // musuh tetap diam selama player menggambar.
+                var movement = enemy.GetComponent<EnemyMovementBehavior>();
+                if (movement != null)
+                {
+                    movement.SetMovementPaused(true);
+                    movement.SetActive(false);
+                }
+
+                enemy.SyncSpawnPosition();
+
+                Debug.Log($"[Tutorial] Challenge aktif untuk {enemy.name} " +
+                          $"({targetAksara.GestureShape}).");
+            }
+            else
+            {
+                // Musuh non-target: matikan challenge supaya tidak digesture.
+                enemy.StopCommandMode();
+
+                var movement = enemy.GetComponent<EnemyMovementBehavior>();
+                if (movement != null)
+                {
+                    movement.SetMovementPaused(true);
+                    movement.SetActive(false);
+                }
+
+                Debug.Log($"[Tutorial] Challenge dimatikan untuk {enemy.name} (non-target).");
+            }
+        }
+    }
+
     private Transform FindPlayerTransform()
     {
         var ph = FindAnyObjectByType<PlayerHealth>();
@@ -1386,37 +1443,31 @@ public class TutorialManager : MonoBehaviour
     // FINISH BUTTONS
     // ============================================================
     private void OnClickMain()
-{
-    if (finishPanel != null) finishPanel.SetActive(false);
-    if (tutorialCanvas != null) tutorialCanvas.gameObject.SetActive(false);
-
-    // Tandai tutorial sudah selesai
-    PlayerPrefs.SetInt("TutorialCompleted", 1);
-    PlayerPrefs.Save();
-
-    // === Unlock Level 1 setelah tutorial selesai ===
-    // Ini yang bikin player bisa masuk gameplay lewat Main Menu.
-    if (LevelManager.Instance != null)
-        LevelManager.Instance.UnlockFirstLevel();
-
-    // TIDAK set "HasSeenFirstGameplayIntro" — biar intro panning
-    // tetap jalan saat pertama kali masuk gameplay.
-
-    Time.timeScale = 1f;
-
-    TransitionManager tm = TransitionManager.Instance();
-
-    if (tm != null && transitionSettings != null)
     {
-        Debug.Log("[Tutorial] Transition ke gameplay pakai TransitionSettings.");
-        tm.Transition(gameplayScene, transitionSettings, loadDelay);
+        if (finishPanel != null) finishPanel.SetActive(false);
+        if (tutorialCanvas != null) tutorialCanvas.gameObject.SetActive(false);
+
+        PlayerPrefs.SetInt("TutorialCompleted", 1);
+        PlayerPrefs.Save();
+
+        if (LevelManager.Instance != null)
+            LevelManager.Instance.UnlockFirstLevel();
+
+        Time.timeScale = 1f;
+
+        TransitionManager tm = TransitionManager.Instance();
+
+        if (tm != null && transitionSettings != null)
+        {
+            Debug.Log("[Tutorial] Transition ke gameplay pakai TransitionSettings.");
+            tm.Transition(gameplayScene, transitionSettings, loadDelay);
+        }
+        else
+        {
+            Debug.LogWarning("[Tutorial] TransitionManager / TransitionSettings null. Load langsung.");
+            SceneManager.LoadScene(gameplayScene);
+        }
     }
-    else
-    {
-        Debug.LogWarning("[Tutorial] TransitionManager / TransitionSettings null. Load langsung.");
-        SceneManager.LoadScene(gameplayScene);
-    }
-}
 
     private void OnClickLatihan()
     {

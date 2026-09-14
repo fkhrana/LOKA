@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.000061035156, y: -70.051}
-  m_SizeDelta: {x: 750, y: 403.3}
+  m_AnchoredPosition: {x: -0.000061035156, y: -71.70129}
+  m_SizeDelta: {x: 750, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3611566156703144958
 CanvasRenderer:
@@ -376,7 +376,6 @@ MonoBehaviour:
   lockedColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
   clickSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   lockedSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
-  gameplaySceneName: MainGameplay(Drawing)
 --- !u!114 &4535268105035283999
 MonoBehaviour:
   m_ObjectHideFlags: 0

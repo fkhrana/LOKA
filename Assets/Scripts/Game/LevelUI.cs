@@ -11,16 +11,14 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private GameObject lockOverlay;
     [SerializeField] private GameObject lockIcon;
 
-    [Header("Colors")]
+    [Header("Colors (Fallback)")]
+    [Tooltip("Warna fallback kalau tidak ada background sprite untuk level ini.")]
     [SerializeField] private Color unlockedColor = new Color(1f, 0.84f, 0f);
     [SerializeField] private Color lockedColor = new Color(0.5f, 0.5f, 0.5f);
 
     [Header("SFX")]
     [SerializeField] private AudioClip clickSound;
     [SerializeField] private AudioClip lockedSound;
-
-    [Header("Scene")]
-    [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
 
     private int levelIndex;
     private bool isUnlocked;
@@ -33,7 +31,8 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
     public void Setup(
         int index,
         bool unlocked,
-        Sprite icon
+        Sprite icon,
+        Sprite backgroundSprite
     )
     {
         levelIndex = index;
@@ -44,10 +43,20 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
 
         if (backgroundImage != null)
         {
-            backgroundImage.color =
-                isUnlocked
-                    ? unlockedColor
-                    : lockedColor;
+            if (backgroundSprite != null)
+            {
+                // Sprite khusus untuk level ini — pakai warna putih
+                // supaya tidak di-tint oleh warna locked/unlocked.
+                backgroundImage.sprite = backgroundSprite;
+                backgroundImage.color = Color.white;
+            }
+            else
+            {
+                // Fallback: tint warna seperti perilaku lama.
+                backgroundImage.sprite = null;
+                backgroundImage.color =
+                    isUnlocked ? unlockedColor : lockedColor;
+            }
         }
 
         if (lockOverlay != null)
@@ -57,20 +66,12 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
             lockIcon.SetActive(!isUnlocked);
     }
 
-    public void OnPointerClick(
-        PointerEventData eventData
-    )
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (!isUnlocked)
         {
             PlaySfxOrFallback(lockedSound);
-
-            Debug.Log(
-                "Level " +
-                (levelIndex + 1) +
-                " masih terkunci."
-            );
-
+            Debug.Log("Level " + (levelIndex + 1) + " masih terkunci.");
             return;
         }
 
@@ -78,25 +79,23 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
 
         if (LevelManager.Instance == null)
         {
-            Debug.LogError(
-                "LevelUI: LevelManager tidak ditemukan."
-            );
-
+            Debug.LogError("LevelUI: LevelManager tidak ditemukan.");
             return;
         }
 
-        LevelManager.Instance.SetCurrentLevel(
-            levelIndex
-        );
+        LevelManager.Instance.SetCurrentLevel(levelIndex);
 
-        Debug.Log(
-            "Memulai Level " +
-            (levelIndex + 1)
-        );
+        string sceneName = LevelManager.Instance.GetSceneNameForLevel(levelIndex);
 
-        SceneManager.LoadScene(
-            gameplaySceneName
-        );
+        if (string.IsNullOrEmpty(sceneName))
+        {
+            Debug.LogError($"LevelUI: Scene name untuk level {levelIndex + 1} kosong.");
+            return;
+        }
+
+        Debug.Log($"Memulai Level {levelIndex + 1} → {sceneName}");
+
+        SceneManager.LoadScene(sceneName);
     }
 
     private void PlaySfxOrFallback(AudioClip clip)

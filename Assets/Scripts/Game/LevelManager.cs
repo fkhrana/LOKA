@@ -18,6 +18,10 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Sprite[] lockedLevelIcons;
     [SerializeField] private Sprite[] unlockedLevelIcons;
 
+    [Header("Level Backgrounds")]
+    [SerializeField] private Sprite[] lockedLevelBackgrounds;
+    [SerializeField] private Sprite[] unlockedLevelBackgrounds;
+
     [Header("SFX")]
     [SerializeField] private AudioClip failureSound;
     [SerializeField] private AudioClip successSound;
@@ -49,8 +53,14 @@ public class LevelManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         totalLevels = Mathf.Max(
-            lockedLevelIcons != null ? lockedLevelIcons.Length : 0,
-            unlockedLevelIcons != null ? unlockedLevelIcons.Length : 0,
+            Mathf.Max(
+                lockedLevelIcons != null ? lockedLevelIcons.Length : 0,
+                unlockedLevelIcons != null ? unlockedLevelIcons.Length : 0
+            ),
+            Mathf.Max(
+                lockedLevelBackgrounds != null ? lockedLevelBackgrounds.Length : 0,
+                unlockedLevelBackgrounds != null ? unlockedLevelBackgrounds.Length : 0
+            ),
             gameplaySceneNames != null ? gameplaySceneNames.Length : 0
         );
 
@@ -188,7 +198,7 @@ public class LevelManager : MonoBehaviour
             LevelUI levelUI = card.GetComponent<LevelUI>();
 
             if (levelUI != null)
-                levelUI.Setup(i, IsUnlocked(i), GetIcon(i));
+                levelUI.Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i));
         }
     }
 
@@ -246,6 +256,28 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
+    private Sprite GetBackground(int index)
+    {
+        if (IsUnlocked(index))
+        {
+            if (unlockedLevelBackgrounds != null &&
+                index < unlockedLevelBackgrounds.Length)
+            {
+                return unlockedLevelBackgrounds[index];
+            }
+        }
+        else
+        {
+            if (lockedLevelBackgrounds != null &&
+                index < lockedLevelBackgrounds.Length)
+            {
+                return lockedLevelBackgrounds[index];
+            }
+        }
+
+        return null;
+    }
+
     public void CompleteLevel(int index)
     {
         if (index < 0 || index >= totalLevels) return;
@@ -284,6 +316,16 @@ public class LevelManager : MonoBehaviour
             0, totalLevels - 1);
     }
 
+    public string GetSceneNameForLevel(int index)
+    {
+        if (gameplaySceneNames == null ||
+            index < 0 ||
+            index >= gameplaySceneNames.Length)
+            return null;
+
+        return gameplaySceneNames[index];
+    }
+
     public void ReplaySelectedLevel()
     {
         int index = carouselSnap != null
@@ -298,9 +340,7 @@ public class LevelManager : MonoBehaviour
         }
 
         PlaySuccessSound();
-        SetCurrentLevel(index);
-        GameProgressManager.ClearGameState();
-        LoadGameplayScene(index);
+        HandleLevelEntry(index);
     }
 
     public void ReplayWithShake()
@@ -332,9 +372,39 @@ public class LevelManager : MonoBehaviour
     private IEnumerator DelayedReplay(int index)
     {
         yield return new WaitForSecondsRealtime(0.5f);
+        HandleLevelEntry(index);
+    }
 
-        SetCurrentLevel(index);
-        GameProgressManager.ClearGameState();
+    // ============================================================
+    // ENTRY LOGIC
+    // ============================================================
+    /// <summary>
+    /// Cek apakah player mau RESUME atau FRESH START level ini.
+    /// Resume terjadi kalau: state == "Gameplay" DAN level yang tersimpan == index ini.
+    /// </summary>
+    private void HandleLevelEntry(int index)
+    {
+        string savedState = GameProgressManager.GetGameState();
+        int savedLevel = GetCurrentLevelIndex();
+
+        bool isResume = savedState == "Gameplay" && savedLevel == index;
+
+        if (isResume)
+        {
+            Debug.Log($"[LevelManager] RESUME Level {index + 1} (state '{savedState}').");
+
+            PlayerPrefs.SetInt(CURRENT_KEY, index);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            Debug.Log($"[LevelManager] FRESH START Level {index + 1} " +
+                      $"(state lama: '{savedState}', level lama: {savedLevel + 1}).");
+
+            SetCurrentLevel(index);
+            GameProgressManager.ClearGameState();
+        }
+
         LoadGameplayScene(index);
     }
 
@@ -402,7 +472,7 @@ public class LevelManager : MonoBehaviour
         LevelUI[] cards = contentParent.GetComponentsInChildren<LevelUI>(true);
 
         for (int i = 0; i < cards.Length && i < totalLevels; i++)
-            cards[i].Setup(i, IsUnlocked(i), GetIcon(i));
+            cards[i].Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i));
 
         if (carouselSnap != null)
             carouselSnap.Refresh();
@@ -411,25 +481,24 @@ public class LevelManager : MonoBehaviour
     }
 
     public void ResetProgress()
-{
-    for (int i = 0; i < totalLevels; i++)
     {
-        PlayerPrefs.DeleteKey(GetKey(UNLOCKED_KEY, i));
-        PlayerPrefs.DeleteKey(GetKey(COMPLETED_KEY, i));
+        for (int i = 0; i < totalLevels; i++)
+        {
+            PlayerPrefs.DeleteKey(GetKey(UNLOCKED_KEY, i));
+            PlayerPrefs.DeleteKey(GetKey(COMPLETED_KEY, i));
+        }
+
+        PlayerPrefs.DeleteKey(CURRENT_KEY);
+        GameProgressManager.ResetProgress();
+
+        CameraIntroManager.ResetIntroFlag();
+
+        PlayerPrefs.Save();
+
+        SetupMainMenu();
+
+        Debug.Log("[LevelManager] Semua progress di-reset.");
     }
-
-    PlayerPrefs.DeleteKey(CURRENT_KEY);
-    GameProgressManager.ResetProgress();
-
-    // === TAMBAHAN: reset intro flag biar panning jalan lagi ===
-    CameraIntroManager.ResetIntroFlag();
-
-    PlayerPrefs.Save();
-
-    SetupMainMenu();
-
-    Debug.Log("[LevelManager] Semua progress di-reset.");
-}
 
     private void PlayFailureSound()
     {

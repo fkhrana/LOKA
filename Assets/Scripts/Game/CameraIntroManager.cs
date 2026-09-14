@@ -7,9 +7,6 @@ public class CameraIntroManager : MonoBehaviour
 {
     public static bool GameStarted = false;
 
-    // Flag: apakah player sudah pernah lihat intro panning
-    private const string KEY_HAS_SEEN_FIRST_INTRO = "HasSeenFirstGameplayIntro";
-
     [Header("Pengaturan Kamera")]
     public Camera mainCamera;
     public Transform targetKanan;
@@ -17,7 +14,7 @@ public class CameraIntroManager : MonoBehaviour
     public float durasiPan = 2.5f;
     public float jedaLihatMusuh = 1.5f;
 
-    [Tooltip("Jeda sebelum countdown saat mode countdown-only (tanpa panning).")]
+    [Tooltip("Jeda sebelum countdown saat mode countdown-only.")]
     [SerializeField] private float jedaSebelumCountdown = 0.3f;
 
     [Header("Pengaturan UI Countdown")]
@@ -36,15 +33,11 @@ public class CameraIntroManager : MonoBehaviour
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
 
-    // ========================================
-    // LIFECYCLE
-    // ========================================
     private void Start()
     {
         if (gestureDrawer == null)
             gestureDrawer = FindAnyObjectByType<GestureDrawer>();
 
-        // Setup countdown image
         if (countdownImage != null)
         {
             countdownImage.gameObject.SetActive(false);
@@ -54,12 +47,12 @@ public class CameraIntroManager : MonoBehaviour
         GameStarted = false;
         DisableGesture();
 
-        // ==== Resume Puzzle / Reward → langsung lanjut, tanpa countdown ====
         string savedState = GameProgressManager.GetGameState();
 
+        // ==== 1) Resume Puzzle / Reward → langsung lanjut ====
         if (savedState == "Puzzle" || savedState == "Reward")
         {
-            Debug.Log($"[CameraIntroManager] Resume {savedState} → langsung lanjut, tanpa countdown.");
+            Debug.Log($"[CameraIntroManager] Resume {savedState} → langsung lanjut.");
 
             GameStarted = true;
             EnableGesture();
@@ -70,17 +63,15 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
-        // ==== Cek apakah player sudah pernah lihat intro panning ====
-        bool hasSeenFirstIntro = PlayerPrefs.GetInt(KEY_HAS_SEEN_FIRST_INTRO, 0) == 1;
-
-        if (hasSeenFirstIntro)
+        // ==== 2) Resume mid-game (pause ke main menu) → countdown saja ====
+        if (savedState == "Gameplay")
         {
-            Debug.Log("[CameraIntroManager] Sudah pernah lihat intro → countdown saja.");
+            Debug.Log("[CameraIntroManager] Resume Gameplay → countdown saja.");
             StartCoroutine(MainkanIntro(withPanning: false));
             return;
         }
 
-        // ==== Fresh start → cek setup panning ====
+        // ==== 3) New / retry / replay → panning + countdown ====
         if (mainCamera == null)
         {
             Debug.LogError("[CameraIntroManager] Main Camera belum diisi! Fallback countdown saja.");
@@ -95,13 +86,10 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("[CameraIntroManager] Fresh start → panning + countdown.");
+        Debug.Log("[CameraIntroManager] Panning + countdown.");
         StartCoroutine(MainkanIntro(withPanning: true));
     }
 
-    // ========================================
-    // GESTURE
-    // ========================================
     private void DisableGesture()
     {
         if (gestureDrawer != null)
@@ -117,14 +105,10 @@ public class CameraIntroManager : MonoBehaviour
             gestureDrawer.enabled = true;
     }
 
-    // ========================================
-    // INTRO SEQUENCE
-    // ========================================
     private IEnumerator MainkanIntro(bool withPanning)
     {
         DisableGesture();
 
-        // ==== Panning (hanya fresh start) ====
         if (withPanning)
         {
             posisiKiri = mainCamera.transform.position;
@@ -144,18 +128,12 @@ public class CameraIntroManager : MonoBehaviour
 
             Debug.Log("Intro: Kamera kembali ke tengah...");
             yield return StartCoroutine(GerakkanKamera(posisiKanan, posisiKiri, durasiPan));
-
-            // Tandai intro panning sudah dilihat — tidak akan muncul lagi
-            PlayerPrefs.SetInt(KEY_HAS_SEEN_FIRST_INTRO, 1);
-            PlayerPrefs.Save();
         }
         else
         {
-            // Mode countdown-only: kasih jeda singkat
             yield return new WaitForSeconds(jedaSebelumCountdown);
         }
 
-        // ==== Countdown ====
         if (countdownImage == null)
         {
             Debug.LogWarning("[CameraIntroManager] Countdown Image kosong. Langsung mulai.");
@@ -176,16 +154,12 @@ public class CameraIntroManager : MonoBehaviour
 
         countdownImage.gameObject.SetActive(false);
 
-        // ==== Game dimulai ====
         GameStarted = true;
         EnableGesture();
 
         Debug.Log("GAME DIMULAI!");
     }
 
-    // ========================================
-    // GERAKKAN KAMERA
-    // ========================================
     private IEnumerator GerakkanKamera(Vector3 posisiAwal, Vector3 posisiAkhir, float durasi)
     {
         float waktu = 0f;
@@ -201,9 +175,6 @@ public class CameraIntroManager : MonoBehaviour
         mainCamera.transform.position = posisiAkhir;
     }
 
-    // ========================================
-    // COUNTDOWN POP UP
-    // ========================================
     private IEnumerator TampilkanEfekPopUp(Sprite spriteAngka)
     {
         if (spriteAngka == null)
@@ -242,13 +213,8 @@ public class CameraIntroManager : MonoBehaviour
         yield return new WaitForSeconds(0.7f);
     }
 
-    // ========================================
-    // PUBLIC — dipanggil LevelManager.ResetProgress()
-    // ========================================
     public static void ResetIntroFlag()
     {
-        PlayerPrefs.DeleteKey(KEY_HAS_SEEN_FIRST_INTRO);
-        PlayerPrefs.Save();
-        Debug.Log("[CameraIntroManager] Intro flag di-reset — next gameplay akan panning lagi.");
+        Debug.Log("[CameraIntroManager] ResetIntroFlag (no-op).");
     }
 }

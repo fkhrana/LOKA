@@ -4,8 +4,6 @@ using UnityEngine.UI;
 /// <summary>
 /// Represents a single Aksara card in the carousel.
 /// Handles visual setup, lock state, click events, and bounce effect.
-/// Gambar card diambil dari AksaraCardVisualLibrary (BUKAN dari data.FragmentSprite/IconSprite),
-/// supaya carousel bisa pakai gambar card yang beda dari yang dipakai di halaman detail lain.
 /// </summary>
 [RequireComponent(typeof(Button))]
 public class AksaraCarouselItemUI : MonoBehaviour
@@ -37,6 +35,7 @@ public class AksaraCarouselItemUI : MonoBehaviour
     {
         mainButton = GetComponent<Button>();
         mainButton.onClick.AddListener(OnClick);
+
         if (soundButton)
             soundButton.onClick.AddListener(PlayLetterSound);
     }
@@ -49,7 +48,9 @@ public class AksaraCarouselItemUI : MonoBehaviour
 
         if (data == null) return;
 
-        Sprite sprite = cardVisualLibrary != null ? cardVisualLibrary.GetCardSprite(data) : null;
+        Sprite sprite = cardVisualLibrary != null
+            ? cardVisualLibrary.GetCardSprite(data)
+            : null;
 
         if (cardBackground)
         {
@@ -76,6 +77,7 @@ public class AksaraCarouselItemUI : MonoBehaviour
         isAnimating = true;
 
         Vector3 startScale = transform.localScale;
+
         LeanTween.scale(gameObject, startScale * 1.2f, 0.1f)
             .setEasePunch()
             .setOnComplete(() =>
@@ -95,8 +97,13 @@ public class AksaraCarouselItemUI : MonoBehaviour
     private void PlayLetterSound()
     {
         if (!isCollected || data == null || soundLibrary == null) return;
+
         AudioClip clip = soundLibrary.GetClip(data.GestureShape);
-        if (clip != null)
-            AudioManager.Instance?.PlayUISFX(clip);
+        if (clip == null) return;
+
+        float volume = soundLibrary.GetVolume(data.GestureShape);
+
+        // Pakai PlayAksaraVoice supaya volume bisa > 1 dan BGM otomatis ducking.
+        AudioManager.Instance?.PlayAksaraVoice(clip, volume);
     }
 }
