@@ -105,6 +105,9 @@ public class AutoResetProgress : MonoBehaviour
         // Reset progress gameplay
         GameProgressManager.ResetProgress();
 
+        // === TAMBAHAN: reset intro flag biar panning jalan lagi ===
+        CameraIntroManager.ResetIntroFlag();
+
         PlayerPrefs.Save();
     }
 

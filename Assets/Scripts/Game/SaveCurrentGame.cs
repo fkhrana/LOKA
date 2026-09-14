@@ -14,13 +14,36 @@ public class SaveCurrentProgress : MonoBehaviour
     [SerializeField] private EnemyWaveSpawner enemyWaveSpawner;
     [SerializeField] private CameraIntroManager cameraIntroManager;
 
+    [Header("Player")]
+    [Tooltip("Drag GameObject Player ke sini. Kalau kosong, akan dicari via tag 'Player'.")]
+    [SerializeField] private Transform player;
+
+    private void Awake()
+    {
+        if (player == null)
+        {
+            GameObject p = GameObject.FindGameObjectWithTag("Player");
+            if (p != null)
+                player = p.transform;
+        }
+    }
+
     private void Start()
     {
-        // Simpan scene gameplay saat ini
         string currentScene = SceneManager.GetActiveScene().name;
         GameProgressManager.SaveLastScene(currentScene);
 
-        // Ambil state terakhir
+        // === TUTORIAL GUARD ===
+        // Kalau tutorial belum selesai, jangan restore state apapun.
+        // TutorialManager yang akan atur semuanya dari awal.
+        if (PlayerPrefs.GetInt("TutorialCompleted", 0) == 0)
+        {
+            Debug.Log("[SaveCurrentProgress] Tutorial belum selesai → skip restore.");
+            return;
+        }
+
+        RestorePlayerPosition();
+
         string savedState = GameProgressManager.GetGameState();
 
         if (savedState == "Puzzle")
@@ -38,10 +61,33 @@ public class SaveCurrentProgress : MonoBehaviour
         StartNewGame();
     }
 
-    // =========================
-    // RESTORE (dipanggil saat scene BARU di-load, tidak perlu save ulang
-    // karena state sudah sesuai dengan yang tersimpan)
-    // =========================
+    // ============================================================
+    // PUBLIC ENTRY POINT — dipanggil dari PauseOverlay
+    // ============================================================
+    public void SavePlayerPositionNow()
+    {
+        if (player == null)
+        {
+            Debug.LogWarning("[SaveCurrentProgress] Player belum di-assign, skip save posisi.");
+            return;
+        }
+
+        GameProgressManager.SavePlayerPosition(player.position);
+    }
+
+    // ============================================================
+    // RESTORE
+    // ============================================================
+    private void RestorePlayerPosition()
+    {
+        if (player == null) return;
+
+        if (GameProgressManager.TryGetPlayerPosition(out Vector3 pos))
+        {
+            player.position = pos;
+            Debug.Log($"[SaveCurrentProgress] Player pos restored: {pos}");
+        }
+    }
 
     private void RestorePuzzle()
     {
@@ -55,82 +101,61 @@ public class SaveCurrentProgress : MonoBehaviour
         ApplyRewardUI();
     }
 
-    // =========================
-    // PUBLIC ENTRY POINT — panggil ini dari script lain
-    // (misal EnemyWaveSpawner saat wave terakhir selesai,
-    // atau PuzzleManager saat puzzle mulai/menang)
-    // =========================
-
+    // ============================================================
+    // PUBLIC ENTRY POINT — panggil dari script lain
+    // ============================================================
     public void MarkPuzzleActive()
     {
         ApplyPuzzleUI();
-
-        // Ini kuncinya: UI berubah SEKALIGUS state tersimpan
         GameProgressManager.SaveGameState("Puzzle");
-
         Debug.Log("[SaveCurrentProgress] State disimpan: Puzzle");
     }
 
     public void MarkRewardActive()
     {
         ApplyRewardUI();
-
         GameProgressManager.SaveGameState("Reward");
-
         Debug.Log("[SaveCurrentProgress] State disimpan: Reward");
     }
 
-    // =========================
-    // UI HELPERS (murni ubah tampilan, tidak menyentuh PlayerPrefs)
-    // =========================
-
+    // ============================================================
+    // UI HELPERS
+    // ============================================================
     private void ApplyPuzzleUI()
     {
-        if (enemyWaveSpawner != null)
-            enemyWaveSpawner.StopWaveSequence();
-
-        if (cameraIntroManager != null)
-            cameraIntroManager.enabled = false;
-
-        if (canvas2 != null)
-            canvas2.SetActive(true);
-
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(true);
-
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
+        if (enemyWaveSpawner != null) enemyWaveSpawner.StopWaveSequence();
+        if (cameraIntroManager != null) cameraIntroManager.enabled = false;
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(true);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
     }
 
     private void ApplyRewardUI()
     {
-        if (enemyWaveSpawner != null)
-            enemyWaveSpawner.StopWaveSequence();
-
-        if (cameraIntroManager != null)
-            cameraIntroManager.enabled = false;
-
-        if (canvas2 != null)
-            canvas2.SetActive(true);
-
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(false);
-
-        if (rewardPanel != null)
-            rewardPanel.SetActive(true);
+        if (enemyWaveSpawner != null) enemyWaveSpawner.StopWaveSequence();
+        if (cameraIntroManager != null) cameraIntroManager.enabled = false;
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(true);
     }
 
     private void StartNewGame()
     {
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
-        if (canvas2 != null)
-            canvas2.SetActive(false);
+        if (canvas2 != null) canvas2.SetActive(false);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(false);
-
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
+        if (GameProgressManager.HasEnteredGameplay())
+        {
+            Debug.Log("[SaveCurrentProgress] Skip cutscene (sudah pernah main)");
+            if (cameraIntroManager != null) cameraIntroManager.enabled = false;
+        }
+        else
+        {
+            GameProgressManager.SetHasEnteredGameplay(true);
+            Debug.Log("[SaveCurrentProgress] Cutscene dimulai.");
+        }
     }
 }

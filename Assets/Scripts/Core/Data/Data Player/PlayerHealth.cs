@@ -25,6 +25,12 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
+         if (TutorialManager.IsTrainingMode)
+        {
+            Debug.Log("[Training] PlayerHealth.TakeDamage diabaikan.");
+            return;
+        }
+
         if (amount <= 0 || IsDead)
             return;
 

@@ -26,6 +26,9 @@ public class PuzzleManager : MonoBehaviour
     [SerializeField] private TransitionSettings transitionSettings;
     [SerializeField] private float transitionDelay = 0.5f;
 
+    [Header("Save Integration (opsional)")]
+    [SerializeField] private SaveCurrentProgress saveCurrentProgress;
+
     private TransitionManager transitionManager;
     private bool wave1PuzzleShown;
     private bool puzzleCompleted;
@@ -36,6 +39,9 @@ public class PuzzleManager : MonoBehaviour
 
         if (gestureDrawer == null)
             gestureDrawer = FindAnyObjectByType<GestureDrawer>();
+
+        if (saveCurrentProgress == null)
+            saveCurrentProgress = FindFirstObjectByType<SaveCurrentProgress>();
     }
 
     public void ShowPuzzleOnce()
@@ -54,10 +60,7 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(
-                    transitionSettings,
-                    transitionDelay
-                );
+                transitionManager.Transition(transitionSettings, transitionDelay);
             }
             else
             {
@@ -77,10 +80,7 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(
-                    transitionSettings,
-                    transitionDelay
-                );
+                transitionManager.Transition(transitionSettings, transitionDelay);
             }
             else
             {
@@ -91,20 +91,14 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivatePuzzlePanel()
     {
-        // Canvas 2 ON
-        if (canvas2 != null)
-            canvas2.SetActive(true);
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(true);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        // Puzzle ON
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(true);
-
-        // Reward OFF
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
-
-        // Save state resume
-        GameProgressManager.SaveGameState("Puzzle");
+        if (saveCurrentProgress != null)
+            saveCurrentProgress.MarkPuzzleActive();
+        else
+            GameProgressManager.SaveGameState("Puzzle");
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= ActivatePuzzlePanel;
@@ -134,24 +128,15 @@ public class PuzzleManager : MonoBehaviour
             gestureDrawer.enabled = true;
     }
 
-    public bool IsPuzzleCompleted()
-    {
-        return puzzleCompleted;
-    }
-
-    public void MarkPuzzleCompleted()
-    {
-        puzzleCompleted = true;
-    }
+    public bool IsPuzzleCompleted() => puzzleCompleted;
+    public void MarkPuzzleCompleted() => puzzleCompleted = true;
 
     public void CheckPuzzleComplete()
     {
         foreach (DropZone slot in allSlots)
         {
             if (slot == null) continue;
-
-            if (!slot.isFilled)
-                return;
+            if (!slot.isFilled) return;
         }
 
         OnPuzzleComplete();
@@ -159,14 +144,11 @@ public class PuzzleManager : MonoBehaviour
 
     private void OnPuzzleComplete()
     {
-        if (puzzleCompleted)
-            return;
+        if (puzzleCompleted) return;
 
         Debug.Log("✅ Puzzle selesai!");
 
         MarkPuzzleCompleted();
-
-        // Jalankan sequence selesai
         StartCoroutine(PuzzleCompleteSequence());
     }
 
@@ -180,25 +162,17 @@ public class PuzzleManager : MonoBehaviour
         if (powerManager != null)
         {
             powerManager.SetUnlocked();
-            StartCoroutine(
-                PopEffect(powerManager.transform)
-            );
+            StartCoroutine(PopEffect(powerManager.transform));
         }
 
-        yield return new WaitForSeconds(
-            delayBeforeWinPanel
-        );
+        yield return new WaitForSeconds(delayBeforeWinPanel);
 
         transitionManager = TransitionManager.Instance();
 
         if (transitionManager != null && transitionSettings != null)
         {
             transitionManager.onTransitionCutPointReached += ActivateRewardPanel;
-
-            transitionManager.Transition(
-                transitionSettings,
-                transitionDelay
-            );
+            transitionManager.Transition(transitionSettings, transitionDelay);
         }
         else
         {
@@ -208,20 +182,14 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivateRewardPanel()
     {
-        // Canvas 2 ON
-        if (canvas2 != null)
-            canvas2.SetActive(true);
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(true);
 
-        // Puzzle OFF
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(false);
-
-        // Reward ON
-        if (rewardPanel != null)
-            rewardPanel.SetActive(true);
-
-        // Save state resume
-        GameProgressManager.SaveGameState("Reward");
+        if (saveCurrentProgress != null)
+            saveCurrentProgress.MarkRewardActive();
+        else
+            GameProgressManager.SaveGameState("Reward");
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
@@ -240,10 +208,7 @@ public class PuzzleManager : MonoBehaviour
             time += Time.unscaledDeltaTime;
 
             target.localScale = Vector3.Lerp(
-                originalScale,
-                punchScale,
-                time / (duration / 2)
-            );
+                originalScale, punchScale, time / (duration / 2));
 
             yield return null;
         }
@@ -255,10 +220,7 @@ public class PuzzleManager : MonoBehaviour
             time += Time.unscaledDeltaTime;
 
             target.localScale = Vector3.Lerp(
-                punchScale,
-                originalScale,
-                time / (duration / 2)
-            );
+                punchScale, originalScale, time / (duration / 2));
 
             yield return null;
         }

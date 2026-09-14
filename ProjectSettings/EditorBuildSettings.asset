@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Nayla/CutScenee.unity
     guid: 4c8143c97fed1cf4c9367adcacea7258
   - enabled: 1
+    path: Assets/Scenes/Main/Latihan.unity
+    guid: 22ab1e9697192fe4492b4343a74d8da5
+  - enabled: 1
     path: Assets/Scenes/Main/MainGameplay(Drawing).unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
   - enabled: 1

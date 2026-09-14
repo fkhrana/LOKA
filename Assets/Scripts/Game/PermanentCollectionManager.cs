@@ -1,52 +1,75 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class PermanentCollectionManager
 {
     private const string KEY_PREFIX = "PermanentCollected_";
 
+    // In-memory collection KHUSUS training mode.
+    // Di-clear saat keluar training mode → tidak disave ke PlayerPrefs.
+    private static readonly HashSet<string> trainingCollected = new HashSet<string>();
+
     public static void SaveCollected(AksaraData data)
     {
-        if (data == null)
+        if (data == null) return;
+
+        string key = KEY_PREFIX + data.GestureShape.ToString();
+
+        // === Training mode → simpan ke memory saja ===
+        if (TutorialManager.IsTrainingMode)
+        {
+            trainingCollected.Add(key);
+            Debug.Log($"[Training] Koleksi disimpan ke memory: {data.AksaraName} (total: {trainingCollected.Count})");
             return;
+        }
 
-        string key =
-            KEY_PREFIX + data.GestureShape.ToString();
-
+        // === Normal mode → simpan ke PlayerPrefs ===
         PlayerPrefs.SetInt(key, 1);
         PlayerPrefs.Save();
     }
 
     public static bool IsCollected(AksaraData data)
     {
-        if (data == null)
-            return false;
+        if (data == null) return false;
 
-        string key =
-            KEY_PREFIX + data.GestureShape.ToString();
+        string key = KEY_PREFIX + data.GestureShape.ToString();
 
+        // === Training mode → cek memory ===
+        if (TutorialManager.IsTrainingMode)
+        {
+            return trainingCollected.Contains(key);
+        }
+
+        // === Normal mode → cek PlayerPrefs ===
         return PlayerPrefs.GetInt(key, 0) == 1;
     }
 
     public static void ResetAksara(AksaraData[] allAksara)
     {
-        if (allAksara == null)
-            return;
+        // Clear memory training juga
+        trainingCollected.Clear();
+
+        if (allAksara == null) return;
 
         foreach (AksaraData data in allAksara)
         {
-            if (data == null)
-                continue;
-
-            string key =
-                KEY_PREFIX + data.GestureShape.ToString();
-
+            if (data == null) continue;
+            string key = KEY_PREFIX + data.GestureShape.ToString();
             PlayerPrefs.DeleteKey(key);
         }
 
         PlayerPrefs.Save();
+        Debug.Log("[PermanentCollectionManager] Data aksara di-reset.");
+    }
 
-        Debug.Log(
-            "[PermanentCollectionManager] Data aksara berhasil di-reset."
-        );
+    /// <summary>
+    /// Dipanggil oleh TutorialManager.OnDestroy() saat keluar training scene.
+    /// Clear memory collection training — aksara yang didapat di training hilang.
+    /// </summary>
+    public static void ClearTrainingCollected()
+    {
+        int count = trainingCollected.Count;
+        trainingCollected.Clear();
+        Debug.Log($"[Training] Clear {count} aksara dari memory training.");
     }
 }

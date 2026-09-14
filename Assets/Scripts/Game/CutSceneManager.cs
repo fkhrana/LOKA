@@ -1,6 +1,7 @@
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Video;
 using UnityEngine.SceneManagement;
+using UnityEngine.Video;
 using EasyTransition;
 
 public class CutsceneManager : MonoBehaviour
@@ -8,247 +9,140 @@ public class CutsceneManager : MonoBehaviour
     [Header("Video")]
     [SerializeField] private VideoPlayer videoPlayer;
 
-    [Header("Scene")]
-    [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
+    [Header("Next Scene")]
+    [Tooltip("Scene tujuan setelah cutscene selesai/skip. Isi dengan scene Tutorial (Latihan).")]
+    [SerializeField] private string nextSceneName = "Latihan";
+
+    [Header("Skip")]
+    [SerializeField] private GameObject skipButton;
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
-    [SerializeField] private float loadDelay = 0.5f;
+    [SerializeField] private float loadDelay = 0f;
 
-    private bool isTransitioning = false;
-
-    private void Awake()
-    {
-        if (videoPlayer == null)
-            videoPlayer = GetComponent<VideoPlayer>();
-
-        if (videoPlayer == null)
-        {
-            Debug.LogWarning(
-                "VideoPlayer not assigned in CutsceneManager!",
-                this
-            );
-        }
-    }
+    private bool videoFinished = false;
+    private bool isLoadingNextScene = false;
+    private TransitionManager transitionManager;
 
     private void OnEnable()
     {
         if (videoPlayer != null)
-        {
-            videoPlayer.loopPointReached +=
-                OnVideoFinished;
-        }
+            videoPlayer.loopPointReached += OnVideoFinished;
     }
 
     private void OnDisable()
     {
         if (videoPlayer != null)
-        {
-            videoPlayer.loopPointReached -=
-                OnVideoFinished;
-        }
+            videoPlayer.loopPointReached -= OnVideoFinished;
+
+        transitionManager = null;
     }
 
     private void Start()
     {
         Time.timeScale = 1f;
 
-        // Simpan scene cutscene yang sedang dibuka
         GameProgressManager.SaveLastScene(
-            SceneManager.GetActiveScene().name
-        );
+            SceneManager.GetActiveScene().name);
 
-        // Jalankan video
-        videoPlayer?.Play();
-
-        // Bersihkan transition lama
-        CleanupStaleTransitions();
+        StartCoroutine(InitializeAfterTransition());
     }
 
-    public void PauseVideo()
+    private IEnumerator InitializeAfterTransition()
     {
-        if (isTransitioning)
-            return;
+        transitionManager = TransitionManager.Instance();
 
-        PlayButtonClickSFX();
+        if (transitionManager == null)
+        {
+            yield return StartCoroutine(PrepareAndPlayVideo());
+            yield break;
+        }
 
-        videoPlayer?.Pause();
+        while (transitionManager.IsTransitionRunning())
+            yield return null;
+
+        yield return StartCoroutine(PrepareAndPlayVideo());
     }
 
-    public void ResumeVideo()
+    private IEnumerator PrepareAndPlayVideo()
     {
-        if (isTransitioning)
-            return;
+        if (videoPlayer == null) yield break;
 
-        PlayButtonClickSFX();
+        videoFinished = false;
 
-        videoPlayer?.Play();
+        videoPlayer.Stop();
+        videoPlayer.Prepare();
+
+        while (!videoPlayer.isPrepared)
+            yield return null;
+
+        if (isLoadingNextScene) yield break;
+
+        videoPlayer.Play();
+
+        if (skipButton != null)
+            skipButton.SetActive(true);
     }
 
-    public void OnSkipClicked()
+    private void OnVideoFinished(VideoPlayer vp)
     {
-        if (isTransitioning)
-            return;
-
-        PlayButtonClickSFX();
-
-        Time.timeScale = 1f;
-
-        videoPlayer?.Stop();
-
+        if (isLoadingNextScene) return;
         LoadNextScene();
     }
 
-    private void PlayButtonClickSFX()
+    public void SkipCutscene()
     {
-        AudioManager.Instance?.PlaySFX(
-            "ButtonHover"
-        );
-    }
-
-    private void OnVideoFinished(
-        VideoPlayer vp
-    )
-    {
-        if (isTransitioning)
-            return;
-
-        Time.timeScale = 1f;
-
+        if (isLoadingNextScene) return;
         LoadNextScene();
     }
 
     private void LoadNextScene()
     {
-        if (isTransitioning)
-            return;
+        if (isLoadingNextScene) return;
 
-        if (string.IsNullOrEmpty(nextSceneName))
+        isLoadingNextScene = true;
+
+        if (videoPlayer != null)
+            videoPlayer.Stop();
+
+        if (skipButton != null)
+            skipButton.SetActive(false);
+
+        // === Selalu ke Tutorial (Latihan) ===
+        // Skip atau selesai, keduanya tetap masuk Tutorial.
+        // Level 1 di-unlock nanti oleh TutorialManager saat player klik Main.
+        Debug.Log($"[CutsceneManager] Cutscene selesai/skip → load '{nextSceneName}'.");
+
+        TransitionManager tm = transitionManager;
+
+        if (tm == null)
+            tm = TransitionManager.Instance();
+
+        if (tm != null && transitionSettings != null)
         {
-            Debug.LogError(
-                "nextSceneName is empty!",
-                this
-            );
-
-            return;
-        }
-
-        // Tandai cutscene sudah selesai
-        GameProgressManager.SetCutsceneCompleted();
-
-        // Unlock Level 1
-        PlayerPrefs.SetInt(
-            "LevelUnlocked_0",
-            1
-        );
-
-        // Simpan progress unlock
-        PlayerPrefs.Save();
-
-        // Simpan scene berikutnya
-        GameProgressManager.SaveLastScene(
-            nextSceneName
-        );
-
-        isTransitioning = true;
-
-        // Bersihkan transition lama
-        CleanupStaleTransitions();
-
-        TransitionManager tm =
-            TransitionManager.Instance();
-
-        if (tm != null &&
-            transitionSettings != null)
-        {
-            tm.Transition(
-                nextSceneName,
-                transitionSettings,
-                loadDelay
-            );
+            tm.Transition(nextSceneName, transitionSettings, loadDelay);
         }
         else
         {
-            Debug.LogWarning(
-                "TransitionManager or Settings missing, loading scene directly."
-            );
-
-            SceneManager.LoadScene(
-                nextSceneName
-            );
-
-            isTransitioning = false;
+            SceneManager.LoadScene(nextSceneName);
         }
     }
 
-    private void CleanupStaleTransitions()
+    public void PauseVideo()
     {
-        EasyTransition.Transition[] oldTransitions =
-            FindObjectsByType<EasyTransition.Transition>(
-                FindObjectsSortMode.None
-            );
-
-        foreach (var t in oldTransitions)
-        {
-            if (t == null)
-                continue;
-
-            if (IsTransitionStillAnimating(t))
-            {
-                continue;
-            }
-
-            Debug.LogWarning(
-                "[CutsceneManager] Menemukan Transition instance lama (selesai), menghapus: "
-                + t.gameObject.name
-            );
-
-            Destroy(t.gameObject);
-        }
+        if (videoPlayer == null) return;
+        if (videoPlayer.isPlaying) videoPlayer.Pause();
     }
 
-    private bool IsTransitionStillAnimating(
-        EasyTransition.Transition t
-    )
+    public void ResumeVideo()
     {
-        Transform[] panels =
+        if (videoPlayer == null) return;
+
+        if (videoPlayer.isPrepared &&
+            !videoPlayer.isPlaying &&
+            !isLoadingNextScene)
         {
-            t.transitionPanelIN,
-            t.transitionPanelOUT
-        };
-
-        foreach (var panel in panels)
-        {
-            if (panel == null ||
-                !panel.gameObject.activeInHierarchy)
-            {
-                continue;
-            }
-
-            Animator[] anims =
-                panel.GetComponentsInChildren<Animator>(
-                    true
-                );
-
-            foreach (var anim in anims)
-            {
-                if (anim == null ||
-                    !anim.isActiveAndEnabled)
-                {
-                    continue;
-                }
-
-                var state =
-                    anim.GetCurrentAnimatorStateInfo(0);
-
-                if (state.normalizedTime < 1f &&
-                    !anim.IsInTransition(0))
-                {
-                    return true;
-                }
-            }
+            videoPlayer.Play();
         }
-
-        return false;
     }
 }

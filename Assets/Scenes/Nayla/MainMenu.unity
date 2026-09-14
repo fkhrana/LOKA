@@ -1253,6 +1253,8 @@ MonoBehaviour:
   - bgmName: Boss Theme
     volume: 0.3
   aksaraBgmVolume: 1
+  defaultBgmFadeDuration: 0.6
+  sfxDuplicateGuardWindow: 0.08
   uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
 GameObject:
@@ -2117,6 +2119,7 @@ MonoBehaviour:
   clickSFXName: ButtonHover
   clickSFXVolume: 1
   firstLevelScene: CutScenee
+  mainMenu: {fileID: 67993241}
 --- !u!1 &859136435
 GameObject:
   m_ObjectHideFlags: 0

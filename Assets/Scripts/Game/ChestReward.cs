@@ -60,15 +60,12 @@ public class ChestReward : MonoBehaviour
         }
 
         if (AudioManager.Instance != null && rewardBGM != null)
-        {
             AudioManager.Instance.PlayRewardBGM(rewardBGM, rewardBGMVolume);
-        }
     }
 
     private void Update()
     {
-        if (isOpened || chestTransform == null)
-            return;
+        if (isOpened || chestTransform == null) return;
 
         float angle = Mathf.Sin(Time.unscaledTime * shakeSpeed) * shakeAngle;
 
@@ -78,20 +75,15 @@ public class ChestReward : MonoBehaviour
 
     public void OpenChest()
     {
-        if (isOpened)
-            return;
+        if (isOpened) return;
 
         isOpened = true;
 
         if (chestTransform != null)
-        {
             chestTransform.localRotation = originalRotation;
-        }
 
         if (AudioManager.Instance != null && chestOpenSFX != null)
-        {
             AudioManager.Instance.PlaySFX(chestOpenSFX);
-        }
 
         StartCoroutine(OpenChestEffect());
     }
@@ -100,15 +92,12 @@ public class ChestReward : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(0.15f);
 
-        if (powerUp == null)
-            yield break;
+        if (powerUp == null) yield break;
 
         powerUp.gameObject.SetActive(true);
 
         if (AudioManager.Instance != null && powerUpAppearSFX != null)
-        {
             AudioManager.Instance.PlaySFX(powerUpAppearSFX);
-        }
 
         powerUp.anchoredPosition = powerUpOriginalPosition;
         powerUp.localRotation = Quaternion.identity;
@@ -141,7 +130,8 @@ public class ChestReward : MonoBehaviour
         while (isOpened && powerUp != null)
         {
             float angle =
-                Mathf.Sin(Time.unscaledTime * powerUpRotateSpeed) * powerUpRotateAngle;
+                Mathf.Sin(Time.unscaledTime * powerUpRotateSpeed) *
+                powerUpRotateAngle;
 
             powerUp.localRotation = Quaternion.Euler(0f, 0f, angle);
 
@@ -160,9 +150,7 @@ public class ChestReward : MonoBehaviour
         powerUpClicked = true;
 
         if (AudioManager.Instance != null && powerUpClickSFX != null)
-        {
             AudioManager.Instance.PlaySFX(powerUpClickSFX);
-        }
     }
 
     public void GoFinalResult()
@@ -172,19 +160,5 @@ public class ChestReward : MonoBehaviour
 
         if (winPanel != null)
             winPanel.SetActive(true);
-
-        // === TAMBAHAN ===
-        // Bersihkan GameState di sini juga, tidak cuma lewat LevelManager.
-        // Titik ini adalah momen pasti "Reward selesai" — jadi paling aman
-        // untuk memutus state "Reward" walaupun LevelManager.Instance
-        // ternyata null atau CompleteLevel gagal karena alasan lain.
-        GameProgressManager.ClearGameState();
-
-        // Tandai level saat ini selesai
-        if (LevelManager.Instance != null)
-        {
-            int currentLevel = LevelManager.Instance.GetCurrentLevelIndex();
-            LevelManager.Instance.CompleteLevel(currentLevel);
-        }
     }
 }

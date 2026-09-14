@@ -45,7 +45,13 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        CleanupAllTransitions();
+        StartCoroutine(DeferredInit());
+    }
+
+    private IEnumerator DeferredInit()
+    {
+        yield return null;
+
         ResetAllCanvases();
         ForceShowMainMenu();
         CloseAllPanels();
@@ -64,18 +70,21 @@ public class MainMenu : MonoBehaviour
     {
         foreach (var p in panels)
             if (p.type == type) return p;
+
         return null;
     }
 
     private void OpenPanel(PanelType type)
     {
-        if (currentPanel == type || isPanelAnimating) return;
+        if (currentPanel == type || isPanelAnimating || isTransitioning)
+            return;
 
         PlayClickSFX();
 
         if (currentPanel != PanelType.None)
         {
             isPanelAnimating = true;
+
             ClosePanel(currentPanel, () =>
             {
                 isPanelAnimating = false;
@@ -91,10 +100,12 @@ public class MainMenu : MonoBehaviour
     private void OpenPanelDirect(PanelType type)
     {
         var data = GetPanelData(type);
+
         if (data == null) return;
 
         data.panel?.SetActive(true);
         data.button?.SetActive(false);
+
         currentPanel = type;
     }
 
@@ -109,6 +120,7 @@ public class MainMenu : MonoBehaviour
         PlayClickSFX();
 
         var data = GetPanelData(type);
+
         if (data == null)
         {
             currentPanel = PanelType.None;
@@ -117,6 +129,7 @@ public class MainMenu : MonoBehaviour
         }
 
         var effect = data.panel?.GetComponent<EffectPanel>();
+
         if (effect != null)
         {
             effect.CloseDialog(() =>
@@ -143,71 +156,81 @@ public class MainMenu : MonoBehaviour
             if (data.panel != null) data.panel.SetActive(false);
             if (data.button != null) data.button.SetActive(true);
         }
+
         currentPanel = PanelType.None;
     }
 
-    public void OpenSetting() => OpenPanel(PanelType.Setting);
-    public void CloseSetting() => ClosePanel(PanelType.Setting);
-
+    public void OpenSetting()    => OpenPanel(PanelType.Setting);
+    public void CloseSetting()   => ClosePanel(PanelType.Setting);
     public void OpenCollection() => OpenPanel(PanelType.Collection);
-    public void CloseCollection() => ClosePanel(PanelType.Collection);
+    public void CloseCollection()=> ClosePanel(PanelType.Collection);
+    public void OpenLevel()      => OpenPanel(PanelType.Level);
+    public void CloseLevel()     => ClosePanel(PanelType.Level);
+    public void OpenCredit()     => OpenPanel(PanelType.Credits);
+    public void CloseCredit()    => ClosePanel(PanelType.Credits);
+    public void OpenTutorial()   => OpenPanel(PanelType.Tutorial);
+    public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
-    public void OpenLevel() => OpenPanel(PanelType.Level);
-    public void CloseLevel() => ClosePanel(PanelType.Level);
+ public void TapToStart()
+{
+    if (isTransitioning)
+        return;
 
-    public void OpenCredit() => OpenPanel(PanelType.Credits);
-    public void CloseCredit() => ClosePanel(PanelType.Credits);
+    isTransitioning = true;
 
-    public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
-    public void CloseTutorial() => ClosePanel(PanelType.Tutorial);
+    PlayClickSFX();
+    AudioManager.Instance?.FadeOutBGM();
 
-    public void TapToStart()
+    bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+    string targetScene = nextSceneName;
+
+    if (!tutorialCompleted)
     {
-        if (isTransitioning) return;
-        isTransitioning = true;
+        // === Player baru → Cutscene → Tutorial → Main ===
+        Debug.Log($"[MainMenu] Player baru → Cutscene: {targetScene}");
+    }
+    else if (GameProgressManager.HasLastScene())
+    {
+        // === Player lama → resume scene terakhir ===
+        string saved = GameProgressManager.GetLastScene();
 
-        PlayClickSFX();
-        AudioManager.Instance?.StopBGM();
-
-        var tm = TransitionManager.Instance();
-        if (tm != null && transitionSettings != null)
-            tm.Transition(nextSceneName, transitionSettings, loadDelay);
-        else
+        if (!string.IsNullOrEmpty(saved))
         {
-            SceneManager.LoadScene(nextSceneName);
-            isTransitioning = false;
+            targetScene = saved;
+            Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
         }
     }
-
-    // ----- Cleaning & UI Force (tidak berubah) -----
-    private void CleanupAllTransitions()
+    else
     {
-        foreach (var t in FindObjectsByType<Transition>(FindObjectsSortMode.None))
-            if (t != null) Destroy(t.gameObject);
-
-        foreach (var obj in FindObjectsByType<GameObject>(FindObjectsSortMode.None))
-        {
-            if (obj == null) continue;
-            string name = obj.name.ToLower();
-            if ((name.Contains("transition") || name.Contains("brush")) && obj.GetComponent<TransitionManager>() == null)
-                Destroy(obj);
-        }
-
-        foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
-        {
-            if (canvas != null && canvas.gameObject.scene.name != gameObject.scene.name)
-                canvas.gameObject.SetActive(false);
-        }
+        Debug.Log($"[MainMenu] Player lama, tidak ada last scene → {targetScene}");
     }
+
+    TransitionManager tm = TransitionManager.Instance();
+
+    if (tm != null && transitionSettings != null)
+    {
+        tm.Transition(targetScene, transitionSettings, loadDelay);
+    }
+    else
+    {
+        SceneManager.LoadScene(targetScene);
+        isTransitioning = false;
+    }
+}
 
     private void ResetAllCanvases()
     {
         foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
         {
-            if (canvas == null || canvas.gameObject.scene.name != gameObject.scene.name) continue;
+            if (canvas == null ||
+                canvas.gameObject.scene.name != gameObject.scene.name)
+                continue;
+
             canvas.sortingOrder = 0;
             canvas.gameObject.SetActive(true);
+
             var cg = canvas.GetComponent<CanvasGroup>();
+
             if (cg != null)
             {
                 cg.alpha = 1f;
@@ -226,19 +249,24 @@ public class MainMenu : MonoBehaviour
         }
 
         mainMenuContent.SetActive(true);
+
         foreach (var cg in mainMenuContent.GetComponentsInChildren<CanvasGroup>(true))
         {
             cg.alpha = 1f;
             cg.interactable = true;
             cg.blocksRaycasts = true;
         }
+
         foreach (Transform child in mainMenuContent.GetComponentsInChildren<Transform>(true))
+        {
             child.gameObject.SetActive(true);
+        }
     }
 
     private IEnumerator EnsureMainMenuVisible()
     {
         yield return new WaitForSecondsRealtime(0.5f);
+
         if (mainMenuContent == null) yield break;
 
         foreach (var cg in mainMenuContent.GetComponentsInChildren<CanvasGroup>(true))
@@ -247,21 +275,26 @@ public class MainMenu : MonoBehaviour
             cg.interactable = true;
             cg.blocksRaycasts = true;
         }
+
         mainMenuContent.SetActive(true);
     }
 
     private void PlayEntryAnimation()
     {
         if (mainMenuContent == null) return;
+
         foreach (var anim in mainMenuContent.GetComponentsInChildren<Animator>(true))
         {
             if (anim == null) continue;
+
             anim.Rebind();
             anim.Update(0f);
+
             if (!string.IsNullOrEmpty(entryStateName))
                 anim.Play(entryStateName, 0, 0f);
             else
                 anim.Play(0, 0, 0f);
+
             anim.Update(0f);
         }
     }

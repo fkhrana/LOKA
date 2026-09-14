@@ -15,7 +15,7 @@ namespace EasyTransition
         [SerializeField] private string transitionSound = "BrushTransisi";
 
         [Range(0f, 1f)]
-        [SerializeField] private float transitionSoundVolume = 2f;
+        [SerializeField] private float transitionSoundVolume = 1f;
 
         private bool runningTransition;
 
@@ -27,27 +27,54 @@ namespace EasyTransition
 
         private void Awake()
         {
+            if (instance != null && instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             instance = this;
         }
 
         public static TransitionManager Instance()
         {
             if (instance == null)
-                Debug.LogError("You tried to access the instance before it exists.");
+                Debug.LogError(
+                    "You tried to access the instance before it exists."
+                );
 
             return instance;
         }
 
-        public void Transition(TransitionSettings transition, float startDelay)
+        public bool IsTransitionRunning()
+        {
+            return runningTransition;
+        }
+
+        public void Transition(
+            TransitionSettings transition,
+            float startDelay
+        )
         {
             if (transition == null || runningTransition)
             {
-                Debug.LogError("You have to assign a transition.");
+                Debug.LogError(
+                    "You have to assign a transition."
+                );
+
                 return;
             }
 
             runningTransition = true;
-            StartCoroutine(Timer(startDelay, transition));
+
+            PlayTransitionSound();
+
+            StartCoroutine(
+                Timer(
+                    startDelay,
+                    transition
+                )
+            );
         }
 
         public void Transition(
@@ -58,12 +85,24 @@ namespace EasyTransition
         {
             if (transition == null || runningTransition)
             {
-                Debug.LogError("You have to assign a transition.");
+                Debug.LogError(
+                    "You have to assign a transition."
+                );
+
                 return;
             }
 
             runningTransition = true;
-            StartCoroutine(Timer(sceneName, startDelay, transition));
+
+            PlayTransitionSound();
+
+            StartCoroutine(
+                Timer(
+                    sceneName,
+                    startDelay,
+                    transition
+                )
+            );
         }
 
         public void Transition(
@@ -74,17 +113,24 @@ namespace EasyTransition
         {
             if (transition == null || runningTransition)
             {
-                Debug.LogError("You have to assign a transition.");
+                Debug.LogError(
+                    "You have to assign a transition."
+                );
+
                 return;
             }
 
             runningTransition = true;
-            StartCoroutine(Timer(sceneIndex, startDelay, transition));
-        }
 
-        private int GetSceneIndex(string sceneName)
-        {
-            return SceneManager.GetSceneByName(sceneName).buildIndex;
+            PlayTransitionSound();
+
+            StartCoroutine(
+                Timer(
+                    sceneIndex,
+                    startDelay,
+                    transition
+                )
+            );
         }
 
         private void PlayTransitionSound()
@@ -110,35 +156,73 @@ namespace EasyTransition
             TransitionSettings transitionSettings
         )
         {
-            yield return new WaitForSecondsRealtime(startDelay);
+            yield return new WaitForSecondsRealtime(
+                startDelay
+            );
 
             onTransitionBegin?.Invoke();
-            PlayTransitionSound();
 
-            GameObject template = Instantiate(transitionTemplate);
+            GameObject template =
+                Instantiate(transitionTemplate);
 
-            template.GetComponent<Transition>().transitionSettings =
+            Transition transition =
+                template.GetComponent<Transition>();
+
+            if (transition == null)
+            {
+                Debug.LogError(
+                    "[TransitionManager] Transition component tidak ditemukan di transitionTemplate."
+                );
+
+                runningTransition = false;
+                yield break;
+            }
+
+            transition.transitionSettings =
                 transitionSettings;
 
-            float transitionTime = transitionSettings.transitionTime;
+            float transitionTime =
+                transitionSettings.transitionTime;
 
             if (transitionSettings.autoAdjustTransitionTime)
             {
                 transitionTime =
-                    transitionTime / transitionSettings.transitionSpeed;
+                    transitionTime /
+                    transitionSettings.transitionSpeed;
             }
 
-            yield return new WaitForSecondsRealtime(transitionTime);
+            yield return new WaitForSecondsRealtime(
+                transitionTime
+            );
 
             onTransitionCutPointReached?.Invoke();
 
-            SceneManager.LoadScene(sceneName);
+            AsyncOperation asyncLoad =
+                SceneManager.LoadSceneAsync(
+                    sceneName
+                );
+
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
 
             yield return new WaitForSecondsRealtime(
-                transitionSettings.destroyTime
+                transitionTime
             );
 
             onTransitionEnd?.Invoke();
+
+            float remainingDestroyTime =
+                transitionSettings.destroyTime -
+                (transitionTime * 2f);
+
+            if (remainingDestroyTime > 0f)
+            {
+                yield return new WaitForSecondsRealtime(
+                    remainingDestroyTime
+                );
+            }
 
             runningTransition = false;
         }
@@ -149,35 +233,73 @@ namespace EasyTransition
             TransitionSettings transitionSettings
         )
         {
-            yield return new WaitForSecondsRealtime(startDelay);
+            yield return new WaitForSecondsRealtime(
+                startDelay
+            );
 
             onTransitionBegin?.Invoke();
-            PlayTransitionSound();
 
-            GameObject template = Instantiate(transitionTemplate);
+            GameObject template =
+                Instantiate(transitionTemplate);
 
-            template.GetComponent<Transition>().transitionSettings =
+            Transition transition =
+                template.GetComponent<Transition>();
+
+            if (transition == null)
+            {
+                Debug.LogError(
+                    "[TransitionManager] Transition component tidak ditemukan di transitionTemplate."
+                );
+
+                runningTransition = false;
+                yield break;
+            }
+
+            transition.transitionSettings =
                 transitionSettings;
 
-            float transitionTime = transitionSettings.transitionTime;
+            float transitionTime =
+                transitionSettings.transitionTime;
 
             if (transitionSettings.autoAdjustTransitionTime)
             {
                 transitionTime =
-                    transitionTime / transitionSettings.transitionSpeed;
+                    transitionTime /
+                    transitionSettings.transitionSpeed;
             }
 
-            yield return new WaitForSecondsRealtime(transitionTime);
+            yield return new WaitForSecondsRealtime(
+                transitionTime
+            );
 
             onTransitionCutPointReached?.Invoke();
 
-            SceneManager.LoadScene(sceneIndex);
+            AsyncOperation asyncLoad =
+                SceneManager.LoadSceneAsync(
+                    sceneIndex
+                );
+
+            while (!asyncLoad.isDone)
+            {
+                yield return null;
+            }
 
             yield return new WaitForSecondsRealtime(
-                transitionSettings.destroyTime
+                transitionTime
             );
 
             onTransitionEnd?.Invoke();
+
+            float remainingDestroyTime =
+                transitionSettings.destroyTime -
+                (transitionTime * 2f);
+
+            if (remainingDestroyTime > 0f)
+            {
+                yield return new WaitForSecondsRealtime(
+                    remainingDestroyTime
+                );
+            }
 
             runningTransition = false;
         }
@@ -187,38 +309,68 @@ namespace EasyTransition
             TransitionSettings transitionSettings
         )
         {
-            yield return new WaitForSecondsRealtime(delay);
+            yield return new WaitForSecondsRealtime(
+                delay
+            );
 
             onTransitionBegin?.Invoke();
-            PlayTransitionSound();
 
-            GameObject template = Instantiate(transitionTemplate);
+            GameObject template =
+                Instantiate(transitionTemplate);
 
-            template.GetComponent<Transition>().transitionSettings =
+            Transition transition =
+                template.GetComponent<Transition>();
+
+            if (transition == null)
+            {
+                Debug.LogError(
+                    "[TransitionManager] Transition component tidak ditemukan di transitionTemplate."
+                );
+
+                runningTransition = false;
+                yield break;
+            }
+
+            transition.transitionSettings =
                 transitionSettings;
 
-            float transitionTime = transitionSettings.transitionTime;
+            float transitionTime =
+                transitionSettings.transitionTime;
 
             if (transitionSettings.autoAdjustTransitionTime)
             {
                 transitionTime =
-                    transitionTime / transitionSettings.transitionSpeed;
+                    transitionTime /
+                    transitionSettings.transitionSpeed;
             }
 
-            yield return new WaitForSecondsRealtime(transitionTime);
+            yield return new WaitForSecondsRealtime(
+                transitionTime
+            );
 
             onTransitionCutPointReached?.Invoke();
 
-            template.GetComponent<Transition>().OnSceneLoad(
+            transition.OnSceneLoad(
                 SceneManager.GetActiveScene(),
                 LoadSceneMode.Single
             );
 
             yield return new WaitForSecondsRealtime(
-                transitionSettings.destroyTime
+                transitionTime
             );
 
             onTransitionEnd?.Invoke();
+
+            float remainingDestroyTime =
+                transitionSettings.destroyTime -
+                (transitionTime * 2f);
+
+            if (remainingDestroyTime > 0f)
+            {
+                yield return new WaitForSecondsRealtime(
+                    remainingDestroyTime
+                );
+            }
 
             runningTransition = false;
         }
@@ -227,21 +379,23 @@ namespace EasyTransition
         {
             while (gameObject.activeInHierarchy)
             {
-                int managerCount = FindObjectsByType<TransitionManager>(
-                    FindObjectsInactive.Include,
-                    FindObjectsSortMode.None
-                ).Length;
+                int managerCount =
+                    FindObjectsByType<TransitionManager>(
+                        FindObjectsInactive.Include,
+                        FindObjectsSortMode.None
+                    ).Length;
 
                 if (managerCount > 1)
                 {
                     Debug.LogError(
                         $"There are {managerCount} Transition Managers in your scene. " +
-                        "Please ensure there is only one Transition Manager in your scene " +
-                        "or overlapping transitions may occur."
+                        "Please ensure there is only one Transition Manager in your scene."
                     );
                 }
 
-                yield return new WaitForSecondsRealtime(1f);
+                yield return new WaitForSecondsRealtime(
+                    1f
+                );
             }
         }
     }
