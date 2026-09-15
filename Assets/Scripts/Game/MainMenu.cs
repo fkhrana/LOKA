@@ -171,52 +171,52 @@ public class MainMenu : MonoBehaviour
     public void OpenTutorial()   => OpenPanel(PanelType.Tutorial);
     public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
- public void TapToStart()
-{
-    if (isTransitioning)
-        return;
-
-    isTransitioning = true;
-
-    PlayClickSFX();
-    AudioManager.Instance?.FadeOutBGM();
-
-    bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
-    string targetScene = nextSceneName;
-
-    if (!tutorialCompleted)
+    public void TapToStart()
     {
-        // === Player baru → Cutscene → Tutorial → Main ===
-        Debug.Log($"[MainMenu] Player baru → Cutscene: {targetScene}");
-    }
-    else if (GameProgressManager.HasLastScene())
-    {
-        // === Player lama → resume scene terakhir ===
-        string saved = GameProgressManager.GetLastScene();
+        if (isTransitioning)
+            return;
 
-        if (!string.IsNullOrEmpty(saved))
+        isTransitioning = true;
+
+        PlayClickSFX();
+        AudioManager.Instance?.FadeOutBGM();
+
+        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        string targetScene = nextSceneName;
+
+        if (!tutorialCompleted)
         {
-            targetScene = saved;
-            Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
+            // === Player baru → Cutscene → Tutorial → Main ===
+            Debug.Log($"[MainMenu] Player baru → Cutscene: {targetScene}");
+        }
+        else if (GameProgressManager.HasLastScene())
+        {
+            // === Player lama → resume scene terakhir ===
+            string saved = GameProgressManager.GetLastScene();
+
+            if (!string.IsNullOrEmpty(saved))
+            {
+                targetScene = saved;
+                Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
+            }
+        }
+        else
+        {
+            Debug.Log($"[MainMenu] Player lama, tidak ada last scene → {targetScene}");
+        }
+
+        TransitionManager tm = TransitionManager.Instance();
+
+        if (tm != null && transitionSettings != null)
+        {
+            tm.Transition(targetScene, transitionSettings, loadDelay);
+        }
+        else
+        {
+            SceneManager.LoadScene(targetScene);
+            isTransitioning = false;
         }
     }
-    else
-    {
-        Debug.Log($"[MainMenu] Player lama, tidak ada last scene → {targetScene}");
-    }
-
-    TransitionManager tm = TransitionManager.Instance();
-
-    if (tm != null && transitionSettings != null)
-    {
-        tm.Transition(targetScene, transitionSettings, loadDelay);
-    }
-    else
-    {
-        SceneManager.LoadScene(targetScene);
-        isTransitioning = false;
-    }
-}
 
     private void ResetAllCanvases()
     {
