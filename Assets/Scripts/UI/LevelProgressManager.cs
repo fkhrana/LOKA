@@ -12,8 +12,17 @@ public class LevelProgressManager : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private Slider progressBar;
+    [SerializeField] private Image progressBarGlow;
+    [SerializeField] private ParticleSystem progressBarVfx;
     [SerializeField] private TMP_Text progressText;
     [SerializeField] private float progressAnimationDuration = 0.25f;
+    [SerializeField] private float progressBarGlowFadeSpeed = 2f;
+    [Range(0f, 1f)]
+    [SerializeField] private float progressBarGlowStartFill = 0.2f;
+    [Range(0f, 1f)]
+    [SerializeField] private float progressBarGlowEndFill = 1f;
+    [SerializeField] private GameObject[] milestoneVfxByWave;
+    [SerializeField] private float milestoneVfxLifetime = 2f;
 
     [Header("Non-Collectible Item VFX")]
     [SerializeField] private Transform[] levelBarStarTargetsByWave;
@@ -22,7 +31,11 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private Vector3 barItemTrailSpawnOffset = new Vector3(0f, 0f, 0.2f);
     [SerializeField] private float barItemTrailDuration = 0.8f;
     [SerializeField] private float trailCollectItemScale = 0.5f;
-    [SerializeField] private float trailCollectItemSpeed = 8f;
+    [SerializeField] private float trailCollectItemFlightDuration = 1.2f;
+    [SerializeField] private float trailCollectItemArcHeight = 3f;
+    [SerializeField] private float trailCollectItemSideOffset = 1f;
+    [SerializeField] private AnimationCurve trailCollectItemFlightCurve =
+        AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
     [SerializeField] private float trailCollectItemArrivalDistance = 0.15f;
     [SerializeField] private float trailCollectItemEndDelay = 0.15f;
 
@@ -33,12 +46,18 @@ public class LevelProgressManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float nonCollectibleVfxSFXVolume = 1f;
 
+    [Header("Testing")]
+    [SerializeField] private Button addProgressButton;
+    [Min(1)]
+    [SerializeField] private int testingProgressAmount = 1;
+
     [Header("Optional Events")]
     public UnityEvent OnReachedWaveMilestone;
     public UnityEvent OnReachedLevelComplete;
 
     private int totalEnemies = 1;
     private int processedEnemies = 0;
+    private int pendingProgress = 0;
 
     private HashSet<int> triggeredMilestones =
         new HashSet<int>();
@@ -60,6 +79,18 @@ public class LevelProgressManager : MonoBehaviour
         Instance = this;
     }
 
+    private void OnEnable()
+    {
+        if (addProgressButton != null)
+            addProgressButton.onClick.AddListener(AddProgressForTesting);
+    }
+
+    private void OnDisable()
+    {
+        if (addProgressButton != null)
+            addProgressButton.onClick.RemoveListener(AddProgressForTesting);
+    }
+
     public void Initialize(
         int totalEnemiesInLevel,
         List<int> waveMilestones = null
@@ -69,25 +100,123 @@ public class LevelProgressManager : MonoBehaviour
             Mathf.Max(1, totalEnemiesInLevel);
 
         processedEnemies = 0;
-
-        triggeredMilestones.Clear();
-        milestones.Clear();
+        pendingProgress = 0;
 
         if (waveMilestones != null)
+        {
+            milestones.Clear();
             milestones.AddRange(waveMilestones);
+        }
+
+        triggeredMilestones.Clear();
+
+        if (progressBarGlow != null)
+        {
+            UpdateGlow(0f);
+            SetGlowAlpha(0f);
+        }
 
         UpdateUI();
     }
 
     public void OnEnemyProcessed()
     {
-        processedEnemies =
-            Mathf.Min(
-                totalEnemies,
-                processedEnemies + 1
-            );
+        pendingProgress = Mathf.Min(
+            totalEnemies - processedEnemies,
+            pendingProgress + 1
+        );
+    }
+
+    public void CompletePendingProgress()
+    {
+        if (pendingProgress <= 0 || processedEnemies >= totalEnemies)
+            return;
+
+        pendingProgress--;
+        processedEnemies++;
+
+        SetGlowAlpha(1f);
+
+        if (progressBarVfx != null)
+        {
+            progressBarVfx.Clear();
+            progressBarVfx.Play();
+        }
 
         UpdateUI();
+    }
+
+    public void AddProgressForTesting()
+    {
+        int amount = Mathf.Max(1, testingProgressAmount);
+
+        for (int i = 0; i < amount; i++)
+        {
+            if (processedEnemies >= totalEnemies)
+                break;
+
+            CompleteProgressForTesting();
+        }
+    }
+
+    private void CompleteProgressForTesting()
+    {
+        processedEnemies = Mathf.Min(totalEnemies, processedEnemies + 1);
+        SetGlowAlpha(1f);
+
+        if (progressBarVfx != null)
+        {
+            progressBarVfx.Clear();
+            progressBarVfx.Play();
+        }
+
+        UpdateUI();
+    }
+
+    private void Update()
+    {
+        if (progressBar != null)
+        {
+            if (progressBarGlow != null)
+                UpdateGlow(progressBar.value);
+        }
+
+        if (progressBarGlow != null)
+        {
+            Color glowColor = progressBarGlow.color;
+
+            if (glowColor.a > 0f)
+            {
+                glowColor.a = Mathf.MoveTowards(
+                    glowColor.a,
+                    0f,
+                    progressBarGlowFadeSpeed * Time.deltaTime
+                );
+                progressBarGlow.color = glowColor;
+            }
+        }
+    }
+
+    private void SetGlowAlpha(float alpha)
+    {
+        if (progressBarGlow == null)
+            return;
+
+        Color glowColor = progressBarGlow.color;
+        glowColor.a = Mathf.Clamp01(alpha);
+        progressBarGlow.color = glowColor;
+    }
+
+    private void UpdateGlow(float progress)
+    {
+        if (progressBarGlow == null)
+            return;
+
+        progressBarGlow.fillAmount = Mathf.Lerp(
+            progressBarGlowStartFill,
+            progressBarGlowEndFill,
+            Mathf.Clamp01(progress)
+        );
     }
 
     public void SetLevelBarTargetForWave(
@@ -122,7 +251,10 @@ public class LevelProgressManager : MonoBehaviour
             barItemTrailVfx == null ||
             trailCollectItemVfx == null
         )
+        {
+            CompletePendingProgress();
             return;
+        }
 
         StartCoroutine(
             PlayNonCollectibleItemVfxRoutine(
@@ -183,6 +315,10 @@ public class LevelProgressManager : MonoBehaviour
         collectTrail.transform.localScale *=
             trailCollectItemScale;
 
+        Vector3 collectTrailStartPosition =
+            collectTrail.transform.position;
+        float collectTrailElapsed = 0f;
+
         while (
             collectTrail != null &&
             target != null
@@ -194,15 +330,53 @@ public class LevelProgressManager : MonoBehaviour
                     collectTrail.transform.position.z
                 );
 
-            collectTrail.transform.position =
-                Vector3.MoveTowards(
-                    collectTrail.transform.position,
+            collectTrailElapsed += Time.deltaTime;
+
+            float flightProgress =
+                Mathf.Clamp01(
+                    collectTrailElapsed /
+                    Mathf.Max(0.01f, trailCollectItemFlightDuration)
+                );
+
+            float curvedProgress =
+                trailCollectItemFlightCurve.Evaluate(
+                    flightProgress
+                );
+
+            Vector3 midpoint =
+                collectTrailStartPosition +
+                (targetPosition - collectTrailStartPosition) /
+                2f;
+            Vector3 controlPoint =
+                midpoint +
+                new Vector3(
+                    trailCollectItemSideOffset,
+                    trailCollectItemArcHeight,
+                    0f
+                );
+
+            Vector3 firstSegment =
+                Vector3.Lerp(
+                    collectTrailStartPosition,
+                    controlPoint,
+                    curvedProgress
+                );
+            Vector3 secondSegment =
+                Vector3.Lerp(
+                    controlPoint,
                     targetPosition,
-                    trailCollectItemSpeed *
-                    Time.deltaTime
+                    curvedProgress
+                );
+
+            collectTrail.transform.position =
+                Vector3.Lerp(
+                    firstSegment,
+                    secondSegment,
+                    curvedProgress
                 );
 
             if (
+                flightProgress >= 1f ||
                 Vector3.Distance(
                     collectTrail.transform.position,
                     targetPosition
@@ -227,6 +401,8 @@ public class LevelProgressManager : MonoBehaviour
 
             Destroy(collectTrail);
         }
+
+        CompletePendingProgress();
     }
 
     private void PlayParticleSystems(
@@ -357,6 +533,8 @@ public class LevelProgressManager : MonoBehaviour
             {
                 triggeredMilestones.Add(m);
 
+                PlayMilestoneVfx(i);
+
                 OnReachedWaveMilestone?.Invoke();
             }
         }
@@ -365,6 +543,33 @@ public class LevelProgressManager : MonoBehaviour
         {
             OnReachedLevelComplete?.Invoke();
         }
+    }
+
+    private void PlayMilestoneVfx(int milestoneIndex)
+    {
+        if (
+            milestoneVfxByWave == null ||
+            milestoneIndex < 0 ||
+            milestoneIndex >= milestoneVfxByWave.Length ||
+            milestoneVfxByWave[milestoneIndex] == null
+        )
+            return;
+
+        GameObject milestoneVfx = milestoneVfxByWave[milestoneIndex];
+        milestoneVfx.SetActive(true);
+        PlayParticleSystems(milestoneVfx);
+
+        StartCoroutine(DisableMilestoneVfxAfterDelay(milestoneVfx));
+    }
+
+    private IEnumerator DisableMilestoneVfxAfterDelay(GameObject milestoneVfx)
+    {
+        yield return new WaitForSeconds(
+            Mathf.Max(0.1f, milestoneVfxLifetime)
+        );
+
+        if (milestoneVfx != null)
+            milestoneVfx.SetActive(false);
     }
 
     private IEnumerator AnimateProgressBar(

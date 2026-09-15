@@ -205,6 +205,10 @@ public class AksaraFragmentItem : MonoBehaviour
 
         CollectionPanel.PlayCollectionBookVfx();
 
+        Transform collectBookTarget = CollectionPanel.CollectBookTarget;
+        if (collectBookTarget != null)
+            collectBookTarget.GetComponent<EffectHover>()?.PlayCollectPulse();
+
         if (aksaraData != null && CollectedAksaraManager.Instance != null)
         {
             CollectedAksaraManager.Instance.RegisterCollect(aksaraData);

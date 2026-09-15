@@ -16,6 +16,10 @@ public class EffectHover : MonoBehaviour,
 
     [SerializeField] private float animDuration = 0.2f;
 
+    [Header("Collect Book Pulse")]
+    [SerializeField] private float collectPulseScale = 1.2f;
+    [SerializeField] private float collectPulseDuration = 0.5f;
+
     [SerializeField] private LeanTweenType easeType =
         LeanTweenType.easeOutBack;
 
@@ -192,6 +196,32 @@ public class EffectHover : MonoBehaviour,
             clickSound,
             clickVolume
         );
+    }
+
+    public void PlayCollectPulse()
+    {
+        if (targetTransform == null)
+            return;
+
+        Vector3 startScale = targetTransform.localScale;
+
+        LeanTween.scale(
+            targetTransform,
+            startScale * collectPulseScale,
+            collectPulseDuration * 0.4f
+        )
+        .setEase(LeanTweenType.easeOutBack)
+        .setIgnoreTimeScale(true)
+        .setOnComplete(() =>
+        {
+            LeanTween.scale(
+                targetTransform,
+                startScale,
+                collectPulseDuration * 0.6f
+            )
+            .setEase(LeanTweenType.easeInOutSine)
+            .setIgnoreTimeScale(true);
+        });
     }
 
     // ==================================================

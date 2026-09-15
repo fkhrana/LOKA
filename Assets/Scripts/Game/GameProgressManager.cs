@@ -2,6 +2,13 @@ using UnityEngine;
 
 public static class GameProgressManager
 {
+    public static bool StartedFromMainMenu { get; private set; }
+
+    public static void MarkStartedFromMainMenu()
+    {
+        StartedFromMainMenu = true;
+    }
+
     private const string KEY_LAST_SCENE = "LastSceneName";
     private const string KEY_GAME_STATE = "GameState";
     private const string KEY_PUZZLE_INDEX = "LastPuzzleIndex";
