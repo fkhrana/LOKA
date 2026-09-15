@@ -186,6 +186,7 @@ public class MainMenu : MonoBehaviour
 
     if (!tutorialCompleted)
     {
+<<<<<<< HEAD
         // === Player baru → Cutscene → Tutorial → Main ===
         Debug.Log($"[MainMenu] Player baru → Cutscene: {targetScene}");
     }
@@ -193,6 +194,11 @@ public class MainMenu : MonoBehaviour
     {
         // === Player lama → resume scene terakhir ===
         string saved = GameProgressManager.GetLastScene();
+=======
+        if (isTransitioning) return;
+        isTransitioning = true;
+        GameProgressManager.MarkStartedFromMainMenu();
+>>>>>>> parent of 20fa826 (Revert "Merge branch 'main' of https://github.com/fkhrana/LOKA")
 
         if (!string.IsNullOrEmpty(saved))
         {

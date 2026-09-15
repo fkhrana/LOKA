@@ -87,6 +87,7 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
 
         string sceneName = LevelManager.Instance.GetSceneNameForLevel(levelIndex);
 
+<<<<<<< HEAD
         if (string.IsNullOrEmpty(sceneName))
         {
             Debug.LogError($"LevelUI: Scene name untuk level {levelIndex + 1} kosong.");
@@ -96,6 +97,12 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
         Debug.Log($"Memulai Level {levelIndex + 1} → {sceneName}");
 
         SceneManager.LoadScene(sceneName);
+=======
+        GameProgressManager.MarkStartedFromMainMenu();
+        SceneManager.LoadScene(
+            gameplaySceneName
+        );
+>>>>>>> parent of 20fa826 (Revert "Merge branch 'main' of https://github.com/fkhrana/LOKA")
     }
 
     private void PlaySfxOrFallback(AudioClip clip)

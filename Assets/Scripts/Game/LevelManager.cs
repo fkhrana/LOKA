@@ -426,7 +426,13 @@ public class LevelManager : MonoBehaviour
             return false;
         }
 
+<<<<<<< HEAD
         Debug.Log($"[LevelManager] Loading Level {index + 1}: {sceneName}");
+=======
+        Debug.Log("[LevelManager] Loading Level " + (index + 1) + ": " + sceneName);
+
+        GameProgressManager.MarkStartedFromMainMenu();
+>>>>>>> parent of 20fa826 (Revert "Merge branch 'main' of https://github.com/fkhrana/LOKA")
         SceneManager.LoadScene(sceneName);
         return true;
     }

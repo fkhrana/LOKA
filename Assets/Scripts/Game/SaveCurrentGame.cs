@@ -143,9 +143,22 @@ public class SaveCurrentProgress : MonoBehaviour
     {
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
+<<<<<<< HEAD
         if (canvas2 != null) canvas2.SetActive(false);
         if (puzzlePanel != null) puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
+=======
+#if UNITY_EDITOR
+        if (!GameProgressManager.StartedFromMainMenu)
+        {
+            Debug.Log("[SaveCurrentProgress] Direct Editor Play → kondisi panel dipertahankan");
+            return;
+        }
+#endif
+
+        if (canvas2 != null)
+            canvas2.SetActive(false);
+>>>>>>> parent of 20fa826 (Revert "Merge branch 'main' of https://github.com/fkhrana/LOKA")
 
         if (GameProgressManager.HasEnteredGameplay())
         {
