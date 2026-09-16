@@ -42,6 +42,23 @@ public class SaveCurrentProgress : MonoBehaviour
         RestorePlayerPosition();
 
         string savedState = GameProgressManager.GetGameState();
+        bool fromMainMenu = GameProgressManager.StartedFromMainMenu;
+
+        Debug.Log($"[SaveCurrentProgress] scene={currentScene}, " +
+                  $"state='{savedState}', fromMainMenu={fromMainMenu}");
+
+        // Kalau masuk scene BUKAN dari main menu → state Panel stale, clear.
+        // (Kejadian kalau Play langsung dari Editor / entry tanpa main menu.)
+        if (!fromMainMenu)
+        {
+            if (savedState == "Puzzle" || savedState == "Reward")
+            {
+                Debug.Log($"[SaveCurrentProgress] Bukan dari main menu → " +
+                          $"state '{savedState}' stale, clear.");
+                GameProgressManager.ClearGameState();
+                savedState = "";
+            }
+        }
 
         if (savedState == "Puzzle") { RestorePuzzle(); return; }
         if (savedState == "Reward") { RestoreReward(); return; }
