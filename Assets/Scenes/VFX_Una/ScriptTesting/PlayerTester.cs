@@ -2,18 +2,24 @@ using UnityEngine;
 
 public class PlayerTester : MonoBehaviour
 {
-    [Header("Masukkan 5 Hati dari Kiri ke Kanan")]
+    [Header("UI HP Bar")]
     public HeartVFX[] daftarHati; 
-    
     private int hpSaatIni;
+
+    [Header("Helper dan VFX")]
+    public GameObject helperKarakter; // Karakter Helper yang akan dimunculkan
+    public GameObject vfxHealObjek;   // Objek induk VFX_Heal yang baru kita buat
 
     void Start()
     {
-        // Set HP awal sesuai jumlah hati yang kamu masukkan
         hpSaatIni = daftarHati.Length; 
+        
+        // Matikan helper dan VFX saat game mulai
+        if(helperKarakter != null) helperKarakter.SetActive(false);
+        if(vfxHealObjek != null) vfxHealObjek.SetActive(false);
     }
 
-    // FUNGSI TESTING: Dipanggil otomatis oleh Unity kalau Sprite ini di-klik pakai Mouse
+    // Dipanggil saat klik Player
     void OnMouseDown()
     {
         KurangiHP();
@@ -23,16 +29,48 @@ public class PlayerTester : MonoBehaviour
     {
         if (hpSaatIni > 0)
         {
-            hpSaatIni--; // Kurangi 1 angka HP (misal dari 5 jadi 4)
-            
-            // Panggil animasi meledak pada hati yang berada di urutan tersebut
+            hpSaatIni--; 
             daftarHati[hpSaatIni].TerkenaDamage(); 
+            Debug.Log("Sisa HP: " + hpSaatIni);
+
+            // Jika HP berkurang, panggil sang Helper!
+            if (helperKarakter != null && !helperKarakter.activeSelf)
+            {
+                helperKarakter.SetActive(true); 
+            }
+        }
+    }
+
+    // FUNGSI BARU UNTUK HEALING
+    public void TambahHP()
+    {
+        if (hpSaatIni < daftarHati.Length)
+        {
+            // Panggil VFX Heal
+            if(vfxHealObjek != null)
+            {
+                vfxHealObjek.SetActive(false); // Matikan dulu biar me-reset
+                vfxHealObjek.SetActive(true);  // Nyalakan lagi
+                
+                // Cari semua Particle System di dalam objek ini dan Play
+                ParticleSystem[] semuaPartikel = vfxHealObjek.GetComponentsInChildren<ParticleSystem>();
+                foreach(ParticleSystem ps in semuaPartikel)
+                {
+                    ps.Play();
+                }
+            }
+
+            // Kembalikan gambar Hati (Tidak perlu animasi, langsung muncul)
+            daftarHati[hpSaatIni].gambarHati.enabled = true;
+            daftarHati[hpSaatIni].transform.localScale = Vector3.one; 
+            daftarHati[hpSaatIni].gambarHati.color = Color.white;
             
-            Debug.Log("Aduh kena hit! Sisa HP: " + hpSaatIni);
+            hpSaatIni++;
+            Debug.Log("Healed! HP sekarang: " + hpSaatIni);
         }
         else
         {
-            Debug.Log("Player Sudah Mati!");
+            Debug.Log("HP Sudah Penuh!");
         }
     }
 }
