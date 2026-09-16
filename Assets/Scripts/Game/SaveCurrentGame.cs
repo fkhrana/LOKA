@@ -15,16 +15,15 @@ public class SaveCurrentProgress : MonoBehaviour
     [SerializeField] private CameraIntroManager cameraIntroManager;
 
     [Header("Player")]
-    [Tooltip("Drag GameObject Player ke sini. Kalau kosong, akan dicari via tag 'Player'.")]
     [SerializeField] private Transform player;
 
     private void Awake()
     {
+        // Auto-cari player via tag kalau kosong.
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null)
-                player = p.transform;
+            if (p != null) player = p.transform;
         }
     }
 
@@ -33,9 +32,7 @@ public class SaveCurrentProgress : MonoBehaviour
         string currentScene = SceneManager.GetActiveScene().name;
         GameProgressManager.SaveLastScene(currentScene);
 
-        // === TUTORIAL GUARD ===
-        // Kalau tutorial belum selesai, jangan restore state apapun.
-        // TutorialManager yang akan atur semuanya dari awal.
+        // Tutorial belum selesai → skip restore semua state.
         if (PlayerPrefs.GetInt("TutorialCompleted", 0) == 0)
         {
             Debug.Log("[SaveCurrentProgress] Tutorial belum selesai → skip restore.");
@@ -46,24 +43,14 @@ public class SaveCurrentProgress : MonoBehaviour
 
         string savedState = GameProgressManager.GetGameState();
 
-        if (savedState == "Puzzle")
-        {
-            RestorePuzzle();
-            return;
-        }
-
-        if (savedState == "Reward")
-        {
-            RestoreReward();
-            return;
-        }
+        if (savedState == "Puzzle") { RestorePuzzle(); return; }
+        if (savedState == "Reward") { RestoreReward(); return; }
+        if (savedState == "Gameplay") { RestoreGameplay(); return; }
 
         StartNewGame();
     }
 
-    // ============================================================
-    // PUBLIC ENTRY POINT — dipanggil dari PauseOverlay
-    // ============================================================
+    // Dipanggil dari PauseOverlay untuk simpan posisi player.
     public void SavePlayerPositionNow()
     {
         if (player == null)
@@ -75,9 +62,7 @@ public class SaveCurrentProgress : MonoBehaviour
         GameProgressManager.SavePlayerPosition(player.position);
     }
 
-    // ============================================================
-    // RESTORE
-    // ============================================================
+    // Restore posisi player dari PlayerPrefs.
     private void RestorePlayerPosition()
     {
         if (player == null) return;
@@ -89,21 +74,33 @@ public class SaveCurrentProgress : MonoBehaviour
         }
     }
 
+    // Resume ke state Puzzle.
     private void RestorePuzzle()
     {
         Debug.Log("[SaveCurrentProgress] Resume → Canvas 2 / Puzzle");
         ApplyPuzzleUI();
     }
 
+    // Resume ke state Reward.
     private void RestoreReward()
     {
         Debug.Log("[SaveCurrentProgress] Resume → Canvas 2 / Reward");
         ApplyRewardUI();
     }
 
-    // ============================================================
-    // PUBLIC ENTRY POINT — panggil dari script lain
-    // ============================================================
+    // Resume ke state Gameplay.
+    private void RestoreGameplay()
+    {
+        Debug.Log("[SaveCurrentProgress] Resume → Gameplay");
+
+        if (canvas2 != null) canvas2.SetActive(false);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
+
+        // Wave index di-restore oleh EnemyWaveSpawner.Start().
+    }
+
+    // Tandai state Puzzle + apply UI.
     public void MarkPuzzleActive()
     {
         ApplyPuzzleUI();
@@ -111,6 +108,7 @@ public class SaveCurrentProgress : MonoBehaviour
         Debug.Log("[SaveCurrentProgress] State disimpan: Puzzle");
     }
 
+    // Tandai state Reward + apply UI.
     public void MarkRewardActive()
     {
         ApplyRewardUI();
@@ -118,9 +116,7 @@ public class SaveCurrentProgress : MonoBehaviour
         Debug.Log("[SaveCurrentProgress] State disimpan: Reward");
     }
 
-    // ============================================================
-    // UI HELPERS
-    // ============================================================
+    // Apply UI untuk state Puzzle.
     private void ApplyPuzzleUI()
     {
         if (enemyWaveSpawner != null) enemyWaveSpawner.StopWaveSequence();
@@ -130,6 +126,7 @@ public class SaveCurrentProgress : MonoBehaviour
         if (rewardPanel != null) rewardPanel.SetActive(false);
     }
 
+    // Apply UI untuk state Reward.
     private void ApplyRewardUI()
     {
         if (enemyWaveSpawner != null) enemyWaveSpawner.StopWaveSequence();
@@ -139,6 +136,7 @@ public class SaveCurrentProgress : MonoBehaviour
         if (rewardPanel != null) rewardPanel.SetActive(true);
     }
 
+    // Setup untuk new game / gameplay normal.
     private void StartNewGame()
     {
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");

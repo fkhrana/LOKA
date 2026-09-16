@@ -8,7 +8,8 @@ public class VolumeSliderController : MonoBehaviour
     [SerializeField] private Slider sfxSlider;
 
     [Header("SFX")]
-    [SerializeField] private AudioClip sliderTickSound; // Drag suara "tic" di sini
+    [SerializeField] private AudioClip sliderTickSound;
+    [Range(0f, 1f)] [SerializeField] private float sliderTickVolume = 0.5f;
 
     private void OnEnable()
     {
@@ -16,12 +17,12 @@ public class VolumeSliderController : MonoBehaviour
 
         if (bgmSlider != null)
         {
-            // Pastikan range slider aman: minValue TIDAK BOLEH 0
+            // Range aman: minValue tidak boleh 0.
             bgmSlider.wholeNumbers = false;
             bgmSlider.minValue = 0.0001f;
             bgmSlider.maxValue = 1f;
 
-            // Set posisi slider sesuai volume saat ini TANPA memicu event dulu
+            // Set posisi slider tanpa memicu event.
             bgmSlider.SetValueWithoutNotify(AudioManager.Instance.GetCurrentBGMVolume());
 
             bgmSlider.onValueChanged.RemoveListener(OnBGMChanged);
@@ -43,28 +44,28 @@ public class VolumeSliderController : MonoBehaviour
 
     private void OnDisable()
     {
-        if (bgmSlider != null)
-            bgmSlider.onValueChanged.RemoveListener(OnBGMChanged);
-
-        if (sfxSlider != null)
-            sfxSlider.onValueChanged.RemoveListener(OnSFXChanged);
+        if (bgmSlider != null) bgmSlider.onValueChanged.RemoveListener(OnBGMChanged);
+        if (sfxSlider != null) sfxSlider.onValueChanged.RemoveListener(OnSFXChanged);
     }
 
+    // Slider BGM berubah: update volume + tick.
     private void OnBGMChanged(float value)
     {
         AudioManager.Instance?.SetBGMVolume(value);
         PlaySliderTick();
     }
 
+    // Slider SFX berubah: update volume + tick.
     private void OnSFXChanged(float value)
     {
         AudioManager.Instance?.SetSFXVolume(value);
         PlaySliderTick();
     }
 
+    // Putar SFX tick saat slider bergerak (tanpa ducking BGM).
     private void PlaySliderTick()
     {
         if (sliderTickSound == null) return;
-        AudioManager.Instance?.PlayUISFX(sliderTickSound);
+        AudioManager.Instance?.PlaySliderTickSFX(sliderTickSound, sliderTickVolume);
     }
 }

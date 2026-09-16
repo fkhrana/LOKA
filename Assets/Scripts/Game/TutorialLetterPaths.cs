@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Library path tutorial dots + hand. 
-/// Support: Na, Wa, La, Qa, Da.
-/// Path dari IGestureTemplateProvider via reflection, fallback manual.
-/// </summary>
 public static class TutorialLetterPaths
 {
     private static Dictionary<GestureShape, List<Vector2>> templateCache;
@@ -20,9 +15,7 @@ public static class TutorialLetterPaths
 
     public static bool IsSupported(GestureShape shape) => supportedShapes.Contains(shape);
 
-    // ============================================================
-    // PUBLIC
-    // ============================================================
+    // Ambil path untuk shape, fallback ke manual kalau tidak ada.
     public static List<Vector2> GetPath(GestureShape shape)
     {
         EnsureCache();
@@ -47,9 +40,7 @@ public static class TutorialLetterPaths
         return ManualNa();
     }
 
-    // ============================================================
-    // CACHE BUILDER (reflection)
-    // ============================================================
+    // Build cache dari semua IGestureTemplateProvider via reflection.
     private static void EnsureCache()
     {
         if (templateCache != null) return;
@@ -115,9 +106,7 @@ public static class TutorialLetterPaths
         Debug.Log($"[TutorialLetterPaths] Cache selesai. {found}/{supportedShapes.Count} shapes terdaftar.");
     }
 
-    // ============================================================
-    // HELPERS
-    // ============================================================
+    // Gabung strokes jadi satu path dengan interpolasi antar stroke.
     private static List<Vector2> CombineStrokes(List<List<Vector2>> strokes)
     {
         var combined = new List<Vector2>();
@@ -141,6 +130,7 @@ public static class TutorialLetterPaths
         return combined;
     }
 
+    // Normalize path ke range targetRange di sekitar center.
     private static List<Vector2> NormalizeToRange(List<Vector2> raw, float targetRange)
     {
         if (raw == null || raw.Count == 0) return new List<Vector2>();
@@ -170,9 +160,7 @@ public static class TutorialLetterPaths
         return result;
     }
 
-    // ============================================================
-    // MANUAL FALLBACK
-    // ============================================================
+    // Ambil fallback manual sesuai shape.
     private static List<Vector2> GetManualFallback(GestureShape shape)
     {
         switch (shape)
@@ -186,6 +174,7 @@ public static class TutorialLetterPaths
         }
     }
 
+    // Path Na manual: garis horizontal.
     private static List<Vector2> ManualNa()
     {
         return new List<Vector2>
@@ -195,6 +184,7 @@ public static class TutorialLetterPaths
         };
     }
 
+    // Path Wa manual: bentuk W.
     private static List<Vector2> ManualWa()
     {
         return new List<Vector2>
@@ -207,6 +197,7 @@ public static class TutorialLetterPaths
         };
     }
 
+    // Path La manual: bentuk L.
     private static List<Vector2> ManualLa()
     {
         return new List<Vector2>
@@ -217,6 +208,7 @@ public static class TutorialLetterPaths
         };
     }
 
+    // Path Qa manual: lingkaran + ekor.
     private static List<Vector2> ManualQa()
     {
         var pts = new List<Vector2>();
@@ -230,6 +222,7 @@ public static class TutorialLetterPaths
         return pts;
     }
 
+    // Path Da manual: bentuk kotak.
     private static List<Vector2> ManualDa()
     {
         return new List<Vector2>

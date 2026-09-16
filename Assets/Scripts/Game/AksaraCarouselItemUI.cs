@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Represents a single Aksara card in the carousel.
-/// Handles visual setup, lock state, click events, and bounce effect.
-/// </summary>
 [RequireComponent(typeof(Button))]
 public class AksaraCarouselItemUI : MonoBehaviour
 {
@@ -25,7 +21,6 @@ public class AksaraCarouselItemUI : MonoBehaviour
     private AksaraCarouselUI carousel;
     private bool isCollected;
     private Button mainButton;
-
     private bool isAnimating = false;
 
     public RectTransform RectTransform => (RectTransform)transform;
@@ -36,10 +31,10 @@ public class AksaraCarouselItemUI : MonoBehaviour
         mainButton = GetComponent<Button>();
         mainButton.onClick.AddListener(OnClick);
 
-        if (soundButton)
-            soundButton.onClick.AddListener(PlayLetterSound);
+        if (soundButton) soundButton.onClick.AddListener(PlayLetterSound);
     }
 
+    // Setup data, sprite, tint, lock state.
     public void Setup(AksaraData newData, AksaraCarouselUI parent, bool collected)
     {
         data = newData;
@@ -63,12 +58,13 @@ public class AksaraCarouselItemUI : MonoBehaviour
         if (soundButton) soundButton.interactable = isCollected;
     }
 
+    // Set scale dari carousel (kecuali sedang bounce).
     public void SetScale(float scale)
     {
-        if (!isAnimating)
-            transform.localScale = Vector3.one * scale;
+        if (!isAnimating) transform.localScale = Vector3.one * scale;
     }
 
+    // Efek bounce saat card di-select.
     public void PlayBounceEffect()
     {
         if (!isCollected || data == null) return;
@@ -88,12 +84,14 @@ public class AksaraCarouselItemUI : MonoBehaviour
             });
     }
 
+    // Forward klik ke carousel.
     private void OnClick()
     {
         if (!isCollected || data == null || carousel == null) return;
         carousel.OnItemSelected(this);
     }
 
+    // Putar suara aksara via sound button.
     private void PlayLetterSound()
     {
         if (!isCollected || data == null || soundLibrary == null) return;
@@ -102,8 +100,6 @@ public class AksaraCarouselItemUI : MonoBehaviour
         if (clip == null) return;
 
         float volume = soundLibrary.GetVolume(data.GestureShape);
-
-        // Pakai PlayAksaraVoice supaya volume bisa > 1 dan BGM otomatis ducking.
         AudioManager.Instance?.PlayAksaraVoice(clip, volume);
     }
 }

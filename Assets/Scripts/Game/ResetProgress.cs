@@ -13,61 +13,37 @@ public class AutoResetProgress : MonoBehaviour
     [SerializeField] private AksaraCarouselUI aksaraCarouselUI;
 
 #if UNITY_EDITOR
-
     private bool resetThisPlaySession = false;
 
-    private void OnEnable()
-    {
-        EditorApplication.playModeStateChanged +=
-            OnPlayModeStateChanged;
-    }
+    private void OnEnable() => EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+    private void OnDisable() => EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
-    private void OnDisable()
+    // Handle event saat Play Mode berubah.
+    private void OnPlayModeStateChanged(PlayModeStateChange state)
     {
-        EditorApplication.playModeStateChanged -=
-            OnPlayModeStateChanged;
-    }
-
-    private void OnPlayModeStateChanged(
-        PlayModeStateChange state
-    )
-    {
-        // Saat mulai Play
-        if (
-            state == PlayModeStateChange.EnteredPlayMode
-        )
+        // Saat mulai Play.
+        if (state == PlayModeStateChange.EnteredPlayMode)
         {
-            resetThisPlaySession =
-                resetOnStop;
+            resetThisPlaySession = resetOnStop;
 
             if (resetThisPlaySession)
             {
                 ResetGameData();
-
-                Debug.Log(
-                    "🆕 NEW PLAYER MODE AKTIF!"
-                );
+                Debug.Log("🆕 NEW PLAYER MODE AKTIF!");
             }
         }
 
-        // Saat klik Stop
-        if (
-            state == PlayModeStateChange.EnteredEditMode
-        )
+        // Saat klik Stop.
+        if (state == PlayModeStateChange.EnteredEditMode)
         {
             if (resetThisPlaySession)
             {
                 ResetGameData();
-
-                Debug.Log(
-                    "🔄 DATA TESTING DI-RESET SETELAH STOP!"
-                );
-
+                Debug.Log("🔄 DATA TESTING DI-RESET SETELAH STOP!");
                 resetThisPlaySession = false;
             }
         }
     }
-
 #endif
 
     private void Awake()
@@ -75,48 +51,30 @@ public class AutoResetProgress : MonoBehaviour
         // Reset dikontrol oleh Play Mode.
     }
 
+    // Hapus semua data progress + koleksi.
     private void ResetGameData()
     {
-        // Reset semua koleksi Aksara
         if (aksaraCarouselUI != null)
-        {
-            PermanentCollectionManager.ResetAksara(
-                aksaraCarouselUI.AllAksaraData.ToArray()
-            );
-        }
+            PermanentCollectionManager.ResetAksara(aksaraCarouselUI.AllAksaraData.ToArray());
 
-        // Reset progress semua level
         for (int i = 0; i < 3; i++)
         {
-            PlayerPrefs.DeleteKey(
-                "LevelUnlocked_" + i
-            );
-
-            PlayerPrefs.DeleteKey(
-                "LevelCompleted_" + i
-            );
+            PlayerPrefs.DeleteKey("LevelUnlocked_" + i);
+            PlayerPrefs.DeleteKey("LevelCompleted_" + i);
         }
 
-        // Reset level yang sedang dipilih
-        PlayerPrefs.DeleteKey(
-            "CurrentLevelIndex"
-        );
+        PlayerPrefs.DeleteKey("CurrentLevelIndex");
 
-        // Reset progress gameplay
         GameProgressManager.ResetProgress();
-
-        // === TAMBAHAN: reset intro flag biar panning jalan lagi ===
         CameraIntroManager.ResetIntroFlag();
 
         PlayerPrefs.Save();
     }
 
+    // Reset manual dari tombol / context menu.
     public void ResetAgain()
     {
         ResetGameData();
-
-        Debug.Log(
-            "🔄 DATA GAME BERHASIL DI-RESET MANUAL!"
-        );
+        Debug.Log("🔄 DATA GAME BERHASIL DI-RESET MANUAL!");
     }
 }

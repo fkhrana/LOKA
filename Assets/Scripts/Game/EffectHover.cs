@@ -11,29 +11,19 @@ public class EffectHover : MonoBehaviour,
 
     [Header("Animation")]
     [SerializeField] private float hoverScale = 1.1f;
-
     [SerializeField] private float hoverMoveY = 10f;
-
     [SerializeField] private float animDuration = 0.2f;
 
     [Header("Collect Book Pulse")]
     [SerializeField] private float collectPulseScale = 1.2f;
     [SerializeField] private float collectPulseDuration = 0.5f;
-
-    [SerializeField] private LeanTweenType easeType =
-        LeanTweenType.easeOutBack;
+    [SerializeField] private LeanTweenType easeType = LeanTweenType.easeOutBack;
 
     [Header("Sound")]
-
     [SerializeField] private string hoverSound = "Hover";
-
     [SerializeField] private string clickSound = "ButtonHover";
-
-    [Range(0f, 1f)]
-    [SerializeField] private float hoverVolume = 0.1f;
-
-    [Range(0f, 1f)]
-    [SerializeField] private float clickVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float hoverVolume = 0.1f;
+    [Range(0f, 1f)] [SerializeField] private float clickVolume = 1f;
 
     private Vector3 originalScale;
     private Vector3 originalPosition;
@@ -43,241 +33,136 @@ public class EffectHover : MonoBehaviour,
 
     private void Awake()
     {
-        if (targetTransform == null)
-            targetTransform =
-                GetComponent<RectTransform>();
+        if (targetTransform == null) targetTransform = GetComponent<RectTransform>();
     }
 
-    private void Start()
-    {
-        CaptureOriginalIfNeeded();
-    }
+    private void Start() => CaptureOriginalIfNeeded();
+    private void OnEnable() => CaptureOriginalIfNeeded();
 
-    private void OnEnable()
-    {
-        CaptureOriginalIfNeeded();
-    }
-
+    // Simpan posisi & scale awal sekali saja.
     private void CaptureOriginalIfNeeded()
     {
-        if (hasCapturedOriginal ||
-            targetTransform == null)
-        {
-            return;
-        }
+        if (hasCapturedOriginal || targetTransform == null) return;
 
-        originalScale =
-            targetTransform.localScale;
-
-        originalPosition =
-            targetTransform.localPosition;
-
+        originalScale = targetTransform.localScale;
+        originalPosition = targetTransform.localPosition;
         hasCapturedOriginal = true;
     }
 
-    // ==================================================
-    // POINTER ENTER
-    // ==================================================
-
-    public void OnPointerEnter(
-        PointerEventData eventData
-    )
+    // Efek hover: scale + move + SFX.
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        DragItem dragItem =
-            GetComponent<DragItem>();
+        DragItem dragItem = GetComponent<DragItem>();
 
-        if (dragItem != null &&
-            dragItem.IsDragging)
-        {
-            return;
-        }
-
-        if (isHovering)
-            return;
+        if (dragItem != null && dragItem.IsDragging) return;
+        if (isHovering) return;
 
         isHovering = true;
 
-        LeanTween.cancel(
-            targetTransform.gameObject
-        );
+        LeanTween.cancel(targetTransform.gameObject);
 
-        // SCALE
-        LeanTween.scale(
-            targetTransform,
-            originalScale * hoverScale,
-            animDuration
-        )
-        .setEase(easeType)
-        .setIgnoreTimeScale(true);
-
-        // MOVE Y
-        if (hoverMoveY != 0f)
-        {
-            LeanTween.moveLocalY(
-                targetTransform.gameObject,
-                originalPosition.y + hoverMoveY,
-                animDuration
-            )
+        // Scale up.
+        LeanTween.scale(targetTransform, originalScale * hoverScale, animDuration)
             .setEase(easeType)
             .setIgnoreTimeScale(true);
+
+        // Move Y.
+        if (hoverMoveY != 0f)
+        {
+            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y + hoverMoveY, animDuration)
+                .setEase(easeType)
+                .setIgnoreTimeScale(true);
         }
 
-        // HOVER SOUND
-        AudioManager.Instance?.StopHoverSFX();
-
-        AudioManager.Instance?.PlayHoverSFX(
-            hoverSound,
-            hoverVolume
-        );
+        // PlayHoverSFX sudah otomatis stop hover yang sedang main.
+        AudioManager.Instance?.PlayHoverSFX(hoverSound, hoverVolume);
     }
 
-    // ==================================================
-    // POINTER EXIT
-    // ==================================================
-
-    public void OnPointerExit(
-        PointerEventData eventData
-    )
+    // Reset scale + posisi saat keluar hover.
+    public void OnPointerExit(PointerEventData eventData)
     {
-        DragItem dragItem =
-            GetComponent<DragItem>();
+        DragItem dragItem = GetComponent<DragItem>();
 
-        if (dragItem != null &&
-            dragItem.IsDragging)
-        {
-            return;
-        }
-
-        if (!isHovering)
-            return;
+        if (dragItem != null && dragItem.IsDragging) return;
+        if (!isHovering) return;
 
         isHovering = false;
 
-        LeanTween.cancel(
-            targetTransform.gameObject
-        );
+        LeanTween.cancel(targetTransform.gameObject);
 
-        // RETURN SCALE
-        LeanTween.scale(
-            targetTransform,
-            originalScale,
-            animDuration
-        )
-        .setEase(easeType)
-        .setIgnoreTimeScale(true);
-
-        // RETURN POSITION
-        if (hoverMoveY != 0f)
-        {
-            LeanTween.moveLocalY(
-                targetTransform.gameObject,
-                originalPosition.y,
-                animDuration
-            )
+        // Return scale.
+        LeanTween.scale(targetTransform, originalScale, animDuration)
             .setEase(easeType)
             .setIgnoreTimeScale(true);
+
+        // Return position.
+        if (hoverMoveY != 0f)
+        {
+            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y, animDuration)
+                .setEase(easeType)
+                .setIgnoreTimeScale(true);
         }
     }
 
-    // ==================================================
-    // POINTER CLICK
-    // ==================================================
+    // Forward click ke OnClick.
+    public void OnPointerClick(PointerEventData eventData) => OnClick();
 
-    public void OnPointerClick(
-        PointerEventData eventData
-    )
-    {
-        OnClick();
-    }
-
+    // Putar SFX klik.
     public void OnClick()
     {
-        AudioManager.Instance?.PlaySFX(
-            clickSound,
-            clickVolume
-        );
+        AudioManager.Instance?.PlaySFX(clickSound, clickVolume);
     }
 
+    // Pulse scale sebentar (untuk item collect).
     public void PlayCollectPulse()
     {
-        if (targetTransform == null)
-            return;
+        if (targetTransform == null) return;
 
         Vector3 startScale = targetTransform.localScale;
 
-        LeanTween.scale(
-            targetTransform,
-            startScale * collectPulseScale,
-            collectPulseDuration * 0.4f
-        )
-        .setEase(LeanTweenType.easeOutBack)
-        .setIgnoreTimeScale(true)
-        .setOnComplete(() =>
-        {
-            LeanTween.scale(
-                targetTransform,
-                startScale,
-                collectPulseDuration * 0.6f
-            )
-            .setEase(LeanTweenType.easeInOutSine)
-            .setIgnoreTimeScale(true);
-        });
+        LeanTween.scale(targetTransform, startScale * collectPulseScale, collectPulseDuration * 0.4f)
+            .setEase(LeanTweenType.easeOutBack)
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
+            {
+                LeanTween.scale(targetTransform, startScale, collectPulseDuration * 0.6f)
+                    .setEase(LeanTweenType.easeInOutSine)
+                    .setIgnoreTimeScale(true);
+            });
     }
 
-    // ==================================================
-    // STOP HOVER EFFECT
-    // ==================================================
-
+    // Stop hover + reset transform.
     public void StopHoverEffect()
     {
         isHovering = false;
 
-        if (targetTransform == null ||
-            !hasCapturedOriginal)
-        {
-            return;
-        }
+        if (targetTransform == null || !hasCapturedOriginal) return;
 
-        LeanTween.cancel(
-            targetTransform.gameObject
-        );
+        LeanTween.cancel(targetTransform.gameObject);
 
-        targetTransform.localScale =
-            originalScale;
-
-        targetTransform.localPosition =
-            originalPosition;
+        targetTransform.localScale = originalScale;
+        targetTransform.localPosition = originalPosition;
 
         AudioManager.Instance?.StopHoverSFX();
     }
 
+    // Stop hover sound saja.
     public void StopHoverSound()
     {
         AudioManager.Instance?.StopHoverSFX();
-
         isHovering = false;
     }
-
-    // ==================================================
-    // DISABLE
-    // ==================================================
 
     private void OnDisable()
     {
         StopHoverSound();
 
-        if (targetTransform != null &&
-            hasCapturedOriginal)
+        if (targetTransform != null && hasCapturedOriginal)
         {
-            targetTransform.localScale =
-                originalScale;
+            targetTransform.localScale = originalScale;
+            targetTransform.localPosition = originalPosition;
 
-            targetTransform.localPosition =
-                originalPosition;
-
-            LeanTween.cancel(
-                targetTransform.gameObject
-            );
+            LeanTween.cancel(targetTransform.gameObject);
         }
 
         isHovering = false;

@@ -5,17 +5,17 @@ public static class PermanentCollectionManager
 {
     private const string KEY_PREFIX = "PermanentCollected_";
 
-    // In-memory collection KHUSUS training mode.
-    // Di-clear saat keluar training mode → tidak disave ke PlayerPrefs.
+    // Koleksi in-memory khusus training, tidak disave ke PlayerPrefs.
     private static readonly HashSet<string> trainingCollected = new HashSet<string>();
 
+    // Simpan aksara yang didapat ke memory (training) atau PlayerPrefs (normal).
     public static void SaveCollected(AksaraData data)
     {
         if (data == null) return;
 
         string key = KEY_PREFIX + data.GestureShape.ToString();
 
-        // === Training mode → simpan ke memory saja ===
+        // Training mode → simpan ke memory saja.
         if (TutorialManager.IsTrainingMode)
         {
             trainingCollected.Add(key);
@@ -23,30 +23,29 @@ public static class PermanentCollectionManager
             return;
         }
 
-        // === Normal mode → simpan ke PlayerPrefs ===
+        // Normal mode → simpan ke PlayerPrefs.
         PlayerPrefs.SetInt(key, 1);
         PlayerPrefs.Save();
     }
 
+    // Cek apakah aksara sudah terkoleksi.
     public static bool IsCollected(AksaraData data)
     {
         if (data == null) return false;
 
         string key = KEY_PREFIX + data.GestureShape.ToString();
 
-        // === Training mode → cek memory ===
+        // Training mode → cek memory.
         if (TutorialManager.IsTrainingMode)
-        {
             return trainingCollected.Contains(key);
-        }
 
-        // === Normal mode → cek PlayerPrefs ===
+        // Normal mode → cek PlayerPrefs.
         return PlayerPrefs.GetInt(key, 0) == 1;
     }
 
+    // Reset semua koleksi aksara.
     public static void ResetAksara(AksaraData[] allAksara)
     {
-        // Clear memory training juga
         trainingCollected.Clear();
 
         if (allAksara == null) return;
@@ -62,10 +61,7 @@ public static class PermanentCollectionManager
         Debug.Log("[PermanentCollectionManager] Data aksara di-reset.");
     }
 
-    /// <summary>
-    /// Dipanggil oleh TutorialManager.OnDestroy() saat keluar training scene.
-    /// Clear memory collection training — aksara yang didapat di training hilang.
-    /// </summary>
+    // Clear memory training, dipanggil saat keluar training scene.
     public static void ClearTrainingCollected()
     {
         int count = trainingCollected.Count;

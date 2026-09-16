@@ -10,7 +10,6 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private VideoPlayer videoPlayer;
 
     [Header("Next Scene")]
-    [Tooltip("Scene tujuan setelah cutscene selesai/skip. Isi dengan scene Tutorial (Latihan).")]
     [SerializeField] private string nextSceneName = "Latihan";
 
     [Header("Skip")]
@@ -26,14 +25,12 @@ public class CutsceneManager : MonoBehaviour
 
     private void OnEnable()
     {
-        if (videoPlayer != null)
-            videoPlayer.loopPointReached += OnVideoFinished;
+        if (videoPlayer != null) videoPlayer.loopPointReached += OnVideoFinished;
     }
 
     private void OnDisable()
     {
-        if (videoPlayer != null)
-            videoPlayer.loopPointReached -= OnVideoFinished;
+        if (videoPlayer != null) videoPlayer.loopPointReached -= OnVideoFinished;
 
         transitionManager = null;
     }
@@ -42,12 +39,12 @@ public class CutsceneManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        GameProgressManager.SaveLastScene(
-            SceneManager.GetActiveScene().name);
+        GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
 
         StartCoroutine(InitializeAfterTransition());
     }
 
+    // Tunggu transisi selesai baru play video.
     private IEnumerator InitializeAfterTransition()
     {
         transitionManager = TransitionManager.Instance();
@@ -64,6 +61,7 @@ public class CutsceneManager : MonoBehaviour
         yield return StartCoroutine(PrepareAndPlayVideo());
     }
 
+    // Prepare video lalu play.
     private IEnumerator PrepareAndPlayVideo()
     {
         if (videoPlayer == null) yield break;
@@ -80,69 +78,61 @@ public class CutsceneManager : MonoBehaviour
 
         videoPlayer.Play();
 
-        if (skipButton != null)
-            skipButton.SetActive(true);
+        if (skipButton != null) skipButton.SetActive(true);
     }
 
+    // Callback saat video selesai.
     private void OnVideoFinished(VideoPlayer vp)
     {
         if (isLoadingNextScene) return;
         LoadNextScene();
     }
 
+    // Tombol skip cutscene.
     public void SkipCutscene()
     {
         if (isLoadingNextScene) return;
         LoadNextScene();
     }
 
+    // Stop video & load scene berikutnya.
     private void LoadNextScene()
     {
         if (isLoadingNextScene) return;
 
         isLoadingNextScene = true;
 
-        if (videoPlayer != null)
-            videoPlayer.Stop();
+        // Tandai cutscene sudah selesai/skip, biar tombol Tutorial tahu.
+        GameProgressManager.SetCutsceneCompleted();
 
-        if (skipButton != null)
-            skipButton.SetActive(false);
+        if (videoPlayer != null) videoPlayer.Stop();
+        if (skipButton != null) skipButton.SetActive(false);
 
-        // === Selalu ke Tutorial (Latihan) ===
-        // Skip atau selesai, keduanya tetap masuk Tutorial.
-        // Level 1 di-unlock nanti oleh TutorialManager saat player klik Main.
-        Debug.Log($"[CutsceneManager] Cutscene selesai/skip → load '{nextSceneName}'.");
+        Debug.Log($"[CutsceneManager] Cutscene skip → load '{nextSceneName}'.");
 
         TransitionManager tm = transitionManager;
 
-        if (tm == null)
-            tm = TransitionManager.Instance();
+        if (tm == null) tm = TransitionManager.Instance();
 
         if (tm != null && transitionSettings != null)
-        {
             tm.Transition(nextSceneName, transitionSettings, loadDelay);
-        }
         else
-        {
             SceneManager.LoadScene(nextSceneName);
-        }
     }
 
+    // Pause video (dipanggil saat pause overlay).
     public void PauseVideo()
     {
         if (videoPlayer == null) return;
         if (videoPlayer.isPlaying) videoPlayer.Pause();
     }
 
+    // Resume video dari pause.
     public void ResumeVideo()
     {
         if (videoPlayer == null) return;
 
-        if (videoPlayer.isPrepared &&
-            !videoPlayer.isPlaying &&
-            !isLoadingNextScene)
-        {
+        if (videoPlayer.isPrepared && !videoPlayer.isPlaying && !isLoadingNextScene)
             videoPlayer.Play();
-        }
     }
 }

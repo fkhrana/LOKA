@@ -28,15 +28,12 @@ public class AksaraCarouselUI : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AksaraSoundLibrary soundLibrary;
-
-    [Range(0f, 1f)]
-    [SerializeField] private float aksaraSoundVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float aksaraSoundVolume = 1f;
 
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
 
     private readonly List<AksaraCarouselItemUI> spawnedItems = new();
-
     public List<AksaraData> AllAksaraData => allAksaraData;
 
     private bool isSnapping;
@@ -44,30 +41,20 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private void Awake()
     {
-        if (leftArrowButton)
-            leftArrowButton.onClick.AddListener(() => SnapStep(-1));
-
-        if (rightArrowButton)
-            rightArrowButton.onClick.AddListener(() => SnapStep(1));
+        if (leftArrowButton) leftArrowButton.onClick.AddListener(() => SnapStep(-1));
+        if (rightArrowButton) rightArrowButton.onClick.AddListener(() => SnapStep(1));
     }
 
     private void OnEnable()
     {
         BuildList();
         UpdateButtons();
-
         DisableGestureInput();
     }
 
-    private void OnDisable()
-    {
-        EnableGestureInput();
-    }
+    private void OnDisable() => EnableGestureInput();
 
-    // =========================
-    // GESTURE
-    // =========================
-
+    // Matikan gesture input sementara.
     private void DisableGestureInput()
     {
         if (gestureDrawer != null)
@@ -77,197 +64,103 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
+    // Nyalakan gesture input lagi.
     private void EnableGestureInput()
     {
-        if (gestureDrawer != null)
-            gestureDrawer.enabled = true;
+        if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
+    // Bangun list item dari data.
     private void BuildList()
     {
         if (content == null || itemPrefab == null || allAksaraData == null)
         {
-            Debug.LogWarning(
-                "[AksaraCarouselUI] Missing references."
-            );
-
+            Debug.LogWarning("[AksaraCarouselUI] Missing references.");
             return;
         }
 
-        foreach (Transform child in content)
-        {
-            Destroy(child.gameObject);
-        }
-
+        foreach (Transform child in content) Destroy(child.gameObject);
         spawnedItems.Clear();
 
         foreach (AksaraData data in allAksaraData)
         {
-            if (data == null)
-                continue;
+            if (data == null) continue;
 
-            bool collected =
-                PermanentCollectionManager.IsCollected(data);
-
-            AksaraCarouselItemUI item =
-                Instantiate(itemPrefab, content);
-
-            item.Setup(
-                data,
-                this,
-                collected
-            );
-
+            bool collected = PermanentCollectionManager.IsCollected(data);
+            AksaraCarouselItemUI item = Instantiate(itemPrefab, content);
+            item.Setup(data, this, collected);
             spawnedItems.Add(item);
         }
 
         ApplyCenteringPadding();
     }
 
+    // Padding kiri-kanan biar item tengah pas di center viewport.
     private void ApplyCenteringPadding()
     {
-        if (
-            contentLayoutGroup == null ||
-            viewport == null ||
-            itemPrefab == null
-        )
-        {
-            return;
-        }
+        if (contentLayoutGroup == null || viewport == null || itemPrefab == null) return;
 
         Canvas.ForceUpdateCanvases();
 
-        float viewportWidth =
-            viewport.rect.width;
+        float viewportWidth = viewport.rect.width;
+        float itemWidth = ((RectTransform)itemPrefab.transform).rect.width;
 
-        float itemWidth =
-            ((RectTransform)itemPrefab.transform).rect.width;
+        int padding = Mathf.Max(0, Mathf.RoundToInt((viewportWidth - itemWidth) * 0.5f));
 
-        int padding =
-            Mathf.Max(
-                0,
-                Mathf.RoundToInt(
-                    (viewportWidth - itemWidth) * 0.5f
-                )
-            );
+        contentLayoutGroup.padding.left = padding;
+        contentLayoutGroup.padding.right = padding;
 
-        contentLayoutGroup.padding.left =
-            padding;
-
-        contentLayoutGroup.padding.right =
-            padding;
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(
-            content
-        );
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
     }
 
     private void Update()
     {
         UpdateScales();
 
-        if (isSnapping && scrollRect != null)
+        if (!isSnapping || scrollRect == null) return;
+
+        scrollRect.horizontalNormalizedPosition = Mathf.Lerp(
+            scrollRect.horizontalNormalizedPosition,
+            snapTargetNormalized,
+            Time.unscaledDeltaTime * snapLerpSpeed);
+
+        if (Mathf.Abs(scrollRect.horizontalNormalizedPosition - snapTargetNormalized) < 0.001f)
         {
-            scrollRect.horizontalNormalizedPosition =
-                Mathf.Lerp(
-                    scrollRect.horizontalNormalizedPosition,
-                    snapTargetNormalized,
-                    Time.unscaledDeltaTime *
-                    snapLerpSpeed
-                );
-
-            if (
-                Mathf.Abs(
-                    scrollRect.horizontalNormalizedPosition -
-                    snapTargetNormalized
-                ) < 0.001f
-            )
-            {
-                scrollRect.horizontalNormalizedPosition =
-                    snapTargetNormalized;
-
-                isSnapping = false;
-
-                UpdateButtons();
-            }
+            scrollRect.horizontalNormalizedPosition = snapTargetNormalized;
+            isSnapping = false;
+            UpdateButtons();
         }
     }
 
+    // Skala item membesar di tengah, mengecil di pinggir.
     private void UpdateScales()
     {
-        if (
-            viewport == null ||
-            spawnedItems.Count == 0
-        )
-            return;
+        if (viewport == null || spawnedItems.Count == 0) return;
 
-        float viewportCenterX =
-            viewport.rect.center.x;
+        float viewportCenterX = viewport.rect.center.x;
 
-        foreach (
-            AksaraCarouselItemUI item
-            in spawnedItems
-        )
+        foreach (AksaraCarouselItemUI item in spawnedItems)
         {
-            Vector3 localPos =
-                viewport.InverseTransformPoint(
-                    item.RectTransform.position
-                );
-
-            float distance =
-                Mathf.Abs(
-                    localPos.x -
-                    viewportCenterX
-                );
-
-            float t =
-                Mathf.Clamp01(
-                    distance /
-                    scaleFalloffDistance
-                );
-
-            float scale =
-                Mathf.Lerp(
-                    centerScale,
-                    edgeScale,
-                    t
-                );
-
-            item.SetScale(scale);
+            Vector3 localPos = viewport.InverseTransformPoint(item.RectTransform.position);
+            float distance = Mathf.Abs(localPos.x - viewportCenterX);
+            float t = Mathf.Clamp01(distance / scaleFalloffDistance);
+            item.SetScale(Mathf.Lerp(centerScale, edgeScale, t));
         }
     }
 
+    // Cari item yang paling dekat dengan center viewport.
     private AksaraCarouselItemUI GetNearestCenterItem()
     {
-        if (
-            viewport == null ||
-            spawnedItems.Count == 0
-        )
-            return null;
+        if (viewport == null || spawnedItems.Count == 0) return null;
 
-        float viewportCenterX =
-            viewport.rect.center.x;
-
+        float viewportCenterX = viewport.rect.center.x;
         AksaraCarouselItemUI nearest = null;
+        float minDistance = float.MaxValue;
 
-        float minDistance =
-            float.MaxValue;
-
-        foreach (
-            AksaraCarouselItemUI item
-            in spawnedItems
-        )
+        foreach (AksaraCarouselItemUI item in spawnedItems)
         {
-            Vector3 localPos =
-                viewport.InverseTransformPoint(
-                    item.RectTransform.position
-                );
-
-            float distance =
-                Mathf.Abs(
-                    localPos.x -
-                    viewportCenterX
-                );
+            Vector3 localPos = viewport.InverseTransformPoint(item.RectTransform.position);
+            float distance = Mathf.Abs(localPos.x - viewportCenterX);
 
             if (distance < minDistance)
             {
@@ -279,148 +172,77 @@ public class AksaraCarouselUI : MonoBehaviour
         return nearest;
     }
 
+    // Geser satu langkah ke kiri/kanan.
     private void SnapStep(int direction)
     {
-        AksaraCarouselItemUI current =
-            GetNearestCenterItem();
+        AksaraCarouselItemUI current = GetNearestCenterItem();
+        if (current == null) return;
 
-        if (current == null)
-            return;
+        int index = spawnedItems.IndexOf(current);
+        int targetIndex = Mathf.Clamp(index + direction, 0, spawnedItems.Count - 1);
 
-        int index =
-            spawnedItems.IndexOf(current);
-
-        int targetIndex =
-            Mathf.Clamp(
-                index + direction,
-                0,
-                spawnedItems.Count - 1
-            );
-
-        ScrollToItem(
-            spawnedItems[targetIndex]
-        );
+        ScrollToItem(spawnedItems[targetIndex]);
     }
 
-    private void ScrollToItem(
-        AksaraCarouselItemUI item
-    )
+    // Set target normalized position biar item pas di tengah.
+    private void ScrollToItem(AksaraCarouselItemUI item)
     {
-        if (
-            scrollRect == null ||
-            content == null ||
-            viewport == null
-        )
-        {
-            return;
-        }
+        if (scrollRect == null || content == null || viewport == null) return;
 
         Canvas.ForceUpdateCanvases();
 
-        float contentWidth =
-            content.rect.width;
+        float contentWidth = content.rect.width;
+        float viewportWidth = viewport.rect.width;
 
-        float viewportWidth =
-            viewport.rect.width;
+        if (contentWidth <= viewportWidth) return;
 
-        if (contentWidth <= viewportWidth)
-            return;
+        RectTransform itemRect = item.RectTransform;
+        float itemCenterX = itemRect.anchoredPosition.x + itemRect.rect.width * (0.5f - itemRect.pivot.x);
 
-        RectTransform itemRect =
-            item.RectTransform;
-
-        float itemCenterX =
-            itemRect.anchoredPosition.x +
-            itemRect.rect.width *
-            (0.5f - itemRect.pivot.x);
-
-        float targetX =
-            Mathf.Clamp(
-                itemCenterX -
-                viewportWidth * 0.5f,
-                0f,
-                contentWidth -
-                viewportWidth
-            );
-
-        snapTargetNormalized =
-            targetX /
-            (contentWidth - viewportWidth);
-
+        float targetX = Mathf.Clamp(itemCenterX - viewportWidth * 0.5f, 0f, contentWidth - viewportWidth);
+        snapTargetNormalized = targetX / (contentWidth - viewportWidth);
         isSnapping = true;
     }
 
-    public void OnItemSelected(
-        AksaraCarouselItemUI item
-    )
+    // Klik card: putar suara aksara + bounce + auto-center.
+    public void OnItemSelected(AksaraCarouselItemUI item)
     {
-        if (
-            !PermanentCollectionManager.IsCollected(
-                item.Data
-            )
-        )
+        if (!PermanentCollectionManager.IsCollected(item.Data))
         {
-            Debug.Log(
-                $"[AksaraCarouselUI] {item.Data.name} locked."
-            );
-
+            Debug.Log($"[AksaraCarouselUI] {item.Data.name} locked.");
             return;
         }
 
         if (soundLibrary != null)
         {
-            AudioClip clip =
-                soundLibrary.GetClip(
-                    item.Data.GestureShape
-                );
+            AudioClip clip = soundLibrary.GetClip(item.Data.GestureShape);
 
             if (clip != null)
             {
-                AudioManager.Instance?.PlayUISFX(
-                    clip,
-                    aksaraSoundVolume
-                );
+                float entryVolume = soundLibrary.GetVolume(item.Data.GestureShape);
+                float finalVolume = Mathf.Clamp01(entryVolume * aksaraSoundVolume);
+                AudioManager.Instance?.PlayAksaraVoice(clip, finalVolume);
             }
         }
 
         item.PlayBounceEffect();
 
-        AksaraCarouselItemUI centerItem =
-            GetNearestCenterItem();
-
-        if (item != centerItem)
-        {
-            ScrollToItem(item);
-        }
+        AksaraCarouselItemUI centerItem = GetNearestCenterItem();
+        if (item != centerItem) ScrollToItem(item);
     }
 
+    // Update interactable panah kiri/kanan sesuai posisi.
     private void UpdateButtons()
     {
-        if (spawnedItems.Count == 0)
-            return;
+        if (spawnedItems.Count == 0) return;
 
-        int currentIndex =
-            spawnedItems.IndexOf(
-                GetNearestCenterItem()
-            );
+        int currentIndex = spawnedItems.IndexOf(GetNearestCenterItem());
+        if (currentIndex < 0) return;
 
-        if (currentIndex < 0)
-            return;
-
-        if (leftArrowButton)
-            leftArrowButton.interactable =
-                currentIndex > 0;
-
-        if (rightArrowButton)
-        {
-            rightArrowButton.interactable =
-                currentIndex <
-                spawnedItems.Count - 1;
-        }
+        if (leftArrowButton) leftArrowButton.interactable = currentIndex > 0;
+        if (rightArrowButton) rightArrowButton.interactable = currentIndex < spawnedItems.Count - 1;
     }
 
-    public void OnEndDrag()
-    {
-        UpdateButtons();
-    }
+    // Dipanggil dari event OnEndDrag ScrollRect.
+    public void OnEndDrag() => UpdateButtons();
 }

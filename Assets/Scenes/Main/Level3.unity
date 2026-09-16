@@ -599,7 +599,7 @@ MonoBehaviour:
   rewardPanel: {fileID: 1414582374}
   enemyWaveSpawner: {fileID: 441064577}
   cameraIntroManager: {fileID: 1609172160}
-  player: {fileID: 0}
+  player: {fileID: 1787184827}
 --- !u!1 &52050606
 GameObject:
   m_ObjectHideFlags: 0
@@ -612,7 +612,7 @@ GameObject:
   - component: {fileID: 52050609}
   - component: {fileID: 52050608}
   m_Layer: 5
-  m_Name: DA
+  m_Name: PA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -657,7 +657,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f23d3c2eb142b674999b3b49ce7036c8, type: 3}
+  m_Sprite: {fileID: 1396130436044517578, guid: fdebf35bb4d41874597f1cbe4b5ff5fb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -815,28 +815,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoseAksaraStatusUI
   slots:
-  - aksaraData: {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
+  - aksaraData: {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
     image: {fileID: 833995657}
     collectedSprite: {fileID: 0}
     uncollectedSprite: {fileID: 0}
     uncollectedAlpha: 0.36
-  - aksaraData: {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
+  - aksaraData: {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
     image: {fileID: 52050608}
     collectedSprite: {fileID: 0}
     uncollectedSprite: {fileID: 0}
     uncollectedAlpha: 0.36
-  - aksaraData: {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-    image: {fileID: 757349915}
-    collectedSprite: {fileID: 0}
-    uncollectedSprite: {fileID: 0}
-    uncollectedAlpha: 0.36
-  - aksaraData: {fileID: 11400000, guid: 48e1522dad39b754cb2e8a2127ce6010, type: 2}
+  - aksaraData: {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
     image: {fileID: 68563061}
     collectedSprite: {fileID: 0}
     uncollectedSprite: {fileID: 0}
     uncollectedAlpha: 0.36
-  - aksaraData: {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
+  - aksaraData: {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
     image: {fileID: 1991808176}
+    collectedSprite: {fileID: 0}
+    uncollectedSprite: {fileID: 0}
+    uncollectedAlpha: 0.36
+  - aksaraData: {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
+    image: {fileID: 757349915}
     collectedSprite: {fileID: 0}
     uncollectedSprite: {fileID: 0}
     uncollectedAlpha: 0.36
@@ -853,7 +853,7 @@ GameObject:
   - component: {fileID: 68563062}
   - component: {fileID: 68563061}
   m_Layer: 5
-  m_Name: LA
+  m_Name: SA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -898,7 +898,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 593e646e8abf0f74da415f426c8ae098, type: 3}
+  m_Sprite: {fileID: -136457969702307619, guid: 4ce17d2f485202e4fbdc65f614c75de2, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2690,6 +2690,7 @@ GameObject:
   - component: {fileID: 256348186}
   - component: {fileID: 256348185}
   - component: {fileID: 256348184}
+  - component: {fileID: 256348187}
   m_Layer: 5
   m_Name: NextButton
   m_TagString: Untagged
@@ -2810,6 +2811,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 256348182}
   m_CullTransparentMesh: 1
+--- !u!114 &256348187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 256348182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 256348183}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &288230764
 GameObject:
   m_ObjectHideFlags: 0
@@ -3127,6 +3151,7 @@ GameObject:
   - component: {fileID: 329263637}
   - component: {fileID: 329263636}
   - component: {fileID: 329263635}
+  - component: {fileID: 329263638}
   m_Layer: 5
   m_Name: ReplayButton
   m_TagString: Untagged
@@ -3247,6 +3272,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 329263633}
   m_CullTransparentMesh: 1
+--- !u!114 &329263638
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329263633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 329263634}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &330683096
 GameObject:
   m_ObjectHideFlags: 0
@@ -3391,6 +3439,7 @@ GameObject:
   - component: {fileID: 340210657}
   - component: {fileID: 340210656}
   - component: {fileID: 340210655}
+  - component: {fileID: 340210658}
   m_Layer: 5
   m_Name: ReplayButton
   m_TagString: Untagged
@@ -3511,6 +3560,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340210653}
   m_CullTransparentMesh: 1
+--- !u!114 &340210658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 340210653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 340210654}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1001 &348305655
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5344,7 +5416,7 @@ GameObject:
   - component: {fileID: 757349916}
   - component: {fileID: 757349915}
   m_Layer: 5
-  m_Name: WA
+  m_Name: ZA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5389,7 +5461,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3f700948059b6dc40a34f1a5908fa991, type: 3}
+  m_Sprite: {fileID: -6967816794218246037, guid: fae9df24e7873424190f284d516aabb9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6131,7 +6203,7 @@ GameObject:
   - component: {fileID: 833995658}
   - component: {fileID: 833995657}
   m_Layer: 5
-  m_Name: NA
+  m_Name: HA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6176,7 +6248,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 6c9ad9ae76eeb944ab2e99a4704d9960, type: 3}
+  m_Sprite: {fileID: -3459297219007375072, guid: af518540ada1a2544a2ea2b3e49e6b0e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6834,6 +6906,7 @@ GameObject:
   - component: {fileID: 934966423}
   - component: {fileID: 934966422}
   - component: {fileID: 934966421}
+  - component: {fileID: 934966424}
   m_Layer: 5
   m_Name: BackButton
   m_TagString: Untagged
@@ -6954,6 +7027,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 934966419}
   m_CullTransparentMesh: 1
+--- !u!114 &934966424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934966419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 934966420}
+  hoverScale: 0
+  hoverMoveY: 0
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &967644098
 GameObject:
   m_ObjectHideFlags: 0
@@ -7014,7 +7110,7 @@ MonoBehaviour:
   gestureDrawer: {fileID: 256010449}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   transitionDelay: 0.5
-  saveCurrentProgress: {fileID: 0}
+  saveCurrentProgress: {fileID: 51174576}
 --- !u!1 &976087872
 GameObject:
   m_ObjectHideFlags: 0
@@ -8357,6 +8453,7 @@ GameObject:
   - component: {fileID: 1183816727}
   - component: {fileID: 1183816726}
   - component: {fileID: 1183816725}
+  - component: {fileID: 1183816728}
   m_Layer: 5
   m_Name: HomeButton
   m_TagString: Untagged
@@ -8477,6 +8574,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1183816723}
   m_CullTransparentMesh: 1
+--- !u!114 &1183816728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1183816723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 1183816724}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1212567132
 GameObject:
   m_ObjectHideFlags: 0
@@ -8489,6 +8609,7 @@ GameObject:
   - component: {fileID: 1212567136}
   - component: {fileID: 1212567135}
   - component: {fileID: 1212567134}
+  - component: {fileID: 1212567137}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -8609,6 +8730,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1212567132}
   m_CullTransparentMesh: 1
+--- !u!114 &1212567137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212567132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 1212567133}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1219567456
 GameObject:
   m_ObjectHideFlags: 0
@@ -10927,6 +11071,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+--- !u!4 &1787184827 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8397764429721623933, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1787184826}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1802549567
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12137,7 +12286,7 @@ GameObject:
   - component: {fileID: 1991808177}
   - component: {fileID: 1991808176}
   m_Layer: 5
-  m_Name: MA
+  m_Name: TA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12182,7 +12331,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ce0cf9ded1eab584dad772d028c8f346, type: 3}
+  m_Sprite: {fileID: -8049224889078464040, guid: c1181b31cf70cba4fbd294ecf6148c32, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12212,6 +12361,7 @@ GameObject:
   - component: {fileID: 2010827294}
   - component: {fileID: 2010827293}
   - component: {fileID: 2010827292}
+  - component: {fileID: 2010827295}
   m_Layer: 5
   m_Name: HomeButton
   m_TagString: Untagged
@@ -12332,6 +12482,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2010827290}
   m_CullTransparentMesh: 1
+--- !u!114 &2010827295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2010827290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 2010827291}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &2049339699
 GameObject:
   m_ObjectHideFlags: 0

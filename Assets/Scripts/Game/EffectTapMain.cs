@@ -15,14 +15,9 @@ public class EffectTapMain : MonoBehaviour,
 
     [Header("SFX")]
     [SerializeField] private string hoverSFXName = "Hover";
-
-    [Range(0f, 1f)]
-    [SerializeField] private float hoverSFXVolume = 0.1f;
-
+    [Range(0f, 1f)] [SerializeField] private float hoverSFXVolume = 0.1f;
     [SerializeField] private string clickSFXName = "Click";
-
-    [Range(0f, 1f)]
-    [SerializeField] private float clickSFXVolume = 1f;
+    [Range(0f, 1f)] [SerializeField] private float clickSFXVolume = 1f;
 
     [Header("Transition")]
     [SerializeField] private MainMenu mainMenu;
@@ -31,68 +26,34 @@ public class EffectTapMain : MonoBehaviour,
     {
         if (tapImage == null)
         {
-            Debug.LogWarning(
-                "EffectTapMain: tapImage not assigned!"
-            );
-
+            Debug.LogWarning("EffectTapMain: tapImage not assigned!");
             return;
         }
 
-        LeanTween.scale(
-            tapImage,
-            Vector3.one * scaleAmount,
-            duration
-        )
-        .setLoopPingPong()
-        .setEase(
-            LeanTweenType.easeInOutSine
-        );
+        // Loop scale ping-pong.
+        LeanTween.scale(tapImage, Vector3.one * scaleAmount, duration)
+            .setLoopPingPong()
+            .setEase(LeanTweenType.easeInOutSine);
 
-        float targetY =
-            tapImage.localPosition.y +
-            moveAmount;
-
-        LeanTween.moveLocalY(
-            tapImage.gameObject,
-            targetY,
-            duration
-        )
-        .setLoopPingPong()
-        .setEase(
-            LeanTweenType.easeInOutSine
-        );
+        // Loop move Y ping-pong.
+        float targetY = tapImage.localPosition.y + moveAmount;
+        LeanTween.moveLocalY(tapImage.gameObject, targetY, duration)
+            .setLoopPingPong()
+            .setEase(LeanTweenType.easeInOutSine);
     }
 
-    public void OnPointerEnter(
-        PointerEventData eventData
-    )
+    // Putar hover SFX saat pointer masuk.
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (
-            AudioManager.Instance != null &&
-            !string.IsNullOrEmpty(hoverSFXName)
-        )
-        {
-            AudioManager.Instance.PlayHoverSFX(
-                hoverSFXName,
-                hoverSFXVolume
-            );
-        }
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(hoverSFXName))
+            AudioManager.Instance.PlayHoverSFX(hoverSFXName, hoverSFXVolume);
     }
 
-    public void OnPointerClick(
-        PointerEventData eventData
-    )
+    // Putar click SFX + trigger TapToStart.
+    public void OnPointerClick(PointerEventData eventData)
     {
-        if (
-            AudioManager.Instance != null &&
-            !string.IsNullOrEmpty(clickSFXName)
-        )
-        {
-            AudioManager.Instance.PlaySFX(
-                clickSFXName,
-                clickSFXVolume
-            );
-        }
+        if (AudioManager.Instance != null && !string.IsNullOrEmpty(clickSFXName))
+            AudioManager.Instance.PlaySFX(clickSFXName, clickSFXVolume);
 
         if (mainMenu != null)
         {
@@ -100,16 +61,11 @@ public class EffectTapMain : MonoBehaviour,
             return;
         }
 
-        Debug.LogWarning(
-            "[EffectTapMain] MainMenu belum di-assign."
-        );
+        Debug.LogWarning("[EffectTapMain] MainMenu belum di-assign.");
     }
 
     private void OnDestroy()
     {
-        if (tapImage != null)
-            LeanTween.cancel(
-                tapImage.gameObject
-            );
+        if (tapImage != null) LeanTween.cancel(tapImage.gameObject);
     }
 }

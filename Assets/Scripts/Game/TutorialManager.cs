@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -11,30 +10,18 @@ using EasyTransition;
 public class TutorialManager : MonoBehaviour
 {
     public static bool IsTrainingMode { get; private set; } = false;
-
     public enum SpawnSide { Left, Right }
 
-    // ============================================================
-    // ENEMY
-    // ============================================================
     [Header("Enemy")]
     [SerializeField] private EnemyGestureCommand enemyPrefab;
     [SerializeField] private Transform worldParent;
     [SerializeField] private Vector3 enemySpawnPos = new Vector3(0f, 1f, 0f);
-
     [SerializeField, Min(1)] private int enemyCount = 2;
-
     [SerializeField] private SpawnSide spawnSide = SpawnSide.Right;
-
-    [Range(0f, 1f)]
-    [SerializeField] private float enemySpawnAnchorY = 0.5f;
-
-    [SerializeField] private float enemySpawnSpacingY = 0.18f;
-
+    [Range(0f, 1f)] [SerializeField] private float enemySpawnAnchorY = 0.5f;
+    [SerializeField] private float enemySpawnSpacingY = 0.25f;
+    [SerializeField] private float enemySpawnSpacingX = 0.05f;
     [SerializeField] private float offscreenPadding = 0.15f;
-
-    [Tooltip("Musuh berhenti kalau viewport X-nya sudah melewati nilai ini. " +
-             "Semakin kecil = musuh makin masuk ke layar sebelum freeze.")]
     [SerializeField] private float enemyStopViewportX = 0.5f;
 
     [Header("Enemy Approach")]
@@ -42,28 +29,27 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float enemyStopDistanceToPlayer = 3f;
     [SerializeField] private float approachTimeoutSeconds = 10f;
 
+    [Header("Enemy Separation (anti tumpang tindih)")]
+    [SerializeField] private float enemyMinSeparationWorld = 0f;
+    [SerializeField] private float enemySeparationPadding = 0.5f;
+    [SerializeField, Min(0)] private int separationIterations = 8;
+    [SerializeField] private bool separateDuringApproach = true;
+    [Range(0.05f, 1f)] [SerializeField] private float approachSeparationStrength = 0.5f;
+
     [Header("Enemy Data Pool")]
     [SerializeField] private EnemyData[] tutorialEnemyDataPool;
     [SerializeField] private EnemyData tutorialEnemyDataFallback;
 
-    // ============================================================
-    // TUTORIAL SAFETY
-    // ============================================================
     [Header("Tutorial Safety")]
     [SerializeField] private bool disableColliderDuringApproach = true;
     [SerializeField] private bool fallbackToCanvasCenterIfEnemyLost = true;
     [SerializeField] private bool forceDefeatEnemyAfterGesture = true;
     [SerializeField] private float postGestureDefeatDelay = 0.2f;
 
-    // ============================================================
-    // TIMING
-    // ============================================================
     [Header("Timing")]
     [SerializeField] private float delayBeforeDotsAndHand = 0.5f;
-    [Tooltip("Jeda setelah musuh terakhir mati sebelum cari fragment (kasih waktu drop animation).")]
     [SerializeField] private float delayAfterEnemyDefeated = 1.2f;
     [SerializeField] private float delayBetweenEnemies = 0.4f;
-    [Tooltip("Jeda setelah player tap fragment sebelum cek fragment berikutnya.")]
     [SerializeField] private float delayAfterFragmentTap = 1.5f;
 
     [Header("Timeouts (detik)")]
@@ -74,15 +60,9 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float collectionOpenTimeout = 3f;
     [SerializeField] private float collectionCloseTimeout = 60f;
 
-    // ============================================================
-    // AKSARA
-    // ============================================================
-    [Header("Aksara Pool (butuh minimal 2 aksara berbeda untuk 2 musuh)")]
+    [Header("Aksara Pool")]
     [SerializeField] private AksaraData[] tutorialAksaraPool;
 
-    // ============================================================
-    // UI CANVAS
-    // ============================================================
     [Header("UI Canvas")]
     [SerializeField] private Canvas tutorialCanvas;
     [SerializeField] private RectTransform tutorialCanvasRect;
@@ -98,17 +78,12 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private Color dotColor = new Color(1f, 0.9f, 0.2f);
 
     [Header("Dots Offset (dari musuh aktif)")]
-    [Tooltip("X negatif = dots muncul di kiri musuh. -200 = dekat musuh, -500 = jauh.")]
     [SerializeField] private Vector2 dotsContainerOffset = new Vector2(-200f, 0f);
 
-    // ============================================================
-    // PATH
-    // ============================================================
     [Header("Path Settings")]
     [SerializeField] private float pathPixelScale = 0f;
     [SerializeField] private int dotCount = 32;
-    [Range(0.1f, 0.9f)]
-    [SerializeField] private float pathMaxCanvasRatio = 0.4f;
+    [Range(0.1f, 0.9f)] [SerializeField] private float pathMaxCanvasRatio = 0.4f;
 
     [Header("Hand Animation")]
     [SerializeField] private float handPathSpeedPx = 220f;
@@ -116,9 +91,6 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float handTapAmplitudePx = 25f;
     [SerializeField] private float handTapSpeed = 4f;
 
-    // ============================================================
-    // REFERENCES
-    // ============================================================
     [Header("UI References")]
     [SerializeField] private Button collectionButton;
     [SerializeField] private RectTransform collectionButtonRect;
@@ -136,60 +108,71 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private TransitionSettings transitionSettings;
     [SerializeField] private float loadDelay = 0f;
 
-    // ============================================================
-    // PRIVATE STATE
-    // ============================================================
+    [Tooltip("Durasi fade out BGM sebelum pindah scene.")]
+    [SerializeField] private float bgmFadeOutDuration = 0.8f;
+
+    [Header("BGM (opsional, override BGM scene)")]
+    [SerializeField] private string tutorialBGMName = "bgm_tutorial";
+    [SerializeField] private float tutorialBgmFadeOut = 0.8f;
+    [SerializeField] private float tutorialBgmFadeIn = 0.8f;
+
+    [Header("SFX")]
+    [SerializeField] private AudioClip aksaraDropSFX;
+    [SerializeField] private AudioClip hoorayAksara1SFX;
+    [SerializeField] private AudioClip hoorayAksara2SFX;
+    [SerializeField] private AudioClip wrongClickSFX;
+
+    [Header("Shake Effect (salah klik fragment)")]
+    [SerializeField] private bool enableShakeOnWrongClick = true;
+    [SerializeField] private float shakeDuration = 0.25f;
+    [SerializeField] private float shakeMagnitude = 0.15f;
+
     private GestureDrawer gestureDrawer;
     private EnemyData currentEnemyData;
     private GestureShape currentTarget;
+    private EnemyGestureCommand activeTargetEnemy;
 
     private readonly List<EnemyGestureCommand> currentEnemies = new List<EnemyGestureCommand>();
     private readonly List<AksaraData> currentAksaraList = new List<AksaraData>();
-    private EnemyGestureCommand activeTargetEnemy;
+    private readonly List<float> cachedHalfExtents = new List<float>();
+    private readonly List<GameObject> currentDots = new List<GameObject>();
+
+    private readonly List<AksaraData> aksaraBag = new List<AksaraData>();
+    private readonly List<EnemyData> enemyDataBag = new List<EnemyData>();
 
     private GameObject currentItem;
     private Image currentHand;
 
-    private readonly List<GameObject> currentDots = new List<GameObject>();
-
     private Coroutine handAnimCoroutine;
     private Coroutine tutorialCoroutine;
+    private Coroutine shakeCoroutine;
 
     private bool waitingForDraw;
     private bool waitingForItemClick;
     private bool waitingForCollectionClick;
 
     private Sprite cachedDotSprite;
-
-    private readonly List<AksaraData> aksaraBag = new List<AksaraData>();
-    private readonly List<EnemyData> enemyDataBag = new List<EnemyData>();
-
     private Vector2? dotsCenterOverride;
 
     private Rect CanvasRect => tutorialCanvasRect != null
         ? tutorialCanvasRect.rect
         : new Rect(0, 0, Screen.width, Screen.height);
 
+    // Skala path efektif: pakai override atau hitung dari canvas.
     private float EffectivePathScale
     {
         get
         {
             if (pathPixelScale > 0f) return pathPixelScale;
-
             float safeDim = Mathf.Min(CanvasRect.width, CanvasRect.height);
             float maxScale = (safeDim * pathMaxCanvasRatio) / 1.2f;
-            float naturalScale = CanvasRect.height * 0.25f;
-
-            return Mathf.Min(naturalScale, maxScale);
+            return Mathf.Min(CanvasRect.height * 0.25f, maxScale);
         }
     }
 
     private float EffectiveHandSize => handSizePx > 0f ? handSizePx : CanvasRect.height * 0.12f;
     private float EffectiveDotSize => dotSizePx > 0f ? dotSizePx : CanvasRect.height * 0.015f;
 
-    // ============================================================
-    // LIFECYCLE
-    // ============================================================
     private void Awake()
     {
         IsTrainingMode = true;
@@ -215,6 +198,9 @@ public class TutorialManager : MonoBehaviour
             Debug.LogWarning("[Tutorial] GestureDrawer tidak ditemukan!");
         }
 
+        if (!string.IsNullOrEmpty(tutorialBGMName) && AudioManager.Instance != null)
+            AudioManager.Instance.PlayBGMWithFade(tutorialBGMName, tutorialBgmFadeOut, tutorialBgmFadeIn);
+
         tutorialCoroutine = StartCoroutine(TutorialSequence());
     }
 
@@ -223,9 +209,9 @@ public class TutorialManager : MonoBehaviour
         IsTrainingMode = false;
 
         if (tutorialCoroutine != null) StopCoroutine(tutorialCoroutine);
+        if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
 
-        if (gestureDrawer != null)
-            gestureDrawer.GestureRecognized -= OnGestureRecognized;
+        if (gestureDrawer != null) gestureDrawer.GestureRecognized -= OnGestureRecognized;
         if (mainButton != null) mainButton.onClick.RemoveListener(OnClickMain);
         if (latihanButton != null) latihanButton.onClick.RemoveListener(OnClickLatihan);
         if (collectionButton != null) collectionButton.onClick.RemoveListener(OnCollectionClicked);
@@ -235,18 +221,16 @@ public class TutorialManager : MonoBehaviour
         for (int i = 0; i < currentEnemies.Count; i++)
             if (currentEnemies[i] != null) Destroy(currentEnemies[i].gameObject);
         currentEnemies.Clear();
+        cachedHalfExtents.Clear();
 
         if (currentItem != null) Destroy(currentItem);
 
         ClearDots();
         ClearHand();
-
         Time.timeScale = 1f;
     }
 
-    // ============================================================
-    // ENEMY HELPERS
-    // ============================================================
+    // Cek ada musuh yang masih hidup.
     private bool HasAnyAliveEnemy()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -254,6 +238,7 @@ public class TutorialManager : MonoBehaviour
         return false;
     }
 
+    // Ambil musuh pertama yang masih hidup.
     private EnemyGestureCommand GetFirstAliveEnemy()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -261,6 +246,7 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
+    // Index musuh di list, -1 kalau tidak ada.
     private int GetEnemyIndex(EnemyGestureCommand enemy)
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -268,32 +254,28 @@ public class TutorialManager : MonoBehaviour
         return -1;
     }
 
+    // Ambil AksaraData untuk musuh tertentu.
     private AksaraData GetAksaraFor(EnemyGestureCommand enemy)
     {
         int idx = GetEnemyIndex(enemy);
-        if (idx >= 0 && idx < currentAksaraList.Count)
-            return currentAksaraList[idx];
-        return null;
+        return idx >= 0 && idx < currentAksaraList.Count ? currentAksaraList[idx] : null;
     }
 
+    // Rata-rata posisi semua musuh hidup.
     private Vector3 GetEnemiesCenterWorld()
     {
         Vector3 sum = Vector3.zero;
         int count = 0;
-
         for (int i = 0; i < currentEnemies.Count; i++)
         {
             if (currentEnemies[i] == null) continue;
             sum += currentEnemies[i].transform.position;
             count++;
         }
-
         return count > 0 ? sum / count : Vector3.zero;
     }
 
-    // ============================================================
-    // REFERENCE RESOLVER
-    // ============================================================
+    // Auto-resolve referensi yang kosong.
     private void ResolveReferences()
     {
         if (tutorialCanvas == null)
@@ -303,10 +285,7 @@ public class TutorialManager : MonoBehaviour
             tutorialCanvasRect = tutorialCanvas.GetComponent<RectTransform>();
 
         if (tutorialContainer == null && tutorialCanvasRect != null)
-        {
             tutorialContainer = tutorialCanvasRect;
-            Debug.LogWarning("[Tutorial] tutorialContainer fallback ke Canvas RectTransform.");
-        }
 
         if (collectionButton == null)
             collectionButton = FindCollectionButton();
@@ -318,75 +297,57 @@ public class TutorialManager : MonoBehaviour
             collectionPanelRoot = FindGameObjectByName("koleksipanel", "collectionpanel");
     }
 
+    // Cari Canvas berdasarkan keyword nama.
     private Canvas FindCanvasWithName(params string[] keywords)
     {
-        Canvas[] all = FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        foreach (var c in all)
+        foreach (var c in FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (c == null) continue;
             string n = c.gameObject.name.ToLower();
             foreach (var k in keywords)
                 if (n.Contains(k)) return c;
         }
-
         return null;
     }
 
+    // Cari tombol collection by nama.
     private Button FindCollectionButton()
     {
-        Button[] all = FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        foreach (var b in all)
+        foreach (var b in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (b == null) continue;
             string n = b.gameObject.name.ToLower();
-
             if (n.Contains("back")) continue;
             if (n.Contains("book") || n.Contains("collection") || n.Contains("koleksi"))
                 return b;
         }
-
         return null;
     }
 
+    // Cari GameObject by nama (inactive included).
     private GameObject FindGameObjectByName(params string[] keywords)
     {
-        GameObject[] all = FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-
-        foreach (var go in all)
+        foreach (var go in FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             if (go == null) continue;
             string n = go.name.ToLower();
             foreach (var k in keywords)
                 if (n.Contains(k)) return go;
         }
-
         return null;
     }
 
-    // ============================================================
-    // MAIN SEQUENCE
-    // ============================================================
+    // Sequence utama tutorial.
     private IEnumerator TutorialSequence()
     {
         yield return new WaitForSeconds(0.5f);
 
-        if (!ValidateSetup())
-        {
-            Debug.LogError("[Tutorial] Setup tidak lengkap. Hentikan tutorial.");
-            yield break;
-        }
-
+        if (!ValidateSetup()) { Debug.LogError("[Tutorial] Setup tidak lengkap."); yield break; }
         if (!PickAksaraAndEnemy()) yield break;
 
-        // --- Phase 1A: Spawn enemies ---
         yield return SpawnEnemiesRoutine();
-
-        // --- Phase 1B: Approach + freeze ---
         yield return ApproachAndFreezeEnemiesRoutine();
 
-        // --- Phase 1C: Loop per musuh ---
         int enemyIndex = 0;
 
         while (HasAnyAliveEnemy())
@@ -395,33 +356,21 @@ public class TutorialManager : MonoBehaviour
             if (active == null) break;
 
             AksaraData activeAksara = GetAksaraFor(active);
-            if (activeAksara == null)
-            {
-                Debug.LogError($"[Tutorial] Aksara untuk musuh #{enemyIndex} tidak ditemukan.");
-                break;
-            }
+            if (activeAksara == null) { Debug.LogError($"[Tutorial] Aksara musuh #{enemyIndex} tidak ada."); break; }
 
             activeTargetEnemy = active;
             currentTarget = activeAksara.GestureShape;
 
-            Debug.Log($"[Tutorial] === Musuh #{enemyIndex} aktif. Target: {currentTarget} ===");
-
-            // === BARU: hanya musuh target yang challenge-nya aktif ===
             ActivateOnlyTargetChallenge(active, activeAksara);
-
             dotsCenterOverride = null;
 
             Camera cam = Camera.main;
-            if (cam != null)
+            if (cam != null && fallbackToCanvasCenterIfEnemyLost)
             {
                 Vector3 vp = cam.WorldToViewportPoint(active.transform.position);
                 bool offScreen = vp.z < 0f || vp.x < 0.05f || vp.x > 0.95f || vp.y < 0.05f || vp.y > 0.95f;
-
-                if (offScreen && fallbackToCanvasCenterIfEnemyLost)
-                {
-                    Debug.LogWarning($"[Tutorial] Musuh aktif di luar viewport ({vp}). Fallback ke tengah canvas.");
+                if (offScreen)
                     dotsCenterOverride = new Vector2(0f, CanvasRect.height * 0.05f) + dotsContainerOffset;
-                }
             }
 
             yield return new WaitForSeconds(delayBeforeDotsAndHand);
@@ -430,18 +379,13 @@ public class TutorialManager : MonoBehaviour
             SpawnHandOnPath();
             PlayHandAlongPath();
 
-            if (gestureDrawer != null)
-            {
-                gestureDrawer.enabled = true;
-                Debug.Log($"[Tutorial] GestureDrawer aktif untuk musuh #{enemyIndex}.");
-            }
+            if (gestureDrawer != null) gestureDrawer.enabled = true;
 
             waitingForDraw = true;
-            yield return WaitUntilOrTimeout(
-                () => !waitingForDraw,
-                gestureDrawTimeout,
-                $"Gesture draw musuh #{enemyIndex}");
+            yield return WaitUntilOrTimeout(() => !waitingForDraw, gestureDrawTimeout, $"Gesture musuh #{enemyIndex}");
             waitingForDraw = false;
+
+            PlayHoorayForEnemyIndex(enemyIndex);
 
             ClearHand();
             ClearDots();
@@ -453,30 +397,19 @@ public class TutorialManager : MonoBehaviour
 
             if (active != null && forceDefeatEnemyAfterGesture)
             {
-                Debug.Log($"[Tutorial] Force defeat musuh #{enemyIndex}.");
-
                 Enemy comp = active.GetComponent<Enemy>();
                 if (comp != null)
                 {
                     active.StopCommandMode();
                     comp.OnDefeated();
                     comp.StartDefeatBlink();
-
-                    float blinkDur = Mathf.Max(0.1f, comp.DefeatBlinkDuration);
-                    yield return new WaitForSeconds(blinkDur);
+                    yield return new WaitForSeconds(Mathf.Max(0.1f, comp.DefeatBlinkDuration));
                 }
             }
 
-            yield return WaitUntilOrTimeout(
-                () => active == null,
-                enemyDestroyTimeout,
-                $"Musuh #{enemyIndex} destroy");
+            yield return WaitUntilOrTimeout(() => active == null, enemyDestroyTimeout, $"Musuh #{enemyIndex} destroy");
 
-            if (active != null)
-            {
-                Debug.LogWarning($"[Tutorial] Force destroy musuh #{enemyIndex}.");
-                Destroy(active.gameObject);
-            }
+            if (active != null) Destroy(active.gameObject);
 
             activeTargetEnemy = null;
             enemyIndex++;
@@ -485,9 +418,6 @@ public class TutorialManager : MonoBehaviour
                 yield return new WaitForSeconds(delayBetweenEnemies);
         }
 
-        // ============================================================
-        // Phase 4: Kumpulkan SEMUA fragment
-        // ============================================================
         yield return new WaitForSeconds(delayAfterEnemyDefeated);
 
         int fragmentsCollected = 0;
@@ -495,19 +425,17 @@ public class TutorialManager : MonoBehaviour
         float phaseStart = Time.time;
         float maxPhaseTime = maxFragments * (fragmentTapTimeout + delayAfterFragmentTap + 2f);
 
-        while (fragmentsCollected < maxFragments &&
-               (Time.time - phaseStart) < maxPhaseTime)
+        while (fragmentsCollected < maxFragments && (Time.time - phaseStart) < maxPhaseTime)
         {
             GameObject frag = FindActiveFragment();
             if (frag == null) break;
 
             currentItem = frag;
-            Debug.Log($"[Tutorial] Fragment #{fragmentsCollected + 1} muncul: {frag.name}");
+            PlayAksaraDropSFX();
 
             yield return TapFragmentRoutine();
             fragmentsCollected++;
 
-            // Tunggu fragment hilang (terbang ke book)
             float waitStart = Time.time;
             while (currentItem != null && (Time.time - waitStart) < 3f)
                 yield return null;
@@ -515,20 +443,14 @@ public class TutorialManager : MonoBehaviour
             yield return new WaitForSeconds(delayAfterFragmentTap);
         }
 
-        if (fragmentsCollected == 0)
-            Debug.LogWarning("[Tutorial] Tidak ada fragment yang dikumpulkan.");
-        else
-            Debug.Log($"[Tutorial] {fragmentsCollected} fragment dikumpulkan.");
-
-        // --- Phase 5: Tap Book Button + tunggu panel ---
         yield return TapBookButtonRoutine();
         yield return WaitCollectionPanelCycle();
 
-        // --- Phase 6: Finish ---
         ShowFinishPanel();
         tutorialCoroutine = null;
     }
 
+    // Tunggu kondisi terpenuhi atau timeout.
     private IEnumerator WaitUntilOrTimeout(Func<bool> condition, float timeout, string label)
     {
         float elapsed = 0f;
@@ -537,52 +459,37 @@ public class TutorialManager : MonoBehaviour
             elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
-
         if (!condition())
-            Debug.LogWarning($"[Tutorial] Timeout menunggu: {label} ({timeout:F1}s)");
+            Debug.LogWarning($"[Tutorial] Timeout: {label} ({timeout:F1}s)");
     }
 
+    // Pilih aksara & enemy data untuk sesi ini.
     private bool PickAksaraAndEnemy()
     {
         currentAksaraList.Clear();
 
         int count = Mathf.Max(1, enemyCount);
-
         while (aksaraBag.Count < count) RefillAksaraBag();
 
         for (int i = 0; i < count; i++)
         {
             AksaraData a = PickAksaraFromBag();
-
             if (a == null)
             {
                 if (currentAksaraList.Count > 0)
                     a = currentAksaraList[UnityEngine.Random.Range(0, currentAksaraList.Count)];
-                else
-                {
-                    Debug.LogError("[Tutorial] AksaraData pool kosong!");
-                    return false;
-                }
+                else { Debug.LogError("[Tutorial] AksaraData pool kosong!"); return false; }
             }
-
             currentAksaraList.Add(a);
         }
 
         currentEnemyData = PickEnemyDataFromBag();
-        if (currentEnemyData == null)
-        {
-            Debug.LogError("[Tutorial] EnemyData pool kosong!");
-            return false;
-        }
+        if (currentEnemyData == null) { Debug.LogError("[Tutorial] EnemyData pool kosong!"); return false; }
 
-        string aksaraStr = "";
-        for (int i = 0; i < currentAksaraList.Count; i++)
-            aksaraStr += $"{currentAksaraList[i].GestureShape} ";
-
-        Debug.Log($"[Tutorial] Picked {currentAksaraList.Count} aksara: {aksaraStr}");
         return true;
     }
 
+    // Routine tap fragment.
     private IEnumerator TapFragmentRoutine()
     {
         if (currentItem == null) yield break;
@@ -597,15 +504,11 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
     }
 
+    // Routine tap tombol book.
     private IEnumerator TapBookButtonRoutine()
     {
         ClearHand();
-
-        if (collectionButtonRect == null)
-        {
-            Debug.LogError("[Tutorial] collectionButtonRect null!");
-            yield break;
-        }
+        if (collectionButtonRect == null) yield break;
 
         SpawnHandAtUI(collectionButtonRect);
 
@@ -619,51 +522,40 @@ public class TutorialManager : MonoBehaviour
         OpenCollectionPanel();
     }
 
+    // Tunggu panel collection buka-tutup.
     private IEnumerator WaitCollectionPanelCycle()
     {
         if (collectionPanelRoot == null)
         {
-            Debug.LogWarning("[Tutorial] collectionPanelRoot null → fallback delay 3s.");
             yield return new WaitForSecondsRealtime(3f);
             yield break;
         }
 
-        yield return WaitUntilOrTimeout(
-            () => collectionPanelRoot.activeInHierarchy,
-            collectionOpenTimeout,
-            "Collection panel open");
+        yield return WaitUntilOrTimeout(() => collectionPanelRoot.activeInHierarchy, collectionOpenTimeout, "Panel open");
 
         if (!collectionPanelRoot.activeInHierarchy)
         {
-            Debug.LogWarning("[Tutorial] Panel koleksi tidak buka. Lanjut ke finish.");
             ClearHand();
             ClearDots();
             yield break;
         }
 
-        yield return WaitUntilOrTimeout(
-            () => !collectionPanelRoot.activeInHierarchy,
-            collectionCloseTimeout,
-            "Collection panel close");
+        yield return WaitUntilOrTimeout(() => !collectionPanelRoot.activeInHierarchy, collectionCloseTimeout, "Panel close");
 
         yield return new WaitForSecondsRealtime(0.3f);
         ClearHand();
         ClearDots();
     }
 
+    // Tampilkan finish panel.
     private void ShowFinishPanel()
     {
-        Debug.Log("[Tutorial] Menampilkan finish panel.");
-
-        if (collectionButton != null)
-            collectionButton.gameObject.SetActive(false);
-
-        if (finishPanel != null)
-            finishPanel.SetActive(true);
-
+        if (collectionButton != null) collectionButton.gameObject.SetActive(false);
+        if (finishPanel != null) finishPanel.SetActive(true);
         Time.timeScale = 1f;
     }
 
+    // Buka collection panel via singleton atau root.
     private void OpenCollectionPanel()
     {
         if (CollectionPanel.Instance != null)
@@ -671,46 +563,31 @@ public class TutorialManager : MonoBehaviour
             CollectionPanel.Instance.OpenCollection();
             return;
         }
-
         if (collectionPanelRoot != null)
-        {
             collectionPanelRoot.SetActive(true);
-            Debug.LogWarning("[Tutorial] CollectionPanel.Instance null → force SetActive.");
-        }
     }
 
+    // Validasi setup sebelum jalan.
     private bool ValidateSetup()
     {
         bool ok = true;
 
         if (enemyPrefab == null) { Debug.LogError("[Tutorial] enemyPrefab kosong!"); ok = false; }
+        if (tutorialCanvas == null) { Debug.LogError("[Tutorial] tutorialCanvas kosong!"); ok = false; }
+        if (tutorialCanvasRect == null) { Debug.LogError("[Tutorial] tutorialCanvasRect kosong!"); ok = false; }
+        if (tutorialContainer == null) { Debug.LogError("[Tutorial] tutorialContainer kosong!"); ok = false; }
 
-        int poolSize = tutorialEnemyDataPool != null ? tutorialEnemyDataPool.Length : 0;
+        int poolSize = tutorialEnemyDataPool?.Length ?? 0;
         if (poolSize == 0 && tutorialEnemyDataFallback == null)
         {
             Debug.LogError("[Tutorial] EnemyData pool + fallback kosong!");
             ok = false;
         }
 
-        if (tutorialCanvas == null) { Debug.LogError("[Tutorial] tutorialCanvas kosong!"); ok = false; }
-        if (tutorialCanvasRect == null) { Debug.LogError("[Tutorial] tutorialCanvasRect kosong!"); ok = false; }
-        if (tutorialContainer == null) { Debug.LogError("[Tutorial] tutorialContainer kosong!"); ok = false; }
-        if (handSprite == null) Debug.LogWarning("[Tutorial] handSprite kosong.");
-        if (gestureDrawer == null) Debug.LogWarning("[Tutorial] gestureDrawer null.");
-
-        int aksaraPoolSize = tutorialAksaraPool != null ? tutorialAksaraPool.Length : 0;
-        if (aksaraPoolSize < Mathf.Max(1, enemyCount))
-        {
-            Debug.LogWarning($"[Tutorial] Aksara pool hanya {aksaraPoolSize} sedangkan enemyCount {enemyCount}. " +
-                             "Aksara akan di-duplikasi → fragment kedua mungkin tidak drop.");
-        }
-
         return ok;
     }
 
-    // ============================================================
-    // SHUFFLE BAG
-    // ============================================================
+    // Ambil aksara dari shuffle bag.
     private AksaraData PickAksaraFromBag()
     {
         if (aksaraBag.Count == 0) RefillAksaraBag();
@@ -721,6 +598,7 @@ public class TutorialManager : MonoBehaviour
         return picked;
     }
 
+    // Isi ulang shuffle bag aksara.
     private void RefillAksaraBag()
     {
         aksaraBag.Clear();
@@ -732,10 +610,10 @@ public class TutorialManager : MonoBehaviour
             if (!TutorialLetterPaths.IsSupported(a.GestureShape)) continue;
             aksaraBag.Add(a);
         }
-
         Shuffle(aksaraBag);
     }
 
+    // Ambil enemy data dari shuffle bag.
     private EnemyData PickEnemyDataFromBag()
     {
         if (enemyDataBag.Count == 0) RefillEnemyDataBag();
@@ -746,10 +624,10 @@ public class TutorialManager : MonoBehaviour
         return picked;
     }
 
+    // Isi ulang shuffle bag enemy data.
     private void RefillEnemyDataBag()
     {
         enemyDataBag.Clear();
-
         if (tutorialEnemyDataPool != null)
             foreach (var d in tutorialEnemyDataPool)
                 if (d != null) enemyDataBag.Add(d);
@@ -760,6 +638,7 @@ public class TutorialManager : MonoBehaviour
         Shuffle(enemyDataBag);
     }
 
+    // Fisher-Yates shuffle in place.
     private static void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -769,54 +648,43 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // SPAWN ENEMIES
-    // ============================================================
+    // Spawn musuh dari sisi kiri/kanan viewport.
     private IEnumerator SpawnEnemiesRoutine()
     {
         currentEnemies.Clear();
+        cachedHalfExtents.Clear();
 
         Transform parent = worldParent != null ? worldParent : transform;
         int count = Mathf.Max(1, enemyCount);
+        float xDir = spawnSide == SpawnSide.Left ? 1f : -1f;
 
         for (int i = 0; i < count; i++)
         {
-            float viewportOffset = (i - (count - 1) * 0.5f) * enemySpawnSpacingY;
-            Vector3 spawnPos = GetEnemyWorldSpawnPosition(viewportOffset);
+            float centeredIndex = i - (count - 1) * 0.5f;
+            float vpYOffset = centeredIndex * enemySpawnSpacingY;
+            float vpXOffset = centeredIndex * enemySpawnSpacingX * xDir;
 
+            Vector3 spawnPos = GetEnemyWorldSpawnPosition(vpXOffset, vpYOffset);
             EnemyGestureCommand enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, parent);
-            if (enemy == null)
-            {
-                Debug.LogError($"[Tutorial] Spawn enemy #{i} gagal!");
-                continue;
-            }
+            if (enemy == null) continue;
 
             enemy.name = $"TutorialEnemy_{i}";
+
+            Vector3 ep = enemy.transform.position;
+            ep.z = enemySpawnPos.z + i * 0.01f;
+            enemy.transform.position = ep;
+
             enemy.transform.localScale = Vector3.one;
             enemy.SetAutoIssueOnStart(false);
 
-            var capturedEnemy = enemy;
-            var guard = enemy.gameObject.AddComponent<TutorialEnemyGuard>();
-            guard.OnDestroyed += () =>
-            {
-                string name = capturedEnemy != null ? capturedEnemy.name : "(destroyed)";
-                Debug.LogWarning($"[Tutorial] {name} destroy pada t={Time.time:F2}s (frame={Time.frameCount})");
-            };
-
             if (disableColliderDuringApproach)
-            {
-                var cols = enemy.GetComponentsInChildren<Collider2D>(true);
-                foreach (var c in cols) c.enabled = false;
-            }
+                foreach (var c in enemy.GetComponentsInChildren<Collider2D>(true))
+                    c.enabled = false;
 
             currentEnemies.Add(enemy);
         }
 
-        if (currentEnemies.Count == 0)
-        {
-            Debug.LogError("[Tutorial] Tidak ada enemy yang berhasil spawn.");
-            yield break;
-        }
+        if (currentEnemies.Count == 0) yield break;
 
         yield return null;
         yield return null;
@@ -845,31 +713,15 @@ public class TutorialManager : MonoBehaviour
 
             TMP_Text label = enemy.GetComponentInChildren<TMP_Text>();
             if (label != null) label.text = aksara.GestureShape.ToString();
-
-            Debug.Log($"[Tutorial] Enemy #{i} configured. Aksara: {aksara.GestureShape}");
         }
 
         yield return null;
 
         for (int i = 0; i < currentEnemies.Count; i++)
-        {
-            var enemy = currentEnemies[i];
-            if (enemy == null) continue;
-
-            var movement = enemy.GetComponent<EnemyMovementBehavior>();
-            if (movement != null && useEnemyApproach)
-            {
-                movement.SetMovementPaused(false);
-                movement.SetActive(true);
-            }
-        }
-
-        Debug.Log($"[Tutorial] {currentEnemies.Count} enemy siap.");
+            cachedHalfExtents.Add(GetEnemyHalfExtent(currentEnemies[i]));
     }
 
-    // ============================================================
-    // APPROACH + FREEZE (ALL)
-    // ============================================================
+    // Musuh approach lalu freeze.
     private IEnumerator ApproachAndFreezeEnemiesRoutine()
     {
         if (!HasAnyAliveEnemy()) yield break;
@@ -883,37 +735,22 @@ public class TutorialManager : MonoBehaviour
         Transform playerTransform = FindPlayerTransform();
         Camera cam = Camera.main;
 
-        Debug.Log($"[Tutorial] Approach start. side={spawnSide}, " +
-                  $"targetDist={enemyStopDistanceToPlayer}, targetVPx={enemyStopViewportX}");
-
         float startTime = Time.time;
-        float nextLog = startTime + 1f;
         bool frozen = false;
 
         while (Time.time - startTime < approachTimeoutSeconds)
         {
-            if (!HasAnyAliveEnemy())
-            {
-                Debug.LogError($"[Tutorial] Semua enemy HILANG di tengah approach setelah {Time.time - startTime:F2}s.");
-                yield break;
-            }
+            if (!HasAnyAliveEnemy()) yield break;
+
+            if (separateDuringApproach)
+                SeparateEnemies(approachSeparationStrength, 1, syncAfter: false);
 
             Vector3 center = GetEnemiesCenterWorld();
 
-            if (Time.time >= nextLog)
-            {
-                float d = playerTransform != null ? Vector2.Distance(center, playerTransform.position) : -1f;
-                Vector3 vp = cam != null ? cam.WorldToViewportPoint(center) : Vector3.zero;
-                Debug.Log($"[Tutorial] t={Time.time - startTime:F1}s center={center} dist={d:F2} vpX={vp.x:F2}");
-                nextLog += 1f;
-            }
-
             if (playerTransform != null && enemyStopDistanceToPlayer > 0f)
             {
-                float dist = Vector2.Distance(center, playerTransform.position);
-                if (dist <= enemyStopDistanceToPlayer)
+                if (Vector2.Distance(center, playerTransform.position) <= enemyStopDistanceToPlayer)
                 {
-                    Debug.Log($"[Tutorial] Center dekat player (dist={dist:F2}). Freeze.");
                     FreezeAllEnemies();
                     frozen = true;
                     break;
@@ -923,15 +760,12 @@ public class TutorialManager : MonoBehaviour
             if (cam != null)
             {
                 Vector3 vp = cam.WorldToViewportPoint(center);
-
                 bool reachedStop = spawnSide == SpawnSide.Left
                     ? vp.x >= enemyStopViewportX
                     : vp.x <= enemyStopViewportX;
 
                 if (reachedStop)
                 {
-                    Debug.Log($"[Tutorial] Center viewport X={vp.x:F2} sudah sampai target " +
-                              $"{enemyStopViewportX:F2}. Freeze.");
                     FreezeAllEnemies();
                     frozen = true;
                     break;
@@ -942,12 +776,10 @@ public class TutorialManager : MonoBehaviour
         }
 
         if (!frozen && HasAnyAliveEnemy())
-        {
-            Debug.LogWarning("[Tutorial] Approach timeout. Freeze paksa.");
             FreezeAllEnemies();
-        }
     }
 
+    // Freeze semua musuh + rapi-rapikan posisi.
     private void FreezeAllEnemies()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -961,24 +793,112 @@ public class TutorialManager : MonoBehaviour
                 movement.SetMovementPaused(true);
                 movement.SetActive(false);
             }
-
             enemy.SyncSpawnPosition();
         }
 
-        Debug.Log("[Tutorial] Semua enemy FROZEN.");
+        SeparateEnemies(1f, separationIterations, syncAfter: true);
     }
 
-    // ============================================================
-    // TARGET CHALLENGE GATE
-    // ============================================================
-    /// <summary>
-    /// Hanya musuh target yang challenge-nya aktif.
-    /// Musuh lain di-StopCommandMode supaya gesture yang salah tidak
-    /// langsung membunuh mereka via EnemyGestureCommand.
-    /// </summary>
-    private void ActivateOnlyTargetChallenge(
-        EnemyGestureCommand target,
-        AksaraData targetAksara)
+    // Anti tumpang tindih antar musuh.
+    private void SeparateEnemies(float strength, int iterations, bool syncAfter)
+    {
+        if (currentEnemies.Count < 2) return;
+        if (iterations <= 0 && strength <= 0f) return;
+
+        int m = currentEnemies.Count;
+        float str = Mathf.Clamp01(strength);
+        int iterCount = Mathf.Max(1, iterations);
+
+        for (int iter = 0; iter < iterCount; iter++)
+        {
+            bool anyMoved = false;
+
+            for (int a = 0; a < m; a++)
+            {
+                var ea = currentEnemies[a];
+                if (ea == null) continue;
+
+                for (int b = a + 1; b < m; b++)
+                {
+                    var eb = currentEnemies[b];
+                    if (eb == null) continue;
+
+                    float sep = enemyMinSeparationWorld > 0f
+                        ? enemyMinSeparationWorld
+                        : GetCachedHalfExtent(ea, a) + GetCachedHalfExtent(eb, b) + enemySeparationPadding;
+
+                    Vector3 pa = ea.transform.position;
+                    Vector3 pb = eb.transform.position;
+
+                    Vector2 diff = new Vector2(pa.x - pb.x, pa.y - pb.y);
+                    float d = diff.magnitude;
+
+                    if (d >= sep) continue;
+
+                    if (d < 0.0001f)
+                    {
+                        float ang = (a * 137.5f + b * 53.1f) * Mathf.Deg2Rad;
+                        diff = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
+                        d = 0.0001f;
+                    }
+
+                    Vector2 dir = diff / d;
+                    float push = (sep - d) * 0.5f * str;
+
+                    Vector3 newA = pa + (Vector3)(dir * push);
+                    Vector3 newB = pb - (Vector3)(dir * push);
+                    newA.z = pa.z;
+                    newB.z = pb.z;
+
+                    ea.transform.position = newA;
+                    eb.transform.position = newB;
+                    anyMoved = true;
+                }
+            }
+
+            if (!anyMoved) break;
+        }
+
+        if (!syncAfter) return;
+
+        for (int i = 0; i < m; i++)
+            if (currentEnemies[i] != null) currentEnemies[i].SyncSpawnPosition();
+    }
+
+    // Ambil half extent dari cache atau hitung ulang.
+    private float GetCachedHalfExtent(EnemyGestureCommand enemy, int indexHint)
+    {
+        if (indexHint >= 0 && indexHint < cachedHalfExtents.Count && cachedHalfExtents[indexHint] > 0.01f)
+            return cachedHalfExtents[indexHint];
+        return GetEnemyHalfExtent(enemy);
+    }
+
+    // Hitung half extent renderer musuh.
+    private float GetEnemyHalfExtent(EnemyGestureCommand enemy)
+    {
+        if (enemy == null) return 1f;
+
+        float maxExtent = 0f;
+
+        foreach (var r in enemy.GetComponentsInChildren<Renderer>())
+        {
+            if (r == null || !r.enabled) continue;
+            if (r is ParticleSystemRenderer || r is TrailRenderer || r is LineRenderer) continue;
+            maxExtent = Mathf.Max(maxExtent, r.bounds.extents.x, r.bounds.extents.y);
+        }
+
+        if (maxExtent < 0.01f)
+        {
+            foreach (var c in enemy.GetComponentsInChildren<Collider2D>())
+                if (c != null)
+                    maxExtent = Mathf.Max(maxExtent, c.bounds.extents.x, c.bounds.extents.y);
+        }
+
+        return maxExtent > 0.01f ? maxExtent : 1f;
+    }
+
+    // Aktifkan challenge hanya untuk target, matikan lainnya.
+    private void ActivateOnlyTargetChallenge(EnemyGestureCommand target, AksaraData targetAksara)
     {
         if (target == null || targetAksara == null) return;
 
@@ -987,56 +907,37 @@ public class TutorialManager : MonoBehaviour
             var enemy = currentEnemies[i];
             if (enemy == null) continue;
 
+            var movement = enemy.GetComponent<EnemyMovementBehavior>();
+
             if (enemy == target)
-            {
                 enemy.ConfigureChallenge(targetAksara.GestureShape, 1);
-
-                // ConfigureChallenge mengaktifkan movement — re-freeze supaya
-                // musuh tetap diam selama player menggambar.
-                var movement = enemy.GetComponent<EnemyMovementBehavior>();
-                if (movement != null)
-                {
-                    movement.SetMovementPaused(true);
-                    movement.SetActive(false);
-                }
-
-                enemy.SyncSpawnPosition();
-
-                Debug.Log($"[Tutorial] Challenge aktif untuk {enemy.name} " +
-                          $"({targetAksara.GestureShape}).");
-            }
             else
-            {
-                // Musuh non-target: matikan challenge supaya tidak digesture.
                 enemy.StopCommandMode();
 
-                var movement = enemy.GetComponent<EnemyMovementBehavior>();
-                if (movement != null)
-                {
-                    movement.SetMovementPaused(true);
-                    movement.SetActive(false);
-                }
-
-                Debug.Log($"[Tutorial] Challenge dimatikan untuk {enemy.name} (non-target).");
+            if (movement != null)
+            {
+                movement.SetMovementPaused(true);
+                movement.SetActive(false);
             }
+
+            enemy.SyncSpawnPosition();
         }
     }
 
+    // Cari transform player via PlayerHealth.
     private Transform FindPlayerTransform()
     {
         var ph = FindAnyObjectByType<PlayerHealth>();
         return ph != null ? ph.transform : null;
     }
 
-    private Vector3 GetEnemyWorldSpawnPosition(float viewportYOffset)
+    // Hitung posisi spawn musuh dari viewport.
+    private Vector3 GetEnemyWorldSpawnPosition(float viewportXOffset, float viewportYOffset)
     {
         Camera cam = Camera.main;
         if (cam == null) return enemySpawnPos;
 
-        float anchorX = spawnSide == SpawnSide.Left
-            ? -offscreenPadding
-            : 1f + offscreenPadding;
-
+        float anchorX = (spawnSide == SpawnSide.Left ? -offscreenPadding : 1f + offscreenPadding) + viewportXOffset;
         float anchorY = Mathf.Clamp01(enemySpawnAnchorY + viewportYOffset);
 
         float z = Mathf.Abs(cam.transform.position.z - enemySpawnPos.z);
@@ -1047,26 +948,15 @@ public class TutorialManager : MonoBehaviour
         return worldPos;
     }
 
-    // ============================================================
-    // FRAGMENT FINDER
-    // ============================================================
+    // Cari fragment aktif di scene.
     private GameObject FindActiveFragment()
     {
-        AksaraFragmentItem[] all = FindObjectsByType<AksaraFragmentItem>(
-            FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-
-        foreach (var f in all)
-        {
-            if (f != null && f.gameObject.activeInHierarchy)
-                return f.gameObject;
-        }
-
+        foreach (var f in FindObjectsByType<AksaraFragmentItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            if (f != null && f.gameObject.activeInHierarchy) return f.gameObject;
         return null;
     }
 
-    // ============================================================
-    // DOTTED PATH
-    // ============================================================
+    // Titik tengah dots dalam UI container.
     private Vector2 GetDotsCenterUI()
     {
         if (dotsCenterOverride.HasValue) return dotsCenterOverride.Value;
@@ -1078,6 +968,7 @@ public class TutorialManager : MonoBehaviour
         return WorldToContainerLocal(GetEnemiesCenterWorld()) + dotsContainerOffset;
     }
 
+    // Spawn titik-titik path aksara.
     private void SpawnDottedPath()
     {
         if (tutorialContainer == null) return;
@@ -1123,6 +1014,7 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    // Buat satu dot UI.
     private void CreateDot(Vector2 anchoredPos)
     {
         var dotGO = new GameObject("TutorialDot", typeof(RectTransform), typeof(Image));
@@ -1143,6 +1035,7 @@ public class TutorialManager : MonoBehaviour
         currentDots.Add(dotGO);
     }
 
+    // Hitung total panjang path.
     private float GetPathLength(List<Vector2> path)
     {
         float len = 0f;
@@ -1151,15 +1044,14 @@ public class TutorialManager : MonoBehaviour
         return len;
     }
 
-    // ============================================================
-    // HAND
-    // ============================================================
+    // Spawn hand UI tanpa posisi (untuk path).
     private void SpawnHandOnPath()
     {
         if (tutorialContainer == null || handSprite == null) return;
         currentHand = CreateHandImage(tutorialContainer);
     }
 
+    // Buat image hand di parent.
     private Image CreateHandImage(RectTransform parent)
     {
         var handGO = new GameObject("TutorialHand", typeof(RectTransform), typeof(Image));
@@ -1179,6 +1071,7 @@ public class TutorialManager : MonoBehaviour
         return img;
     }
 
+    // Spawn hand di posisi UI target.
     private void SpawnHandAtUI(RectTransform targetUI, bool withTapping = true)
     {
         ClearHand();
@@ -1203,6 +1096,7 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    // Spawn hand di posisi world target.
     private void SpawnHandAtWorld(Vector3 worldPos, bool withTapping = true)
     {
         ClearHand();
@@ -1227,6 +1121,7 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    // Mulai animasi hand mengikuti path.
     private void PlayHandAlongPath()
     {
         if (currentHand == null) return;
@@ -1234,6 +1129,7 @@ public class TutorialManager : MonoBehaviour
         handAnimCoroutine = StartCoroutine(HandPathRoutine());
     }
 
+    // Loop hand mengikuti path aksara.
     private IEnumerator HandPathRoutine()
     {
         List<Vector2> path = TutorialLetterPaths.GetPath(currentTarget);
@@ -1270,19 +1166,19 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    // Animasi tap (naik-turun) hand.
     private IEnumerator HandTapRoutine(Vector2 basePos)
     {
         while (true)
         {
             float offset = Mathf.Abs(Mathf.Sin(Time.unscaledTime * handTapSpeed)) * handTapAmplitudePx;
-
             if (currentHand != null)
                 currentHand.rectTransform.anchoredPosition = basePos - new Vector2(0f, offset);
-
             yield return null;
         }
     }
 
+    // Hapus hand dari layar.
     private void ClearHand()
     {
         if (handAnimCoroutine != null)
@@ -1298,17 +1194,26 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    // Hapus semua dot.
     private void ClearDots()
     {
         foreach (var d in currentDots)
             if (d != null) Destroy(d);
-
         currentDots.Clear();
     }
 
-    // ============================================================
-    // COORDINATE HELPERS
-    // ============================================================
+    // Sembunyikan/tampilkan hand + dots (dipakai saat pause).
+    public void SetTutorialVisualsVisible(bool visible)
+    {
+        if (currentHand != null)
+            currentHand.gameObject.SetActive(visible);
+
+        for (int i = 0; i < currentDots.Count; i++)
+            if (currentDots[i] != null)
+                currentDots[i].SetActive(visible);
+    }
+
+    // Convert world pos ke local container UI.
     private Vector2 WorldToContainerLocal(Vector3 worldPos)
     {
         Camera cam = Camera.main;
@@ -1323,57 +1228,38 @@ public class TutorialManager : MonoBehaviour
         return localPos;
     }
 
+    // Ambil camera yang dipakai Canvas (null untuk overlay).
     private static Camera GetCanvasCameraFor(RectTransform rect)
     {
         if (rect == null) return null;
-
         Canvas c = rect.GetComponentInParent<Canvas>();
-        if (c == null) return null;
-        if (c.renderMode == RenderMode.ScreenSpaceOverlay) return null;
-
+        if (c == null || c.renderMode == RenderMode.ScreenSpaceOverlay) return null;
         return c.worldCamera;
     }
 
-    // ============================================================
-    // GESTURE
-    // ============================================================
+    // Callback gesture selesai digambar.
     private void OnGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
         if (!waitingForDraw) return;
         if (!result.IsRecognized) return;
+        if (result.DetectedShape != currentTarget) return;
 
-        if (result.DetectedShape != currentTarget)
-        {
-            Debug.Log($"[Tutorial] Gesture {result.DetectedShape} bukan target saat ini ({currentTarget}). Abaikan.");
-            return;
-        }
-
-        Debug.Log($"[Tutorial] Berhasil gambar {currentTarget}!");
         waitingForDraw = false;
     }
 
-    // ============================================================
-    // COLLECTION CLICK
-    // ============================================================
+    // Callback tombol collection diklik.
     private void OnCollectionClicked()
     {
         if (!waitingForCollectionClick) return;
         waitingForCollectionClick = false;
     }
 
-    // ============================================================
-    // INPUT (fragment tap)
-    // ============================================================
+    // Handle input tap fragment + salah klik.
     private void Update()
     {
         if (!waitingForItemClick) return;
 
-        if (currentItem == null)
-        {
-            waitingForItemClick = false;
-            return;
-        }
-
+        if (currentItem == null) { waitingForItemClick = false; return; }
         if (!Input.GetMouseButtonDown(0)) return;
 
         Camera cam = Camera.main;
@@ -1387,22 +1273,74 @@ public class TutorialManager : MonoBehaviour
             currentItem.SendMessage("OnMouseDown", SendMessageOptions.DontRequireReceiver);
             waitingForItemClick = false;
         }
+        else
+        {
+            TriggerWrongClickFeedback();
+        }
     }
 
-    // ============================================================
-    // SPRITE CACHE
-    // ============================================================
+    // Putar SFX hooray sesuai index musuh.
+    private void PlayHoorayForEnemyIndex(int enemyIndex)
+    {
+        if (AudioManager.Instance == null) return;
+        AudioClip clip = enemyIndex == 0 ? hoorayAksara1SFX : hoorayAksara2SFX;
+        if (clip != null) AudioManager.Instance.PlaySFX(clip);
+    }
+
+    // Putar SFX aksara drop.
+    private void PlayAksaraDropSFX()
+    {
+        if (AudioManager.Instance != null && aksaraDropSFX != null)
+            AudioManager.Instance.PlaySFX(aksaraDropSFX);
+    }
+
+    // Feedback salah klik: SFX + shake.
+    private void TriggerWrongClickFeedback()
+    {
+        if (wrongClickSFX != null && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(wrongClickSFX);
+
+        if (!enableShakeOnWrongClick) return;
+
+        if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
+        shakeCoroutine = StartCoroutine(ShakeCameraRoutine());
+    }
+
+    // Shake camera sebentar.
+    private IEnumerator ShakeCameraRoutine()
+    {
+        Camera cam = Camera.main;
+        if (cam == null) { shakeCoroutine = null; yield break; }
+
+        Transform t = cam.transform;
+        Vector3 original = t.localPosition;
+        float elapsed = 0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float damper = 1f - (elapsed / shakeDuration);
+            float ang = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            Vector2 offset = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * shakeMagnitude * damper;
+
+            t.localPosition = original + new Vector3(offset.x, offset.y, 0f);
+
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        t.localPosition = original;
+        shakeCoroutine = null;
+    }
+
+    // Ambil sprite dot (generate kalau kosong).
     private Sprite GetDotSprite()
     {
         if (cachedDotSprite != null) return cachedDotSprite;
-
-        cachedDotSprite = dotSprite != null
-            ? dotSprite
-            : CreateCircleSprite(64);
-
+        cachedDotSprite = dotSprite != null ? dotSprite : CreateCircleSprite(64);
         return cachedDotSprite;
     }
 
+    // Generate sprite lingkaran runtime.
     private Sprite CreateCircleSprite(int size)
     {
         var tex = new Texture2D(size, size, TextureFormat.RGBA32, false)
@@ -1439,9 +1377,7 @@ public class TutorialManager : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
     }
 
-    // ============================================================
-    // FINISH BUTTONS
-    // ============================================================
+    // Tombol MAIN: selesai tutorial → gameplay (dengan fade BGM).
     private void OnClickMain()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
@@ -1455,37 +1391,27 @@ public class TutorialManager : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        TransitionManager tm = TransitionManager.Instance();
-
-        if (tm != null && transitionSettings != null)
-        {
-            Debug.Log("[Tutorial] Transition ke gameplay pakai TransitionSettings.");
-            tm.Transition(gameplayScene, transitionSettings, loadDelay);
-        }
-        else
-        {
-            Debug.LogWarning("[Tutorial] TransitionManager / TransitionSettings null. Load langsung.");
-            SceneManager.LoadScene(gameplayScene);
-        }
+        StartCoroutine(FadeAndLoadScene(gameplayScene));
     }
 
+    // Tombol LATIHAN: reload scene dengan fade BGM.
     private void OnClickLatihan()
     {
         Time.timeScale = 1f;
-
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        StartCoroutine(FadeAndLoadScene(SceneManager.GetActiveScene().name));
     }
-}
 
-// ============================================================
-// HELPER — diagnostik waktu destroy enemy
-// ============================================================
-internal class TutorialEnemyGuard : MonoBehaviour
-{
-    public Action OnDestroyed;
-
-    private void OnDestroy()
+    // Fade out BGM lalu load scene via TransitionManager.
+    private IEnumerator FadeAndLoadScene(string sceneName)
     {
-        OnDestroyed?.Invoke();
+        if (AudioManager.Instance != null)
+            yield return AudioManager.Instance.FadeOutBGMAndWait(bgmFadeOutDuration);
+
+        TransitionManager tm = TransitionManager.Instance();
+
+        if (tm != null && transitionSettings != null)
+            tm.Transition(sceneName, transitionSettings, loadDelay);
+        else
+            SceneManager.LoadScene(sceneName);
     }
 }

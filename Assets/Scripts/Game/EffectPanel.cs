@@ -20,9 +20,7 @@ public class EffectPanel : MonoBehaviour
     [SerializeField] private bool useSound = true;
     [SerializeField] private string openSound = "Panel";
     [SerializeField] private string closeSound = "Panel";
-
-    [Range(0f, 1f)]
-    [SerializeField] private float panelSoundVolume = 0.6f;
+    [Range(0f, 1f)] [SerializeField] private float panelSoundVolume = 0.6f;
 
     public Action onOpenComplete;
     public Action onCloseComplete;
@@ -33,8 +31,7 @@ public class EffectPanel : MonoBehaviour
 
     private void Awake()
     {
-        if (box == null)
-            box = GetComponent<RectTransform>();
+        if (box == null) box = GetComponent<RectTransform>();
 
         originalPosition = box.anchoredPosition;
 
@@ -47,28 +44,19 @@ public class EffectPanel : MonoBehaviour
         }
 
         if (background == null)
-            Debug.LogWarning(
-                $"EffectPanel: Background belum diisi pada {gameObject.name}"
-            );
+            Debug.LogWarning($"EffectPanel: Background belum diisi pada {gameObject.name}");
     }
 
     private void OnEnable()
     {
-        if (isAnimating || box == null)
-            return;
+        if (isAnimating || box == null) return;
 
         isAnimating = true;
         isOpen = true;
 
-        if (useSound)
-            AudioManager.Instance?.PlayUISFX(
-                openSound,
-                panelSoundVolume
-            );
+        if (useSound) AudioManager.Instance?.PlayUISFX(openSound, panelSoundVolume);
 
-        box.anchoredPosition =
-            originalPosition + new Vector2(0, -slideDistance);
-
+        box.anchoredPosition = originalPosition + new Vector2(0, -slideDistance);
         boxCanvasGroup.alpha = 0f;
 
         if (isStacked && background != null)
@@ -77,36 +65,24 @@ public class EffectPanel : MonoBehaviour
             background.blocksRaycasts = true;
             background.interactable = true;
 
-            LeanTween.alphaCanvas(
-                background,
-                1f,
-                fadeDuration
-            )
-            .setIgnoreTimeScale(true);
+            LeanTween.alphaCanvas(background, 1f, fadeDuration).setIgnoreTimeScale(true);
         }
 
-        LeanTween.move(
-            box,
-            originalPosition,
-            slideDuration
-        )
-        .setEaseOutExpo()
-        .setIgnoreTimeScale(true);
+        LeanTween.move(box, originalPosition, slideDuration)
+            .setEaseOutExpo()
+            .setIgnoreTimeScale(true);
 
-        LeanTween.alphaCanvas(
-            boxCanvasGroup,
-            1f,
-            slideDuration
-        )
-        .setEaseOutExpo()
-        .setIgnoreTimeScale(true)
-        .setOnComplete(() =>
-        {
-            isAnimating = false;
-            onOpenComplete?.Invoke();
-        });
+        LeanTween.alphaCanvas(boxCanvasGroup, 1f, slideDuration)
+            .setEaseOutExpo()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(() =>
+            {
+                isAnimating = false;
+                onOpenComplete?.Invoke();
+            });
     }
 
+    // Tutup dialog dengan animasi slide + fade.
     public void CloseDialog(Action onComplete = null)
     {
         if (!isOpen)
@@ -126,14 +102,11 @@ public class EffectPanel : MonoBehaviour
 
         isAnimating = true;
 
-        if (useSound)
-            AudioManager.Instance?.PlayUISFX(
-                closeSound,
-                panelSoundVolume
-            );
+        if (useSound) AudioManager.Instance?.PlayUISFX(closeSound, panelSoundVolume);
 
         int completed = 0;
 
+        // Panggil callback setelah 3 animasi selesai.
         void TryFinish()
         {
             completed++;
@@ -149,41 +122,29 @@ public class EffectPanel : MonoBehaviour
             }
         }
 
-        // Slide box
-        LeanTween.move(
-            box,
-            originalPosition + new Vector2(0, -slideDistance),
-            slideDuration
-        )
-        .setEaseInExpo()
-        .setIgnoreTimeScale(true)
-        .setOnComplete(TryFinish);
+        // Slide box.
+        LeanTween.move(box, originalPosition + new Vector2(0, -slideDistance), slideDuration)
+            .setEaseInExpo()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(TryFinish);
 
-        // Fade box
-        LeanTween.alphaCanvas(
-            boxCanvasGroup,
-            0f,
-            slideDuration
-        )
-        .setEaseInExpo()
-        .setIgnoreTimeScale(true)
-        .setOnComplete(TryFinish);
+        // Fade box.
+        LeanTween.alphaCanvas(boxCanvasGroup, 0f, slideDuration)
+            .setEaseInExpo()
+            .setIgnoreTimeScale(true)
+            .setOnComplete(TryFinish);
 
-        // Fade background
+        // Fade background.
         if (isStacked && background != null)
         {
-            LeanTween.alphaCanvas(
-                background,
-                0f,
-                fadeDuration
-            )
-            .setIgnoreTimeScale(true)
-            .setOnComplete(() =>
-            {
-                background.blocksRaycasts = false;
-                background.interactable = false;
-                TryFinish();
-            });
+            LeanTween.alphaCanvas(background, 0f, fadeDuration)
+                .setIgnoreTimeScale(true)
+                .setOnComplete(() =>
+                {
+                    background.blocksRaycasts = false;
+                    background.interactable = false;
+                    TryFinish();
+                });
         }
         else
         {
@@ -199,8 +160,7 @@ public class EffectPanel : MonoBehaviour
         {
             box.anchoredPosition = originalPosition;
 
-            if (boxCanvasGroup != null)
-                boxCanvasGroup.alpha = 1f;
+            if (boxCanvasGroup != null) boxCanvasGroup.alpha = 1f;
         }
 
         if (background != null)

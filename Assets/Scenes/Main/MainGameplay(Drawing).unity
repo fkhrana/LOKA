@@ -1917,8 +1917,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneTag: DA
   isFilled: 0
-  correctSFX: {fileID: 8300000, guid: d598052716c50864c88e0723d64eddbe, type: 3}
-  wrongSFX: {fileID: 8300000, guid: e808d54b00f4bcd41a18a93aa3967b31, type: 3}
+  correctSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
   correctVFX: {fileID: 2125754360}
   shakeDuration: 0.3
   shakeMagnitude: 15
@@ -3628,7 +3628,7 @@ MonoBehaviour:
   rewardPanel: {fileID: 1504385821}
   enemyWaveSpawner: {fileID: 441064577}
   cameraIntroManager: {fileID: 1167486402}
-  player: {fileID: 0}
+  player: {fileID: 1540591676459283538}
 --- !u!1 &441064576
 GameObject:
   m_ObjectHideFlags: 0
@@ -6156,8 +6156,8 @@ MonoBehaviour:
   collectPulseScale: 1.2
   collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
   hoverVolume: 0.1
   clickVolume: 1
 --- !u!1 &910368817
@@ -6629,7 +6629,7 @@ MonoBehaviour:
   gestureDrawer: {fileID: 256010449}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   transitionDelay: 0.5
-  saveCurrentProgress: {fileID: 0}
+  saveCurrentProgress: {fileID: 423558674}
 --- !u!1 &1007347939
 GameObject:
   m_ObjectHideFlags: 0
@@ -6865,8 +6865,8 @@ MonoBehaviour:
   collectPulseScale: 1.2
   collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
   hoverVolume: 0.1
   clickVolume: 1
 --- !u!1001 &1019592671
@@ -7156,8 +7156,8 @@ MonoBehaviour:
   collectPulseScale: 1.2
   collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: ButtonHover
-  clickSound: ButtonClick
+  hoverSound: Hover
+  clickSound: ButtonHover
   hoverVolume: 0.1
   clickVolume: 1
 --- !u!1 &1024302526
@@ -7293,11 +7293,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -8334,7 +8334,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1305981802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10740,11 +10740,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -11179,11 +11179,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7380152644264910544, guid: 3e48c5ed3e6b5de469666285a23d3300, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178107060637295066, guid: 3e48c5ed3e6b5de469666285a23d3300, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13014,11 +13014,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7380152644264910544, guid: 3e48c5ed3e6b5de469666285a23d3300, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9178107060637295066, guid: 3e48c5ed3e6b5de469666285a23d3300, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13215,6 +13215,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+--- !u!4 &1540591676459283538 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8397764429721623933, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1540591676459283537}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

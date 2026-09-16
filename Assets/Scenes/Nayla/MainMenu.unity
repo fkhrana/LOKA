@@ -290,11 +290,9 @@ MonoBehaviour:
   - type: 4
     panel: {fileID: 1635363522}
     button: {fileID: 281792779}
-  - type: 5
-    panel: {fileID: 1455421459}
-    button: {fileID: 4405265163833901325}
   clickSound: {fileID: 8300000, guid: 453d1a6fbbd32854bb56e76d2f034fca, type: 3}
   nextSceneName: CutScenee
+  tutorialSceneName: Latihan
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.1
   mainMenuContent: {fileID: 165104819}
@@ -784,6 +782,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: SenaraiIntrover
   clickSound: 
@@ -938,6 +938,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -1238,6 +1240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
   audioMixer: {fileID: 24100000, guid: 702cd432c97f06749b221584c75770fd, type: 2}
+  aksaraVoiceMixerGroup: {fileID: -5755352336160559651, guid: 702cd432c97f06749b221584c75770fd, type: 2}
   bgmSource: {fileID: 47126520}
   sfxSource: {fileID: 1633464359}
   hoverSource: {fileID: 1612740816}
@@ -1248,13 +1251,13 @@ MonoBehaviour:
   defaultSfxVolume: 1
   bgmSettings:
   - bgmName: Surat Ajaib Desa
-    volume: 0.3
+    volume: 0.2
   - bgmName: Broken Festival Kite
     volume: 0.2
   - bgmName: Boss Theme
-    volume: 0.3
+    volume: 0.2
   aksaraBgmVolume: 1
-  defaultBgmFadeDuration: 0.6
+  defaultBgmFadeDuration: 0.9
   sfxDuplicateGuardWindow: 0.08
   uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
@@ -1444,6 +1447,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -1969,6 +1974,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2316,6 +2323,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2647,6 +2656,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -2949,6 +2960,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: 
@@ -3113,6 +3126,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 0
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -3697,6 +3712,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -3976,6 +3993,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -4477,11 +4496,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1569412105}
   m_SourcePrefab: {fileID: 100100000, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
---- !u!1 &4405265163833901325 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5251362974825698684, guid: 912301feea60d7443bf0db5ee671f992, type: 3}
-  m_PrefabInstance: {fileID: 4405265163833901324}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6337591362325402283
 PrefabInstance:
   m_ObjectHideFlags: 0
