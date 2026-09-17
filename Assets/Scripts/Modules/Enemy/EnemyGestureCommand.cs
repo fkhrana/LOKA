@@ -179,11 +179,8 @@ public class EnemyGestureCommand : MonoBehaviour
     if (!challengeActive)
         return;
 
-    if (!CameraIntroManager.GameStarted)
-        return;
-
     if (movementBehavior != null)
-        movementBehavior.Tick();
+        movementBehavior.Tick(CameraIntroManager.GameStarted);
 }
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)

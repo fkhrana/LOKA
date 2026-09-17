@@ -123,7 +123,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         moveDirection = moveLeft ? -1f : 1f;
         baseY = transform.position.y;
-        bobTimer = 0f;
+        bobTimer = Random.Range(0f, Mathf.PI * 2f);
         heightAdjustSpeed = Random.Range(heightAdjustSpeedMin, heightAdjustSpeedMax);
         knockbackForce = Random.Range(knockbackForceMin, knockbackForceMax);
     }
@@ -163,7 +163,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         allMovementPaused = paused;
     }
 
-    public void Tick()
+    public void Tick(bool approachPlayer = true)
     {
         if (isMovementPaused || allMovementPaused)
             return;
@@ -194,7 +194,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
 
         Vector2 moveDelta = Vector2.zero;
-        if (isActive && playerTransform != null)
+        if (approachPlayer && isActive && playerTransform != null)
         {
             float deltaX = playerTransform.position.x - currentPosition.x;
             float horizontalStep = Mathf.Sign(deltaX) * moveSpeed * Time.deltaTime;
