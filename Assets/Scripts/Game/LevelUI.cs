@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class LevelUI : MonoBehaviour, IPointerClickHandler
 {
@@ -11,8 +12,10 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
     [SerializeField] private GameObject lockOverlay;
     [SerializeField] private GameObject lockIcon;
 
+    [Header("Aksara Status")]
+    [SerializeField] private LevelAksaraStatusUI aksaraStatusUI;
+
     [Header("Colors (Fallback)")]
-    [Tooltip("Warna fallback kalau tidak ada background sprite untuk level ini.")]
     [SerializeField] private Color unlockedColor = new Color(1f, 0.84f, 0f);
     [SerializeField] private Color lockedColor = new Color(0.5f, 0.5f, 0.5f);
 
@@ -32,7 +35,8 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
         int index,
         bool unlocked,
         Sprite icon,
-        Sprite backgroundSprite
+        Sprite backgroundSprite,
+        List<AksaraData> aksaraList = null
     )
     {
         levelIndex = index;
@@ -45,14 +49,11 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
         {
             if (backgroundSprite != null)
             {
-                // Sprite khusus untuk level ini — pakai warna putih
-                // supaya tidak di-tint oleh warna locked/unlocked.
                 backgroundImage.sprite = backgroundSprite;
                 backgroundImage.color = Color.white;
             }
             else
             {
-                // Fallback: tint warna seperti perilaku lama.
                 backgroundImage.sprite = null;
                 backgroundImage.color =
                     isUnlocked ? unlockedColor : lockedColor;
@@ -64,6 +65,9 @@ public class LevelUI : MonoBehaviour, IPointerClickHandler
 
         if (lockIcon != null)
             lockIcon.SetActive(!isUnlocked);
+
+        if (aksaraStatusUI != null && aksaraList != null)
+            aksaraStatusUI.Setup(aksaraList);
     }
 
     public void OnPointerClick(PointerEventData eventData)

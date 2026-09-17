@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LevelManager : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class LevelManager : MonoBehaviour
     [Header("Level Backgrounds")]
     [SerializeField] private Sprite[] lockedLevelBackgrounds;
     [SerializeField] private Sprite[] unlockedLevelBackgrounds;
+
+    [Header("Level Aksara Display")]
+    [SerializeField] private List<LevelAksaraConfig> levelAksaraConfigs = new List<LevelAksaraConfig>();
 
     [Header("SFX")]
     [SerializeField] private AudioClip failureSound;
@@ -52,7 +56,6 @@ public class LevelManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // Hitung total level dari max panjang semua array.
         totalLevels = Mathf.Max(
             Mathf.Max(
                 lockedLevelIcons != null ? lockedLevelIcons.Length : 0,
@@ -79,7 +82,6 @@ public class LevelManager : MonoBehaviour
             SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // Setup ulang saat balik ke main menu.
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name != mainMenuSceneName) return;
@@ -87,14 +89,12 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(SetupMainMenuDelayed());
     }
 
-    // Delay 1 frame biar layout ready.
     private IEnumerator SetupMainMenuDelayed()
     {
         yield return null;
         SetupMainMenu();
     }
 
-    // Build semua UI main menu.
     private void SetupMainMenu()
     {
         if (SceneManager.GetActiveScene().name != mainMenuSceneName) return;
@@ -119,7 +119,6 @@ public class LevelManager : MonoBehaviour
         UpdateReplayButton();
     }
 
-    // Auto-cari referensi carousel & replay button.
     private void FindMainMenuReferences()
     {
         carouselSnap = null;
@@ -152,7 +151,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // Setup listener tombol replay.
     private void SetupReplayButton()
     {
         if (replayButton == null) { Debug.LogWarning("LevelManager: Replay Button tidak ditemukan."); return; }
@@ -167,7 +165,6 @@ public class LevelManager : MonoBehaviour
         replayButton.onClick.AddListener(ReplayWithShake);
     }
 
-    // Instantiate semua card level.
     private void GenerateLevels()
     {
         if (contentParent == null || levelCardPrefab == null) return;
@@ -181,34 +178,30 @@ public class LevelManager : MonoBehaviour
             LevelUI levelUI = card.GetComponent<LevelUI>();
 
             if (levelUI != null)
-                levelUI.Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i));
+                levelUI.Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i), GetAksaraList(i));
         }
     }
 
     private string GetKey(string prefix, int index) => prefix + index;
 
-    // Cek level sudah di-unlock.
     public bool IsUnlocked(int index)
     {
         if (index < 0 || index >= totalLevels) return false;
         return PlayerPrefs.GetInt(GetKey(UNLOCKED_KEY, index), 0) == 1;
     }
 
-    // Cek level sudah selesai.
     public bool IsCompleted(int index)
     {
         if (index < 0 || index >= totalLevels) return false;
         return PlayerPrefs.GetInt(GetKey(COMPLETED_KEY, index), 0) == 1;
     }
 
-    // Set flag unlock level.
     private void UnlockLevel(int index)
     {
         if (index < 0 || index >= totalLevels) return;
         PlayerPrefs.SetInt(GetKey(UNLOCKED_KEY, index), 1);
     }
 
-    // Buka level 1, dipanggil setelah cutscene selesai.
     public void UnlockFirstLevel()
     {
         if (totalLevels <= 0) return;
@@ -224,7 +217,6 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    // Ambil icon sesuai status unlock.
     private Sprite GetIcon(int index)
     {
         if (IsUnlocked(index))
@@ -241,7 +233,6 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
-    // Ambil background sesuai status unlock.
     private Sprite GetBackground(int index)
     {
         if (IsUnlocked(index))
@@ -258,7 +249,15 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
-   // Tandai level selesai + unlock level berikutnya.
+    private List<AksaraData> GetAksaraList(int index)
+    {
+        if (levelAksaraConfigs == null) return null;
+        if (index < 0 || index >= levelAksaraConfigs.Count) return null;
+
+        LevelAksaraConfig config = levelAksaraConfigs[index];
+        return config != null ? config.aksaraList : null;
+    }
+
     public void CompleteLevel(int index)
     {
         if (index < 0 || index >= totalLevels) return;
@@ -269,7 +268,6 @@ public class LevelManager : MonoBehaviour
         if (index + 1 < totalLevels)
             UnlockLevel(index + 1);
 
-        // Clear state level ini saja (bukan level lain).
         GameProgressManager.ClearGameState(index);
 
         PlayerPrefs.Save();
@@ -279,7 +277,6 @@ public class LevelManager : MonoBehaviour
         RefreshUI();
     }
 
-    // Set current level index.
     public void SetCurrentLevel(int index)
     {
         if (index < 0 || index >= totalLevels || !IsUnlocked(index)) return;
@@ -290,7 +287,6 @@ public class LevelManager : MonoBehaviour
         Debug.Log($"[LevelManager] Current Level: {index + 1}");
     }
 
-    // Ambil current level index.
     public int GetCurrentLevelIndex()
     {
         if (totalLevels <= 0) return 0;
@@ -298,7 +294,6 @@ public class LevelManager : MonoBehaviour
         return Mathf.Clamp(PlayerPrefs.GetInt(CURRENT_KEY, 0), 0, totalLevels - 1);
     }
 
-    // Ambil nama scene untuk level tertentu.
     public string GetSceneNameForLevel(int index)
     {
         if (gameplaySceneNames == null || index < 0 || index >= gameplaySceneNames.Length)
@@ -307,7 +302,6 @@ public class LevelManager : MonoBehaviour
         return gameplaySceneNames[index];
     }
 
-    // Replay level yang sedang dipilih.
     public void ReplaySelectedLevel()
     {
         int index = carouselSnap != null ? carouselSnap.GetCurrentIndex() : GetCurrentLevelIndex();
@@ -323,7 +317,6 @@ public class LevelManager : MonoBehaviour
         HandleLevelEntry(index);
     }
 
-    // Replay + shake effect di card.
     public void ReplayWithShake()
     {
         int index = carouselSnap != null ? carouselSnap.GetCurrentIndex() : GetCurrentLevelIndex();
@@ -348,14 +341,12 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(DelayedReplay(index));
     }
 
-    // Delay sebelum masuk level.
     private IEnumerator DelayedReplay(int index)
     {
         yield return new WaitForSecondsRealtime(0.5f);
         HandleLevelEntry(index);
     }
 
-    // Cek resume vs fresh start lalu load scene.
     private void HandleLevelEntry(int index)
     {
         string savedState = GameProgressManager.GetGameState(index);
@@ -374,7 +365,6 @@ public class LevelManager : MonoBehaviour
         LoadGameplayScene(index);
     }
 
-    // Load gameplay scene untuk level tertentu.
     private bool LoadGameplayScene(int index)
     {
         if (gameplaySceneNames == null || index < 0 || index >= gameplaySceneNames.Length)
@@ -396,7 +386,6 @@ public class LevelManager : MonoBehaviour
         return true;
     }
 
-    // Cari transform card berdasarkan index level.
     private Transform GetCardTransform(int index)
     {
         if (contentParent == null) return null;
@@ -413,7 +402,6 @@ public class LevelManager : MonoBehaviour
         return null;
     }
 
-    // Update state interactable tombol replay.
     public void UpdateReplayButton()
     {
         if (replayButton == null) return;
@@ -426,7 +414,6 @@ public class LevelManager : MonoBehaviour
             replayCanvasGroup.alpha = 1f;
     }
 
-    // Refresh tampilan semua card level.
     public void RefreshUI()
     {
         if (contentParent == null) { SetupMainMenu(); return; }
@@ -434,15 +421,14 @@ public class LevelManager : MonoBehaviour
         LevelUI[] cards = contentParent.GetComponentsInChildren<LevelUI>(true);
 
         for (int i = 0; i < cards.Length && i < totalLevels; i++)
-            cards[i].Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i));
+            cards[i].Setup(i, IsUnlocked(i), GetIcon(i), GetBackground(i), GetAksaraList(i));
 
         if (carouselSnap != null)
             carouselSnap.Refresh();
 
         UpdateReplayButton();
     }
-    
-    // Reset semua progress level.
+
     public void ResetProgress()
     {
         for (int i = 0; i < totalLevels; i++)
@@ -453,7 +439,6 @@ public class LevelManager : MonoBehaviour
 
         PlayerPrefs.DeleteKey(CURRENT_KEY);
 
-        // Reset semua state per-level + global.
         GameProgressManager.ResetAllLevelProgress(totalLevels);
         GameProgressManager.ResetProgress();
 
@@ -465,17 +450,23 @@ public class LevelManager : MonoBehaviour
 
         Debug.Log("[LevelManager] Semua progress di-reset.");
     }
-        // Putar SFX gagal.
+
     private void PlayFailureSound()
     {
         if (failureSound != null) AudioManager.Instance?.PlayUISFX(failureSound);
         else AudioManager.Instance?.PlayUISFX("Failure");
     }
 
-    // Putar SFX sukses.
     private void PlaySuccessSound()
     {
         if (successSound != null) AudioManager.Instance?.PlayUISFX(successSound);
         else AudioManager.Instance?.PlayUISFX("ButtonHover");
     }
+}
+
+[System.Serializable]
+public class LevelAksaraConfig
+{
+    public string label = "Level";
+    public List<AksaraData> aksaraList = new List<AksaraData>();
 }
