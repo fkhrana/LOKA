@@ -106,6 +106,10 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private RectTransform collectionButtonRect;
     [SerializeField] private GameObject collectionPanelRoot;
 
+    [Header("Follow Banner")]
+    [Tooltip("Banner 'Yuk Ikutin Aksaranya' yang muncul saat dots muncul dan hilang setelah player selesai gambar.")]
+    [SerializeField] private GameObject followAksaraBanner;
+
     [Header("Finish Panel")]
     [SerializeField] private GameObject finishPanel;
     [SerializeField] private Button mainButton;
@@ -205,6 +209,7 @@ public class TutorialManager : MonoBehaviour
     private void Start()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
+        if (followAksaraBanner != null) followAksaraBanner.SetActive(false);
         if (mainButton != null) mainButton.onClick.AddListener(OnClickMain);
         if (latihanButton != null) latihanButton.onClick.AddListener(OnClickLatihan);
         if (collectionButton != null) collectionButton.onClick.AddListener(OnCollectionClicked);
@@ -226,6 +231,8 @@ public class TutorialManager : MonoBehaviour
     private void OnDestroy()
     {
         IsTrainingMode = false;
+
+        HideFollowBanner();
 
         if (tutorialCoroutine != null) StopCoroutine(tutorialCoroutine);
         if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
@@ -376,6 +383,9 @@ public class TutorialManager : MonoBehaviour
 
             yield return new WaitForSeconds(delayBeforeDotsAndHand);
 
+            // Tampilkan banner "Yuk Ikutin Aksaranya" sebelum dots muncul
+            ShowFollowBanner();
+
             SpawnDottedPath();
             SpawnHandOnPath();
             PlayHandAlongPath();
@@ -385,6 +395,9 @@ public class TutorialManager : MonoBehaviour
             waitingForDraw = true;
             yield return WaitUntilOrTimeout(() => !waitingForDraw, gestureDrawTimeout, $"Gesture musuh #{enemyIndex}");
             waitingForDraw = false;
+
+            // Sembunyikan banner setelah player selesai gambar
+            HideFollowBanner();
 
             PlayCorrectSFX();
 
@@ -876,8 +889,19 @@ public class TutorialManager : MonoBehaviour
                     newA.z = pa.z;
                     newB.z = pb.z;
 
-                    ea.transform.position = newA;
-                    eb.transform.position = newB;
+                    Rigidbody2D rbA = ea.GetComponent<Rigidbody2D>();
+                    Rigidbody2D rbB = eb.GetComponent<Rigidbody2D>();
+
+                    if (rbA != null)
+                        rbA.position = newA;
+                    else
+                        ea.transform.position = newA;
+
+                    if (rbB != null)
+                        rbB.position = newB;
+                    else
+                        eb.transform.position = newB;
+
                     anyMoved = true;
                 }
             }
@@ -1197,7 +1221,6 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
-            // Tap dots pakai volume khusus
             PlayHandTapSFX(tapSFX, tapDotsSFXVolume);
 
             if (currentHand != null)
@@ -1335,7 +1358,21 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // === SFX helpers dengan log minimal ===
+    // === Follow Banner helpers ===
+
+    private void ShowFollowBanner()
+    {
+        if (followAksaraBanner != null)
+            followAksaraBanner.SetActive(true);
+    }
+
+    private void HideFollowBanner()
+    {
+        if (followAksaraBanner != null)
+            followAksaraBanner.SetActive(false);
+    }
+
+    // === End Follow Banner helpers ===
 
     private void PlayAksaraDropSFX()
     {
@@ -1358,8 +1395,6 @@ public class TutorialManager : MonoBehaviour
         Debug.Log($"[SFX] Hooray #{enemyIndex} @ {Time.time:F2}s");
         AudioManager.Instance.PlaySFX(clip);
     }
-
-    // === End SFX helpers ===
 
     private void TriggerWrongClickFeedback()
     {
@@ -1440,7 +1475,7 @@ public class TutorialManager : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
     }
 
-        private void OnClickMain()
+    private void OnClickMain()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
         if (tutorialCanvas != null) tutorialCanvas.gameObject.SetActive(false);
@@ -1451,14 +1486,11 @@ public class TutorialManager : MonoBehaviour
         if (LevelManager.Instance != null)
             LevelManager.Instance.UnlockFirstLevel();
 
-        // Cek apakah player masuk tutorial dari gameplay (lewat pause).
         string returnScene = PlayerPrefs.GetString("ReturnSceneAfterTutorial", "");
         string targetScene;
 
         if (!string.IsNullOrEmpty(returnScene))
         {
-            // Balik ke scene asal — state udah "Gameplay" dari PauseOverlay,
-            // jadi bakal countdown-only (nggak panning).
             targetScene = returnScene;
 
             PlayerPrefs.DeleteKey("ReturnSceneAfterTutorial");
@@ -1468,16 +1500,13 @@ public class TutorialManager : MonoBehaviour
         }
         else
         {
-            // Player baru (dari MainMenu → Cutscene → Tutorial) → ke gameplay default.
             targetScene = gameplayScene;
 
-            // Reset state biar intro panning + countdown muncul.
             GameProgressManager.ClearGameState();
 
             Debug.Log($"[Tutorial] Selesai → lanjut ke gameplay default: {targetScene}");
         }
 
-        // Tandai scene ini sebagai "scene sebelumnya".
         GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
 
         Time.timeScale = 1f;
@@ -1487,8 +1516,6 @@ public class TutorialManager : MonoBehaviour
 
     private void OnClickLatihan()
     {
-        // Reload scene latihan tanpa mengubah ReturnSceneAfterTutorial.
-        // Player masih dalam alur tutorial → flag tetap tersimpan.
         Time.timeScale = 1f;
         StartCoroutine(FadeAndLoadScene(SceneManager.GetActiveScene().name));
     }
