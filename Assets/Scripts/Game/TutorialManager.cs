@@ -107,8 +107,25 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private GameObject collectionPanelRoot;
 
     [Header("Follow Banner")]
-    [Tooltip("Banner 'Yuk Ikutin Aksaranya' yang muncul saat dots muncul dan hilang setelah player selesai gambar.")]
+    [Tooltip("Satu GameObject banner (background + TMP_Text). Teks diganti via array di bawah.")]
     [SerializeField] private GameObject followAksaraBanner;
+
+    [Tooltip("Referensi ke komponen TMP_Text di dalam banner.")]
+    [SerializeField] private TMP_Text followBannerText;
+
+    [Tooltip("Teks banner untuk tiap dots. Index 0 = dots musuh pertama, 1 = dots musuh kedua, dst.")]
+    [SerializeField] private string[] dotsBannerTexts =
+    {
+        "Yuk ikutin aksaranya!",
+        "Sekarang aksara berikutnya!"
+    };
+
+    [Tooltip("Teks banner untuk tiap fragment drop. Index 0 = drop pertama, 1 = drop kedua, dst.")]
+    [SerializeField] private string[] fragmentBannerTexts =
+    {
+        "Tap fragment yang muncul!",
+        "Satu lagi, tap fragmentnya!"
+    };
 
     [Header("Finish Panel")]
     [SerializeField] private GameObject finishPanel;
@@ -148,7 +165,7 @@ public class TutorialManager : MonoBehaviour
 
     [Range(0f, 2f)]
     [Tooltip("Volume khusus untuk tap dots (path aksara). Bisa beda dari tap fragment/book.")]
-    [SerializeField] private float tapDotsSFXVolume = 1f;
+    [SerializeField] private float tapDotsSfxVolume = 1f;
 
     [Header("Shake Effect (salah klik fragment)")]
     [SerializeField] private bool enableShakeOnWrongClick = true;
@@ -180,6 +197,7 @@ public class TutorialManager : MonoBehaviour
     private bool waitingForCollectionClick;
 
     private Sprite cachedDotSprite;
+    private bool bannerActive;
 
     private Rect CanvasRect => tutorialCanvasRect != null
         ? tutorialCanvasRect.rect
@@ -209,7 +227,9 @@ public class TutorialManager : MonoBehaviour
     private void Start()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
-        if (followAksaraBanner != null) followAksaraBanner.SetActive(false);
+
+        HideBanner();
+
         if (mainButton != null) mainButton.onClick.AddListener(OnClickMain);
         if (latihanButton != null) latihanButton.onClick.AddListener(OnClickLatihan);
         if (collectionButton != null) collectionButton.onClick.AddListener(OnCollectionClicked);
@@ -232,7 +252,7 @@ public class TutorialManager : MonoBehaviour
     {
         IsTrainingMode = false;
 
-        HideFollowBanner();
+        HideBanner();
 
         if (tutorialCoroutine != null) StopCoroutine(tutorialCoroutine);
         if (shakeCoroutine != null) StopCoroutine(shakeCoroutine);
@@ -315,6 +335,10 @@ public class TutorialManager : MonoBehaviour
 
         if (collectionPanelRoot == null)
             collectionPanelRoot = FindGameObjectByName("koleksipanel", "collectionpanel");
+
+        // Auto-cari TMP_Text di banner kalau belum di-assign
+        if (followBannerText == null && followAksaraBanner != null)
+            followBannerText = followAksaraBanner.GetComponentInChildren<TMP_Text>(true);
     }
 
     private Canvas FindCanvasWithName(params string[] keywords)
@@ -383,8 +407,8 @@ public class TutorialManager : MonoBehaviour
 
             yield return new WaitForSeconds(delayBeforeDotsAndHand);
 
-            // Tampilkan banner "Yuk Ikutin Aksaranya" sebelum dots muncul
-            ShowFollowBanner();
+            // Tampilkan banner dengan teks sesuai index dots
+            ShowBannerByIndex(dotsBannerTexts, enemyIndex);
 
             SpawnDottedPath();
             SpawnHandOnPath();
@@ -396,8 +420,7 @@ public class TutorialManager : MonoBehaviour
             yield return WaitUntilOrTimeout(() => !waitingForDraw, gestureDrawTimeout, $"Gesture musuh #{enemyIndex}");
             waitingForDraw = false;
 
-            // Sembunyikan banner setelah player selesai gambar
-            HideFollowBanner();
+            HideBanner();
 
             PlayCorrectSFX();
 
@@ -453,7 +476,13 @@ public class TutorialManager : MonoBehaviour
             currentItem = frag;
             PlayAksaraDropSFX();
 
+            // Tampilkan banner fragment sesuai index drop
+            ShowBannerByIndex(fragmentBannerTexts, fragmentsCollected);
+
             yield return TapFragmentRoutine();
+
+            HideBanner();
+
             fragmentsCollected++;
 
             float waitStart = Time.time;
@@ -1221,7 +1250,7 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
-            PlayHandTapSFX(tapSFX, tapDotsSFXVolume);
+            PlayHandTapSFX(tapSFX, tapDotsSfxVolume);
 
             if (currentHand != null)
                 currentHand.rectTransform.anchoredPosition = center + path[0] * scale;
@@ -1290,6 +1319,9 @@ public class TutorialManager : MonoBehaviour
         for (int i = 0; i < currentDots.Count; i++)
             if (currentDots[i] != null)
                 currentDots[i].SetActive(visible);
+
+        if (bannerActive && followAksaraBanner != null)
+            followAksaraBanner.SetActive(visible);
     }
 
     private Vector2 WorldToContainerLocal(Vector3 worldPos)
@@ -1358,18 +1390,26 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // === Follow Banner helpers ===
+    // === Follow Banner helpers (text-based) ===
 
-    private void ShowFollowBanner()
+    // Tampilkan banner dengan teks sesuai index. Fallback ke teks default kalau array kosong.
+    private void ShowBannerByIndex(string[] texts, int index)
     {
-        if (followAksaraBanner != null)
-            followAksaraBanner.SetActive(true);
+        if (followAksaraBanner == null) return;
+
+        if (followBannerText != null && texts != null && index >= 0 && index < texts.Length)
+            followBannerText.text = texts[index];
+
+        followAksaraBanner.SetActive(true);
+        bannerActive = true;
     }
 
-    private void HideFollowBanner()
+    private void HideBanner()
     {
         if (followAksaraBanner != null)
             followAksaraBanner.SetActive(false);
+
+        bannerActive = false;
     }
 
     // === End Follow Banner helpers ===
