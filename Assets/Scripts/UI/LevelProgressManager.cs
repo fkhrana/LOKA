@@ -93,7 +93,8 @@ public class LevelProgressManager : MonoBehaviour
     public void Initialize(
         int totalEnemiesInLevel,
         List<int> waveMilestones = null,
-        bool resumeFromSave = false
+        bool resumeFromSave = false,
+        int initialProcessedEnemies = 0
     )
     {
         totalEnemies =
@@ -109,8 +110,12 @@ public class LevelProgressManager : MonoBehaviour
         }
         else
         {
-            processedEnemies = 0;
-            GameProgressManager.SaveProcessedEnemies(0);
+            processedEnemies = Mathf.Clamp(
+                initialProcessedEnemies,
+                0,
+                totalEnemies
+            );
+            GameProgressManager.SaveProcessedEnemies(processedEnemies);
         }
 
         pendingProgress = 0;
@@ -123,7 +128,7 @@ public class LevelProgressManager : MonoBehaviour
 
         triggeredMilestones.Clear();
 
-        if (resumeFromSave && milestones.Count > 0)
+        if ((resumeFromSave || initialProcessedEnemies > 0) && milestones.Count > 0)
         {
             for (int i = 0; i < milestones.Count; i++)
             {

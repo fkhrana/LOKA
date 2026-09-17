@@ -22,6 +22,9 @@ public class PuzzleManager : MonoBehaviour
     [Header("Puzzle Complete VFX")]
     [SerializeField] private GameObject puzzleCompleteVfx;
 
+    [Header("Win SFX")]
+    [SerializeField] private AudioClip winSfx;
+
     [Header("Delay")]
     public float delayBeforeWinPanel = 2f;
 
@@ -137,6 +140,23 @@ public class PuzzleManager : MonoBehaviour
     public bool IsPuzzleCompleted() => puzzleCompleted;
     public void MarkPuzzleCompleted() => puzzleCompleted = true;
 
+    public void PlayWaveCompleteVfx()
+    {
+        PlayPuzzleCompleteVfx();
+    }
+
+    public IEnumerator PlayWaveCompleteSequence()
+    {
+        PlayWaveCompleteVfx();
+
+        yield return new WaitForSeconds(delayBeforeWinPanel);
+
+        if (puzzleCompleteVfx != null)
+            puzzleCompleteVfx.SetActive(false);
+
+        ShowPuzzleOnce();
+    }
+
     public void CheckPuzzleComplete()
     {
         foreach (DropZone slot in allSlots)
@@ -166,6 +186,9 @@ public class PuzzleManager : MonoBehaviour
             return;
 
         puzzleCompleteVfx.SetActive(true);
+
+        if (winSfx != null)
+            AudioManager.Instance?.PlayUISFX(winSfx);
 
         EfekConfetti[] confettiEffects =
             puzzleCompleteVfx.GetComponentsInChildren<EfekConfetti>(true);

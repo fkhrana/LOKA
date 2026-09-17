@@ -3010,6 +3010,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   enemyCount: 3
   spawnOnStart: 1
+  startFromWave2OnStart: 0
   waveTransitionBanner: {fileID: 1415337698}
   waveTransitionBannerDuration: 3
   useWaveInfoSFX: 1
@@ -4467,7 +4468,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -216, y: 0}
+  m_AnchoredPosition: {x: -316, y: 0}
   m_SizeDelta: {x: 147, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &695627354
@@ -4526,7 +4527,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2664e5701a1461748819e04a0842132a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cfff7a3931de61043ba8e0f4cb7fe3ff, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6037,6 +6038,7 @@ MonoBehaviour:
   powerManager: {fileID: 4207086250871307407}
   rewardPowerUpType: 0
   puzzleCompleteVfx: {fileID: 1855647552}
+  winSfx: {fileID: 8300000, guid: 03cd2db8f94c5a64c817cce7a8fa8800, type: 3}
   delayBeforeWinPanel: 2
   gestureDrawer: {fileID: 256010449}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
@@ -6078,8 +6080,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -90, y: -200}
-  m_SizeDelta: {x: 695.2, y: 167.8}
+  m_AnchoredPosition: {x: 1, y: -200}
+  m_SizeDelta: {x: 926.2704, y: 167.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &997620717
 GameObject:
@@ -6695,7 +6697,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 415, y: 0}
+  m_AnchoredPosition: {x: 314.99994, y: 0}
   m_SizeDelta: {x: 147, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1146848038
@@ -7356,8 +7358,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneTag: GA
   isFilled: 0
-  correctSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
-  wrongSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  correctSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
   correctVFX: {fileID: 1452302964}
   shakeDuration: 0.3
   shakeMagnitude: 15
@@ -8282,8 +8284,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneTag: FA
   isFilled: 0
-  correctSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
-  wrongSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  correctSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
   correctVFX: {fileID: 1035354140}
   shakeDuration: 0.3
   shakeMagnitude: 15
@@ -8555,7 +8557,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 216, y: 0}
+  m_AnchoredPosition: {x: 115.99994, y: 0}
   m_SizeDelta: {x: 147, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1573313939
@@ -8593,7 +8595,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2510bf0ab02445e4bae131e2099d3ff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragItem
-  correctTargetTag: DA
+  correctTargetTag: QA
 --- !u!114 &1573313941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12432,7 +12434,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -100.00006, y: 0}
   m_SizeDelta: {x: 147, y: 136}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2097320962
@@ -12491,7 +12493,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e8752e6406318544aa1c77d6d65ed3ad, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2adca3877482c5a48abaf7a684222967, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -3969,6 +3969,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   enemyCount: 3
   spawnOnStart: 1
+  startFromWave2OnStart: 0
   waveTransitionBanner: {fileID: 1415337698}
   waveTransitionBannerDuration: 3
   useWaveInfoSFX: 1
@@ -6604,6 +6605,7 @@ MonoBehaviour:
   powerManager: {fileID: 6214370911082769550}
   rewardPowerUpType: 2
   puzzleCompleteVfx: {fileID: 1356631361}
+  winSfx: {fileID: 8300000, guid: 03cd2db8f94c5a64c817cce7a8fa8800, type: 3}
   delayBeforeWinPanel: 2
   gestureDrawer: {fileID: 256010449}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}

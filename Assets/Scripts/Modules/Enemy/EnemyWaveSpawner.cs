@@ -32,6 +32,8 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private EnemyGestureCommand enemyPrefab;
     [SerializeField, Min(0)] private int enemyCount = 0;
     [SerializeField] private bool spawnOnStart = true;
+    [Header("Debug")]
+    [SerializeField] private bool startFromWave2OnStart = false;
     [SerializeField] private GameObject waveTransitionBanner;
     [SerializeField, Min(0.1f)] private float waveTransitionBannerDuration = 1.5f;
 
@@ -87,6 +89,12 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private void Start()
     {
+        if (startFromWave2OnStart)
+        {
+            StartFromWave(1);
+            return;
+        }
+
         string savedState =
             GameProgressManager.GetGameState();
 
@@ -113,6 +121,11 @@ public class EnemyWaveSpawner : MonoBehaviour
     }
 
     public void StartWaveSequence()
+    {
+        StartFromWave(0);
+    }
+
+    public void StartFromWave(int waveIndex)
     {
         StopWaveSequence();
 
@@ -188,22 +201,26 @@ public class EnemyWaveSpawner : MonoBehaviour
             );
         }
 
+        waveIndex = Mathf.Clamp(waveIndex, 0, waves.Count - 1);
+
         LevelProgressManager.Instance?.Initialize(
             totalLevelEnemies,
-            milestones
+            milestones,
+            false,
+            CountEnemiesBeforeWave(waveIndex)
         );
 
-        currentWaveIndex = -1;
+        currentWaveIndex = waveIndex - 1;
 
         currentWaveEnemies.Clear();
 
         GameProgressManager.SaveWaveIndex(
-            0
+            waveIndex
         );
 
         waveSequenceCoroutine =
             StartCoroutine(
-                SpawnWaveSequenceRoutine()
+                SpawnWaveSequenceRoutine(waveIndex)
             );
     }
 
@@ -308,6 +325,29 @@ public class EnemyWaveSpawner : MonoBehaviour
             );
     }
 
+    private int CountEnemiesBeforeWave(int waveIndex)
+    {
+        int completedEnemies = 0;
+
+        for (int i = 0; i < waveIndex && i < waves.Count; i++)
+        {
+            EnemyWaveDefinition wave = waves[i];
+
+            if (wave == null || wave.groups == null)
+                continue;
+
+            for (int groupIndex = 0; groupIndex < wave.groups.Count; groupIndex++)
+            {
+                EnemyWaveGroup group = wave.groups[groupIndex];
+
+                if (group != null)
+                    completedEnemies += Mathf.Max(0, group.enemyCount);
+            }
+        }
+
+        return completedEnemies;
+    }
+
     public void StopWaveSequence()
     {
         if (waveSequenceCoroutine != null)
@@ -399,7 +439,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         currentWaveEnemies.Clear();
     }
 
-    private IEnumerator SpawnWaveSequenceRoutine()
+    private IEnumerator SpawnWaveSequenceRoutine(int startWaveIndex)
     {
         if (waves == null ||
             waves.Count == 0)
@@ -409,7 +449,7 @@ public class EnemyWaveSpawner : MonoBehaviour
             yield break;
         }
 
-        for (int waveIndex = 0;
+        for (int waveIndex = startWaveIndex;
              waveIndex < waves.Count;
              waveIndex++)
         {
@@ -467,7 +507,9 @@ public class EnemyWaveSpawner : MonoBehaviour
                 if (PuzzleManager.Instance != null &&
                     !PuzzleManager.Instance.IsPuzzleCompleted())
                 {
-                    PuzzleManager.Instance.ShowPuzzleOnce();
+                    yield return StartCoroutine(
+                        PuzzleManager.Instance.PlayWaveCompleteSequence()
+                    );
 
                     yield return StartCoroutine(
                         WaitForPuzzleCompletionRoutine()
@@ -549,7 +591,9 @@ public class EnemyWaveSpawner : MonoBehaviour
                 if (PuzzleManager.Instance != null &&
                     !PuzzleManager.Instance.IsPuzzleCompleted())
                 {
-                    PuzzleManager.Instance.ShowPuzzleOnce();
+                    yield return StartCoroutine(
+                        PuzzleManager.Instance.PlayWaveCompleteSequence()
+                    );
 
                     yield return StartCoroutine(
                         WaitForPuzzleCompletionRoutine()

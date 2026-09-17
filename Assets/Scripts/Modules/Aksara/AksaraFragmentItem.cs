@@ -8,6 +8,7 @@ public class AksaraFragmentItem : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private float sideDistance = -1.5f;
     [SerializeField] private float dropDuration = 0.4f;
+    [SerializeField, Min(0f)] private float autoCollectDelay = 5f;
     [SerializeField] private GameObject dropVfx;
 
     [Header("Collect Animation")]
@@ -20,6 +21,7 @@ public class AksaraFragmentItem : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private AksaraData aksaraData;
     private Coroutine fallCoroutine;
+    private Coroutine autoCollectCoroutine;
     private ParticleSystem[] dropVfxParticles;
     private bool isCollecting;
     private GameObject activeCollectTrail;
@@ -61,6 +63,20 @@ public class AksaraFragmentItem : MonoBehaviour
         if (fallCoroutine != null)
             StopCoroutine(fallCoroutine);
         fallCoroutine = StartCoroutine(DropCoroutine(spawnPosition));
+
+        if (autoCollectCoroutine != null)
+            StopCoroutine(autoCollectCoroutine);
+
+        if (autoCollectDelay > 0f)
+            autoCollectCoroutine = StartCoroutine(AutoCollectAfterDelay());
+    }
+
+    private IEnumerator AutoCollectAfterDelay()
+    {
+        yield return new WaitForSeconds(autoCollectDelay);
+
+        if (!isCollecting && aksaraData != null)
+            TriggerCollect();
     }
 
     private IEnumerator DropCoroutine(Vector2 startPos)
@@ -105,6 +121,11 @@ public class AksaraFragmentItem : MonoBehaviour
 
     private void OnMouseDown()
     {
+        TriggerCollect();
+    }
+
+    private void TriggerCollect()
+    {
         if (isCollecting || aksaraData == null)
             return;
 
@@ -120,6 +141,9 @@ public class AksaraFragmentItem : MonoBehaviour
 
         if (fallCoroutine != null)
             StopCoroutine(fallCoroutine);
+
+        if (autoCollectCoroutine != null)
+            StopCoroutine(autoCollectCoroutine);
 
         Collider2D itemCollider = GetComponent<Collider2D>();
         if (itemCollider != null)
