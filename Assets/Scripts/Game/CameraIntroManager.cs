@@ -57,6 +57,8 @@ public class CameraIntroManager : MonoBehaviour
 
         string savedState = GameProgressManager.GetGameState();
 
+        Debug.Log($"[CameraIntroManager] Start() dipanggil, savedState='{savedState}'");
+
         // 1. Resume Puzzle / Reward → skip total (langsung lanjut)
         if (savedState == "Puzzle" || savedState == "Reward")
         {
@@ -176,7 +178,7 @@ public class CameraIntroManager : MonoBehaviour
         GameStarted = true;
         EnableGesture();
 
-        Debug.Log("GAME DIMULAI!");
+        Debug.Log("GAME DIMULAI! GameStarted=" + GameStarted);
     }
 
     private IEnumerator GerakkanKamera(Vector3 posisiAwal, Vector3 posisiAkhir, float durasi)

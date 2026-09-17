@@ -65,6 +65,11 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField, Min(0.1f)] private float minSpawnDistance = 1f;
     [SerializeField, Min(0.1f)] private float maxSpawnDistance = 3f;
 
+    [Header("Fail-safe")]
+    [Tooltip("Buffer tambahan (detik) di atas estimasi durasi intro CameraIntroManager, sebelum GameStarted dipaksa true. " +
+             "Dalam kondisi normal fail-safe ini tidak akan pernah terpakai; hanya jaga-jaga kalau CameraIntroManager error/hilang.")]
+    [SerializeField, Min(1f)] private float gameStartedFailSafeBuffer = 5f;
+
     private readonly List<EnemyGestureCommand> spawnedEnemies =
         new List<EnemyGestureCommand>();
 
@@ -89,6 +94,8 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private void Start()
     {
+        StartCoroutine(FailSafeGameStarted());
+
         if (startFromWave2OnStart)
         {
             StartFromWave(1);
@@ -118,6 +125,56 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         if (spawnOnStart)
             StartWaveSequence();
+    }
+
+    private IEnumerator FailSafeGameStarted()
+    {
+        // Hitung estimasi durasi intro terpanjang (skenario fresh start dengan panning) secara dinamis
+        // dari CameraIntroManager.Instance, supaya tidak salah tembak kalau nilai jeda diubah di Inspector.
+        float estimatedIntroDuration = 12f; // fallback kalau CameraIntroManager tidak ditemukan
+
+        if (CameraIntroManager.Instance != null)
+        {
+            var intro = CameraIntroManager.Instance;
+
+            float panningDuration =
+                intro.jedaAwal +
+                (intro.durasiPan * 2f) +
+                intro.jedaLihatMusuh;
+
+            float countdownDuration = 4f;
+
+            estimatedIntroDuration = panningDuration + countdownDuration;
+        }
+
+        float timeout = estimatedIntroDuration + gameStartedFailSafeBuffer;
+
+        Debug.Log($"[EnemyWaveSpawner] Fail-safe GameStarted aktif dalam {timeout:F1} detik jika belum true.");
+
+        yield return new WaitForSeconds(timeout);
+
+        if (!CameraIntroManager.GameStarted)
+        {
+            if (CameraIntroManager.Instance == null)
+            {
+                Debug.LogWarning(
+                    "[EnemyWaveSpawner] CameraIntroManager.Instance tidak ditemukan setelah " +
+                    timeout +
+                    " detik — GameStarted dipaksa true agar musuh tidak macet permanen."
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[EnemyWaveSpawner] GameStarted masih false setelah " +
+                    timeout +
+                    " detik meskipun CameraIntroManager ada — kemungkinan intro macet/error. " +
+                    "GameStarted dipaksa true sebagai upaya terakhir."
+                );
+            }
+
+            CameraIntroManager.GameStarted = true;
+        }
     }
 
     public void StartWaveSequence()
@@ -750,8 +807,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         {
             RefreshCurrentWaveEnemies();
 
-            if (currentWaveEnemies.Count <
-                initialBatchSize)
+            if (currentWaveEnemies.Count < initialBatchSize)
             {
                 EnemyWaveGroup selectedGroup =
                     GetNextMixedGroup(

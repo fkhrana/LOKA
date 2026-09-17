@@ -194,7 +194,10 @@ public class PuzzleManager : MonoBehaviour
             puzzleCompleteVfx.GetComponentsInChildren<EfekConfetti>(true);
 
         foreach (EfekConfetti confettiEffect in confettiEffects)
+        {
+            confettiEffect.gameObject.SetActive(true); // FIX: aktifkan child dulu sebelum StartCoroutine
             confettiEffect.MuntahkanConfetti();
+        }
 
         ParticleSystem[] particles =
             puzzleCompleteVfx.GetComponentsInChildren<ParticleSystem>(true);
