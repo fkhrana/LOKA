@@ -1440,7 +1440,7 @@ public class TutorialManager : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
     }
 
-    private void OnClickMain()
+        private void OnClickMain()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
         if (tutorialCanvas != null) tutorialCanvas.gameObject.SetActive(false);
@@ -1451,13 +1451,44 @@ public class TutorialManager : MonoBehaviour
         if (LevelManager.Instance != null)
             LevelManager.Instance.UnlockFirstLevel();
 
+        // Cek apakah player masuk tutorial dari gameplay (lewat pause).
+        string returnScene = PlayerPrefs.GetString("ReturnSceneAfterTutorial", "");
+        string targetScene;
+
+        if (!string.IsNullOrEmpty(returnScene))
+        {
+            // Balik ke scene asal — state udah "Gameplay" dari PauseOverlay,
+            // jadi bakal countdown-only (nggak panning).
+            targetScene = returnScene;
+
+            PlayerPrefs.DeleteKey("ReturnSceneAfterTutorial");
+            PlayerPrefs.Save();
+
+            Debug.Log($"[Tutorial] Selesai → kembali ke scene asal: {targetScene}");
+        }
+        else
+        {
+            // Player baru (dari MainMenu → Cutscene → Tutorial) → ke gameplay default.
+            targetScene = gameplayScene;
+
+            // Reset state biar intro panning + countdown muncul.
+            GameProgressManager.ClearGameState();
+
+            Debug.Log($"[Tutorial] Selesai → lanjut ke gameplay default: {targetScene}");
+        }
+
+        // Tandai scene ini sebagai "scene sebelumnya".
+        GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
+
         Time.timeScale = 1f;
 
-        StartCoroutine(FadeAndLoadScene(gameplayScene));
+        StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
     private void OnClickLatihan()
     {
+        // Reload scene latihan tanpa mengubah ReturnSceneAfterTutorial.
+        // Player masih dalam alur tutorial → flag tetap tersimpan.
         Time.timeScale = 1f;
         StartCoroutine(FadeAndLoadScene(SceneManager.GetActiveScene().name));
     }

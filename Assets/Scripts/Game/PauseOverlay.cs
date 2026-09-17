@@ -51,6 +51,8 @@ public class PauseOverlay : MonoBehaviour
 
     private TutorialManager cachedTutorialManager;
 
+    private const string KEY_RETURN_SCENE = "ReturnSceneAfterTutorial";
+
     private void Start()
     {
         Time.timeScale = 1f;
@@ -104,7 +106,6 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.PauseVideo();
             DisableGestureInput();
 
-            // Sembunyikan countdown intro saat pause
             SetIntroUIVisible(false);
 
             GetTutorialManager()?.SetTutorialVisualsVisible(false);
@@ -131,7 +132,6 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.ResumeVideo();
             EnableGestureInput();
 
-            // Tampilkan lagi countdown intro (kalau masih jalan)
             SetIntroUIVisible(true);
 
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
@@ -207,6 +207,13 @@ public class PauseOverlay : MonoBehaviour
         if (isTransitioning) return;
 
         SaveGameplayProgress();
+
+        // Simpan scene asal — biar bisa balik setelah tutorial selesai
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetString(KEY_RETURN_SCENE, activeSceneName);
+        PlayerPrefs.Save();
+
+        Debug.Log($"[PauseOverlay] ReturnSceneAfterTutorial = '{activeSceneName}'");
 
         bool cutsceneCompleted = GameProgressManager.IsCutsceneCompleted();
         string targetScene = cutsceneCompleted ? tutorialSceneName : cutsceneSceneName;

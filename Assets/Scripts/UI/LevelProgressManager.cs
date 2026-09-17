@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,13 +92,27 @@ public class LevelProgressManager : MonoBehaviour
 
     public void Initialize(
         int totalEnemiesInLevel,
-        List<int> waveMilestones = null
+        List<int> waveMilestones = null,
+        bool resumeFromSave = false
     )
     {
         totalEnemies =
             Mathf.Max(1, totalEnemiesInLevel);
 
-        processedEnemies = 0;
+        if (resumeFromSave)
+        {
+            processedEnemies = Mathf.Clamp(
+                GameProgressManager.GetProcessedEnemies(),
+                0,
+                totalEnemies
+            );
+        }
+        else
+        {
+            processedEnemies = 0;
+            GameProgressManager.SaveProcessedEnemies(0);
+        }
+
         pendingProgress = 0;
 
         if (waveMilestones != null)
@@ -109,6 +122,15 @@ public class LevelProgressManager : MonoBehaviour
         }
 
         triggeredMilestones.Clear();
+
+        if (resumeFromSave && milestones.Count > 0)
+        {
+            for (int i = 0; i < milestones.Count; i++)
+            {
+                if (processedEnemies >= milestones[i])
+                    triggeredMilestones.Add(milestones[i]);
+            }
+        }
 
         if (progressBarGlow != null)
         {
@@ -134,6 +156,8 @@ public class LevelProgressManager : MonoBehaviour
 
         pendingProgress--;
         processedEnemies++;
+
+        GameProgressManager.SaveProcessedEnemies(processedEnemies);
 
         SetGlowAlpha(1f);
 
@@ -162,6 +186,9 @@ public class LevelProgressManager : MonoBehaviour
     private void CompleteProgressForTesting()
     {
         processedEnemies = Mathf.Min(totalEnemies, processedEnemies + 1);
+
+        GameProgressManager.SaveProcessedEnemies(processedEnemies);
+
         SetGlowAlpha(1f);
 
         if (progressBarVfx != null)
@@ -293,7 +320,6 @@ public class LevelProgressManager : MonoBehaviour
                 barItemTrailVfx.transform.rotation
             );
 
-        // SFX dimainkan saat bar VFX muncul
         PlayNonCollectibleVfxSFX();
 
         PlayParticleSystems(barTrail);
@@ -517,7 +543,6 @@ public class LevelProgressManager : MonoBehaviour
                 $"{processedEnemies}/{totalEnemies}";
         }
 
-        // Check milestones
         for (
             int i = 0;
             i < milestones.Count;

@@ -229,7 +229,8 @@ public class EnemyWaveSpawner : MonoBehaviour
 
             LevelProgressManager.Instance?.Initialize(
                 enemyCount,
-                null
+                null,
+                true
             );
 
             SpawnWave();
@@ -282,7 +283,8 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         LevelProgressManager.Instance?.Initialize(
             totalLevelEnemies,
-            milestones
+            milestones,
+            true
         );
 
         int savedWave =
