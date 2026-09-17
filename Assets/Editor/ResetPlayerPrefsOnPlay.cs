@@ -48,6 +48,17 @@ public static class ResetPlayerPrefsOnPlay
         {
             PlayerPrefs.DeleteKey("LevelUnlocked_" + levelIndex);
             PlayerPrefs.DeleteKey("LevelCompleted_" + levelIndex);
+
+            // Progress keys sekarang disimpan per level.
+            PlayerPrefs.DeleteKey("GameState_L" + levelIndex);
+            PlayerPrefs.DeleteKey("LastPuzzleIndex_L" + levelIndex);
+            PlayerPrefs.DeleteKey("LastWaveIndex_L" + levelIndex);
+            PlayerPrefs.DeleteKey("ProcessedEnemies_L" + levelIndex);
+            PlayerPrefs.DeleteKey("SavedPos_X_L" + levelIndex);
+            PlayerPrefs.DeleteKey("SavedPos_Y_L" + levelIndex);
+            PlayerPrefs.DeleteKey("SavedPos_Z_L" + levelIndex);
+            PlayerPrefs.DeleteKey("HasPlayerPos_L" + levelIndex);
+            PlayerPrefs.DeleteKey("HasEnteredGameplay_L" + levelIndex);
         }
 
         foreach (string shape in Enum.GetNames(typeof(GestureShape)))
