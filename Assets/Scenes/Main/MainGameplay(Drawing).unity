@@ -848,7 +848,7 @@ PrefabInstance:
     - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: boxCanvasGroup
       value: 
-      objectReference: {fileID: 1567922412}
+      objectReference: {fileID: 0}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -877,6 +877,10 @@ PrefabInstance:
       propertyPath: pauseButton
       value: 
       objectReference: {fileID: 3534892}
+    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: panels.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1018,15 +1022,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5521010539138929266, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1813084351}
-    - targetCorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1567922412}
   m_SourcePrefab: {fileID: 100100000, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
 --- !u!1 &147695075
 GameObject:
@@ -6106,6 +6108,7 @@ MonoBehaviour:
   puzzlePanel: {fileID: 1665822008}
   rewardPanel: {fileID: 1504385821}
   powerManager: {fileID: 0}
+  rewardPowerUpType: 0
   puzzleCompleteVfx: {fileID: 1012445887}
   delayBeforeWinPanel: 2
   gestureDrawer: {fileID: 256010449}
@@ -7223,23 +7226,6 @@ RectTransform:
   m_AnchoredPosition: {x: -194.7, y: 43.9}
   m_SizeDelta: {x: 99.42, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1100206848 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 1975329875}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &1100206853
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1100206848}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1167486400
 GameObject:
   m_ObjectHideFlags: 0
@@ -8980,23 +8966,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1513814743}
   m_CullTransparentMesh: 1
---- !u!1 &1567922410 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-  m_PrefabInstance: {fileID: 139183398}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &1567922412
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1567922410}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1582759693
 GameObject:
   m_ObjectHideFlags: 0
@@ -11502,7 +11471,7 @@ PrefabInstance:
     - target: {fileID: 2555143359823660388, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: boxCanvasGroup
       value: 
-      objectReference: {fileID: 1100206853}
+      objectReference: {fileID: 0}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -11535,6 +11504,10 @@ PrefabInstance:
       propertyPath: gestureDrawer
       value: 
       objectReference: {fileID: 256010449}
+    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: panels.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -11676,15 +11649,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5521010539138929266, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1487617949}
-    - targetCorrespondingSourceObject: {fileID: 1476107464772848710, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1100206853}
   m_SourcePrefab: {fileID: 100100000, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
 --- !u!224 &1975329876 stripped
 RectTransform:

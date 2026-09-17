@@ -295,6 +295,7 @@ MonoBehaviour:
   tutorialSceneName: Latihan
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.1
+  bgmFadeOutDuration: 1.2
   mainMenuContent: {fileID: 165104819}
   entryStateName: PopUpMain
 --- !u!4 &67993242
@@ -1257,6 +1258,9 @@ MonoBehaviour:
   - bgmName: Boss Theme
     volume: 0.2
   aksaraBgmVolume: 1
+  sfxBgmVolume: 0.7
+  sfxDuckMinDuration: 0.2
+  sfxDuckMaxDuration: 1.5
   defaultBgmFadeDuration: 0.9
   sfxDuplicateGuardWindow: 0.08
   uiSFXCooldown: 0.5
@@ -2965,7 +2969,7 @@ MonoBehaviour:
   easeType: 27
   hoverSound: Hover
   clickSound: 
-  hoverVolume: 0.1
+  hoverVolume: 0.3
   clickVolume: 1
 --- !u!1 &1455421459 stripped
 GameObject:

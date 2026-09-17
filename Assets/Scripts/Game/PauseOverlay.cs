@@ -67,7 +67,6 @@ public class PauseOverlay : MonoBehaviour
         if (playButton != null) playButton.onClick.RemoveListener(ResumeGame);
     }
 
-    // Cari TutorialManager di scene (cache).
     private TutorialManager GetTutorialManager()
     {
         if (cachedTutorialManager == null)
@@ -76,7 +75,6 @@ public class PauseOverlay : MonoBehaviour
         return cachedTutorialManager;
     }
 
-    // Cari data panel by tipe.
     private PanelData GetPanelData(PanelType type)
     {
         foreach (var p in panels)
@@ -85,10 +83,15 @@ public class PauseOverlay : MonoBehaviour
         return null;
     }
 
-    // Ambil GameObject panel by tipe.
     private GameObject GetPanel(PanelType type) => GetPanelData(type)?.panel;
 
-    // Buka panel & pause game.
+    // Helper untuk sembunyikan/tampilkan countdown intro
+    private void SetIntroUIVisible(bool visible)
+    {
+        if (CameraIntroManager.Instance != null)
+            CameraIntroManager.Instance.SetIntroUIVisible(visible);
+    }
+
     private void OpenPanel(PanelType type)
     {
         if (currentPanel == type || isClosing || isTransitioning) return;
@@ -101,7 +104,9 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.PauseVideo();
             DisableGestureInput();
 
-            // Sembunyikan visual tutorial (hand + dots) saat pause.
+            // Sembunyikan countdown intro saat pause
+            SetIntroUIVisible(false);
+
             GetTutorialManager()?.SetTutorialVisualsVisible(false);
         }
 
@@ -109,7 +114,6 @@ public class PauseOverlay : MonoBehaviour
         currentPanel = type;
     }
 
-    // Tutup panel dan/atau resume game.
     private void ClosePanel(PanelType type, System.Action onComplete = null)
     {
         if (currentPanel != type || isClosing || isTransitioning)
@@ -127,7 +131,9 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.ResumeVideo();
             EnableGestureInput();
 
-            // Tampilkan kembali visual tutorial.
+            // Tampilkan lagi countdown intro (kalau masih jalan)
+            SetIntroUIVisible(true);
+
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
 
             currentPanel = PanelType.None;
@@ -150,14 +156,12 @@ public class PauseOverlay : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    // Matikan semua panel.
     private void CloseAllPanels()
     {
         foreach (var data in panels)
             if (data.panel != null) data.panel.SetActive(false);
     }
 
-    // Tutup panel via EffectPanel kalau ada.
     private void CloseWithEffect(PanelType type)
     {
         var panel = GetPanel(type);
@@ -170,7 +174,6 @@ public class PauseOverlay : MonoBehaviour
         else ClosePanel(type);
     }
 
-    // Fade in CanvasGroup objek.
     private void FadeIn(GameObject obj)
     {
         if (obj == null) return;
@@ -182,7 +185,6 @@ public class PauseOverlay : MonoBehaviour
         LeanTween.alphaCanvas(cg, 1f, 0.25f).setIgnoreTimeScale(true);
     }
 
-    // Matikan gesture input sementara.
     private void DisableGestureInput()
     {
         if (gestureDrawer != null)
@@ -192,7 +194,6 @@ public class PauseOverlay : MonoBehaviour
         }
     }
 
-    // Nyalakan gesture input.
     private void EnableGestureInput()
     {
         if (gestureDrawer != null) gestureDrawer.enabled = true;
@@ -201,7 +202,6 @@ public class PauseOverlay : MonoBehaviour
     public void OpenPause()    => OpenPanel(PanelType.Pause);
     public void ClosePause()   => CloseWithEffect(PanelType.Pause);
 
-    // Tombol Tutorial: save progress, fade BGM, lalu load Latihan/Cutscene.
     public void OpenTutorial()
     {
         if (isTransitioning) return;
@@ -219,10 +219,8 @@ public class PauseOverlay : MonoBehaviour
         StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
-    // Tetap ada untuk backward compatibility (mis. tombol close panel).
     public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
 
-    // Resume game dari panel apapun.
     public void ResumeGame()
     {
         if (currentPanel == PanelType.Pause)
@@ -236,7 +234,7 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.ResumeVideo();
             EnableGestureInput();
 
-            // Tampilkan kembali visual tutorial.
+            SetIntroUIVisible(true);
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
 
             currentPanel = PanelType.None;
@@ -246,16 +244,16 @@ public class PauseOverlay : MonoBehaviour
             Time.timeScale = 1f;
             cutsceneManager?.ResumeVideo();
             EnableGestureInput();
+
+            SetIntroUIVisible(true);
         }
     }
 
-    // Simpan progress lalu kembali ke main menu.
     public void GoToMainMenu()
     {
         if (isTransitioning) return;
 
         SaveGameplayProgress();
-
         PrepareForTransition();
 
         if (string.IsNullOrEmpty(mainMenuSceneName))
@@ -271,7 +269,6 @@ public class PauseOverlay : MonoBehaviour
         StartCoroutine(FadeAndLoadScene(mainMenuSceneName));
     }
 
-    // Simpan wave + posisi player + state gameplay.
     private void SaveGameplayProgress()
     {
         EnemyWaveSpawner enemyWaveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
@@ -282,12 +279,9 @@ public class PauseOverlay : MonoBehaviour
 
         GameProgressManager.SetHasEnteredGameplay(true);
         GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
-
-        // Tandai state Gameplay supaya CameraIntroManager tahu ini resume.
         GameProgressManager.SaveGameState("Gameplay");
     }
 
-    // Cleanup state sebelum pindah scene (tween, timeScale, panel, gesture).
     private void PrepareForTransition()
     {
         isTransitioning = true;
@@ -301,7 +295,6 @@ public class PauseOverlay : MonoBehaviour
         EnableGestureInput();
     }
 
-    // Fade out BGM lalu load scene via TransitionManager.
     private IEnumerator FadeAndLoadScene(string sceneName)
     {
         if (AudioManager.Instance != null)

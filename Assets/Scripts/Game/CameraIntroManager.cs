@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class CameraIntroManager : MonoBehaviour
 {
     public static bool GameStarted = false;
+    public static CameraIntroManager Instance { get; private set; }
 
     [Header("Pengaturan Kamera")]
     public Camera mainCamera;
@@ -32,6 +33,12 @@ public class CameraIntroManager : MonoBehaviour
 
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
+    private bool isCountdownActive = false;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -45,15 +52,14 @@ public class CameraIntroManager : MonoBehaviour
         }
 
         GameStarted = false;
+        isCountdownActive = false;
         DisableGesture();
 
         string savedState = GameProgressManager.GetGameState();
 
-        // ==== 1) Resume Puzzle / Reward → langsung lanjut ====
         if (savedState == "Puzzle" || savedState == "Reward")
         {
             Debug.Log($"[CameraIntroManager] Resume {savedState} → langsung lanjut.");
-
             GameStarted = true;
             EnableGesture();
 
@@ -63,7 +69,6 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
-        // ==== 2) Resume mid-game (pause ke main menu) → countdown saja ====
         if (savedState == "Gameplay")
         {
             Debug.Log("[CameraIntroManager] Resume Gameplay → countdown saja.");
@@ -71,7 +76,6 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
-        // ==== 3) New / retry / replay → panning + countdown ====
         if (mainCamera == null)
         {
             Debug.LogError("[CameraIntroManager] Main Camera belum diisi! Fallback countdown saja.");
@@ -88,6 +92,19 @@ public class CameraIntroManager : MonoBehaviour
 
         Debug.Log("[CameraIntroManager] Panning + countdown.");
         StartCoroutine(MainkanIntro(withPanning: true));
+    }
+
+    // ============================================
+    // PAUSE / RESUME UI SAAT PAUSE PANEL TERBUKA
+    // ============================================
+
+    public void SetIntroUIVisible(bool visible)
+    {
+        if (GameStarted) return;
+        if (!isCountdownActive) return;
+        if (countdownImage == null) return;
+
+        countdownImage.gameObject.SetActive(visible);
     }
 
     private void DisableGesture()
@@ -112,11 +129,7 @@ public class CameraIntroManager : MonoBehaviour
         if (withPanning)
         {
             posisiKiri = mainCamera.transform.position;
-            posisiKanan = new Vector3(
-                targetKanan.position.x,
-                posisiKiri.y,
-                posisiKiri.z
-            );
+            posisiKanan = new Vector3(targetKanan.position.x, posisiKiri.y, posisiKiri.z);
 
             yield return new WaitForSeconds(jedaAwal);
 
@@ -143,6 +156,7 @@ public class CameraIntroManager : MonoBehaviour
         }
 
         countdownImage.gameObject.SetActive(true);
+        isCountdownActive = true;
 
         if (AudioManager.Instance != null && countdownSFX != null)
             AudioManager.Instance.PlaySFX(countdownSFX);
@@ -153,6 +167,7 @@ public class CameraIntroManager : MonoBehaviour
         yield return StartCoroutine(TampilkanEfekPopUp(gambarMulai));
 
         countdownImage.gameObject.SetActive(false);
+        isCountdownActive = false;
 
         GameStarted = true;
         EnableGesture();

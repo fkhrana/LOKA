@@ -16,6 +16,9 @@ public class PuzzleManager : MonoBehaviour
     public GameObject rewardPanel;
     public PowerManager powerManager;
 
+    [Header("Reward Power Up")]
+    [SerializeField] private PowerManager.PowerUpType rewardPowerUpType = PowerManager.PowerUpType.Freeze;
+
     [Header("Puzzle Complete VFX")]
     [SerializeField] private GameObject puzzleCompleteVfx;
 
@@ -149,12 +152,11 @@ public class PuzzleManager : MonoBehaviour
     {
         if (puzzleCompleted) return;
 
-        Debug.Log("✅ Puzzle selesai!");
+        Debug.Log("Puzzle selesai!");
 
         MarkPuzzleCompleted();
         PlayPuzzleCompleteVfx();
 
-        // Jalankan sequence selesai
         StartCoroutine(PuzzleCompleteSequence());
     }
 
@@ -181,7 +183,7 @@ public class PuzzleManager : MonoBehaviour
         }
 
         Debug.Log(
-            "✨ Puzzle complete VFX dimainkan: " +
+            "Puzzle complete VFX dimainkan: " +
             confettiEffects.Length + " efek terompet, " +
             particles.Length + " particle system."
         );
@@ -192,12 +194,17 @@ public class PuzzleManager : MonoBehaviour
         if (gestureDrawer != null)
             EnableGestureInput();
 
-        PowerManager.UnlockPowerUp();
-
         if (powerManager != null)
         {
-            powerManager.SetUnlocked();
-            StartCoroutine(PopEffect(powerManager.transform));
+            powerManager.SetUnlocked(rewardPowerUpType);
+
+            Transform target = powerManager.GetSlotTransform(rewardPowerUpType);
+            if (target != null)
+                StartCoroutine(PopEffect(target));
+        }
+        else
+        {
+            PowerManager.UnlockPowerUp(rewardPowerUpType);
         }
 
         yield return new WaitForSeconds(delayBeforeWinPanel);

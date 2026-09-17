@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using EasyTransition;
 
@@ -11,6 +12,11 @@ public class TutorialManager : MonoBehaviour
 {
     public static bool IsTrainingMode { get; private set; } = false;
     public enum SpawnSide { Left, Right }
+
+    [Header("Player")]
+    [Tooltip("Drag GameObject player ke sini. Kalau kosong, akan dicari otomatis.")]
+    [SerializeField] private Transform playerTransform;
+    [SerializeField] private float waitForPlayerTimeout = 5f;
 
     [Header("Enemy")]
     [SerializeField] private EnemyGestureCommand enemyPrefab;
@@ -77,8 +83,8 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float handSizePx = 0f;
     [SerializeField] private Color dotColor = new Color(1f, 0.9f, 0.2f);
 
-    [Header("Dots Offset (dari musuh aktif)")]
-    [SerializeField] private Vector2 dotsContainerOffset = new Vector2(-200f, 0f);
+    [Header("Dots Offset (dari player)")]
+    [SerializeField] private Vector2 dotsContainerOffset = new Vector2(0f, 120f);
 
     [Header("Path Settings")]
     [SerializeField] private float pathPixelScale = 0f;
@@ -345,6 +351,9 @@ public class TutorialManager : MonoBehaviour
         if (!ValidateSetup()) { Debug.LogError("[Tutorial] Setup tidak lengkap."); yield break; }
         if (!PickAksaraAndEnemy()) yield break;
 
+        // Tunggu player spawn sebelum spawn musuh + dots
+        yield return WaitForPlayerRoutine();
+
         yield return SpawnEnemiesRoutine();
         yield return ApproachAndFreezeEnemiesRoutine();
 
@@ -448,6 +457,25 @@ public class TutorialManager : MonoBehaviour
 
         ShowFinishPanel();
         tutorialCoroutine = null;
+    }
+
+    // Tunggu player spawn (max waitForPlayerTimeout detik)
+    private IEnumerator WaitForPlayerRoutine()
+    {
+        if (FindPlayerTransform() != null)
+            yield break;
+
+        float elapsed = 0f;
+        while (FindPlayerTransform() == null && elapsed < waitForPlayerTimeout)
+        {
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (FindPlayerTransform() == null)
+            Debug.LogWarning($"[Tutorial] Player tidak ditemukan setelah {waitForPlayerTimeout:F1}s — dots akan pakai fallback musuh.");
+        else
+            Debug.Log($"[Tutorial] Player ditemukan: {FindPlayerTransform().name}");
     }
 
     // Tunggu kondisi terpenuhi atau timeout.
@@ -732,7 +760,7 @@ public class TutorialManager : MonoBehaviour
             yield break;
         }
 
-        Transform playerTransform = FindPlayerTransform();
+        Transform targetPlayer = FindPlayerTransform();
         Camera cam = Camera.main;
 
         float startTime = Time.time;
@@ -747,9 +775,9 @@ public class TutorialManager : MonoBehaviour
 
             Vector3 center = GetEnemiesCenterWorld();
 
-            if (playerTransform != null && enemyStopDistanceToPlayer > 0f)
+            if (targetPlayer != null && enemyStopDistanceToPlayer > 0f)
             {
-                if (Vector2.Distance(center, playerTransform.position) <= enemyStopDistanceToPlayer)
+                if (Vector2.Distance(center, targetPlayer.position) <= enemyStopDistanceToPlayer)
                 {
                     FreezeAllEnemies();
                     frozen = true;
@@ -757,18 +785,39 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
+            // Cek musuh TERDEPAN, bukan rata-rata
             if (cam != null)
             {
-                Vector3 vp = cam.WorldToViewportPoint(center);
-                bool reachedStop = spawnSide == SpawnSide.Left
-                    ? vp.x >= enemyStopViewportX
-                    : vp.x <= enemyStopViewportX;
+                float extremeX = spawnSide == SpawnSide.Left ? float.MinValue : float.MaxValue;
+                bool hasValid = false;
 
-                if (reachedStop)
+                for (int i = 0; i < currentEnemies.Count; i++)
                 {
-                    FreezeAllEnemies();
-                    frozen = true;
-                    break;
+                    if (currentEnemies[i] == null) continue;
+
+                    Vector3 vp = cam.WorldToViewportPoint(currentEnemies[i].transform.position);
+                    if (vp.z < 0f) continue;
+
+                    if (spawnSide == SpawnSide.Left)
+                        extremeX = Mathf.Max(extremeX, vp.x);
+                    else
+                        extremeX = Mathf.Min(extremeX, vp.x);
+
+                    hasValid = true;
+                }
+
+                if (hasValid)
+                {
+                    bool reachedStop = spawnSide == SpawnSide.Left
+                        ? extremeX >= enemyStopViewportX
+                        : extremeX <= enemyStopViewportX;
+
+                    if (reachedStop)
+                    {
+                        FreezeAllEnemies();
+                        frozen = true;
+                        break;
+                    }
                 }
             }
 
@@ -924,11 +973,49 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Cari transform player via PlayerHealth.
+    // Cari transform player (multi-fallback):
+    // 1. Field manual di Inspector
+    // 2. PlayerHealth component
+    // 3. Tag "Player"
+    // 4. Nama GameObject mengandung "player"
     private Transform FindPlayerTransform()
     {
+        // 1. Field manual
+        if (playerTransform != null)
+            return playerTransform;
+
+        // 2. PlayerHealth
         var ph = FindAnyObjectByType<PlayerHealth>();
-        return ph != null ? ph.transform : null;
+        if (ph != null)
+        {
+            playerTransform = ph.transform;
+            return playerTransform;
+        }
+
+        // 3. Tag "Player"
+        GameObject byTag = null;
+        try { byTag = GameObject.FindGameObjectWithTag("Player"); }
+        catch { /* tag belum dibuat di project */ }
+
+        if (byTag != null)
+        {
+            playerTransform = byTag.transform;
+            return playerTransform;
+        }
+
+        // 4. Fallback terakhir: nama mengandung "player"
+        foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        {
+            if (t == null) continue;
+            string n = t.name.ToLower();
+            if (n == "player" || n.Contains("player"))
+            {
+                playerTransform = t;
+                return playerTransform;
+            }
+        }
+
+        return null;
     }
 
     // Hitung posisi spawn musuh dari viewport.
@@ -956,10 +1043,14 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Titik tengah dots dalam UI container.
+    // Titik tengah dots di atas PLAYER
     private Vector2 GetDotsCenterUI()
     {
         if (dotsCenterOverride.HasValue) return dotsCenterOverride.Value;
+
+        Transform pt = FindPlayerTransform();
+        if (pt != null)
+            return WorldToContainerLocal(pt.position) + dotsContainerOffset;
 
         if (activeTargetEnemy != null)
             return WorldToContainerLocal(activeTargetEnemy.transform.position) + dotsContainerOffset;
@@ -1254,13 +1345,20 @@ public class TutorialManager : MonoBehaviour
         waitingForCollectionClick = false;
     }
 
-    // Handle input tap fragment + salah klik.
+    // Handle input tap fragment + salah klik (jangan trigger saat pause / klik UI)
     private void Update()
     {
         if (!waitingForItemClick) return;
 
         if (currentItem == null) { waitingForItemClick = false; return; }
         if (!Input.GetMouseButtonDown(0)) return;
+
+        // Skip kalau lagi pause
+        if (Time.timeScale <= 0f) return;
+
+        // Skip kalau klik kena UI (pause button, dsb)
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
 
         Camera cam = Camera.main;
         if (cam == null) return;

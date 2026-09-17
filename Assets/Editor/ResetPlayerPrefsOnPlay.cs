@@ -31,10 +31,14 @@ public static class ResetPlayerPrefsOnPlay
             "CutsceneCompleted",
             "CurrentLevelIndex",
             "OpenTutorial",
+
+            // Power Up keys
             "PowerUp_Freeze_Unlocked",
             "PowerUp_Freeze_Consumed",
             "PowerUp_Combo_Unlocked",
-            "PowerUp_Combo_Consumed"
+            "PowerUp_Combo_Consumed",
+            "PowerUp_Boost_Unlocked",   // ← NEW untuk Kacapi
+            "PowerUp_Boost_Consumed"    // ← NEW untuk Kacapi
         };
 
         foreach (string key in fixedKeys)
