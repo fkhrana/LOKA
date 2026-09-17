@@ -16,7 +16,7 @@ public class LevelAksaraStatusUI : MonoBehaviour
     [Tooltip("Warna tint saat aksara sudah dikoleksi.")]
     [SerializeField] private Color collectedColor = Color.white;
 
-    [Tooltip("Warna tint saat aksara belum dikoleksi. Putih/abu transparan biar bentuk aksara tetap keliatan.")]
+    [Tooltip("Warna tint saat aksara belum dikoleksi.")]
     [SerializeField] private Color uncollectedColor = new Color(0.6f, 0.6f, 0.6f, 0.36f);
 
     [Header("Options")]
@@ -71,8 +71,6 @@ public class LevelAksaraStatusUI : MonoBehaviour
         if (spawnedSlots.Count == 0 || currentAksaraList == null)
             return;
 
-        bool managerExists = CollectedAksaraManager.Instance != null;
-
         for (int i = 0; i < spawnedSlots.Count && i < currentAksaraList.Count; i++)
         {
             Image img = spawnedSlots[i];
@@ -80,9 +78,8 @@ public class LevelAksaraStatusUI : MonoBehaviour
 
             if (img == null) continue;
 
-            bool collected = managerExists
-                && data != null
-                && CollectedAksaraManager.Instance.IsCollected(data);
+            // ✅ Pakai PermanentCollectionManager — konsisten sama Collection UI
+            bool collected = data != null && PermanentCollectionManager.IsCollected(data);
 
             Sprite fallbackSprite = data != null ? data.IconSprite : null;
 
