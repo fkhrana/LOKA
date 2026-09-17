@@ -29,7 +29,10 @@ public class SaveCurrentProgress : MonoBehaviour
 
     private void Start()
     {
+        // Simpan scene sebelumnya SEBELUM update LastScene.
+        string previousScene = GameProgressManager.GetLastScene();
         string currentScene = SceneManager.GetActiveScene().name;
+
         GameProgressManager.SaveLastScene(currentScene);
 
         // Tutorial belum selesai → skip restore semua state.
@@ -44,17 +47,23 @@ public class SaveCurrentProgress : MonoBehaviour
         string savedState = GameProgressManager.GetGameState();
         bool fromMainMenu = GameProgressManager.StartedFromMainMenu;
 
-        Debug.Log($"[SaveCurrentProgress] scene={currentScene}, " +
-                  $"state='{savedState}', fromMainMenu={fromMainMenu}");
+        Debug.Log($"[SaveCurrentProgress] scene='{currentScene}', " +
+                  $"prevScene='{previousScene}', state='{savedState}', " +
+                  $"fromMainMenu={fromMainMenu}");
 
-        // Kalau masuk scene BUKAN dari main menu → state Panel stale, clear.
-        // (Kejadian kalau Play langsung dari Editor / entry tanpa main menu.)
-        if (!fromMainMenu)
+        // Kalau state = Puzzle/Reward, valid resume cuma kalau:
+        //   1. Datang dari MainMenu (player sengaja klik resume), ATAU
+        //   2. First entry / crash recovery (previousScene kosong).
+        // Selain itu (dari Latihan, Cutscene, scene lain) → stale, clear.
+        if (savedState == "Puzzle" || savedState == "Reward")
         {
-            if (savedState == "Puzzle" || savedState == "Reward")
+            bool cameFromMainMenu = (previousScene == "MainMenu");
+            bool isFirstEntry = string.IsNullOrEmpty(previousScene);
+
+            if (!cameFromMainMenu && !isFirstEntry)
             {
-                Debug.Log($"[SaveCurrentProgress] Bukan dari main menu → " +
-                          $"state '{savedState}' stale, clear.");
+                Debug.Log($"[SaveCurrentProgress] State '{savedState}' stale " +
+                          $"(prevScene='{previousScene}') → clear.");
                 GameProgressManager.ClearGameState();
                 savedState = "";
             }
@@ -114,7 +123,8 @@ public class SaveCurrentProgress : MonoBehaviour
         if (puzzlePanel != null) puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        // Wave index di-restore oleh EnemyWaveSpawner.Start().
+        // CameraIntroManager TETAP enabled.
+        // State = "Gameplay" → CameraIntroManager pakai countdown-only.
     }
 
     // Tandai state Puzzle + apply UI.
@@ -162,15 +172,8 @@ public class SaveCurrentProgress : MonoBehaviour
         if (puzzlePanel != null) puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        if (GameProgressManager.HasEnteredGameplay())
-        {
-            Debug.Log("[SaveCurrentProgress] Skip cutscene (sudah pernah main)");
-            if (cameraIntroManager != null) cameraIntroManager.enabled = false;
-        }
-        else
-        {
-            GameProgressManager.SetHasEnteredGameplay(true);
-            Debug.Log("[SaveCurrentProgress] Cutscene dimulai.");
-        }
+        // CameraIntroManager TIDAK di-disable.
+        // State kosong → CameraIntroManager fallback → panning + countdown.
+        // Blok HasEnteredGameplay dihapus karena redundan dan bikin intro ke-skip.
     }
 }

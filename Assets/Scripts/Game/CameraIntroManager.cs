@@ -57,6 +57,7 @@ public class CameraIntroManager : MonoBehaviour
 
         string savedState = GameProgressManager.GetGameState();
 
+        // 1. Resume Puzzle / Reward → skip total (langsung lanjut)
         if (savedState == "Puzzle" || savedState == "Reward")
         {
             Debug.Log($"[CameraIntroManager] Resume {savedState} → langsung lanjut.");
@@ -69,6 +70,7 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
+        // 2. Resume Gameplay → countdown saja (nggak panning)
         if (savedState == "Gameplay")
         {
             Debug.Log("[CameraIntroManager] Resume Gameplay → countdown saja.");
@@ -76,6 +78,7 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
+        // 3. Fallback check: kamera / target harus ada buat panning
         if (mainCamera == null)
         {
             Debug.LogError("[CameraIntroManager] Main Camera belum diisi! Fallback countdown saja.");
@@ -90,6 +93,7 @@ public class CameraIntroManager : MonoBehaviour
             return;
         }
 
+        // 4. State kosong (fresh start / level baru) → panning + countdown
         Debug.Log("[CameraIntroManager] Panning + countdown.");
         StartCoroutine(MainkanIntro(withPanning: true));
     }
