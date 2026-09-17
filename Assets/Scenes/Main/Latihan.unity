@@ -1053,6 +1053,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6048b9f0de720488365c9ace8e2ba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+--- !u!4 &789072147 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8397764429721623933, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1540591676459283537}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &836338600
 GameObject:
   m_ObjectHideFlags: 0
@@ -1292,7 +1297,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2661167625112631104, guid: 552b1bb4cb22d544aa4159d80dd7d550, type: 3}
+  m_Sprite: {fileID: -3387851845313058321, guid: cae87ead68736ce4a98daaa7f1c1a89f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1354,6 +1359,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f919223c0a648d4d910d183ddfa40ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialManager
+  playerTransform: {fileID: 789072147}
+  waitForPlayerTimeout: 5
   enemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   worldParent: {fileID: 0}
   enemySpawnPos: {x: 0, y: 0, z: 0}
@@ -1366,7 +1373,7 @@ MonoBehaviour:
   enemyStopViewportX: 0.35
   useEnemyApproach: 1
   enemyStopDistanceToPlayer: 2
-  approachTimeoutSeconds: 8
+  approachTimeoutSeconds: 13
   enemyMinSeparationWorld: 0
   enemySeparationPadding: 0.5
   separationIterations: 8
@@ -1377,13 +1384,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
   tutorialEnemyDataFallback: {fileID: 11400000, guid: 4c22222d9055bf543bd2b7e5171ed95f, type: 2}
   disableColliderDuringApproach: 1
-  fallbackToCanvasCenterIfEnemyLost: 1
   forceDefeatEnemyAfterGesture: 1
   postGestureDefeatDelay: 0.2
   delayBeforeDotsAndHand: 0.5
   delayAfterEnemyDefeated: 0.5
   delayBetweenEnemies: 0.4
-  delayAfterFragmentTap: 1.5
+  delayAfterFragmentTap: 0.5
+  hoorayDelayAfterDrop: 0.15
   gestureDrawTimeout: 60
   enemyDestroyTimeout: 10
   fragmentTapTimeout: 30
@@ -1403,7 +1410,7 @@ MonoBehaviour:
   dotSizePx: 14
   handSizePx: 0
   dotColor: {r: 1, g: 0, b: 0, a: 1}
-  dotsContainerOffset: {x: -350, y: 100}
+  dotsContainerOffset: {x: 0, y: 350}
   pathPixelScale: 0
   dotCount: 40
   pathMaxCanvasRatio: 0.4
@@ -1421,13 +1428,16 @@ MonoBehaviour:
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.4
   bgmFadeOutDuration: 0.8
-  tutorialBGMName: bgm_tutorial
-  tutorialBgmFadeOut: 0.8
-  tutorialBgmFadeIn: 0.8
   aksaraDropSFX: {fileID: 8300000, guid: b8e9c8f871f7509478d47ead47be0ffb, type: 3}
-  hoorayAksara1SFX: {fileID: 0}
-  hoorayAksara2SFX: {fileID: 0}
-  wrongClickSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
+  hoorayAksara1SFX: {fileID: 8300000, guid: 03cd2db8f94c5a64c817cce7a8fa8800, type: 3}
+  hoorayAksara2SFX: {fileID: 8300000, guid: 03cd2db8f94c5a64c817cce7a8fa8800, type: 3}
+  wrongClickSFX: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
+  correctSFX: {fileID: 8300000, guid: d598052716c50864c88e0723d64eddbe, type: 3}
+  tapDotsSFX: {fileID: 8300000, guid: 5e4f4da5b965bfd439e069b057426e0d, type: 3}
+  tapFragmentSFX: {fileID: 8300000, guid: 9d8c161ae5b6c034982bde41b2e0800e, type: 3}
+  tapBookSFX: {fileID: 8300000, guid: 9d8c161ae5b6c034982bde41b2e0800e, type: 3}
+  tapSFXVolume: 0.5
+  tapDotsSFXVolume: 1
   enableShakeOnWrongClick: 1
   shakeDuration: 0.25
   shakeMagnitude: 0.15
@@ -1685,7 +1695,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2161421294694987519, guid: 5187bda876ad77e4fa722d3c0cece348, type: 3}
+  m_Sprite: {fileID: -467579133535583514, guid: c701247ec26106f44bd06c738d7b96a9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

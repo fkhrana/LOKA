@@ -48,7 +48,6 @@ public class TutorialManager : MonoBehaviour
 
     [Header("Tutorial Safety")]
     [SerializeField] private bool disableColliderDuringApproach = true;
-    [SerializeField] private bool fallbackToCanvasCenterIfEnemyLost = true;
     [SerializeField] private bool forceDefeatEnemyAfterGesture = true;
     [SerializeField] private float postGestureDefeatDelay = 0.2f;
 
@@ -57,6 +56,11 @@ public class TutorialManager : MonoBehaviour
     [SerializeField] private float delayAfterEnemyDefeated = 1.2f;
     [SerializeField] private float delayBetweenEnemies = 0.4f;
     [SerializeField] private float delayAfterFragmentTap = 1.5f;
+
+    [Header("SFX Timing")]
+    [Tooltip("Jeda antara enemy drop dan SFX hooray (detik). Biar nggak tabrakan dengan SFX correct.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float hoorayDelayAfterDrop = 0.15f;
 
     [Header("Timeouts (detik)")]
     [SerializeField] private float gestureDrawTimeout = 60f;
@@ -117,16 +121,30 @@ public class TutorialManager : MonoBehaviour
     [Tooltip("Durasi fade out BGM sebelum pindah scene.")]
     [SerializeField] private float bgmFadeOutDuration = 0.8f;
 
-    [Header("BGM (opsional, override BGM scene)")]
-    [SerializeField] private string tutorialBGMName = "bgm_tutorial";
-    [SerializeField] private float tutorialBgmFadeOut = 0.8f;
-    [SerializeField] private float tutorialBgmFadeIn = 0.8f;
-
     [Header("SFX")]
     [SerializeField] private AudioClip aksaraDropSFX;
     [SerializeField] private AudioClip hoorayAksara1SFX;
     [SerializeField] private AudioClip hoorayAksara2SFX;
     [SerializeField] private AudioClip wrongClickSFX;
+    [Tooltip("SFX saat gesture berhasil (correct).")]
+    [SerializeField] private AudioClip correctSFX;
+
+    [Header("Hand Tap SFX")]
+    [Tooltip("SFX tap saat hand nunjukin path aksara (dots). Main tiap loop selesai.")]
+    [SerializeField] private AudioClip tapDotsSFX;
+
+    [Tooltip("SFX tap saat hand nunjukin fragment aksara. Main tiap hand turun.")]
+    [SerializeField] private AudioClip tapFragmentSFX;
+
+    [Tooltip("SFX tap saat hand nunjukin tombol book/collection. Main tiap hand turun.")]
+    [SerializeField] private AudioClip tapBookSFX;
+
+    [Range(0f, 2f)]
+    [SerializeField] private float tapSFXVolume = 0.6f;
+
+    [Range(0f, 2f)]
+    [Tooltip("Volume khusus untuk tap dots (path aksara). Bisa beda dari tap fragment/book.")]
+    [SerializeField] private float tapDotsSFXVolume = 1f;
 
     [Header("Shake Effect (salah klik fragment)")]
     [SerializeField] private bool enableShakeOnWrongClick = true;
@@ -158,13 +176,11 @@ public class TutorialManager : MonoBehaviour
     private bool waitingForCollectionClick;
 
     private Sprite cachedDotSprite;
-    private Vector2? dotsCenterOverride;
 
     private Rect CanvasRect => tutorialCanvasRect != null
         ? tutorialCanvasRect.rect
         : new Rect(0, 0, Screen.width, Screen.height);
 
-    // Skala path efektif: pakai override atau hitung dari canvas.
     private float EffectivePathScale
     {
         get
@@ -204,9 +220,6 @@ public class TutorialManager : MonoBehaviour
             Debug.LogWarning("[Tutorial] GestureDrawer tidak ditemukan!");
         }
 
-        if (!string.IsNullOrEmpty(tutorialBGMName) && AudioManager.Instance != null)
-            AudioManager.Instance.PlayBGMWithFade(tutorialBGMName, tutorialBgmFadeOut, tutorialBgmFadeIn);
-
         tutorialCoroutine = StartCoroutine(TutorialSequence());
     }
 
@@ -236,7 +249,6 @@ public class TutorialManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // Cek ada musuh yang masih hidup.
     private bool HasAnyAliveEnemy()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -244,7 +256,6 @@ public class TutorialManager : MonoBehaviour
         return false;
     }
 
-    // Ambil musuh pertama yang masih hidup.
     private EnemyGestureCommand GetFirstAliveEnemy()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -252,7 +263,6 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Index musuh di list, -1 kalau tidak ada.
     private int GetEnemyIndex(EnemyGestureCommand enemy)
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -260,14 +270,12 @@ public class TutorialManager : MonoBehaviour
         return -1;
     }
 
-    // Ambil AksaraData untuk musuh tertentu.
     private AksaraData GetAksaraFor(EnemyGestureCommand enemy)
     {
         int idx = GetEnemyIndex(enemy);
         return idx >= 0 && idx < currentAksaraList.Count ? currentAksaraList[idx] : null;
     }
 
-    // Rata-rata posisi semua musuh hidup.
     private Vector3 GetEnemiesCenterWorld()
     {
         Vector3 sum = Vector3.zero;
@@ -281,7 +289,6 @@ public class TutorialManager : MonoBehaviour
         return count > 0 ? sum / count : Vector3.zero;
     }
 
-    // Auto-resolve referensi yang kosong.
     private void ResolveReferences()
     {
         if (tutorialCanvas == null)
@@ -303,7 +310,6 @@ public class TutorialManager : MonoBehaviour
             collectionPanelRoot = FindGameObjectByName("koleksipanel", "collectionpanel");
     }
 
-    // Cari Canvas berdasarkan keyword nama.
     private Canvas FindCanvasWithName(params string[] keywords)
     {
         foreach (var c in FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -316,7 +322,6 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Cari tombol collection by nama.
     private Button FindCollectionButton()
     {
         foreach (var b in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -330,7 +335,6 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Cari GameObject by nama (inactive included).
     private GameObject FindGameObjectByName(params string[] keywords)
     {
         foreach (var go in FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -343,7 +347,6 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Sequence utama tutorial.
     private IEnumerator TutorialSequence()
     {
         yield return new WaitForSeconds(0.5f);
@@ -351,7 +354,6 @@ public class TutorialManager : MonoBehaviour
         if (!ValidateSetup()) { Debug.LogError("[Tutorial] Setup tidak lengkap."); yield break; }
         if (!PickAksaraAndEnemy()) yield break;
 
-        // Tunggu player spawn sebelum spawn musuh + dots
         yield return WaitForPlayerRoutine();
 
         yield return SpawnEnemiesRoutine();
@@ -371,16 +373,6 @@ public class TutorialManager : MonoBehaviour
             currentTarget = activeAksara.GestureShape;
 
             ActivateOnlyTargetChallenge(active, activeAksara);
-            dotsCenterOverride = null;
-
-            Camera cam = Camera.main;
-            if (cam != null && fallbackToCanvasCenterIfEnemyLost)
-            {
-                Vector3 vp = cam.WorldToViewportPoint(active.transform.position);
-                bool offScreen = vp.z < 0f || vp.x < 0.05f || vp.x > 0.95f || vp.y < 0.05f || vp.y > 0.95f;
-                if (offScreen)
-                    dotsCenterOverride = new Vector2(0f, CanvasRect.height * 0.05f) + dotsContainerOffset;
-            }
 
             yield return new WaitForSeconds(delayBeforeDotsAndHand);
 
@@ -394,11 +386,10 @@ public class TutorialManager : MonoBehaviour
             yield return WaitUntilOrTimeout(() => !waitingForDraw, gestureDrawTimeout, $"Gesture musuh #{enemyIndex}");
             waitingForDraw = false;
 
-            PlayHoorayForEnemyIndex(enemyIndex);
+            PlayCorrectSFX();
 
             ClearHand();
             ClearDots();
-            dotsCenterOverride = null;
 
             if (gestureDrawer != null) gestureDrawer.enabled = false;
 
@@ -412,7 +403,14 @@ public class TutorialManager : MonoBehaviour
                     active.StopCommandMode();
                     comp.OnDefeated();
                     comp.StartDefeatBlink();
-                    yield return new WaitForSeconds(Mathf.Max(0.1f, comp.DefeatBlinkDuration));
+
+                    yield return new WaitForSeconds(hoorayDelayAfterDrop);
+
+                    PlayHoorayForEnemyIndex(enemyIndex);
+
+                    float remaining = Mathf.Max(0.1f, comp.DefeatBlinkDuration) - hoorayDelayAfterDrop;
+                    if (remaining > 0f)
+                        yield return new WaitForSeconds(remaining);
                 }
             }
 
@@ -459,7 +457,6 @@ public class TutorialManager : MonoBehaviour
         tutorialCoroutine = null;
     }
 
-    // Tunggu player spawn (max waitForPlayerTimeout detik)
     private IEnumerator WaitForPlayerRoutine()
     {
         if (FindPlayerTransform() != null)
@@ -474,11 +471,8 @@ public class TutorialManager : MonoBehaviour
 
         if (FindPlayerTransform() == null)
             Debug.LogWarning($"[Tutorial] Player tidak ditemukan setelah {waitForPlayerTimeout:F1}s — dots akan pakai fallback musuh.");
-        else
-            Debug.Log($"[Tutorial] Player ditemukan: {FindPlayerTransform().name}");
     }
 
-    // Tunggu kondisi terpenuhi atau timeout.
     private IEnumerator WaitUntilOrTimeout(Func<bool> condition, float timeout, string label)
     {
         float elapsed = 0f;
@@ -491,7 +485,6 @@ public class TutorialManager : MonoBehaviour
             Debug.LogWarning($"[Tutorial] Timeout: {label} ({timeout:F1}s)");
     }
 
-    // Pilih aksara & enemy data untuk sesi ini.
     private bool PickAksaraAndEnemy()
     {
         currentAksaraList.Clear();
@@ -517,12 +510,11 @@ public class TutorialManager : MonoBehaviour
         return true;
     }
 
-    // Routine tap fragment.
     private IEnumerator TapFragmentRoutine()
     {
         if (currentItem == null) yield break;
 
-        SpawnHandAtWorld(currentItem.transform.position);
+        SpawnHandAtWorld(currentItem.transform.position, tapFragmentSFX);
 
         waitingForItemClick = true;
         yield return WaitUntilOrTimeout(() => !waitingForItemClick, fragmentTapTimeout, "Fragment tap");
@@ -532,13 +524,12 @@ public class TutorialManager : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
     }
 
-    // Routine tap tombol book.
     private IEnumerator TapBookButtonRoutine()
     {
         ClearHand();
         if (collectionButtonRect == null) yield break;
 
-        SpawnHandAtUI(collectionButtonRect);
+        SpawnHandAtUI(collectionButtonRect, tapBookSFX);
 
         waitingForCollectionClick = true;
         yield return WaitUntilOrTimeout(() => !waitingForCollectionClick, collectionClickTimeout, "Book button click");
@@ -550,7 +541,6 @@ public class TutorialManager : MonoBehaviour
         OpenCollectionPanel();
     }
 
-    // Tunggu panel collection buka-tutup.
     private IEnumerator WaitCollectionPanelCycle()
     {
         if (collectionPanelRoot == null)
@@ -575,7 +565,6 @@ public class TutorialManager : MonoBehaviour
         ClearDots();
     }
 
-    // Tampilkan finish panel.
     private void ShowFinishPanel()
     {
         if (collectionButton != null) collectionButton.gameObject.SetActive(false);
@@ -583,7 +572,6 @@ public class TutorialManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // Buka collection panel via singleton atau root.
     private void OpenCollectionPanel()
     {
         if (CollectionPanel.Instance != null)
@@ -595,7 +583,6 @@ public class TutorialManager : MonoBehaviour
             collectionPanelRoot.SetActive(true);
     }
 
-    // Validasi setup sebelum jalan.
     private bool ValidateSetup()
     {
         bool ok = true;
@@ -615,7 +602,6 @@ public class TutorialManager : MonoBehaviour
         return ok;
     }
 
-    // Ambil aksara dari shuffle bag.
     private AksaraData PickAksaraFromBag()
     {
         if (aksaraBag.Count == 0) RefillAksaraBag();
@@ -626,7 +612,6 @@ public class TutorialManager : MonoBehaviour
         return picked;
     }
 
-    // Isi ulang shuffle bag aksara.
     private void RefillAksaraBag()
     {
         aksaraBag.Clear();
@@ -641,7 +626,6 @@ public class TutorialManager : MonoBehaviour
         Shuffle(aksaraBag);
     }
 
-    // Ambil enemy data dari shuffle bag.
     private EnemyData PickEnemyDataFromBag()
     {
         if (enemyDataBag.Count == 0) RefillEnemyDataBag();
@@ -652,7 +636,6 @@ public class TutorialManager : MonoBehaviour
         return picked;
     }
 
-    // Isi ulang shuffle bag enemy data.
     private void RefillEnemyDataBag()
     {
         enemyDataBag.Clear();
@@ -666,7 +649,6 @@ public class TutorialManager : MonoBehaviour
         Shuffle(enemyDataBag);
     }
 
-    // Fisher-Yates shuffle in place.
     private static void Shuffle<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
@@ -676,7 +658,6 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Spawn musuh dari sisi kiri/kanan viewport.
     private IEnumerator SpawnEnemiesRoutine()
     {
         currentEnemies.Clear();
@@ -749,7 +730,6 @@ public class TutorialManager : MonoBehaviour
             cachedHalfExtents.Add(GetEnemyHalfExtent(currentEnemies[i]));
     }
 
-    // Musuh approach lalu freeze.
     private IEnumerator ApproachAndFreezeEnemiesRoutine()
     {
         if (!HasAnyAliveEnemy()) yield break;
@@ -785,7 +765,6 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
-            // Cek musuh TERDEPAN, bukan rata-rata
             if (cam != null)
             {
                 float extremeX = spawnSide == SpawnSide.Left ? float.MinValue : float.MaxValue;
@@ -828,7 +807,6 @@ public class TutorialManager : MonoBehaviour
             FreezeAllEnemies();
     }
 
-    // Freeze semua musuh + rapi-rapikan posisi.
     private void FreezeAllEnemies()
     {
         for (int i = 0; i < currentEnemies.Count; i++)
@@ -848,7 +826,6 @@ public class TutorialManager : MonoBehaviour
         SeparateEnemies(1f, separationIterations, syncAfter: true);
     }
 
-    // Anti tumpang tindih antar musuh.
     private void SeparateEnemies(float strength, int iterations, bool syncAfter)
     {
         if (currentEnemies.Count < 2) return;
@@ -914,7 +891,6 @@ public class TutorialManager : MonoBehaviour
             if (currentEnemies[i] != null) currentEnemies[i].SyncSpawnPosition();
     }
 
-    // Ambil half extent dari cache atau hitung ulang.
     private float GetCachedHalfExtent(EnemyGestureCommand enemy, int indexHint)
     {
         if (indexHint >= 0 && indexHint < cachedHalfExtents.Count && cachedHalfExtents[indexHint] > 0.01f)
@@ -922,7 +898,6 @@ public class TutorialManager : MonoBehaviour
         return GetEnemyHalfExtent(enemy);
     }
 
-    // Hitung half extent renderer musuh.
     private float GetEnemyHalfExtent(EnemyGestureCommand enemy)
     {
         if (enemy == null) return 1f;
@@ -946,7 +921,6 @@ public class TutorialManager : MonoBehaviour
         return maxExtent > 0.01f ? maxExtent : 1f;
     }
 
-    // Aktifkan challenge hanya untuk target, matikan lainnya.
     private void ActivateOnlyTargetChallenge(EnemyGestureCommand target, AksaraData targetAksara)
     {
         if (target == null || targetAksara == null) return;
@@ -973,18 +947,11 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Cari transform player (multi-fallback):
-    // 1. Field manual di Inspector
-    // 2. PlayerHealth component
-    // 3. Tag "Player"
-    // 4. Nama GameObject mengandung "player"
     private Transform FindPlayerTransform()
     {
-        // 1. Field manual
         if (playerTransform != null)
             return playerTransform;
 
-        // 2. PlayerHealth
         var ph = FindAnyObjectByType<PlayerHealth>();
         if (ph != null)
         {
@@ -992,10 +959,9 @@ public class TutorialManager : MonoBehaviour
             return playerTransform;
         }
 
-        // 3. Tag "Player"
         GameObject byTag = null;
         try { byTag = GameObject.FindGameObjectWithTag("Player"); }
-        catch { /* tag belum dibuat di project */ }
+        catch { }
 
         if (byTag != null)
         {
@@ -1003,7 +969,6 @@ public class TutorialManager : MonoBehaviour
             return playerTransform;
         }
 
-        // 4. Fallback terakhir: nama mengandung "player"
         foreach (var t in FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
         {
             if (t == null) continue;
@@ -1018,7 +983,6 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Hitung posisi spawn musuh dari viewport.
     private Vector3 GetEnemyWorldSpawnPosition(float viewportXOffset, float viewportYOffset)
     {
         Camera cam = Camera.main;
@@ -1035,7 +999,6 @@ public class TutorialManager : MonoBehaviour
         return worldPos;
     }
 
-    // Cari fragment aktif di scene.
     private GameObject FindActiveFragment()
     {
         foreach (var f in FindObjectsByType<AksaraFragmentItem>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -1043,23 +1006,15 @@ public class TutorialManager : MonoBehaviour
         return null;
     }
 
-    // Titik tengah dots di atas PLAYER
     private Vector2 GetDotsCenterUI()
     {
-        if (dotsCenterOverride.HasValue) return dotsCenterOverride.Value;
-
         Transform pt = FindPlayerTransform();
         if (pt != null)
             return WorldToContainerLocal(pt.position) + dotsContainerOffset;
 
-        if (activeTargetEnemy != null)
-            return WorldToContainerLocal(activeTargetEnemy.transform.position) + dotsContainerOffset;
-
-        if (!HasAnyAliveEnemy()) return Vector2.zero;
-        return WorldToContainerLocal(GetEnemiesCenterWorld()) + dotsContainerOffset;
+        return new Vector2(0f, CanvasRect.height * 0.05f) + dotsContainerOffset;
     }
 
-    // Spawn titik-titik path aksara.
     private void SpawnDottedPath()
     {
         if (tutorialContainer == null) return;
@@ -1105,7 +1060,6 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Buat satu dot UI.
     private void CreateDot(Vector2 anchoredPos)
     {
         var dotGO = new GameObject("TutorialDot", typeof(RectTransform), typeof(Image));
@@ -1126,7 +1080,6 @@ public class TutorialManager : MonoBehaviour
         currentDots.Add(dotGO);
     }
 
-    // Hitung total panjang path.
     private float GetPathLength(List<Vector2> path)
     {
         float len = 0f;
@@ -1135,14 +1088,12 @@ public class TutorialManager : MonoBehaviour
         return len;
     }
 
-    // Spawn hand UI tanpa posisi (untuk path).
     private void SpawnHandOnPath()
     {
         if (tutorialContainer == null || handSprite == null) return;
         currentHand = CreateHandImage(tutorialContainer);
     }
 
-    // Buat image hand di parent.
     private Image CreateHandImage(RectTransform parent)
     {
         var handGO = new GameObject("TutorialHand", typeof(RectTransform), typeof(Image));
@@ -1162,8 +1113,7 @@ public class TutorialManager : MonoBehaviour
         return img;
     }
 
-    // Spawn hand di posisi UI target.
-    private void SpawnHandAtUI(RectTransform targetUI, bool withTapping = true)
+    private void SpawnHandAtUI(RectTransform targetUI, AudioClip tapSFX, bool withTapping = true)
     {
         ClearHand();
         if (targetUI == null || handSprite == null || tutorialContainer == null) return;
@@ -1183,12 +1133,11 @@ public class TutorialManager : MonoBehaviour
         if (withTapping)
         {
             if (handAnimCoroutine != null) StopCoroutine(handAnimCoroutine);
-            handAnimCoroutine = StartCoroutine(HandTapRoutine(localPos));
+            handAnimCoroutine = StartCoroutine(HandTapRoutine(localPos, tapSFX));
         }
     }
 
-    // Spawn hand di posisi world target.
-    private void SpawnHandAtWorld(Vector3 worldPos, bool withTapping = true)
+    private void SpawnHandAtWorld(Vector3 worldPos, AudioClip tapSFX, bool withTapping = true)
     {
         ClearHand();
         if (handSprite == null || tutorialContainer == null) return;
@@ -1208,20 +1157,18 @@ public class TutorialManager : MonoBehaviour
         if (withTapping)
         {
             if (handAnimCoroutine != null) StopCoroutine(handAnimCoroutine);
-            handAnimCoroutine = StartCoroutine(HandTapRoutine(localPos));
+            handAnimCoroutine = StartCoroutine(HandTapRoutine(localPos, tapSFX));
         }
     }
 
-    // Mulai animasi hand mengikuti path.
     private void PlayHandAlongPath()
     {
         if (currentHand == null) return;
         if (handAnimCoroutine != null) StopCoroutine(handAnimCoroutine);
-        handAnimCoroutine = StartCoroutine(HandPathRoutine());
+        handAnimCoroutine = StartCoroutine(HandPathRoutine(tapDotsSFX));
     }
 
-    // Loop hand mengikuti path aksara.
-    private IEnumerator HandPathRoutine()
+    private IEnumerator HandPathRoutine(AudioClip tapSFX)
     {
         List<Vector2> path = TutorialLetterPaths.GetPath(currentTarget);
         if (path == null || path.Count < 2) yield break;
@@ -1250,6 +1197,9 @@ public class TutorialManager : MonoBehaviour
                 }
             }
 
+            // Tap dots pakai volume khusus
+            PlayHandTapSFX(tapSFX, tapDotsSFXVolume);
+
             if (currentHand != null)
                 currentHand.rectTransform.anchoredPosition = center + path[0] * scale;
 
@@ -1257,19 +1207,36 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Animasi tap (naik-turun) hand.
-    private IEnumerator HandTapRoutine(Vector2 basePos)
+    private IEnumerator HandTapRoutine(Vector2 basePos, AudioClip tapSFX)
     {
+        float lastTapTime = 0f;
+        const float TAP_COOLDOWN = 0.35f;
+
         while (true)
         {
-            float offset = Mathf.Abs(Mathf.Sin(Time.unscaledTime * handTapSpeed)) * handTapAmplitudePx;
+            float sinValue = Mathf.Sin(Time.unscaledTime * handTapSpeed);
+            float offset = Mathf.Abs(sinValue) * handTapAmplitudePx;
+
             if (currentHand != null)
                 currentHand.rectTransform.anchoredPosition = basePos - new Vector2(0f, offset);
+
+            if (Mathf.Abs(sinValue) > 0.95f && Time.unscaledTime - lastTapTime > TAP_COOLDOWN)
+            {
+                PlayHandTapSFX(tapSFX, tapSFXVolume);
+                lastTapTime = Time.unscaledTime;
+            }
+
             yield return null;
         }
     }
 
-    // Hapus hand dari layar.
+    private void PlayHandTapSFX(AudioClip clip, float volume)
+    {
+        if (clip == null) return;
+        if (AudioManager.Instance == null) return;
+        AudioManager.Instance.PlaySFX(clip, volume);
+    }
+
     private void ClearHand()
     {
         if (handAnimCoroutine != null)
@@ -1285,7 +1252,6 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Hapus semua dot.
     private void ClearDots()
     {
         foreach (var d in currentDots)
@@ -1293,7 +1259,6 @@ public class TutorialManager : MonoBehaviour
         currentDots.Clear();
     }
 
-    // Sembunyikan/tampilkan hand + dots (dipakai saat pause).
     public void SetTutorialVisualsVisible(bool visible)
     {
         if (currentHand != null)
@@ -1304,7 +1269,6 @@ public class TutorialManager : MonoBehaviour
                 currentDots[i].SetActive(visible);
     }
 
-    // Convert world pos ke local container UI.
     private Vector2 WorldToContainerLocal(Vector3 worldPos)
     {
         Camera cam = Camera.main;
@@ -1319,7 +1283,6 @@ public class TutorialManager : MonoBehaviour
         return localPos;
     }
 
-    // Ambil camera yang dipakai Canvas (null untuk overlay).
     private static Camera GetCanvasCameraFor(RectTransform rect)
     {
         if (rect == null) return null;
@@ -1328,7 +1291,6 @@ public class TutorialManager : MonoBehaviour
         return c.worldCamera;
     }
 
-    // Callback gesture selesai digambar.
     private void OnGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
         if (!waitingForDraw) return;
@@ -1338,14 +1300,12 @@ public class TutorialManager : MonoBehaviour
         waitingForDraw = false;
     }
 
-    // Callback tombol collection diklik.
     private void OnCollectionClicked()
     {
         if (!waitingForCollectionClick) return;
         waitingForCollectionClick = false;
     }
 
-    // Handle input tap fragment + salah klik (jangan trigger saat pause / klik UI)
     private void Update()
     {
         if (!waitingForItemClick) return;
@@ -1353,10 +1313,8 @@ public class TutorialManager : MonoBehaviour
         if (currentItem == null) { waitingForItemClick = false; return; }
         if (!Input.GetMouseButtonDown(0)) return;
 
-        // Skip kalau lagi pause
         if (Time.timeScale <= 0f) return;
 
-        // Skip kalau klik kena UI (pause button, dsb)
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
@@ -1377,22 +1335,32 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
-    // Putar SFX hooray sesuai index musuh.
+    // === SFX helpers dengan log minimal ===
+
+    private void PlayAksaraDropSFX()
+    {
+        if (AudioManager.Instance == null || aksaraDropSFX == null) return;
+        AudioManager.Instance.PlaySFX(aksaraDropSFX);
+    }
+
+    private void PlayCorrectSFX()
+    {
+        if (AudioManager.Instance == null || correctSFX == null) return;
+        Debug.Log($"[SFX] Correct @ {Time.time:F2}s");
+        AudioManager.Instance.PlaySFX(correctSFX);
+    }
+
     private void PlayHoorayForEnemyIndex(int enemyIndex)
     {
         if (AudioManager.Instance == null) return;
         AudioClip clip = enemyIndex == 0 ? hoorayAksara1SFX : hoorayAksara2SFX;
-        if (clip != null) AudioManager.Instance.PlaySFX(clip);
+        if (clip == null) return;
+        Debug.Log($"[SFX] Hooray #{enemyIndex} @ {Time.time:F2}s");
+        AudioManager.Instance.PlaySFX(clip);
     }
 
-    // Putar SFX aksara drop.
-    private void PlayAksaraDropSFX()
-    {
-        if (AudioManager.Instance != null && aksaraDropSFX != null)
-            AudioManager.Instance.PlaySFX(aksaraDropSFX);
-    }
+    // === End SFX helpers ===
 
-    // Feedback salah klik: SFX + shake.
     private void TriggerWrongClickFeedback()
     {
         if (wrongClickSFX != null && AudioManager.Instance != null)
@@ -1404,7 +1372,6 @@ public class TutorialManager : MonoBehaviour
         shakeCoroutine = StartCoroutine(ShakeCameraRoutine());
     }
 
-    // Shake camera sebentar.
     private IEnumerator ShakeCameraRoutine()
     {
         Camera cam = Camera.main;
@@ -1430,7 +1397,6 @@ public class TutorialManager : MonoBehaviour
         shakeCoroutine = null;
     }
 
-    // Ambil sprite dot (generate kalau kosong).
     private Sprite GetDotSprite()
     {
         if (cachedDotSprite != null) return cachedDotSprite;
@@ -1438,7 +1404,6 @@ public class TutorialManager : MonoBehaviour
         return cachedDotSprite;
     }
 
-    // Generate sprite lingkaran runtime.
     private Sprite CreateCircleSprite(int size)
     {
         var tex = new Texture2D(size, size, TextureFormat.RGBA32, false)
@@ -1475,7 +1440,6 @@ public class TutorialManager : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f);
     }
 
-    // Tombol MAIN: selesai tutorial → gameplay (dengan fade BGM).
     private void OnClickMain()
     {
         if (finishPanel != null) finishPanel.SetActive(false);
@@ -1492,14 +1456,12 @@ public class TutorialManager : MonoBehaviour
         StartCoroutine(FadeAndLoadScene(gameplayScene));
     }
 
-    // Tombol LATIHAN: reload scene dengan fade BGM.
     private void OnClickLatihan()
     {
         Time.timeScale = 1f;
         StartCoroutine(FadeAndLoadScene(SceneManager.GetActiveScene().name));
     }
 
-    // Fade out BGM lalu load scene via TransitionManager.
     private IEnumerator FadeAndLoadScene(string sceneName)
     {
         if (AudioManager.Instance != null)

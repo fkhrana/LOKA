@@ -1257,11 +1257,13 @@ MonoBehaviour:
     volume: 0.2
   - bgmName: Boss Theme
     volume: 0.2
+  - bgmName: Bgm_tutorial
+    volume: 0.1
   aksaraBgmVolume: 1
-  sfxBgmVolume: 0.7
+  sfxBgmVolume: 0.5
   sfxDuckMinDuration: 0.2
   sfxDuckMaxDuration: 1.5
-  defaultBgmFadeDuration: 0.9
+  defaultBgmFadeDuration: 1
   sfxDuplicateGuardWindow: 0.08
   uiSFXCooldown: 0.5
 --- !u!1 &590408712 stripped
