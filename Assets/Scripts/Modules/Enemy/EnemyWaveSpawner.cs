@@ -1345,21 +1345,28 @@ public class EnemyWaveSpawner : MonoBehaviour
             attempt++;
         }
 
-        if (IsPositionTooClose(
-                position,
-                usedPositions
-            ))
+        for (int separationPass = 0; separationPass < 10; separationPass++)
         {
-            Vector2 nudge =
-                Random.insideUnitCircle.normalized *
-                minSpawnDistance;
+            bool moved = false;
 
-            position +=
-                new Vector3(
-                    nudge.x,
-                    nudge.y,
-                    0f
-                );
+            for (int i = 0; i < usedPositions.Count; i++)
+            {
+                Vector3 difference = position - usedPositions[i];
+                float distance = difference.magnitude;
+
+                if (distance >= minSpawnDistance)
+                    continue;
+
+                Vector3 direction = distance > 0.001f
+                    ? difference / distance
+                    : Vector3.up;
+
+                position = usedPositions[i] + direction * minSpawnDistance;
+                moved = true;
+            }
+
+            if (!moved || !IsPositionTooClose(position, usedPositions))
+                break;
         }
 
         return position;

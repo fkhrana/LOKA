@@ -1252,8 +1252,8 @@ Transform:
   m_GameObject: {fileID: 182775193}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.5, y: -1.4, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalPosition: {x: 12.5, y: -1.4, z: 0}
+  m_LocalScale: {x: 7, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -3433,8 +3433,8 @@ MonoBehaviour:
   waveInfoSFXName: Warning
   waveInfoSFXVolume: 1
   useSpawnArea: 1
-  spawnAreaCenter: {x: 11.5, y: -1.4}
-  spawnAreaSize: {x: 5, y: 5}
+  spawnAreaCenter: {x: 12.5, y: -1.4}
+  spawnAreaSize: {x: 7, y: 5}
   spawnPoints: []
   spawnedParent: {fileID: 0}
   spawnEntries: []
@@ -12236,43 +12236,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6050567217414212196, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6050567217414212196, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 8464496025513245693, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 8464496025513245693, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 1812784534814580687, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 1812784534814580687, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6456471884219706066, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6456471884219706066, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 8996319106399681985, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 8996319106399681985, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 4060891487707059250, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 4060891487707059250, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b27c844fb1d3fa4c8d1e371ecb50193, type: 3}
 --- !u!224 &6492500130271276686 stripped
 RectTransform:
