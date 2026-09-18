@@ -14,7 +14,7 @@ public class GestureChallengeManager : MonoBehaviour
     public bool IsRandomChallengeModeActive { get; private set; }
 
     private Coroutine randomChallengeCoroutine;
-    private readonly GestureShape[] randomShapes = { GestureShape.Circle, GestureShape.Square };
+    private readonly GestureShape[] randomShapes = { GestureShape.Na, GestureShape.Ka };
 
     private void Awake()
     {
@@ -145,7 +145,7 @@ public class GestureChallengeManager : MonoBehaviour
     private GestureShape GetRandomShape(GestureShape excludeShape = GestureShape.None)
     {
         if (randomShapes.Length == 0)
-            return GestureShape.Circle;
+            return GestureShape.Na;
 
         if (randomShapes.Length == 1)
             return randomShapes[0];

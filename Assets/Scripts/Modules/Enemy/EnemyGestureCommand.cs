@@ -11,7 +11,7 @@ public class EnemyGestureCommand : MonoBehaviour
             movementBehavior.SetSpawnPosition(transform.position);
     }
     [SerializeField] private bool autoIssueOnStart = true;
-    [SerializeField] private GestureShape gestureToCommand = GestureShape.Circle;
+    [SerializeField] private GestureShape gestureToCommand = GestureShape.Na;
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private TMP_Text promptText;
@@ -477,8 +477,6 @@ public class EnemyGestureCommand : MonoBehaviour
     {
         switch (gestureShape)
         {
-            case GestureShape.Circle: return "LINGKARAN";
-            case GestureShape.Square: return "KOTAK";
             case GestureShape.Na: return "NA";
             case GestureShape.Ka: return "KA";
             default: return gestureShape.ToString();

@@ -41,8 +41,6 @@ public class GestureRecognizer : MonoBehaviour
         templates.Clear();
         templateProviders.Clear();
 
-        templateProviders.Add(new CircleGestureTemplate());
-        templateProviders.Add(new SquareGestureTemplate());
         templateProviders.Add(new NaGestureTemplate());
         templateProviders.Add(new KaGestureTemplate());
         templateProviders.Add(new DaGestureTemplate());
@@ -141,7 +139,7 @@ public class GestureRecognizer : MonoBehaviour
         float angleRange = Mathf.Deg2Rad * 45f;
         foreach (var template in templates)
         {
-            // Pastikan jumlah stroke sama dengan template. Circle, Square, Na = 1 stroke, Ka = 2 stroke.
+            // Pastikan jumlah stroke sama dengan template.
             if (template.Strokes.Count != candidateStrokes.Count)
                 continue;
 
@@ -234,23 +232,21 @@ public enum GestureShape
 {
     None,
     Unknown,
-    Circle,
-    Square,
-    Na,
-    Ka,
-    Da,
-    Wa,
-    La,
-    Ma,
-    Ba,
-    Fa,
-    Qa,
-    Ga,
-    Ha,
-    Pa,
-    Za,
-    Ta,
-    Sa
+    Na = 4,
+    Ka = 5,
+    Da = 6,
+    Wa = 7,
+    La = 8,
+    Ma = 9,
+    Ba = 10,
+    Fa = 11,
+    Qa = 12,
+    Ga = 13,
+    Ha = 14,
+    Pa = 15,
+    Za = 16,
+    Ta = 17,
+    Sa = 18
 }
 
 public struct GestureRecognitionResult

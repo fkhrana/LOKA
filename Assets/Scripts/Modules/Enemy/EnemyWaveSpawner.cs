@@ -54,10 +54,6 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField, Min(0.1f)] private float delayBetweenWaves = 2f;
     [SerializeField, Min(1)] private int initialConcurrentEnemies = 3;
     [SerializeField, Min(0.1f)] private float staggerSpawnInterval = 0.6f;
-    [SerializeField] private GestureCategory gestureCategory = GestureCategory.Shapes;
-    [SerializeField] private GestureShape[] availableShapeGestures =
-        { GestureShape.Circle, GestureShape.Square };
-
     [SerializeField] private GestureShape[] availableAksaraGestures =
         { GestureShape.Na, GestureShape.Ka };
 
@@ -1404,7 +1400,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         if (candidates == null ||
             candidates.Length == 0)
         {
-            return GestureShape.Circle;
+            return GestureShape.Na;
         }
 
         int selectedIndex =
@@ -1420,58 +1416,13 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private GestureShape[] GetAvailableGesturesByCategory()
     {
-        switch (gestureCategory)
-        {
-            case GestureCategory.Aksara:
-                return availableAksaraGestures != null &&
-                       availableAksaraGestures.Length > 0
-                    ? availableAksaraGestures
-                    : new[]
-                    {
-                        GestureShape.Na,
-                        GestureShape.Ka
-                    };
-
-            case GestureCategory.Shapes:
-                return availableShapeGestures != null &&
-                       availableShapeGestures.Length > 0
-                    ? availableShapeGestures
-                    : new[]
-                    {
-                        GestureShape.Circle,
-                        GestureShape.Square
-                    };
-
-            default:
-                var combined =
-                    new List<GestureShape>();
-
-                if (availableShapeGestures != null)
-                    combined.AddRange(
-                        availableShapeGestures
-                    );
-
-                if (availableAksaraGestures != null)
-                    combined.AddRange(
-                        availableAksaraGestures
-                    );
-
-                return combined.Count > 0
-                    ? combined.ToArray()
-                    : new[]
-                    {
-                        GestureShape.Circle,
-                        GestureShape.Square,
-                        GestureShape.Na,
-                        GestureShape.Ka
-                    };
-        }
-    }
-
-    private enum GestureCategory
-    {
-        Shapes,
-        Aksara,
-        Mixed
+        return availableAksaraGestures != null &&
+               availableAksaraGestures.Length > 0
+            ? availableAksaraGestures
+            : new[]
+            {
+                GestureShape.Na,
+                GestureShape.Ka
+            };
     }
 }
