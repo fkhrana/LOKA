@@ -3076,8 +3076,6 @@ MonoBehaviour:
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
-  gestureCategory: 1
-  availableShapeGestures: 0200000003000000
   availableAksaraGestures: 040000000500000006000000070000000800000009000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2
@@ -7139,6 +7137,10 @@ MonoBehaviour:
   playerHealth: {fileID: 497076175}
   helperPrefab: {fileID: 8032596638176675067, guid: 30e511d8ee764554c99fd8fa7b477eaf, type: 3}
   helperParent: {fileID: 649845678}
+  gestureDrawer: {fileID: 256010449}
+  healVfx: {fileID: 1356767883}
+  activateWithLoveGesture: 1
+  allowClickActivation: 0
   healthUnits: 5
   healthThreshold: 5
   healUnits: 1
@@ -7988,6 +7990,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1345640653}
   m_CullTransparentMesh: 1
+--- !u!198 &1356767883 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1204773974366829196, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1787184826}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1357430123
 GameObject:
   m_ObjectHideFlags: 0

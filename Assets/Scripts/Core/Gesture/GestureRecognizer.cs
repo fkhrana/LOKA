@@ -60,6 +60,7 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new TaSingleStrokeTemplate());
         templateProviders.Add(new SaGestureTemplate());
         templateProviders.Add(new SaAlternativeGestureTemplate());
+        templateProviders.Add(new LoveGestureTemplate());
 
         foreach (var provider in templateProviders)
         {
@@ -246,7 +247,8 @@ public enum GestureShape
     Pa = 15,
     Za = 16,
     Ta = 17,
-    Sa = 18
+    Sa = 18,
+    Love = 19
 }
 
 public struct GestureRecognitionResult

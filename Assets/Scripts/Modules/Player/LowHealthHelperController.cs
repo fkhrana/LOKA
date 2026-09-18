@@ -6,6 +6,12 @@ public class LowHealthHelperController : MonoBehaviour
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private LowHealthHelper helperPrefab;
     [SerializeField] private RectTransform helperParent;
+    [SerializeField] private GestureDrawer gestureDrawer;
+    [SerializeField] private ParticleSystem healVfx;
+
+    [Header("Activation")]
+    [SerializeField] private bool activateWithLoveGesture = true;
+    [SerializeField] private bool allowClickActivation;
 
     [Header("Rules")]
     [Tooltip("Jumlah bar health yang ditampilkan saat health penuh.")]
@@ -37,6 +43,15 @@ public class LowHealthHelperController : MonoBehaviour
 
     private void Awake()
     {
+        if (gestureDrawer == null)
+            gestureDrawer = FindAnyObjectByType<GestureDrawer>();
+
+        if (healVfx == null && playerHealth != null)
+            healVfx = playerHealth.GetComponentInChildren<ParticleSystem>(true);
+
+        if (healVfx != null)
+            healVfx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
         if (playerHealth == null)
             Debug.LogWarning(
                 "LowHealthHelperController: Player Health wajib di-assign di Inspector.",
@@ -87,12 +102,36 @@ public class LowHealthHelperController : MonoBehaviour
     {
         if (playerHealth != null)
             playerHealth.HealthChanged += HandleHealthChanged;
+
+        if (gestureDrawer != null)
+            gestureDrawer.GestureRecognized += HandleGestureRecognized;
     }
 
     private void OnDisable()
     {
         if (playerHealth != null)
             playerHealth.HealthChanged -= HandleHealthChanged;
+
+        if (gestureDrawer != null)
+            gestureDrawer.GestureRecognized -= HandleGestureRecognized;
+    }
+
+    public bool AllowClickActivation => allowClickActivation;
+
+    private void HandleGestureRecognized(
+        System.Collections.Generic.List<System.Collections.Generic.List<Vector2>> strokes,
+        GestureRecognitionResult result
+    )
+    {
+        if (
+            !activateWithLoveGesture ||
+            !result.IsRecognized ||
+            result.DetectedShape != GestureShape.Love ||
+            activeHelper == null
+        )
+            return;
+
+        activeHelper.Activate();
     }
 
     private void HandleHealthChanged(
@@ -233,7 +272,18 @@ public class LowHealthHelperController : MonoBehaviour
             healthPerUnit * healUnits
         );
 
+        PlayHealVfx();
+
         helper.FadeOutAndDestroy();
+    }
+
+    private void PlayHealVfx()
+    {
+        if (healVfx == null)
+            return;
+
+        healVfx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        healVfx.Play(true);
     }
 
     public void NotifyHelperDestroyed(

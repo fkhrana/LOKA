@@ -216,8 +216,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureTemplateRecorder
   drawer: {fileID: 1392741719}
-  gestureName: SA
-  targetStrokeCount: 4
+  gestureName: LOVE
+  targetStrokeCount: 1
 --- !u!1 &1368193397
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,8 +386,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureDrawer
   lineRenderer: {fileID: 1392741720}
+  brushPrefab: {fileID: 0}
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
+  blockWhenPointerOverUI: 1
+  blockWhenPointerOverFragment: 1
+  fragmentCheckMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  useBrushSFX: 1
+  brushSFXName: BrushDraw
+  brushSFXVolume: 1
 --- !u!120 &1392741720
 LineRenderer:
   serializedVersion: 3

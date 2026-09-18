@@ -3530,8 +3530,6 @@ MonoBehaviour:
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
-  gestureCategory: 1
-  availableShapeGestures: 0200000003000000
   availableAksaraGestures: 040000000500000006000000070000000800000009000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2
@@ -7454,11 +7452,16 @@ MonoBehaviour:
   playerHealth: {fileID: 789072142}
   helperPrefab: {fileID: 8032596638176675067, guid: 30e511d8ee764554c99fd8fa7b477eaf, type: 3}
   helperParent: {fileID: 695064522}
+  gestureDrawer: {fileID: 256010449}
+  healVfx: {fileID: 1540591676459283539}
+  activateWithLoveGesture: 1
+  allowClickActivation: 0
   healthUnits: 5
   healthThreshold: 5
   healUnits: 1
   maxUsesPerScene: 1
   spawnCooldown: 0.5
+  healVfxDuration: 1.5
   topMargin: 80
   helperAppearSFX: {fileID: 8300000, guid: fd96d43e39bd97b4994080a4956052d7, type: 3}
   helperClickSFX: {fileID: 8300000, guid: 8950e812d2686974b8710f32bb9760a2, type: 3}
@@ -12205,6 +12208,11 @@ PrefabInstance:
 --- !u!4 &1540591676459283538 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8397764429721623933, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1540591676459283537}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1540591676459283539 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1204773974366829196, guid: 1d696eed676647b469b18301c42f2753, type: 3}
   m_PrefabInstance: {fileID: 1540591676459283537}
   m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807

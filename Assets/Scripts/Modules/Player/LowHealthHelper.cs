@@ -51,6 +51,14 @@ public class LowHealthHelper : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (controller == null || !controller.AllowClickActivation)
+            return;
+
+        Activate();
+    }
+
+    public void Activate()
+    {
         if (!isInteractable)
             return;
 
@@ -61,7 +69,7 @@ public class LowHealthHelper : MonoBehaviour, IPointerClickHandler
             canvasGroup.blocksRaycasts = false;
         }
 
-        controller?.ConsumeHelper(this);
+        controller.ConsumeHelper(this);
     }
 
     public void FadeOutAndDestroy()
