@@ -17,6 +17,9 @@ public class SaveCurrentProgress : MonoBehaviour
     [Header("Player")]
     [SerializeField] private Transform player;
 
+    private string previousSceneAtStartup;
+    private string currentSceneAtStartup;
+
     private void Awake()
     {
         // Auto-cari player via tag kalau kosong.
@@ -25,15 +28,50 @@ public class SaveCurrentProgress : MonoBehaviour
             GameObject p = GameObject.FindGameObjectWithTag("Player");
             if (p != null) player = p.transform;
         }
+
+        previousSceneAtStartup = GameProgressManager.GetLastScene();
+        currentSceneAtStartup = SceneManager.GetActiveScene().name;
+
+        GameProgressManager.SaveLastScene(currentSceneAtStartup);
+
+        if (PlayerPrefs.GetInt("TutorialCompleted", 0) == 0)
+            return;
+
+        string savedState = GameProgressManager.GetGameState();
+        bool cameFromMainMenu = previousSceneAtStartup == "MainMenu";
+        bool isFirstEntry = string.IsNullOrEmpty(previousSceneAtStartup);
+
+        // Gameplay selalu dimulai dari awal saat scene dibuka kembali.
+        // Progress wave dan level bar lama tidak dipakai.
+        if (savedState == "Gameplay")
+        {
+            Debug.Log(
+                "[SaveCurrentProgress] State Gameplay lama di-clear " +
+                "→ reset progress wave dan level bar."
+            );
+
+            GameProgressManager.ClearGameState();
+            return;
+        }
+
+        if ((savedState == "Puzzle" || savedState == "Reward") &&
+            !cameFromMainMenu &&
+            !isFirstEntry)
+        {
+            Debug.Log(
+                $"[SaveCurrentProgress] State '{savedState}' stale " +
+                $"(prevScene='{previousSceneAtStartup}') → clear sebelum Start."
+            );
+
+            GameProgressManager.ClearGameState();
+        }
     }
 
     private void Start()
     {
-        // Simpan scene sebelumnya SEBELUM update LastScene.
-        string previousScene = GameProgressManager.GetLastScene();
-        string currentScene = SceneManager.GetActiveScene().name;
-
-        GameProgressManager.SaveLastScene(currentScene);
+        // Nilai scene sudah disimpan di Awake sebelum LastScene diperbarui.
+        string previousScene = previousSceneAtStartup;
+        string currentScene = currentSceneAtStartup;
 
         // Tutorial belum selesai → skip restore semua state.
         if (PlayerPrefs.GetInt("TutorialCompleted", 0) == 0)
@@ -51,24 +89,7 @@ public class SaveCurrentProgress : MonoBehaviour
                   $"prevScene='{previousScene}', state='{savedState}', " +
                   $"fromMainMenu={fromMainMenu}");
 
-        // Kalau state = Puzzle/Reward, valid resume cuma kalau:
-        //   1. Datang dari MainMenu (player sengaja klik resume), ATAU
-        //   2. First entry / crash recovery (previousScene kosong).
-        // Selain itu (dari Latihan, Cutscene, scene lain) → stale, clear.
-        if (savedState == "Puzzle" || savedState == "Reward")
-        {
-            bool cameFromMainMenu = (previousScene == "MainMenu");
-            bool isFirstEntry = string.IsNullOrEmpty(previousScene);
-
-            if (!cameFromMainMenu && !isFirstEntry)
-            {
-                Debug.Log($"[SaveCurrentProgress] State '{savedState}' stale " +
-                          $"(prevScene='{previousScene}') → clear.");
-                GameProgressManager.ClearGameState();
-                savedState = "";
-            }
-        }
-
+        // Puzzle/Reward tetap bisa di-resume dari save yang valid.
         if (savedState == "Puzzle") { RestorePuzzle(); return; }
         if (savedState == "Reward") { RestoreReward(); return; }
         if (savedState == "Gameplay") { RestoreGameplay(); return; }
@@ -114,17 +135,16 @@ public class SaveCurrentProgress : MonoBehaviour
         ApplyRewardUI();
     }
 
-    // Resume ke state Gameplay.
+    // Gameplay baru dimulai dari awal; canvas tetap aktif untuk VFX gameplay.
     private void RestoreGameplay()
     {
         Debug.Log("[SaveCurrentProgress] Resume → Gameplay");
 
-        if (canvas2 != null) canvas2.SetActive(false);
+        if (canvas2 != null) canvas2.SetActive(true);
         if (puzzlePanel != null) puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        // CameraIntroManager TETAP enabled.
-        // State = "Gameplay" → CameraIntroManager pakai countdown-only.
+        // CameraIntroManager tetap enabled untuk menjalankan intro/countdown.
     }
 
     // Tandai state Puzzle + apply UI.
@@ -163,17 +183,15 @@ public class SaveCurrentProgress : MonoBehaviour
         if (rewardPanel != null) rewardPanel.SetActive(true);
     }
 
-    // Setup untuk new game / gameplay normal.
+    // Setup gameplay normal dengan panel Puzzle/Reward tersembunyi.
     private void StartNewGame()
     {
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
-        if (canvas2 != null) canvas2.SetActive(false);
+        if (canvas2 != null) canvas2.SetActive(true);
         if (puzzlePanel != null) puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
-        // CameraIntroManager TIDAK di-disable.
-        // State kosong → CameraIntroManager fallback → panning + countdown.
-        // Blok HasEnteredGameplay dihapus karena redundan dan bikin intro ke-skip.
+        // CameraIntroManager tetap enabled agar intro/countdown dapat berjalan.
     }
 }

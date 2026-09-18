@@ -119,7 +119,13 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         if (savedState == "Gameplay")
         {
-            ResumeWaveSequence();
+            Debug.Log(
+                "[EnemyWaveSpawner] State Gameplay → mulai ulang dari wave 1."
+            );
+
+            if (spawnOnStart)
+                StartWaveSequence();
+
             return;
         }
 

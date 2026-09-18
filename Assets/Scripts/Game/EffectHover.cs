@@ -118,16 +118,19 @@ public class EffectHover : MonoBehaviour,
     {
         if (targetTransform == null) return;
 
-        Vector3 startScale = targetTransform.localScale;
+        CaptureOriginalIfNeeded();
+        LeanTween.cancel(targetTransform.gameObject);
+        targetTransform.localScale = originalScale;
 
-        LeanTween.scale(targetTransform, startScale * collectPulseScale, collectPulseDuration * 0.4f)
+        LeanTween.scale(targetTransform, originalScale * collectPulseScale, collectPulseDuration * 0.4f)
             .setEase(LeanTweenType.easeOutBack)
             .setIgnoreTimeScale(true)
             .setOnComplete(() =>
             {
-                LeanTween.scale(targetTransform, startScale, collectPulseDuration * 0.6f)
+                LeanTween.scale(targetTransform, originalScale, collectPulseDuration * 0.6f)
                     .setEase(LeanTweenType.easeInOutSine)
-                    .setIgnoreTimeScale(true);
+                    .setIgnoreTimeScale(true)
+                    .setOnComplete(() => targetTransform.localScale = originalScale);
             });
     }
 

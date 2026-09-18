@@ -25,15 +25,26 @@ public class ResultButton : MonoBehaviour
     {
         Time.timeScale = 1f;
 
+        string targetScene = nextScene;
+
         if (LevelManager.Instance != null)
         {
             int currentLevel = LevelManager.Instance.GetCurrentLevelIndex();
+            int nextLevel = currentLevel + 1;
 
             // Tandai selesai → unlock level berikutnya + clear GameState
             LevelManager.Instance.CompleteLevel(currentLevel);
 
             // Update current level ke level berikutnya
-            LevelManager.Instance.SetCurrentLevel(currentLevel + 1);
+            LevelManager.Instance.SetCurrentLevel(nextLevel);
+
+            string configuredScene =
+                LevelManager.Instance.GetSceneNameForLevel(nextLevel);
+
+            if (!string.IsNullOrEmpty(configuredScene))
+                targetScene = configuredScene;
+
+            GameProgressManager.ClearGameState(nextLevel);
 
             Debug.Log($"[ResultButton] Level {currentLevel + 1} selesai → " +
                       $"Level {currentLevel + 2} di-unlock.");
@@ -43,7 +54,7 @@ public class ResultButton : MonoBehaviour
             Debug.LogWarning("[ResultButton] LevelManager.Instance tidak ditemukan.");
         }
 
-        SceneManager.LoadScene(nextScene);
+        SceneManager.LoadScene(targetScene);
     }
 
     // BACK
