@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class PlayerHealthBarUI : MonoBehaviour
 {
     [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private Image[] heartImages;
     [SerializeField] private Image healthImage;
     [SerializeField] private Sprite[] healthSprites;
     [SerializeField] private Slider slider;
@@ -13,6 +14,7 @@ public class PlayerHealthBarUI : MonoBehaviour
     [SerializeField] private TMP_Text valueText;
 
     private Vector3 initialFillScale = Vector3.one;
+    private int lastVisibleHeartCount = -1;
 
     private void Awake()
     {
@@ -55,7 +57,46 @@ public class PlayerHealthBarUI : MonoBehaviour
     {
         float normalized = max > 0 ? (float)current / max : 0f;
 
-        if (healthImage != null && healthSprites != null && healthSprites.Length > 0)
+        if (heartImages != null && heartImages.Length > 0)
+        {
+            int visibleHeartCount = Mathf.CeilToInt(normalized * heartImages.Length);
+
+            if (lastVisibleHeartCount >= 0 && visibleHeartCount < lastVisibleHeartCount)
+            {
+                for (int i = visibleHeartCount; i < lastVisibleHeartCount; i++)
+                {
+                    if (i >= heartImages.Length || heartImages[i] == null)
+                        continue;
+
+                    PlayerHealthHeartVFX heartVfx = heartImages[i].GetComponent<PlayerHealthHeartVFX>();
+                    if (heartVfx != null)
+                        heartVfx.PlayDamage();
+                }
+            }
+
+            for (int i = 0; i < heartImages.Length; i++)
+            {
+                if (heartImages[i] != null)
+                {
+                    if (i < visibleHeartCount)
+                    {
+                        heartImages[i].enabled = true;
+                        PlayerHealthHeartVFX heartVfx = heartImages[i].GetComponent<PlayerHealthHeartVFX>();
+                        if (heartVfx != null)
+                            heartVfx.ResetVisual();
+                    }
+                    else if (i >= lastVisibleHeartCount || heartImages[i].GetComponent<PlayerHealthHeartVFX>() == null)
+                    {
+                        heartImages[i].enabled = false;
+                    }
+                }
+            }
+
+            lastVisibleHeartCount = visibleHeartCount;
+        }
+
+        if ((heartImages == null || heartImages.Length == 0) &&
+            healthImage != null && healthSprites != null && healthSprites.Length > 0)
         {
             int spriteIndex = Mathf.Clamp(
                 Mathf.FloorToInt((1f - normalized) * healthSprites.Length),
