@@ -1221,7 +1221,10 @@ public class EnemyWaveSpawner : MonoBehaviour
         else if (useSpawnArea)
         {
             position =
-                GetAreaSpawnPosition();
+                GetAreaSpawnPosition(
+                    index,
+                    totalEnemiesInWave
+                );
         }
         else
         {
@@ -1235,7 +1238,9 @@ public class EnemyWaveSpawner : MonoBehaviour
         position =
             GetValidSpawnPosition(
                 position,
-                usedPositions
+                usedPositions,
+                index,
+                totalEnemiesInWave
             );
 
         usedPositions.Add(
@@ -1245,13 +1250,22 @@ public class EnemyWaveSpawner : MonoBehaviour
         return position;
     }
 
-    private Vector3 GetAreaSpawnPosition()
+    private Vector3 GetAreaSpawnPosition(
+        int index = 0,
+        int totalEnemies = 1
+    )
     {
+        totalEnemies = Mathf.Max(1, totalEnemies);
+
+        float areaMinX = spawnAreaCenter.x - spawnAreaSize.x / 2f;
+        float segmentWidth = spawnAreaSize.x / totalEnemies;
+        float segmentMinX = areaMinX + segmentWidth * index;
+
         float x =
-            spawnAreaCenter.x +
+            segmentMinX +
             Random.Range(
-                -spawnAreaSize.x / 2f,
-                spawnAreaSize.x / 2f
+                0f,
+                segmentWidth
             );
 
         float y =
@@ -1323,7 +1337,9 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private Vector3 GetValidSpawnPosition(
         Vector3 position,
-        List<Vector3> usedPositions
+        List<Vector3> usedPositions,
+        int index,
+        int totalEnemiesInWave
     )
     {
         if (usedPositions.Count == 0)
@@ -1340,7 +1356,10 @@ public class EnemyWaveSpawner : MonoBehaviour
         )
         {
             position =
-                GetAreaSpawnPosition();
+                GetAreaSpawnPosition(
+                    index,
+                    totalEnemiesInWave
+                );
 
             attempt++;
         }
