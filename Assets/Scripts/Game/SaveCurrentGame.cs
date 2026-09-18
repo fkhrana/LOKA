@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class SaveCurrentProgress : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class SaveCurrentProgress : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] private Transform player;
+
+    [Header("Testing")]
+    [FormerlySerializedAs("keepPuzzlePanelStateOnSceneStart")]
+    [SerializeField] private bool preservePanelStatesForDirectSceneTesting;
 
     private string previousSceneAtStartup;
     private string currentSceneAtStartup;
@@ -80,6 +85,13 @@ public class SaveCurrentProgress : MonoBehaviour
             return;
         }
 
+        if (preservePanelStatesForDirectSceneTesting)
+        {
+            if (canvas2 != null) canvas2.SetActive(true);
+            Debug.Log("[SaveCurrentProgress] Direct scene testing → panel state dipertahankan.");
+            return;
+        }
+
         RestorePlayerPosition();
 
         string savedState = GameProgressManager.GetGameState();
@@ -141,7 +153,8 @@ public class SaveCurrentProgress : MonoBehaviour
         Debug.Log("[SaveCurrentProgress] Resume → Gameplay");
 
         if (canvas2 != null) canvas2.SetActive(true);
-        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
         // CameraIntroManager tetap enabled untuk menjalankan intro/countdown.
@@ -189,7 +202,8 @@ public class SaveCurrentProgress : MonoBehaviour
         Debug.Log("[SaveCurrentProgress] New Game → Gameplay normal");
 
         if (canvas2 != null) canvas2.SetActive(true);
-        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(false);
         if (rewardPanel != null) rewardPanel.SetActive(false);
 
         // CameraIntroManager tetap enabled agar intro/countdown dapat berjalan.

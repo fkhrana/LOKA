@@ -8,6 +8,9 @@ public class ChestReward : MonoBehaviour
     [SerializeField] private float shakeAngle = 8f;
     [SerializeField] private float shakeSpeed = 25f;
 
+    [Header("Chest VFX")]
+    [SerializeField] private GameObject chestVfx;
+
     [Header("Reward")]
     [SerializeField] private RectTransform powerUp;
     [SerializeField] private float powerUpMoveDuration = 2f;
@@ -53,6 +56,9 @@ public class ChestReward : MonoBehaviour
         if (chestTransform != null)
             originalRotation = chestTransform.localRotation;
 
+        if (chestVfx != null)
+            chestVfx.SetActive(true);
+
         if (powerUp != null)
         {
             powerUpOriginalPosition = powerUp.anchoredPosition;
@@ -94,6 +100,7 @@ public class ChestReward : MonoBehaviour
 
         if (powerUp == null) yield break;
 
+        StopChestVfx();
         powerUp.gameObject.SetActive(true);
 
         if (AudioManager.Instance != null && powerUpAppearSFX != null)
@@ -123,6 +130,21 @@ public class ChestReward : MonoBehaviour
         powerUp.anchoredPosition = targetPosition;
 
         StartCoroutine(PowerUpRotateLoop());
+    }
+
+    private void StopChestVfx()
+    {
+        if (chestVfx == null)
+            return;
+
+        ParticleSystem[] particles =
+            chestVfx.GetComponentsInChildren<ParticleSystem>(true);
+
+        foreach (ParticleSystem particle in particles)
+        {
+            if (particle != null)
+                particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     private IEnumerator PowerUpRotateLoop()
