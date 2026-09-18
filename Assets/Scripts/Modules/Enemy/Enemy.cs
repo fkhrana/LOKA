@@ -25,6 +25,12 @@ public class Enemy : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float enemyDefeatSFXVolume = 1f;
 
+    [Header("Aksara Defeat SFX")]
+    [SerializeField] private bool useAksaraDefeatSFX = true;
+    [SerializeField] private AksaraSoundLibrary aksaraSoundLibrary;
+    [Range(0f, 2f)]
+    [SerializeField] private float aksaraDefeatSFXVolume = 1.5f;
+
     [Header("Aksara Drop SFX")]
     [SerializeField] private bool useAksaraDropSFX = true;
     [SerializeField] private string aksaraDropSFXName = "AksaraDrop";
@@ -139,6 +145,7 @@ public class Enemy : MonoBehaviour
         // PLAY ENEMY DEFEAT SFX
         // ========================================
         PlayEnemyDefeatSFX();
+        PlayAksaraDefeatSFX();
 
         if (enemyData != null &&
             enemyData.DropsAksaraFragment &&
@@ -293,6 +300,18 @@ public class Enemy : MonoBehaviour
                 enemyDefeatSFXName,
                 enemyDefeatSFXVolume
             );
+        }
+    }
+
+    private void PlayAksaraDefeatSFX()
+    {
+        if (!useAksaraDefeatSFX || aksaraSoundLibrary == null || aksaraData == null)
+            return;
+
+        AudioClip clip = aksaraSoundLibrary.GetClip(aksaraData.GestureShape);
+        if (clip != null)
+        {
+            AudioManager.Instance?.PlayLoudSFX(clip, Mathf.Clamp(aksaraDefeatSFXVolume * 8f, 0f, 10f));
         }
     }
 

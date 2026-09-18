@@ -428,6 +428,16 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip, Mathf.Clamp(volumeMultiplier, 0f, 2f));
     }
 
+    public void PlayLoudSFX(AudioClip clip, float volumeMultiplier)
+    {
+        if (clip == null || sfxSource == null) return;
+        if (IsDuplicateSfx(clip)) return;
+
+        StopHoverSFX();
+        DuckBGMForSFX(clip);
+        sfxSource.PlayOneShot(clip, Mathf.Clamp(volumeMultiplier, 0f, 10f));
+    }
+
     public void PlaySFX(string clipName) => PlaySFX(clipName, 1f);
 
     public void PlaySFX(string clipName, float volumeMultiplier)

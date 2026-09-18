@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 505826a279c24cb4b934169b4e530be7, type: 3}
+  m_Name: Aksara Sound Library
+  m_EditorClassIdentifier: Assembly-CSharp::AksaraSoundLibrary
+  entries:
+  - gestureShape: 4
+    clip: {fileID: 8300000, guid: b14b11fc7d325794ba998d898ff69f95, type: 3}
+    volume: 1
+  - gestureShape: 6
+    clip: {fileID: 8300000, guid: 73da90a9c00e1af4387d1f48b4b31341, type: 3}
+    volume: 1
+  - gestureShape: 7
+    clip: {fileID: 8300000, guid: e29eb97b22a26cf4995a7ef31ed7a34f, type: 3}
+    volume: 1
+  - gestureShape: 8
+    clip: {fileID: 8300000, guid: 7978169d011805b40bdb259b7295ad6d, type: 3}
+    volume: 1
+  - gestureShape: 9
+    clip: {fileID: 8300000, guid: 1dbc003510b192f44b3fd420bfb6907f, type: 3}
+    volume: 1
+  - gestureShape: 10
+    clip: {fileID: 8300000, guid: 9219412646706064faed449766068800, type: 3}
+    volume: 1
+  - gestureShape: 11
+    clip: {fileID: 8300000, guid: 7dca8a1bc13d89b429b2ff761c678ace, type: 3}
+    volume: 1
+  - gestureShape: 12
+    clip: {fileID: 8300000, guid: bd037149707282947920d4c7fa091f9c, type: 3}
+    volume: 1
+  - gestureShape: 13
+    clip: {fileID: 8300000, guid: c15bc12c0cb5ab5469a2d69efc2544a9, type: 3}
+    volume: 1
+  - gestureShape: 5
+    clip: {fileID: 8300000, guid: 3911712f1b7885f44b995a66ec0fb0f8, type: 3}
+    volume: 1
+  - gestureShape: 14
+    clip: {fileID: 8300000, guid: 05c842a44920cdd408a7b0285c654dd1, type: 3}
+    volume: 1
+  - gestureShape: 15
+    clip: {fileID: 8300000, guid: 158f34a813460df43b7bfcff16f41ce5, type: 3}
+    volume: 1
+  - gestureShape: 16
+    clip: {fileID: 8300000, guid: f9ecf5b1f3d2fc646bb2b6d63f6bb8d3, type: 3}
+    volume: 1
+  - gestureShape: 17
+    clip: {fileID: 8300000, guid: 99e451dec7a25734388b6e5fe174debc, type: 3}
+    volume: 1
+  - gestureShape: 18
+    clip: {fileID: 8300000, guid: aecf23e5d176d0f448987ba3cf5bfea1, type: 3}
+    volume: 1

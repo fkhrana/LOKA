@@ -239,11 +239,18 @@ MonoBehaviour:
   bodyRenderer: {fileID: 5233950752072861356}
   aksaraIconRenderer: {fileID: 8604418189492127069}
   aksaraIconFragment: {fileID: 5508302643624087199}
+  animator: {fileID: 0}
   defeatBlinkDuration: 0.8
   defeatBlinkInterval: 0.15
+  defeatShrinkDuration: 0.25
+  defeatShrinkTargetScale: 0.1
+  defeatAnimationStateName: enemyDieBlubub
   useEnemyDefeatSFX: 1
   enemyDefeatSFXName: EnemyDefeat
   enemyDefeatSFXVolume: 0.3
+  useAksaraDefeatSFX: 1
+  aksaraSoundLibrary: {fileID: 11400000, guid: 753ec4f2e65cf104bb52c64cf96a4f4f, type: 2}
+  aksaraDefeatSFXVolume: 2
   useAksaraDropSFX: 1
   aksaraDropSFXName: AksaraDrop
   aksaraDropSFXVolume: 1
@@ -749,6 +756,7 @@ MonoBehaviour:
   jumpHeight: 1.5
   sideDistance: -1.5
   dropDuration: 0.4
+  autoCollectDelay: 5
   dropVfx: {fileID: 7863991665977017088}
   collectTrailVfx: {fileID: 8757289190187547843, guid: 326b0c52804065b4ca11216e0e64c235, type: 3}
   collectFlightSpeed: 5
