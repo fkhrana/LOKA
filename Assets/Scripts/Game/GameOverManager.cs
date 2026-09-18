@@ -1,11 +1,14 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using EasyTransition;
 
 public class GameOverManager : MonoBehaviour
 {
     [Header("Nama Scene")]
     public string mainMenuScene = "MainMenu";
     public string gameplayScene = "MainGameplay(Drawing)";
+    public string tutorialScene = "Latihan";
 
     [Header("Player & Lose Panel")]
     [SerializeField] private PlayerHealth playerHealth;
@@ -15,11 +18,19 @@ public class GameOverManager : MonoBehaviour
     [Header("Lose SFX")]
     [SerializeField] private bool useLoseSFX = true;
     [SerializeField] private string loseSFXName = "Lose";
-    
+
     [Range(0f, 1f)]
     [SerializeField] private float loseSFXVolume = 1f;
 
+    [Header("Transition")]
+    [SerializeField] private TransitionSettings transitionSettings;
+    [SerializeField] private float loadDelay = 0f;
+
+    [Tooltip("Durasi fade out BGM sebelum pindah scene.")]
+    [SerializeField] private float bgmFadeOutDuration = 0.8f;
+
     private bool isGameOver;
+    private bool isTransitioning;
 
     private void Awake()
     {
@@ -45,6 +56,8 @@ public class GameOverManager : MonoBehaviour
     {
         if (playerHealth != null)
             playerHealth.Died -= HandlePlayerDied;
+
+        Time.timeScale = 1f;
     }
 
     private void HandlePlayerDied()
@@ -90,8 +103,48 @@ public class GameOverManager : MonoBehaviour
 
     public void OpenTutorial()
     {
+        if (isTransitioning)
+            return;
+
+        isTransitioning = true;
+
         Time.timeScale = 1f;
-        PlayerPrefs.SetInt("OpenTutorial", 1);
-        SceneManager.LoadScene(mainMenuScene);
+
+        StartCoroutine(
+            FadeAndLoadScene(tutorialScene)
+        );
+    }
+
+    private IEnumerator FadeAndLoadScene(string sceneName)
+    {
+        if (AudioManager.Instance != null)
+        {
+            yield return
+                AudioManager.Instance
+                    .FadeOutBGMAndWait(
+                        bgmFadeOutDuration
+                    );
+        }
+
+        TransitionManager tm =
+            TransitionManager.Instance();
+
+        if (tm != null &&
+            transitionSettings != null)
+        {
+            tm.Transition(
+                sceneName,
+                transitionSettings,
+                loadDelay
+            );
+        }
+        else
+        {
+            Time.timeScale = 1f;
+
+            SceneManager.LoadScene(sceneName);
+
+            isTransitioning = false;
+        }
     }
 }
