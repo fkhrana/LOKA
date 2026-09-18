@@ -3082,6 +3082,7 @@ MonoBehaviour:
   requiredCorrectGestures: 1
   minSpawnDistance: 2
   maxSpawnDistance: 3
+  gameStartedFailSafeBuffer: 5
 --- !u!4 &441064578
 Transform:
   m_ObjectHideFlags: 0

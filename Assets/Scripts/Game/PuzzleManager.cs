@@ -17,7 +17,8 @@ public class PuzzleManager : MonoBehaviour
     public PowerManager powerManager;
 
     [Header("Reward Power Up")]
-    [SerializeField] private PowerManager.PowerUpType rewardPowerUpType = PowerManager.PowerUpType.Freeze;
+    [SerializeField] private PowerManager.PowerUpType rewardPowerUpType =
+        PowerManager.PowerUpType.Freeze;
 
     [Header("Puzzle Complete VFX")]
     [SerializeField] private GameObject puzzleCompleteVfx;
@@ -55,7 +56,8 @@ public class PuzzleManager : MonoBehaviour
 
     public void ShowPuzzleOnce()
     {
-        if (wave1PuzzleShown) return;
+        if (wave1PuzzleShown)
+            return;
 
         wave1PuzzleShown = true;
         puzzleCompleted = false;
@@ -69,7 +71,10 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(transitionSettings, transitionDelay);
+                transitionManager.Transition(
+                    transitionSettings,
+                    transitionDelay
+                );
             }
             else
             {
@@ -89,7 +94,10 @@ public class PuzzleManager : MonoBehaviour
             if (transitionManager != null && transitionSettings != null)
             {
                 transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(transitionSettings, transitionDelay);
+                transitionManager.Transition(
+                    transitionSettings,
+                    transitionDelay
+                );
             }
             else
             {
@@ -100,9 +108,16 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivatePuzzlePanel()
     {
-        if (canvas2 != null) canvas2.SetActive(true);
-        if (puzzlePanel != null) puzzlePanel.SetActive(true);
-        if (rewardPanel != null) rewardPanel.SetActive(false);
+        if (canvas2 != null)
+            canvas2.SetActive(true);
+
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(true);
+
+        if (rewardPanel != null)
+            rewardPanel.SetActive(false);
+
+        SetGameStarted(true);
 
         if (saveCurrentProgress != null)
             saveCurrentProgress.MarkPuzzleActive();
@@ -137,8 +152,20 @@ public class PuzzleManager : MonoBehaviour
             gestureDrawer.enabled = true;
     }
 
-    public bool IsPuzzleCompleted() => puzzleCompleted;
-    public void MarkPuzzleCompleted() => puzzleCompleted = true;
+    private void SetGameStarted(bool started)
+    {
+        CameraIntroManager.GameStarted = started;
+    }
+
+    public bool IsPuzzleCompleted()
+    {
+        return puzzleCompleted;
+    }
+
+    public void MarkPuzzleCompleted()
+    {
+        puzzleCompleted = true;
+    }
 
     public void PlayWaveCompleteVfx()
     {
@@ -161,8 +188,11 @@ public class PuzzleManager : MonoBehaviour
     {
         foreach (DropZone slot in allSlots)
         {
-            if (slot == null) continue;
-            if (!slot.isFilled) return;
+            if (slot == null)
+                continue;
+
+            if (!slot.isFilled)
+                return;
         }
 
         OnPuzzleComplete();
@@ -170,11 +200,13 @@ public class PuzzleManager : MonoBehaviour
 
     private void OnPuzzleComplete()
     {
-        if (puzzleCompleted) return;
+        if (puzzleCompleted)
+            return;
 
         Debug.Log("Puzzle selesai!");
 
         MarkPuzzleCompleted();
+
         PlayPuzzleCompleteVfx();
 
         StartCoroutine(PuzzleCompleteSequence());
@@ -195,7 +227,10 @@ public class PuzzleManager : MonoBehaviour
 
         foreach (EfekConfetti confettiEffect in confettiEffects)
         {
-            confettiEffect.gameObject.SetActive(true); // FIX: aktifkan child dulu sebelum StartCoroutine
+            if (confettiEffect == null)
+                continue;
+
+            confettiEffect.gameObject.SetActive(true);
             confettiEffect.MuntahkanConfetti();
         }
 
@@ -204,14 +239,25 @@ public class PuzzleManager : MonoBehaviour
 
         foreach (ParticleSystem particle in particles)
         {
+            if (particle == null)
+                continue;
+
             particle.gameObject.SetActive(true);
-            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+            particle.Stop(
+                true,
+                ParticleSystemStopBehavior.StopEmittingAndClear
+            );
+
+            particle.Play(true);
         }
 
         Debug.Log(
             "Puzzle complete VFX dimainkan: " +
-            confettiEffects.Length + " efek terompet, " +
-            particles.Length + " particle system."
+            confettiEffects.Length +
+            " efek confetti, " +
+            particles.Length +
+            " particle system."
         );
     }
 
@@ -220,11 +266,15 @@ public class PuzzleManager : MonoBehaviour
         if (gestureDrawer != null)
             EnableGestureInput();
 
+        SetGameStarted(true);
+
         if (powerManager != null)
         {
             powerManager.SetUnlocked(rewardPowerUpType);
 
-            Transform target = powerManager.GetSlotTransform(rewardPowerUpType);
+            Transform target =
+                powerManager.GetSlotTransform(rewardPowerUpType);
+
             if (target != null)
                 StartCoroutine(PopEffect(target));
         }
@@ -239,8 +289,13 @@ public class PuzzleManager : MonoBehaviour
 
         if (transitionManager != null && transitionSettings != null)
         {
-            transitionManager.onTransitionCutPointReached += ActivateRewardPanel;
-            transitionManager.Transition(transitionSettings, transitionDelay);
+            transitionManager.onTransitionCutPointReached +=
+                ActivateRewardPanel;
+
+            transitionManager.Transition(
+                transitionSettings,
+                transitionDelay
+            );
         }
         else
         {
@@ -250,9 +305,16 @@ public class PuzzleManager : MonoBehaviour
 
     private void ActivateRewardPanel()
     {
-        if (canvas2 != null) canvas2.SetActive(true);
-        if (puzzlePanel != null) puzzlePanel.SetActive(false);
-        if (rewardPanel != null) rewardPanel.SetActive(true);
+        if (canvas2 != null)
+            canvas2.SetActive(true);
+
+        if (puzzlePanel != null)
+            puzzlePanel.SetActive(false);
+
+        if (rewardPanel != null)
+            rewardPanel.SetActive(true);
+
+        SetGameStarted(true);
 
         if (saveCurrentProgress != null)
             saveCurrentProgress.MarkRewardActive();
@@ -260,7 +322,8 @@ public class PuzzleManager : MonoBehaviour
             GameProgressManager.SaveGameState("Reward");
 
         if (transitionManager != null)
-            transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
+            transitionManager.onTransitionCutPointReached -=
+                ActivateRewardPanel;
     }
 
     private IEnumerator PopEffect(Transform target)
@@ -276,7 +339,10 @@ public class PuzzleManager : MonoBehaviour
             time += Time.unscaledDeltaTime;
 
             target.localScale = Vector3.Lerp(
-                originalScale, punchScale, time / (duration / 2));
+                originalScale,
+                punchScale,
+                time / (duration / 2)
+            );
 
             yield return null;
         }
@@ -288,7 +354,10 @@ public class PuzzleManager : MonoBehaviour
             time += Time.unscaledDeltaTime;
 
             target.localScale = Vector3.Lerp(
-                punchScale, originalScale, time / (duration / 2));
+                punchScale,
+                originalScale,
+                time / (duration / 2)
+            );
 
             yield return null;
         }
