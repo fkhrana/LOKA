@@ -50,7 +50,11 @@ public class LowHealthHelperController : MonoBehaviour
             healVfx = playerHealth.GetComponentInChildren<ParticleSystem>(true);
 
         if (healVfx != null)
+        {
+            ParticleSystem.MainModule main = healVfx.main;
+            main.playOnAwake = false;
             healVfx.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
 
         if (playerHealth == null)
             Debug.LogWarning(

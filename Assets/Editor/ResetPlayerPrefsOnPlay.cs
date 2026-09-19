@@ -37,8 +37,12 @@ public static class ResetPlayerPrefsOnPlay
             "PowerUp_Freeze_Consumed",
             "PowerUp_Combo_Unlocked",
             "PowerUp_Combo_Consumed",
-            "PowerUp_Boost_Unlocked",   // ← NEW untuk Kacapi
-            "PowerUp_Boost_Consumed"    // ← NEW untuk Kacapi
+            "PowerUp_Shield_Unlocked",
+            "PowerUp_Shield_Consumed",
+
+            // Legacy keys from before Boost was renamed to Shield.
+            "PowerUp_Boost_Unlocked",
+            "PowerUp_Boost_Consumed"
         };
 
         foreach (string key in fixedKeys)

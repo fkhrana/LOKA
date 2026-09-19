@@ -35,6 +35,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     private float knockbackTimer;
     private Vector2 knockbackStartPosition;
     private Vector2 knockbackTargetPosition;
+    private Vector2 spawnPosition;
     private readonly Collider2D[] overlapResults = new Collider2D[4];
 
     private Vector2 FindSafeKnockbackTarget(Vector2 origin, Vector2 direction, float force)
@@ -123,12 +124,14 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         moveDirection = moveLeft ? -1f : 1f;
         baseY = transform.position.y;
+        spawnPosition = transform.position;
         bobTimer = Random.Range(0f, Mathf.PI * 2f);
         heightAdjustSpeed = Random.Range(heightAdjustSpeedMin, heightAdjustSpeedMax);
         knockbackForce = Random.Range(knockbackForceMin, knockbackForceMax);
     }
     public void SetSpawnPosition(Vector2 position)
     {
+        spawnPosition = position;
         baseY = position.y;
         if (rb != null)
             rb.position = position;
@@ -265,6 +268,16 @@ public class EnemyMovementBehavior : MonoBehaviour
         if (hitPlayerHealth == null || hitPlayerHealth != playerHealth)
             return;
 
+        if (PowerManager.IsShieldActive)
+        {
+            PlayShieldKnockback(
+                PowerManager.ShieldKnockbackDistance,
+                PowerManager.ShieldKnockbackToSpawn
+            );
+            contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+            return;
+        }
+
         playerHealth.TakeDamage(damageOnContact);
         Debug.Log("EnemyMovementBehavior: Player hit, enemy destroyed after contact.");
         GetComponent<EnemyGestureCommand>()?.ReportProcessed();
@@ -305,6 +318,38 @@ public class EnemyMovementBehavior : MonoBehaviour
         knockbackStartPosition = currentPosition;
         knockbackTargetPosition = FindSafeKnockbackTarget(currentPosition, direction, force);
         Debug.Log($"EnemyMovementBehavior.PlayKnockback start={knockbackStartPosition} target={knockbackTargetPosition} angle={angle:F1} duration={knockbackDuration}");
+        return knockbackDuration;
+    }
+
+    private float PlayShieldKnockback(float distance, bool returnToSpawn)
+    {
+        isKnockedBack = true;
+        isActive = false;
+        knockbackTimer = 0f;
+        knockbackDuration = 0.48f;
+
+        Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
+        Vector2 targetPosition;
+
+        if (returnToSpawn)
+        {
+            targetPosition = spawnPosition;
+        }
+        else
+        {
+            Vector2 away = playerTransform != null
+                ? (currentPosition - (Vector2)playerTransform.position).normalized
+                : Vector2.right * -moveDirection;
+
+            targetPosition = FindSafeKnockbackTarget(
+                currentPosition,
+                away,
+                Mathf.Max(0f, distance)
+            );
+        }
+
+        knockbackStartPosition = currentPosition;
+        knockbackTargetPosition = targetPosition;
         return knockbackDuration;
     }
 }

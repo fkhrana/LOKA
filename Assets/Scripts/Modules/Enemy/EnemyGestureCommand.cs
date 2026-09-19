@@ -297,7 +297,6 @@ public class EnemyGestureCommand : MonoBehaviour
             if (PowerManager.IsComboActive)
             {
                 DefeatNearbyEnemies(this, PowerManager.ActiveComboRadius);
-                PowerManager.EndComboPowerUp();
             }
 
             challengeActive = false;
