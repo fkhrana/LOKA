@@ -15,6 +15,7 @@ public class PlayerHealth : MonoBehaviour
     public bool IsDead => CurrentHealth <= 0;
 
     public event Action<int, int> HealthChanged;
+    public event Action<int> DamageTaken;
     public event Action Died;
 
     private void Awake()
@@ -40,6 +41,7 @@ public class PlayerHealth : MonoBehaviour
             AudioManager.Instance.PlaySFX(hurtSFXName);
 
         NotifyHealthChanged();
+        DamageTaken?.Invoke(amount);
 
         if (CurrentHealth == 0)
             Died?.Invoke();

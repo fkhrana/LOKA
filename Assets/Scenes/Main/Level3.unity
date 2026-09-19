@@ -10200,6 +10200,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4961193368913274868, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+      propertyPath: gestureDrawer
+      value: 
+      objectReference: {fileID: 256010449}
     - target: {fileID: 5500279180711650864, guid: 1d696eed676647b469b18301c42f2753, type: 3}
       propertyPath: m_Name
       value: Player

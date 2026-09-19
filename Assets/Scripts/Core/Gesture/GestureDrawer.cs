@@ -10,6 +10,8 @@ using UnityEngine.InputSystem;
 public class GestureDrawer : MonoBehaviour
 {
     public event Action<List<List<Vector2>>, GestureRecognitionResult> GestureRecognized;
+    public event Action DrawingStarted;
+    public event Action DrawingStopped;
 
     public LineRenderer lineRenderer;
     [SerializeField] private GameObject brushPrefab;
@@ -251,6 +253,7 @@ public class GestureDrawer : MonoBehaviour
         ClearCurrentStrokePreview();
 
         isDrawing = true;
+        DrawingStarted?.Invoke();
 
         if (useBrushSFX && AudioManager.Instance != null)
         {
@@ -283,6 +286,7 @@ public class GestureDrawer : MonoBehaviour
     private void EndStroke()
     {
         isDrawing = false;
+        DrawingStopped?.Invoke();
         activeBrush = null;
 
         if (useBrushSFX && AudioManager.Instance != null)
@@ -587,9 +591,13 @@ public class GestureDrawer : MonoBehaviour
 
     private void ResetGesture()
     {
+        bool wasDrawing = isDrawing;
         isDrawing = false;
         isAwaitingNextStroke = false;
         pendingRecognitionTime = 0f;
+
+        if (wasDrawing)
+            DrawingStopped?.Invoke();
 
         if (useBrushSFX && AudioManager.Instance != null)
         {

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1562345173170563925}
   - component: {fileID: 3498745426594179641}
   - component: {fileID: 5071552032349484078}
+  - component: {fileID: 4961193368913274868}
   - component: {fileID: 4937154253790665705}
   m_Layer: 0
   m_Name: Player
@@ -188,6 +189,25 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &4961193368913274868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5500279180711650864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a3d71b4d09b76640bc156946b1780df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimationController
+  animator: {fileID: 4937154253790665705}
+  gestureDrawer: {fileID: 0}
+  playerHealth: {fileID: 1562345173170563925}
+  idleStateName: playerIdle
+  initiateAttackStateName: playerInitiateAttack
+  attackUpStateName: playerAttackUp
+  gotHitStateName: playerGotHit
 --- !u!95 &4937154253790665705
 Animator:
   serializedVersion: 7

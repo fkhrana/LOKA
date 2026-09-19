@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class EnemyGestureCommand : MonoBehaviour
 {
+    public static event System.Action EnemyDefeated;
+
     public void SyncSpawnPosition()
     {
         if (movementBehavior != null)
@@ -284,6 +286,8 @@ public class EnemyGestureCommand : MonoBehaviour
 
         if (remainingCorrectGestures <= 0)
         {
+            EnemyDefeated?.Invoke();
+
             if (movementBehavior != null)
                 movementBehavior.SetMovementPaused(true);
 
