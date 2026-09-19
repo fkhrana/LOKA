@@ -134,6 +134,14 @@ public class GestureDrawer : MonoBehaviour
             return false;
 
 #if ENABLE_INPUT_SYSTEM
+        if (Touchscreen.current != null &&
+            Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            return EventSystem.current.IsPointerOverGameObject(
+                Touchscreen.current.primaryTouch.touchId.ReadValue()
+            );
+        }
+
         if (Mouse.current != null)
         {
             return EventSystem.current.IsPointerOverGameObject(
@@ -176,6 +184,12 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerDown()
     {
 #if ENABLE_INPUT_SYSTEM
+        if (Touchscreen.current != null &&
+            Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
+        {
+            return true;
+        }
+
         return Mouse.current != null
             ? Mouse.current.leftButton.wasPressedThisFrame
             : false;
@@ -187,6 +201,12 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerHeld()
     {
 #if ENABLE_INPUT_SYSTEM
+        if (Touchscreen.current != null &&
+            Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            return true;
+        }
+
         return Mouse.current != null
             ? Mouse.current.leftButton.isPressed
             : false;
@@ -198,6 +218,12 @@ public class GestureDrawer : MonoBehaviour
     private bool IsPointerUp()
     {
 #if ENABLE_INPUT_SYSTEM
+        if (Touchscreen.current != null &&
+            Touchscreen.current.primaryTouch.press.wasReleasedThisFrame)
+        {
+            return true;
+        }
+
         return Mouse.current != null
             ? Mouse.current.leftButton.wasReleasedThisFrame
             : false;
@@ -616,6 +642,23 @@ public class GestureDrawer : MonoBehaviour
     private Vector3 GetMouseWorldPosition()
     {
 #if ENABLE_INPUT_SYSTEM
+        if (Touchscreen.current != null &&
+            Touchscreen.current.primaryTouch.press.isPressed)
+        {
+            var touchPosition =
+                Touchscreen.current.primaryTouch.position.ReadValue();
+
+            var touchScreenPosition = new Vector3(
+                touchPosition.x,
+                touchPosition.y,
+                -mainCamera.transform.position.z
+            );
+
+            return mainCamera.ScreenToWorldPoint(
+                touchScreenPosition
+            );
+        }
+
         if (Mouse.current != null)
         {
             var pos2 = Mouse.current.position.ReadValue();
