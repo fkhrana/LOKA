@@ -30,6 +30,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     private bool isMovementPaused;
     private static bool allMovementPaused;
     private bool isKnockedBack;
+    private bool knockbackOnPlayerContact;
     private float bobTimer;
     private float baseY;
     private float knockbackTimer;
@@ -147,6 +148,11 @@ public class EnemyMovementBehavior : MonoBehaviour
     public void SetDamageFromData(int damage)
     {
         damageOnContact = damage;
+    }
+
+    public void SetKnockbackOnPlayerContact(bool enabled)
+    {
+        knockbackOnPlayerContact = enabled;
     }
 
     public void SetActive(bool active)
@@ -299,6 +305,15 @@ public class EnemyMovementBehavior : MonoBehaviour
         }
 
         playerHealth.TakeDamage(damageOnContact);
+
+        if (knockbackOnPlayerContact)
+        {
+            PlayKnockback();
+            contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+            Debug.Log("EnemyMovementBehavior: Boss hit player and was knocked back.");
+            return;
+        }
+
         Debug.Log("EnemyMovementBehavior: Player hit, enemy destroyed after contact.");
         GetComponent<EnemyGestureCommand>()?.ReportProcessed();
         LevelProgressManager.Instance?.CompletePendingProgress();

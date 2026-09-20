@@ -57,6 +57,8 @@ public class BossEnemy : MonoBehaviour
     [SerializeField, Range(0f, 2f)] private float aksaraSFXVolume = 1.5f;
 
     [Header("Boss Defeat")]
+    [SerializeField] private GameObject gameplayHudCanvas;
+    [SerializeField] private BossCameraShake cameraShakeEffect;
     [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
     [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
     [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
@@ -106,6 +108,15 @@ public class BossEnemy : MonoBehaviour
         hasIntroStopPosition = true;
     }
 
+    public void ConfigureDefeatPresentation(
+        GameObject gameplayHud,
+        BossCameraShake shakeEffect
+    )
+    {
+        gameplayHudCanvas = gameplayHud;
+        cameraShakeEffect = shakeEffect;
+    }
+
     public void BeginBossFight()
     {
         if (movementBehavior == null)
@@ -118,6 +129,7 @@ public class BossEnemy : MonoBehaviour
         Collider2D bossCollider = GetComponent<Collider2D>();
         SpriteRenderer bossRenderer = GetComponentInChildren<SpriteRenderer>(true);
         movementBehavior.Initialize(playerHealth, bossCollider, bossRenderer);
+        movementBehavior.SetKnockbackOnPlayerContact(true);
 
         EnemyGestureCommand regularChallenge = GetComponent<EnemyGestureCommand>();
         if (regularChallenge != null)
@@ -489,13 +501,11 @@ public class BossEnemy : MonoBehaviour
         isTransitioning = true;
         if (state == 1)
         {
-            HideIconAndPlayVfx(matchedIndex, null);
-            AdvanceToStateTwo();
+            HideIconAndPlayVfx(matchedIndex, AdvanceToStateTwo);
             return;
         }
 
-        HideIconAndPlayVfx(matchedIndex, null);
-        DefeatBoss();
+        BeginBossDefeat(matchedIndex);
     }
 
     private AksaraData[] ChooseUniqueAksara()
@@ -667,8 +677,9 @@ public class BossEnemy : MonoBehaviour
         }
     }
 
-    private void DefeatBoss()
+    private void BeginBossDefeat(int finalIconIndex)
     {
+        LevelProgressManager.Instance?.SetLevelCompleteEventSuppressed(true);
         state = 0;
         isTransitioning = false;
         HasActiveBoss = false;
@@ -677,7 +688,58 @@ public class BossEnemy : MonoBehaviour
         HideAllIcons();
         PlayDefeatSFX();
 
-        StartCoroutine(BossDefeatRoutine());
+        StartCoroutine(BossDefeatSequence(finalIconIndex));
+    }
+
+    private IEnumerator BossDefeatSequence(int finalIconIndex)
+    {
+        bool progressVfxComplete = false;
+        PlayFinalIconVfx(finalIconIndex, () => progressVfxComplete = true);
+
+        yield return BlinkWhileProgressVfxRuns(() => progressVfxComplete);
+
+        if (gameplayHudCanvas != null)
+            gameplayHudCanvas.SetActive(false);
+
+        if (cameraShakeEffect != null)
+            cameraShakeEffect.PlayShake();
+
+        yield return BossDefeatRoutine();
+        LevelProgressManager.Instance?.ReleaseLevelCompleteEvent();
+    }
+
+    private void PlayFinalIconVfx(int iconIndex, System.Action onComplete)
+    {
+        if (iconIndex < 0 || iconIndex >= aksaraIconRenderers.Length ||
+            aksaraIconRenderers[iconIndex] == null)
+        {
+            onComplete?.Invoke();
+            return;
+        }
+
+        Vector3 iconPosition = aksaraIconRenderers[iconIndex].transform.position;
+        if (LevelProgressManager.Instance != null)
+            LevelProgressManager.Instance.PlayNonCollectibleItemVfx(iconPosition, onComplete);
+        else
+            onComplete?.Invoke();
+    }
+
+    private IEnumerator BlinkWhileProgressVfxRuns(System.Func<bool> isComplete)
+    {
+        bool isVisible = true;
+        float interval = Mathf.Max(0.01f, defeatBlinkInterval);
+
+        while (!isComplete())
+        {
+            yield return new WaitForSeconds(interval);
+            isVisible = !isVisible;
+
+            if (bodyRenderer != null)
+                bodyRenderer.enabled = isVisible;
+        }
+
+        if (bodyRenderer != null)
+            bodyRenderer.enabled = true;
     }
 
     private void PlayDefeatSFX()

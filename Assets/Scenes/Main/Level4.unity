@@ -4106,6 +4106,8 @@ MonoBehaviour:
   bossOnlyMode: 1
   bossSpawnPoint: {fileID: 1413303303}
   bossStopPoint: {fileID: 1393089950}
+  bossGameplayHudCanvas: {fileID: 1648195318}
+  bossCameraShakeEffect: {fileID: 836338605}
   bossProgressStarTarget: {fileID: 1153645661}
   bossAksaraPool:
   - {fileID: 11400000, guid: 59dbbd094101b9a4ea9360daf80d6825, type: 2}
@@ -5861,6 +5863,7 @@ GameObject:
   - component: {fileID: 836338602}
   - component: {fileID: 836338601}
   - component: {fileID: 836338604}
+  - component: {fileID: 836338605}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5986,6 +5989,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &836338605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836338600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec0e377f0d0d0b44398c50687afa5f1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossCameraShake
+  duration: 0.8
+  strength: 0.12
 --- !u!1 &857988695
 GameObject:
   m_ObjectHideFlags: 0

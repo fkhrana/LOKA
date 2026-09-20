@@ -66,6 +66,7 @@ public class LevelProgressManager : MonoBehaviour
 
     private Coroutine progressAnimation;
     private Transform activeLevelBarStarTarget;
+    private bool suppressLevelCompleteEvent;
 
     private void Awake()
     {
@@ -161,6 +162,19 @@ public class LevelProgressManager : MonoBehaviour
 
         totalEnemies += amount;
         UpdateUI();
+    }
+
+    public void SetLevelCompleteEventSuppressed(bool suppressed)
+    {
+        suppressLevelCompleteEvent = suppressed;
+    }
+
+    public void ReleaseLevelCompleteEvent()
+    {
+        suppressLevelCompleteEvent = false;
+
+        if (processedEnemies >= totalEnemies)
+            OnReachedLevelComplete?.Invoke();
     }
 
     public void CompletePendingProgress()
@@ -595,7 +609,7 @@ public class LevelProgressManager : MonoBehaviour
             }
         }
 
-        if (processedEnemies >= totalEnemies)
+        if (processedEnemies >= totalEnemies && !suppressLevelCompleteEvent)
         {
             OnReachedLevelComplete?.Invoke();
         }
