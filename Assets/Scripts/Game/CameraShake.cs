@@ -1,12 +1,37 @@
 using System.Collections;
 using UnityEngine;
 
-public class BossCameraShake : MonoBehaviour
+public class CameraShake : MonoBehaviour
 {
     [SerializeField, Min(0.01f)] private float duration = 0.45f;
     [SerializeField, Min(0f)] private float strength = 0.12f;
+    [SerializeField] private PlayerHealth playerHealth;
+    [SerializeField] private bool shakeOnPlayerDamage = true;
 
     private Coroutine shakeCoroutine;
+
+    private void OnEnable()
+    {
+        if (!shakeOnPlayerDamage)
+            return;
+
+        if (playerHealth == null)
+            playerHealth = FindAnyObjectByType<PlayerHealth>();
+
+        if (playerHealth != null)
+            playerHealth.DamageTaken += HandlePlayerDamageTaken;
+    }
+
+    private void OnDisable()
+    {
+        if (playerHealth != null)
+            playerHealth.DamageTaken -= HandlePlayerDamageTaken;
+    }
+
+    private void HandlePlayerDamageTaken(int amount)
+    {
+        PlayShake();
+    }
 
     public void PlayShake()
     {

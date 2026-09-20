@@ -37,7 +37,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private Transform bossSpawnPoint;
     [SerializeField] private Transform bossStopPoint;
     [SerializeField] private GameObject bossGameplayHudCanvas;
-    [SerializeField] private BossCameraShake bossCameraShakeEffect;
+    [SerializeField] private CameraShake bossCameraShakeEffect;
     [SerializeField] private Transform bossProgressStarTarget;
     [SerializeField] private List<AksaraData> bossAksaraPool = new List<AksaraData>();
     [SerializeField, Min(0)] private int enemyCount = 0;

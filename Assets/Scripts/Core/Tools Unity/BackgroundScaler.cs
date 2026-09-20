@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class BackgroundScaler : MonoBehaviour
 {
+    [SerializeField, Min(0f)] private float extraCoverage = 0.5f;
+
     private SpriteRenderer sr;
 
     void Start()
@@ -18,8 +20,8 @@ public class BackgroundScaler : MonoBehaviour
         float spriteHeight = sr.sprite.bounds.size.y;
         float spriteWidth = sr.sprite.bounds.size.x;
 
-        float scaleX = cameraWidth / spriteWidth;
-        float scaleY = cameraHeight / spriteHeight;
+        float scaleX = (cameraWidth + extraCoverage * 2f) / spriteWidth;
+        float scaleY = (cameraHeight + extraCoverage * 2f) / spriteHeight;
 
         float scale = Mathf.Max(scaleX, scaleY);
         transform.localScale = new Vector3(scale, scale, 1f);

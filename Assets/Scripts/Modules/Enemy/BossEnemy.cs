@@ -58,7 +58,7 @@ public class BossEnemy : MonoBehaviour
 
     [Header("Boss Defeat")]
     [SerializeField] private GameObject gameplayHudCanvas;
-    [SerializeField] private BossCameraShake cameraShakeEffect;
+    [SerializeField] private CameraShake cameraShakeEffect;
     [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
     [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
     [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
@@ -110,7 +110,7 @@ public class BossEnemy : MonoBehaviour
 
     public void ConfigureDefeatPresentation(
         GameObject gameplayHud,
-        BossCameraShake shakeEffect
+        CameraShake shakeEffect
     )
     {
         gameplayHudCanvas = gameplayHud;
