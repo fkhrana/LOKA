@@ -40,6 +40,7 @@ public class Enemy : MonoBehaviour
     private EnemyGestureCommand gestureCommand;
     private EnemyMovementBehavior movementBehavior;
     private bool hasBeenDefeated;
+    private bool dropEnabled = true;
 
     public EnemyData EnemyData => enemyData;
     public AksaraData AksaraData => aksaraData;
@@ -66,6 +67,11 @@ public class Enemy : MonoBehaviour
         enemyData = newEnemyData;
         aksaraData = newAksaraData;
         ApplyEnemyData();
+    }
+
+    public void SetDropEnabled(bool enabled)
+    {
+        dropEnabled = enabled;
     }
 
     private void ApplyEnemyData()
@@ -148,6 +154,7 @@ public class Enemy : MonoBehaviour
         PlayAksaraDefeatSFX();
 
         if (enemyData != null &&
+            dropEnabled &&
             enemyData.DropsAksaraFragment &&
             aksaraData != null)
         {

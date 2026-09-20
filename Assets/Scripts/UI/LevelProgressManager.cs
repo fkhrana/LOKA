@@ -154,6 +154,15 @@ public class LevelProgressManager : MonoBehaviour
         );
     }
 
+    public void AddTotalProgressUnits(int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        totalEnemies += amount;
+        UpdateUI();
+    }
+
     public void CompletePendingProgress()
     {
         if (pendingProgress <= 0 || processedEnemies >= totalEnemies)
@@ -267,8 +276,21 @@ public class LevelProgressManager : MonoBehaviour
             levelBarStarTargetsByWave[waveIndex];
     }
 
+    public void SetLevelBarTarget(Transform target)
+    {
+        activeLevelBarStarTarget = target;
+    }
+
     public void PlayNonCollectibleItemVfx(
         Vector3 itemPosition
+    )
+    {
+        PlayNonCollectibleItemVfx(itemPosition, null);
+    }
+
+    public void PlayNonCollectibleItemVfx(
+        Vector3 itemPosition,
+        System.Action onComplete
     )
     {
         Transform target =
@@ -285,13 +307,15 @@ public class LevelProgressManager : MonoBehaviour
         )
         {
             CompletePendingProgress();
+            onComplete?.Invoke();
             return;
         }
 
         StartCoroutine(
             PlayNonCollectibleItemVfxRoutine(
                 itemPosition,
-                target
+                target,
+                onComplete
             )
         );
     }
@@ -312,7 +336,8 @@ public class LevelProgressManager : MonoBehaviour
 
     private IEnumerator PlayNonCollectibleItemVfxRoutine(
         Vector3 itemPosition,
-        Transform target
+        Transform target,
+        System.Action onComplete
     )
     {
         Vector3 spawnPosition =
@@ -434,6 +459,7 @@ public class LevelProgressManager : MonoBehaviour
         }
 
         CompletePendingProgress();
+        onComplete?.Invoke();
     }
 
     private void PlayParticleSystems(

@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemyGestureCommand : MonoBehaviour
 {
     public static event System.Action EnemyDefeated;
+    public static event System.Action<EnemyGestureCommand> EnemyDefeatedWithSource;
 
     public void SyncSpawnPosition()
     {
@@ -18,6 +19,8 @@ public class EnemyGestureCommand : MonoBehaviour
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private TMP_Text promptText;
     [SerializeField] private int healOnSuccess = 0;
+    private bool canReceiveChallengeDuringBoss;
+    private bool reportProgress = true;
     private PlayerHealth playerHealth;
     private Transform playerTransform;
     private int remainingCorrectGestures;
@@ -190,6 +193,16 @@ public class EnemyGestureCommand : MonoBehaviour
         autoIssueOnStart = shouldAutoIssue;
     }
 
+    public void SetCanReceiveChallengeDuringBoss(bool canReceive)
+    {
+        canReceiveChallengeDuringBoss = canReceive;
+    }
+
+    public void SetReportProgress(bool shouldReport)
+    {
+        reportProgress = shouldReport;
+    }
+
     public void IssueCommand()
     {
         if (gestureDrawer == null)
@@ -233,6 +246,9 @@ public class EnemyGestureCommand : MonoBehaviour
 
     private void HandleGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
     {
+        if (BossEnemy.HasActiveBoss && !canReceiveChallengeDuringBoss)
+            return;
+
         if (!challengeActive)
             return;
 
@@ -287,6 +303,7 @@ public class EnemyGestureCommand : MonoBehaviour
         if (remainingCorrectGestures <= 0)
         {
             EnemyDefeated?.Invoke();
+            EnemyDefeatedWithSource?.Invoke(this);
 
             if (movementBehavior != null)
                 movementBehavior.SetMovementPaused(true);
@@ -356,6 +373,9 @@ public class EnemyGestureCommand : MonoBehaviour
 
     public void ReportProcessed()
     {
+        if (!reportProgress)
+            return;
+
         if (hasReportedProcessed)
             return;
 

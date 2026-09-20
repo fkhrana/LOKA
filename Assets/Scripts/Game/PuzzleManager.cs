@@ -184,6 +184,11 @@ public class PuzzleManager : MonoBehaviour
         ShowPuzzleOnce();
     }
 
+    public void PlayWaveCompleteSequenceFromProgress()
+    {
+        StartCoroutine(PlayWaveCompleteSequence());
+    }
+
     public void CheckPuzzleComplete()
     {
         foreach (DropZone slot in allSlots)

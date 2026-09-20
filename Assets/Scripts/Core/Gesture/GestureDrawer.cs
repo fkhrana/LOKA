@@ -398,6 +398,17 @@ public class GestureDrawer : MonoBehaviour
             return;
         }
 
+        if (expectedShape == GestureShape.None &&
+            BossEnemy.HasActiveBossWithMoreStrokes(
+                completedStrokes.Count))
+        {
+            isAwaitingNextStroke = true;
+            pendingRecognitionTime =
+                Time.unscaledTime + firstStrokeGracePeriod;
+
+            return;
+        }
+
         if (completedStrokes.Count == 1 &&
             expectedShape == GestureShape.None &&
             !EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(

@@ -30,6 +30,13 @@ public class EnemyWaveDefinition
 public class EnemyWaveSpawner : MonoBehaviour
 {
     [SerializeField] private EnemyGestureCommand enemyPrefab;
+    [SerializeField] private BossEnemy bossPrefab;
+    [SerializeField] private bool spawnBossOnStart = false;
+    [SerializeField] private bool bossOnlyMode = false;
+    [Header("Boss Spawn")]
+    [SerializeField] private Transform bossSpawnPoint;
+    [SerializeField] private Transform bossProgressStarTarget;
+    [SerializeField] private List<AksaraData> bossAksaraPool = new List<AksaraData>();
     [SerializeField, Min(0)] private int enemyCount = 0;
     [SerializeField] private bool spawnOnStart = true;
     [Header("Debug")]
@@ -73,6 +80,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         new List<EnemyGestureCommand>();
 
     private Coroutine waveSequenceCoroutine;
+    private bool bossProgressInitialized;
 
     private int currentWaveIndex = -1;
 
@@ -95,6 +103,12 @@ public class EnemyWaveSpawner : MonoBehaviour
         if (startFromWave2OnStart)
         {
             StartFromWave(1);
+            return;
+        }
+
+        if (bossOnlyMode && spawnBossOnStart)
+        {
+            SpawnBoss();
             return;
         }
 
@@ -127,6 +141,47 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         if (spawnOnStart)
             StartWaveSequence();
+
+        if (spawnBossOnStart)
+            SpawnBoss();
+    }
+
+    public void SpawnBoss()
+    {
+        if (bossPrefab == null)
+        {
+            Debug.LogWarning("EnemyWaveSpawner: bossPrefab belum di-assign.");
+            return;
+        }
+
+        if (bossSpawnPoint == null)
+        {
+            Debug.LogWarning("EnemyWaveSpawner: bossSpawnPoint belum di-assign.");
+            return;
+        }
+
+        Vector3 spawnPosition = bossSpawnPoint.position;
+        Transform parent = spawnedParent != null ? spawnedParent : transform;
+        BossEnemy boss = Instantiate(bossPrefab, spawnPosition, Quaternion.identity, parent);
+
+        if (bossOnlyMode)
+        {
+            LevelProgressManager.Instance?.SetLevelBarTarget(bossProgressStarTarget);
+            InitializeBossProgress(boss.ProgressUnits);
+        }
+
+        boss.ConfigureAksaraPool(bossAksaraPool);
+        boss.SyncSpawnPosition();
+        boss.BeginBossFight();
+    }
+
+    private void InitializeBossProgress(int progressUnits)
+    {
+        if (bossProgressInitialized)
+            return;
+
+        LevelProgressManager.Instance?.Initialize(progressUnits, null);
+        bossProgressInitialized = true;
     }
 
     private IEnumerator FailSafeGameStarted()
