@@ -144,7 +144,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 1356737835368022217, guid: de95ecee9da2dcd49949f426d95cc10d, type: 3}
+  m_Sprite: {fileID: -1516508022938475743, guid: 74850682ed8f5be48b9842e269421c1b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -173,7 +173,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -183,10 +183,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -1496244677365247846, guid: ea32ec96189290142b8cbdcce8d67d43, type: 3}
+    m_PressedSprite: {fileID: 5888632954620296110, guid: 351ab35cfd9c2f54c9389edbe4e77aba, type: 3}
+    m_SelectedSprite: {fileID: 5888632954620296110, guid: 351ab35cfd9c2f54c9389edbe4e77aba, type: 3}
+    m_DisabledSprite: {fileID: 5888632954620296110, guid: 351ab35cfd9c2f54c9389edbe4e77aba, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -214,6 +214,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -401,7 +403,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3345069147506911896, guid: bc6fff502e5d521428c43ad94a4ad429, type: 3}
+  m_Sprite: {fileID: 6938652463038702320, guid: d5ba49d4b3ac3d0419ee086c6e4429cd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -430,7 +432,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -440,10 +442,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -3596750135699128658, guid: 3aec6cc2f83c4094a82d7521f79176fd, type: 3}
+    m_PressedSprite: {fileID: -1501595144084750757, guid: f461c90d7901cd94393515f95168355d, type: 3}
+    m_SelectedSprite: {fileID: -1501595144084750757, guid: f461c90d7901cd94393515f95168355d, type: 3}
+    m_DisabledSprite: {fileID: -1501595144084750757, guid: f461c90d7901cd94393515f95168355d, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -471,6 +473,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 0
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -964,7 +968,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4319977200541631774, guid: b442aa7f58cca354a8dcb18a2136e847, type: 3}
+  m_Sprite: {fileID: -9181324082861698006, guid: 4b0d1dc5a923bfe4da9df869e0187f12, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -993,7 +997,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1003,10 +1007,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 4302820658603322204, guid: 08b6b3fbd5642a94098aa1346292d417, type: 3}
+    m_PressedSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    m_SelectedSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    m_DisabledSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1046,6 +1050,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover

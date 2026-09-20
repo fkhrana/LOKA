@@ -751,7 +751,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -761,10 +761,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 4978262193000989282, guid: d6d1af5d33f8364499351eb91716f0fa, type: 3}
+    m_PressedSprite: {fileID: -8375418814744394380, guid: bad36921369893a4ab27c612990b88e1, type: 3}
+    m_SelectedSprite: {fileID: -8375418814744394380, guid: bad36921369893a4ab27c612990b88e1, type: 3}
+    m_DisabledSprite: {fileID: -8375418814744394380, guid: bad36921369893a4ab27c612990b88e1, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -808,7 +808,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1833038796557976211, guid: 28407ff61d719eb4c998aa2c199aca6f, type: 3}
+  m_Sprite: {fileID: -9110677919090179814, guid: 2a2f0f89d08ef2141955ac17a3fed78f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -842,6 +842,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -905,7 +907,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -915,7 +917,7 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 3826177280834346107, guid: bff2182e53429f74099ef131625d66e4, type: 3}
     m_PressedSprite: {fileID: 0}
     m_SelectedSprite: {fileID: 0}
     m_DisabledSprite: {fileID: 0}
@@ -962,7 +964,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5113469029405553909, guid: d278667e52e0e684098df3983cf5f205, type: 3}
+  m_Sprite: {fileID: -5629063888563510368, guid: 014b4aa5f3b369142a031e888815f781, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -996,6 +998,8 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
@@ -1170,6 +1174,74 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1122222616503569834, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1122222616503569834, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1122222616503569834, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1122222616503569834, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1122222616503569834, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 4302820658603322204, guid: 08b6b3fbd5642a94098aa1346292d417, type: 3}
+    - target: {fileID: 1163082357022248430, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1163082357022248430, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1163082357022248430, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1163082357022248430, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 1163082357022248430, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 4302820658603322204, guid: 08b6b3fbd5642a94098aa1346292d417, type: 3}
+    - target: {fileID: 1480654981258330947, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -9181324082861698006, guid: 4b0d1dc5a923bfe4da9df869e0187f12, type: 3}
+    - target: {fileID: 2091995338445409146, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 9126752567118189338, guid: 29a1afa868438aa499d9f6c2458ae8c6, type: 3}
+    - target: {fileID: 2264152465724209458, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2264152465724209458, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 8487527645030104345, guid: d700bbf78ea869048882205465254eb6, type: 3}
+    - target: {fileID: 2264152465724209458, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 8487527645030104345, guid: d700bbf78ea869048882205465254eb6, type: 3}
+    - target: {fileID: 2264152465724209458, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 8487527645030104345, guid: d700bbf78ea869048882205465254eb6, type: 3}
+    - target: {fileID: 2264152465724209458, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 1904271449201535073, guid: 8a32ea983deadb74b8d98cb7cada64eb, type: 3}
     - target: {fileID: 2385814002162030061, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -1182,6 +1254,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2515819588390726662, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -9181324082861698006, guid: 4b0d1dc5a923bfe4da9df869e0187f12, type: 3}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 1
@@ -1198,6 +1274,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3404829874969845913, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 5366468705549758668, guid: 8a0f2c7353d38a54eadff8316e174aa9, type: 3}
     - target: {fileID: 3450520724091905555, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Name
       value: Pause Overlay
@@ -1210,6 +1290,26 @@ PrefabInstance:
       propertyPath: cutsceneManager
       value: 
       objectReference: {fileID: 1156163498}
+    - target: {fileID: 4044921905707413230, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4044921905707413230, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
+    - target: {fileID: 4044921905707413230, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
+    - target: {fileID: 4044921905707413230, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
+    - target: {fileID: 4044921905707413230, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 1982479704968680254, guid: 69e38ad47506a314cbd9bdf8e5898e0b, type: 3}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1290,10 +1390,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5020462854642326518, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5020462854642326518, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: -4726734363322775762, guid: 6e425444b45e8204eb90bf0159b1b43e, type: 3}
+    - target: {fileID: 5020462854642326518, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: -4726734363322775762, guid: 6e425444b45e8204eb90bf0159b1b43e, type: 3}
+    - target: {fileID: 5020462854642326518, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: -4726734363322775762, guid: 6e425444b45e8204eb90bf0159b1b43e, type: 3}
+    - target: {fileID: 5020462854642326518, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 5949044611706048737, guid: 2b82c44e75eebd5429d8b7fea10035d5, type: 3}
+    - target: {fileID: 5242827758727453401, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 4978346421133410088, guid: 456587c7e9d4a154c965b0b27fe9718b, type: 3}
     - target: {fileID: 5521010539138929266, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6415155974142129657, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -3446697567927286018, guid: dc7a10a97fd9f8a4fb88acbf2e76d391, type: 3}
     - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
