@@ -140,6 +140,7 @@ public class AudioManager : MonoBehaviour
             case "MainGameplay(Drawing)":
             case "Level2": PlayBGMWithFade("Broken Festival Kite", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
             case "Level3": PlayBGMWithFade("Boss Theme", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
+            case "Level4": PlayBGMWithFade("Boss Theme", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
             case "Latihan":PlayBGMWithFade("Bgm_tutorial", defaultBgmFadeDuration, defaultBgmFadeDuration);break;
             default: FadeOutBGM(defaultBgmFadeDuration); break;
         }

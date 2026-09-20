@@ -248,8 +248,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  introMoveDuration: 9
-  stateTwoMoveSpeed: 0.45
+  introMoveDuration: 8.5
+  stateTwoMoveSpeed: 1.5
   aksaraPerState: 3
   standardEnemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   standardEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
@@ -259,9 +259,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 595eeb38116b0e7468a7c372df7ac21e, type: 2}
   - {fileID: 11400000, guid: 2e431fd15d1df264d9b657b41cc6725c, type: 2}
   - {fileID: 11400000, guid: 940c2561a45c80e42a6d3798345a8133, type: 2}
-  standardEnemySpawnOffsetLeft: {x: -1.5, y: -0.2}
-  standardEnemySpawnOffsetRight: {x: 1.5, y: -0.5}
-  standardEnemySpawnDelay: 1
+  standardEnemySpawnOffsetLeft: {x: -1, y: -0.8}
+  standardEnemySpawnOffsetRight: {x: 1.2, y: -2}
+  initialStandardEnemySpawnDelay: 0.75
+  standardEnemyRespawnDelay: 3
   useDefeatSFX: 1
   defeatSFXName: EnemyDefeat
   defeatSFXVolume: 0.3

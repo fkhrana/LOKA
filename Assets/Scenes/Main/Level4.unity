@@ -6372,7 +6372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[2].unlockOnStartForTesting
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[2].resetSavedUnlockForTesting
@@ -8779,7 +8779,7 @@ Transform:
   m_GameObject: {fileID: 1413303302}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.45, y: -0.93, z: 0}
+  m_LocalPosition: {x: 12.45, y: -0.46, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

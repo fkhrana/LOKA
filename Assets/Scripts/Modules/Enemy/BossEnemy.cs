@@ -46,7 +46,8 @@ public class BossEnemy : MonoBehaviour
     [SerializeField] private List<AksaraData> standardAksaraPool = new List<AksaraData>();
     [SerializeField] private Vector2 standardEnemySpawnOffsetLeft = new Vector2(-1.5f, 0f);
     [SerializeField] private Vector2 standardEnemySpawnOffsetRight = new Vector2(1.5f, 0f);
-    [SerializeField, Min(0f)] private float standardEnemySpawnDelay = 0.75f;
+    [SerializeField, Min(0f)] private float initialStandardEnemySpawnDelay = 0.75f;
+    [SerializeField, Min(0f)] private float standardEnemyRespawnDelay = 3f;
 
     [Header("Boss SFX")]
     [SerializeField] private bool useDefeatSFX = true;
@@ -192,8 +193,8 @@ public class BossEnemy : MonoBehaviour
         {
             SpawnStandardEnemy();
 
-            if (i == 0 && standardEnemySpawnDelay > 0f)
-                yield return new WaitForSeconds(standardEnemySpawnDelay);
+            if (i == 0 && initialStandardEnemySpawnDelay > 0f)
+                yield return new WaitForSeconds(initialStandardEnemySpawnDelay);
         }
     }
 
@@ -282,7 +283,7 @@ public class BossEnemy : MonoBehaviour
 
     private IEnumerator RespawnStandardPairAfterDelay()
     {
-        yield return new WaitForSeconds(standardEnemySpawnDelay);
+        yield return new WaitForSeconds(standardEnemyRespawnDelay);
         standardRespawnCoroutine = null;
 
         if (state != 1 || isTransitioning)
@@ -290,8 +291,8 @@ public class BossEnemy : MonoBehaviour
 
         SpawnStandardEnemy();
 
-        if (standardEnemySpawnDelay > 0f)
-            yield return new WaitForSeconds(standardEnemySpawnDelay);
+        if (initialStandardEnemySpawnDelay > 0f)
+            yield return new WaitForSeconds(initialStandardEnemySpawnDelay);
 
         if (state == 1 && !isTransitioning)
             SpawnStandardEnemy();
