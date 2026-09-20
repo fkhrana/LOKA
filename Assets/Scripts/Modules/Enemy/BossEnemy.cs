@@ -36,7 +36,6 @@ public class BossEnemy : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private SpriteRenderer[] aksaraIconRenderers = new SpriteRenderer[3];
     [SerializeField] private List<AksaraData> aksaraPool = new List<AksaraData>();
-    [SerializeField, Min(0.1f)] private float introMoveDuration = 1.5f;
     [SerializeField, Min(0.1f)] private float stateTwoMoveSpeed = 0.45f;
     [SerializeField, Min(1)] private int aksaraPerState = 3;
 
@@ -75,6 +74,9 @@ public class BossEnemy : MonoBehaviour
     private readonly bool[] occupiedStandardSlots = new bool[2];
     private int standardAksaraIndex;
     private Coroutine standardRespawnCoroutine;
+    private Vector2 introStopPosition;
+    private bool hasIntroStopPosition;
+    private bool introMovementComplete;
 
     public int ProgressUnits => aksaraPerState * 2;
 
@@ -96,6 +98,12 @@ public class BossEnemy : MonoBehaviour
     {
         if (movementBehavior != null)
             movementBehavior.SetSpawnPosition(transform.position);
+    }
+
+    public void ConfigureStopPosition(Vector2 stopPosition)
+    {
+        introStopPosition = stopPosition;
+        hasIntroStopPosition = true;
     }
 
     public void BeginBossFight()
@@ -135,6 +143,8 @@ public class BossEnemy : MonoBehaviour
         HasActiveBoss = true;
         EnemyGestureCommand.EnemyDefeatedWithSource -= HandleStandardEnemyDefeated;
         EnemyGestureCommand.EnemyDefeatedWithSource += HandleStandardEnemyDefeated;
+        EnemyGestureCommand.EnemyDefeatedWithGesture -= HandleStandardEnemyDefeatedWithGesture;
+        EnemyGestureCommand.EnemyDefeatedWithGesture += HandleStandardEnemyDefeatedWithGesture;
         Subscribe();
         SetIcons(ChooseUniqueAksara());
         movementBehavior.SetActive(false);
@@ -171,6 +181,7 @@ public class BossEnemy : MonoBehaviour
     {
         Unsubscribe();
         EnemyGestureCommand.EnemyDefeatedWithSource -= HandleStandardEnemyDefeated;
+        EnemyGestureCommand.EnemyDefeatedWithGesture -= HandleStandardEnemyDefeatedWithGesture;
         if (HasActiveBoss)
             HasActiveBoss = false;
     }
@@ -178,16 +189,25 @@ public class BossEnemy : MonoBehaviour
     private IEnumerator StopAfterIntro()
     {
         yield return new WaitUntil(() => CameraIntroManager.GameStarted);
+        if (hasIntroStopPosition)
+            movementBehavior.SetMovementTarget(introStopPosition);
+
         movementBehavior.SetActive(true);
-        yield return new WaitForSeconds(introMoveDuration);
+
+        if (hasIntroStopPosition)
+            yield return new WaitUntil(() => movementBehavior.HasReachedMovementTarget());
+
         if (movementBehavior != null)
             movementBehavior.SetActive(false);
+
+        movementBehavior.ClearMovementTarget();
+        introMovementComplete = true;
     }
 
     private IEnumerator SpawnStandardEnemiesAfterIntro()
     {
         yield return new WaitUntil(() => CameraIntroManager.GameStarted);
-        yield return new WaitForSeconds(introMoveDuration);
+        yield return new WaitUntil(() => introMovementComplete);
 
         for (int i = 0; i < 2; i++)
         {
@@ -281,6 +301,48 @@ public class BossEnemy : MonoBehaviour
         }
     }
 
+    private void HandleStandardEnemyDefeatedWithGesture(
+        EnemyGestureCommand defeatedEnemy,
+        GestureShape detectedShape)
+    {
+        if (!PowerManager.IsComboActive || !standardEnemySlots.ContainsKey(defeatedEnemy))
+            return;
+
+        if (!HasNearbyStandardEnemy(defeatedEnemy.transform.position))
+            return;
+
+        int bossAksaraIndex = FindUnsolvedAksara(detectedShape);
+        if (bossAksaraIndex < 0)
+            bossAksaraIndex = FindAnyUnsolvedAksara();
+
+        if (bossAksaraIndex < 0)
+            return;
+
+        Debug.Log($"[Boss] Combo aktif: enemy kecil memicu aksara boss {detectedShape}.");
+        EnemyGestureCommand.DefeatNearbyEnemiesAtPosition(
+            defeatedEnemy.transform.position,
+            PowerManager.ActiveComboRadius
+        );
+        ProcessBossAksara(bossAksaraIndex, false);
+    }
+
+    private bool HasNearbyStandardEnemy(Vector2 position)
+    {
+        return Vector2.Distance(transform.position, position) <= PowerManager.ActiveComboRadius;
+    }
+
+    private bool HasNearbyStandardEnemy()
+    {
+        for (int i = 0; i < standardEnemies.Count; i++)
+        {
+            if (standardEnemies[i] != null &&
+                HasNearbyStandardEnemy(standardEnemies[i].transform.position))
+                return true;
+        }
+
+        return false;
+    }
+
     private IEnumerator RespawnStandardPairAfterDelay()
     {
         yield return new WaitForSeconds(standardEnemyRespawnDelay);
@@ -371,17 +433,52 @@ public class BossEnemy : MonoBehaviour
         if (!result.IsRecognized || !IsVisibleOnCamera())
             return;
 
-        int matchedIndex = FindUnsolvedAksara(result.DetectedShape);
+        if (EnemyGestureCommand.IsCurrentStrokeHandled(strokes))
+            return;
+
+        Vector2 strokeCenter = GetStrokeCenter(strokes);
+        int matchedIndex = FindNearestUnsolvedAksara(
+            result.DetectedShape,
+            strokeCenter,
+            out float bossDistance
+        );
+
         if (matchedIndex < 0)
         {
-            Debug.Log($"[Boss] Aksara {result.DetectedShape} bukan permintaan aktif atau sudah selesai.");
             return;
         }
+
+        if (EnemyGestureCommand.TryGetNearestActiveEnemyDistance(
+                strokeCenter,
+                result.DetectedShape,
+                out float enemyDistance) && enemyDistance <= bossDistance)
+        {
+            Debug.Log($"[Boss] Gesture {result.DetectedShape} diproses enemy kecil karena lebih dekat.");
+            return;
+        }
+
+        EnemyGestureCommand.MarkStrokeHandled(strokes);
+
+        ProcessBossAksara(matchedIndex);
+    }
+
+    private void ProcessBossAksara(int matchedIndex, bool defeatEnemiesAroundBoss = true)
+    {
+        if (matchedIndex < 0 || matchedIndex >= currentAksara.Length || solvedAksara[matchedIndex])
+            return;
 
         solvedAksara[matchedIndex] = true;
         LevelProgressManager.Instance?.OnEnemyProcessed();
         PlayAksaraSFX(currentAksara[matchedIndex].GestureShape);
-        Debug.Log($"[Boss] Aksara {result.DetectedShape} benar. Sisa: {GetRequestedAksaraLog()}");
+        Debug.Log($"[Boss] Aksara {currentAksara[matchedIndex].GestureShape} benar. Sisa: {GetRequestedAksaraLog()}");
+
+        if (defeatEnemiesAroundBoss && PowerManager.IsComboActive && HasNearbyStandardEnemy())
+        {
+            EnemyGestureCommand.DefeatNearbyEnemiesAtPosition(
+                transform.position,
+                PowerManager.ActiveComboRadius
+            );
+        }
 
         if (!AreAllAksaraSolved())
         {
@@ -441,6 +538,67 @@ public class BossEnemy : MonoBehaviour
         }
 
         return -1;
+    }
+
+    private int FindAnyUnsolvedAksara()
+    {
+        for (int i = 0; i < currentAksara.Length; i++)
+        {
+            if (!solvedAksara[i] && currentAksara[i] != null)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private int FindNearestUnsolvedAksara(
+        GestureShape detectedShape,
+        Vector2 strokeCenter,
+        out float distance)
+    {
+        int nearestIndex = -1;
+        distance = float.MaxValue;
+
+        for (int i = 0; i < currentAksara.Length; i++)
+        {
+            if (solvedAksara[i] || currentAksara[i] == null ||
+                currentAksara[i].GestureShape != detectedShape ||
+                i >= aksaraIconRenderers.Length || aksaraIconRenderers[i] == null)
+                continue;
+
+            float candidateDistance = Vector2.Distance(
+                strokeCenter,
+                aksaraIconRenderers[i].transform.position
+            );
+
+            if (candidateDistance < distance)
+            {
+                distance = candidateDistance;
+                nearestIndex = i;
+            }
+        }
+
+        return nearestIndex;
+    }
+
+    private static Vector2 GetStrokeCenter(List<List<Vector2>> strokes)
+    {
+        Vector2 center = Vector2.zero;
+        int pointCount = 0;
+
+        foreach (List<Vector2> stroke in strokes)
+        {
+            if (stroke == null)
+                continue;
+
+            foreach (Vector2 point in stroke)
+            {
+                center += point;
+                pointCount++;
+            }
+        }
+
+        return pointCount > 0 ? center / pointCount : Vector2.zero;
     }
 
     private bool AreAllAksaraSolved()

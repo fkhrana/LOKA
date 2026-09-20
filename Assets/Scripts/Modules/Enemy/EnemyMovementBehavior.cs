@@ -36,6 +36,8 @@ public class EnemyMovementBehavior : MonoBehaviour
     private Vector2 knockbackStartPosition;
     private Vector2 knockbackTargetPosition;
     private Vector2 spawnPosition;
+    private Vector2 movementTarget;
+    private bool hasMovementTarget;
     private readonly Collider2D[] overlapResults = new Collider2D[4];
 
     private Vector2 FindSafeKnockbackTarget(Vector2 origin, Vector2 direction, float force)
@@ -156,6 +158,23 @@ public class EnemyMovementBehavior : MonoBehaviour
         Debug.Log($"EnemyMovementBehavior.SetActive active={isActive} moveDirection={moveDirection}");
     }
 
+    public void SetMovementTarget(Vector2 target)
+    {
+        movementTarget = target;
+        hasMovementTarget = true;
+    }
+
+    public void ClearMovementTarget()
+    {
+        hasMovementTarget = false;
+    }
+
+    public bool HasReachedMovementTarget(float tolerance = 0.05f)
+    {
+        Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
+        return hasMovementTarget && Vector2.Distance(currentPosition, movementTarget) <= tolerance;
+    }
+
     public void SetMovementPaused(bool paused)
     {
         isMovementPaused = paused;
@@ -199,7 +218,8 @@ public class EnemyMovementBehavior : MonoBehaviour
         Vector2 moveDelta = Vector2.zero;
         if (approachPlayer && isActive && playerTransform != null)
         {
-            float deltaX = playerTransform.position.x - currentPosition.x;
+            Vector2 target = hasMovementTarget ? movementTarget : playerTransform.position;
+            float deltaX = target.x - currentPosition.x;
             float horizontalStep = Mathf.Sign(deltaX) * moveSpeed * Time.deltaTime;
             if (Mathf.Abs(deltaX) < Mathf.Abs(horizontalStep))
                 horizontalStep = deltaX;
@@ -207,7 +227,7 @@ public class EnemyMovementBehavior : MonoBehaviour
             moveDelta = new Vector2(horizontalStep, 0f);
             moveDirection = deltaX < 0f ? -1f : 1f;
 
-            baseY = Mathf.MoveTowards(baseY, playerTransform.position.y, heightAdjustSpeed * Time.deltaTime);
+            baseY = Mathf.MoveTowards(baseY, target.y, heightAdjustSpeed * Time.deltaTime);
         }
 
         bobTimer += Time.deltaTime * bobFrequency;

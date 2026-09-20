@@ -35,6 +35,7 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField] private bool bossOnlyMode = false;
     [Header("Boss Spawn")]
     [SerializeField] private Transform bossSpawnPoint;
+    [SerializeField] private Transform bossStopPoint;
     [SerializeField] private Transform bossProgressStarTarget;
     [SerializeField] private List<AksaraData> bossAksaraPool = new List<AksaraData>();
     [SerializeField, Min(0)] private int enemyCount = 0;
@@ -163,6 +164,7 @@ public class EnemyWaveSpawner : MonoBehaviour
         Vector3 spawnPosition = bossSpawnPoint.position;
         Transform parent = spawnedParent != null ? spawnedParent : transform;
         BossEnemy boss = Instantiate(bossPrefab, spawnPosition, Quaternion.identity, parent);
+        boss.ConfigureStopPosition(bossStopPoint != null ? bossStopPoint.position : spawnPosition);
 
         if (bossOnlyMode)
         {

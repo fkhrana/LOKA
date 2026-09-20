@@ -7,6 +7,7 @@ public class EnemyGestureCommand : MonoBehaviour
 {
     public static event System.Action EnemyDefeated;
     public static event System.Action<EnemyGestureCommand> EnemyDefeatedWithSource;
+    public static event System.Action<EnemyGestureCommand, GestureShape> EnemyDefeatedWithGesture;
 
     public void SyncSpawnPosition()
     {
@@ -117,6 +118,55 @@ public class EnemyGestureCommand : MonoBehaviour
     public static bool HasHandledStroke(List<Vector2> points)
     {
         return cachedStrokePoints == points && cachedStrokeHandled;
+    }
+
+    public static bool IsCurrentStrokeHandled(List<List<Vector2>> strokes)
+    {
+        return cachedStrokes == strokes && cachedStrokeHandled;
+    }
+
+    public static void MarkStrokeHandled(List<List<Vector2>> strokes)
+    {
+        cachedStrokes = strokes;
+        cachedStrokePoints = new List<Vector2>();
+
+        foreach (List<Vector2> stroke in strokes)
+        {
+            if (stroke != null)
+                cachedStrokePoints.AddRange(stroke);
+        }
+
+        cachedStrokeHandled = true;
+    }
+
+    public static bool TryGetNearestActiveEnemyDistance(
+        Vector2 strokeCenter,
+        GestureShape gestureShape,
+        out float distance)
+    {
+        distance = float.MaxValue;
+        bool found = false;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            EnemyGestureCommand enemy = activeEnemies[i];
+            if (enemy == null || !enemy.challengeActive ||
+                enemy.gestureToCommand != gestureShape || !enemy.IsVisibleOnCamera())
+                continue;
+
+            float candidateDistance = Vector2.Distance(
+                strokeCenter,
+                enemy.transform.position
+            );
+
+            if (candidateDistance < distance)
+            {
+                distance = candidateDistance;
+                found = true;
+            }
+        }
+
+        return found;
     }
 
     private void Awake()
@@ -303,6 +353,7 @@ public class EnemyGestureCommand : MonoBehaviour
         if (remainingCorrectGestures <= 0)
         {
             EnemyDefeated?.Invoke();
+            EnemyDefeatedWithGesture?.Invoke(this, gestureToCommand);
             EnemyDefeatedWithSource?.Invoke(this);
 
             if (movementBehavior != null)
@@ -348,21 +399,39 @@ public class EnemyGestureCommand : MonoBehaviour
 
     private static void DefeatNearbyEnemies(EnemyGestureCommand defeatedTarget, float radius)
     {
+        DefeatNearbyEnemiesAtPosition(
+            defeatedTarget.transform.position,
+            radius,
+            defeatedTarget
+        );
+    }
+
+    public static void DefeatNearbyEnemiesAtPosition(Vector2 center, float radius)
+    {
+        DefeatNearbyEnemiesAtPosition(center, radius, null);
+    }
+
+    private static void DefeatNearbyEnemiesAtPosition(
+        Vector2 center,
+        float radius,
+        EnemyGestureCommand excludedTarget)
+    {
         float radiusSqr = radius * radius;
 
         for (int i = activeEnemies.Count - 1; i >= 0; i--)
         {
             EnemyGestureCommand nearbyEnemy = activeEnemies[i];
-            if (nearbyEnemy == null || nearbyEnemy == defeatedTarget)
+            if (nearbyEnemy == null || nearbyEnemy == excludedTarget)
                 continue;
 
-            if (((Vector2)nearbyEnemy.transform.position - (Vector2)defeatedTarget.transform.position).sqrMagnitude > radiusSqr)
+            if (((Vector2)nearbyEnemy.transform.position - center).sqrMagnitude > radiusSqr)
                 continue;
 
             nearbyEnemy.challengeActive = false;
             nearbyEnemy.movementBehavior?.SetActive(false);
             nearbyEnemy.movementBehavior?.SetMovementPaused(true);
             nearbyEnemy.ReportProcessed();
+            EnemyDefeatedWithSource?.Invoke(nearbyEnemy);
             Enemy nearbyEnemyData = nearbyEnemy.GetComponent<Enemy>();
             nearbyEnemyData?.OnDefeated();
             nearbyEnemyData?.StartDefeatBlink();

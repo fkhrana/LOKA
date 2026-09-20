@@ -430,7 +430,7 @@ MonoBehaviour:
     powerUpButton: {fileID: 3094892661624249185}
     powerUpType: 1
     freezeDuration: 0
-    comboRadius: 4
+    comboRadius: 3.5
     comboDuration: 8
     shieldDuration: 5
     shieldKnockbackToSpawn: 1
