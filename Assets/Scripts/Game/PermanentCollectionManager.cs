@@ -32,7 +32,10 @@ public static class PermanentCollectionManager
 
         int levelIndex = ResolveAssignedLevelIndex(data);
         if (levelIndex >= 0)
+        {
             SaveCollectedForLevel(levelIndex, data);
+            BooksFinal.AppendCollectedAksara(levelIndex, data.IconSprite);
+        }
         else
             SaveCollectedForCurrentLevel(data);
 
