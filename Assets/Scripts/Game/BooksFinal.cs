@@ -29,7 +29,7 @@ public class BooksFinal : MonoBehaviour
     [SerializeField] private Button replayButton;
 
     [Header("Review Levels")]
-    [SerializeField] private int[] reviewLevelIndexes = { 0, 1, 2 };
+    [SerializeField] private int[] reviewLevelIndexes = { 0, 1, 2, 3 };
 
     private readonly List<LevelReviewData> reviewData = new();
     private int currentReviewIndex;
@@ -283,7 +283,7 @@ public class BooksFinal : MonoBehaviour
         if (levelIndex < 0)
             return;
 
-        var aksaraList = aksaraSprites == null ? new List<Sprite>() : aksaraSprites.ToList();
+        var aksaraList = ResolveAksaraSpritesForSave(levelIndex, aksaraSprites);
 
         var data = new LevelReviewData(
             $"Level {levelIndex + 1}",
@@ -306,6 +306,51 @@ public class BooksFinal : MonoBehaviour
 
         PlayerPrefs.SetString(GetAksaraKey(levelIndex), aksaraJoined);
         PlayerPrefs.Save();
+    }
+
+    private static List<Sprite> ResolveAksaraSpritesForSave(int levelIndex, IEnumerable<Sprite> aksaraSprites)
+    {
+        var merged = new List<Sprite>();
+
+        if (aksaraSprites != null)
+        {
+            foreach (Sprite sprite in aksaraSprites)
+            {
+                if (sprite != null && !merged.Contains(sprite))
+                    merged.Add(sprite);
+            }
+        }
+
+        string existingCsv = PlayerPrefs.GetString(GetAksaraKey(levelIndex), string.Empty);
+        if (!string.IsNullOrEmpty(existingCsv))
+        {
+            foreach (string key in existingCsv.Split('|'))
+            {
+                if (string.IsNullOrWhiteSpace(key))
+                    continue;
+
+                Sprite sprite = LoadSpriteByKey(key);
+                if (sprite != null && !merged.Contains(sprite))
+                    merged.Add(sprite);
+            }
+        }
+
+        if (LevelManager.Instance != null)
+        {
+            var levelAksara = LevelManager.Instance.GetAksaraListForLevel(levelIndex);
+            if (levelAksara != null)
+            {
+                foreach (AksaraData aksara in PermanentCollectionManager.GetCollectedAksaraForLevel(levelIndex, levelAksara))
+                {
+                    if (aksara == null || aksara.IconSprite == null || merged.Contains(aksara.IconSprite))
+                        continue;
+
+                    merged.Add(aksara.IconSprite);
+                }
+            }
+        }
+
+        return merged;
     }
 
     public static void SaveAutomaticPowerUpReward(

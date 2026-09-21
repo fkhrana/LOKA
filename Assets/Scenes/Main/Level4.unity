@@ -7239,7 +7239,7 @@ MonoBehaviour:
   previousButton: {fileID: 1243029352}
   homeButton: {fileID: 2010827292}
   replayButton: {fileID: 329263635}
-  reviewLevelIndexes: 000000000100000002000000
+  reviewLevelIndexes: 00000000010000000200000003000000
 --- !u!1 &1770809641
 GameObject:
   m_ObjectHideFlags: 0
