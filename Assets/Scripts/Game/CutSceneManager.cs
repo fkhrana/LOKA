@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
@@ -34,13 +33,19 @@ public class CutsceneManager : MonoBehaviour
     private void OnEnable()
     {
         if (videoPlayer != null)
+        {
             videoPlayer.loopPointReached += OnVideoFinished;
+            videoPlayer.errorReceived += OnVideoError;
+        }
     }
 
     private void OnDisable()
     {
         if (videoPlayer != null)
+        {
             videoPlayer.loopPointReached -= OnVideoFinished;
+            videoPlayer.errorReceived -= OnVideoError;
+        }
 
         transitionManager = null;
     }
@@ -53,45 +58,15 @@ public class CutsceneManager : MonoBehaviour
             SceneManager.GetActiveScene().name
         );
 
-        StartCoroutine(InitializeAfterTransition());
-    }
-
-    // Tunggu transisi selesai baru play video.
-    private IEnumerator InitializeAfterTransition()
-    {
         transitionManager = TransitionManager.Instance();
-
-        if (transitionManager == null)
-        {
-            yield return StartCoroutine(PrepareAndPlayVideo());
-            yield break;
-        }
-
-        while (transitionManager.IsTransitionRunning())
-            yield return null;
-
-        yield return StartCoroutine(PrepareAndPlayVideo());
-    }
-
-    // Prepare video lalu play.
-    private IEnumerator PrepareAndPlayVideo()
-    {
-        if (videoPlayer == null)
-            yield break;
-
-        videoPlayer.Stop();
-        videoPlayer.Prepare();
-
-        while (!videoPlayer.isPrepared)
-            yield return null;
-
-        if (isLoadingNextScene)
-            yield break;
-
-        videoPlayer.Play();
 
         if (skipButton != null)
             skipButton.SetActive(true);
+    }
+
+    private void OnVideoError(VideoPlayer source, string message)
+    {
+        Debug.LogError($"[CutsceneManager] VideoPlayer error: {message}");
     }
 
     // Callback saat video selesai.
