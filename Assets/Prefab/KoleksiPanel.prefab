@@ -596,7 +596,7 @@ MonoBehaviour:
   edgeScale: 0.85
   scaleFalloffDistance: 300
   snapLerpSpeed: 10
-  soundLibrary: {fileID: 11400000, guid: bfda3e72ae3f7ec42ae5bebdceb987b6, type: 2}
+  soundLibrary: {fileID: 11400000, guid: 753ec4f2e65cf104bb52c64cf96a4f4f, type: 2}
   aksaraSoundVolume: 1
   gestureDrawer: {fileID: 0}
 --- !u!1 &6213464017615318399
