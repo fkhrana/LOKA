@@ -383,8 +383,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1202c0cb01923c459455f5471c671c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  cutsceneType: 1
   videoPlayer: {fileID: 1652985839}
-  nextSceneName: Latihan
+  openingClip: {fileID: 32900000, guid: 6b4ba33960961bf40a515b501fd936c6, type: 3}
+  endingClip: {fileID: 0}
+  nextSceneName: MainGameplay(Drawing)
   skipButton: {fileID: 2095838924}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.5
@@ -548,7 +551,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1652985838}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 1f83dc604f3a3a24ea5396f46a27c25d, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 6b4ba33960961bf40a515b501fd936c6, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
