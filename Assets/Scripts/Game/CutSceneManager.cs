@@ -17,8 +17,6 @@ public class CutsceneManager : MonoBehaviour
 
     [Header("Video")]
     [SerializeField] private VideoPlayer videoPlayer;
-    [SerializeField] private VideoClip openingClip;
-    [SerializeField] private VideoClip endingClip;
 
     [Header("Next Scene")]
     [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
@@ -80,22 +78,6 @@ public class CutsceneManager : MonoBehaviour
     {
         if (videoPlayer == null)
             yield break;
-
-        // Pilih clip sesuai jenis cutscene (Opening / Ending).
-        VideoClip clipToPlay = (cutsceneType == CutsceneType.Opening)
-            ? openingClip
-            : endingClip;
-
-        if (clipToPlay != null)
-        {
-            videoPlayer.clip = clipToPlay;
-        }
-        else
-        {
-            Debug.LogWarning(
-                $"[CutsceneManager] Clip untuk {cutsceneType} belum di-assign di Inspector."
-            );
-        }
 
         videoPlayer.Stop();
         videoPlayer.Prepare();
