@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c38a0df97db8dfe42b219ea5cd9040a6
+guid: 3573cbf70c47a8b45bc66ea738a8b1a9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2628372608328631121
-    second: lvl3 blur_0
+      213: 6790749543653961625
+    second: lvl 2 blur new_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -109,11 +109,24 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: lvl3 blur_0
+      name: lvl 2 blur new_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +141,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fac7437d905268bd0800000000000000
-      internalID: -2628372608328631121
+      spriteID: 99fe3242bb69d3e50800000000000000
+      internalID: 6790749543653961625
       vertices: []
       indices: 
       edges: []
@@ -148,7 +161,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      lvl3 blur_0: -2628372608328631121
+      lvl 2 blur new_0: 6790749543653961625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -26,7 +26,7 @@ public class EffectHover : MonoBehaviour,
     [Range(0f, 1f)] [SerializeField] private float clickVolume = 1f;
 
     private Vector3 originalScale;
-    private Vector3 originalPosition;
+    private Vector2 originalAnchoredPosition;
 
     private bool isHovering;
     private bool hasCapturedOriginal;
@@ -45,7 +45,7 @@ public class EffectHover : MonoBehaviour,
         if (hasCapturedOriginal || targetTransform == null) return;
 
         originalScale = targetTransform.localScale;
-        originalPosition = targetTransform.localPosition;
+        originalAnchoredPosition = targetTransform.anchoredPosition;
         hasCapturedOriginal = true;
     }
 
@@ -69,7 +69,7 @@ public class EffectHover : MonoBehaviour,
         // Move Y.
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y + hoverMoveY, animDuration)
+            LeanTween.moveY(targetTransform, originalAnchoredPosition.y + hoverMoveY, animDuration)
                 .setEase(easeType)
                 .setIgnoreTimeScale(true);
         }
@@ -98,14 +98,18 @@ public class EffectHover : MonoBehaviour,
         // Return position.
         if (hoverMoveY != 0f)
         {
-            LeanTween.moveLocalY(targetTransform.gameObject, originalPosition.y, animDuration)
+            LeanTween.moveY(targetTransform, originalAnchoredPosition.y, animDuration)
                 .setEase(easeType)
                 .setIgnoreTimeScale(true);
         }
     }
 
-    // Forward click ke OnClick.
-    public void OnPointerClick(PointerEventData eventData) => OnClick();
+    // Forward click ke OnClick dan reset hover untuk touch device.
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnClick();
+        StopHoverEffect();
+    }
 
     // Putar SFX klik.
     public void OnClick()
@@ -144,7 +148,7 @@ public class EffectHover : MonoBehaviour,
         LeanTween.cancel(targetTransform.gameObject);
 
         targetTransform.localScale = originalScale;
-        targetTransform.localPosition = originalPosition;
+        targetTransform.anchoredPosition = originalAnchoredPosition;
 
         AudioManager.Instance?.StopHoverSFX();
     }
@@ -163,7 +167,7 @@ public class EffectHover : MonoBehaviour,
         if (targetTransform != null && hasCapturedOriginal)
         {
             targetTransform.localScale = originalScale;
-            targetTransform.localPosition = originalPosition;
+            targetTransform.anchoredPosition = originalAnchoredPosition;
 
             LeanTween.cancel(targetTransform.gameObject);
         }
