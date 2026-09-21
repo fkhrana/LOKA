@@ -6708,7 +6708,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraIntroManager
   mainCamera: {fileID: 836338602}
   targetKanan: {fileID: 1770809642}
-  jedaAwal: 0.5
+  jedaAwal: 0
   durasiPan: 2.5
   jedaLihatMusuh: 1.5
   jedaSebelumCountdown: 0.3
