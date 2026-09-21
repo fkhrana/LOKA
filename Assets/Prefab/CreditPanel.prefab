@@ -93,9 +93,13 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: 
-  clickSound: Hover
+  hoverSound: Hover
+  clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &1615859727969870225
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,17 +263,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114622336851405661}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3319583882869532253}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 4.2700195, y: -32.09}
-  m_SizeDelta: {x: 403.2, y: 1284.51}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5222730245183319981
 CanvasRenderer:
@@ -299,7 +303,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3824595535668656808, guid: b13fc5ee74dc0c64097109d4e2b6dfa8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b84cab203de438e4190de0e265079b6c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -414,9 +418,13 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: 
-  clickSound: Hover
+  hoverSound: Hover
+  clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &2983956819525242022
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,11 +594,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4041884389098650374}
+  m_Father: {fileID: 3319583882869532253}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -284, y: 57}
+  m_AnchoredPosition: {x: 39.99951, y: -22.500732}
   m_SizeDelta: {x: 156, y: 156}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6395091255383489198
@@ -621,7 +629,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4319977200541631774, guid: b442aa7f58cca354a8dcb18a2136e847, type: 3}
+  m_Sprite: {fileID: -9181324082861698006, guid: 4b0d1dc5a923bfe4da9df869e0187f12, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -650,7 +658,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -660,10 +668,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 4302820658603322204, guid: 08b6b3fbd5642a94098aa1346292d417, type: 3}
+    m_PressedSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    m_SelectedSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    m_DisabledSprite: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -676,8 +684,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PauseOverlay, Assembly-CSharp
-        m_MethodName: CloseCredits
+        m_TargetAssemblyTypeName: MainMenu, Assembly-CSharp
+        m_MethodName: CloseCredit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -703,9 +711,13 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
   hoverSound: Hover
   clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &3866697261761868244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1073,9 +1085,13 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: 
-  clickSound: Hover
+  hoverSound: Hover
+  clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &6381417107665594017
 GameObject:
   m_ObjectHideFlags: 0
@@ -1087,6 +1103,7 @@ GameObject:
   - component: {fileID: 5875205865945106162}
   - component: {fileID: 9157633857790047508}
   - component: {fileID: 7084341634624781568}
+  - component: {fileID: 2023150821291935191}
   m_Layer: 5
   m_Name: Logo Senarai
   m_TagString: Untagged
@@ -1151,6 +1168,29 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2023150821291935191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6381417107665594017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 0}
+  hoverScale: 1.1
+  hoverMoveY: 10
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: SenaraiIntrover
+  clickSound: 
+  hoverVolume: 0.5
+  clickVolume: 1
 --- !u!1 &6593796922931118126
 GameObject:
   m_ObjectHideFlags: 0
@@ -1183,7 +1223,6 @@ RectTransform:
   m_Children:
   - {fileID: 5875205865945106162}
   - {fileID: 3106242325597837166}
-  - {fileID: 5190582514668597107}
   m_Father: {fileID: 3319583882869532253}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1418,6 +1457,7 @@ GameObject:
   - component: {fileID: 4104798577082221653}
   - component: {fileID: 7462417538103277972}
   - component: {fileID: 3770591513568890475}
+  - component: {fileID: 7507160066881897472}
   m_Layer: 5
   m_Name: CreditPanel
   m_TagString: Untagged
@@ -1439,6 +1479,7 @@ RectTransform:
   m_Children:
   - {fileID: 6889716651518092404}
   - {fileID: 4041884389098650374}
+  - {fileID: 5190582514668597107}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1498,15 +1539,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogBox
   box: {fileID: 3319583882869532253}
   background: {fileID: 482410952747066120}
-  boxCanvasGroup: {fileID: 0}
+  boxCanvasGroup: {fileID: 7507160066881897472}
   slideDistance: 50
-  fadeDuration: 0.3
+  fadeDuration: 0.5
   slideDuration: 0.5
   isStacked: 1
   useSound: 1
   openSound: Panel
   closeSound: Panel
   panelSoundVolume: 0.6
+--- !u!225 &7507160066881897472
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7919921704380169891}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7966341796486969391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1600,9 +1653,13 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: 
-  clickSound: Hover
+  hoverSound: Hover
+  clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &8813013236961087226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1696,6 +1753,10 @@ MonoBehaviour:
   hoverScale: 1.1
   hoverMoveY: 10
   animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.25
   easeType: 27
-  hoverSound: 
-  clickSound: Hover
+  hoverSound: Hover
+  clickSound: 
+  hoverVolume: 0.1
+  clickVolume: 1
