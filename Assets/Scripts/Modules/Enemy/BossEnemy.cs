@@ -59,6 +59,7 @@ public class BossEnemy : MonoBehaviour
     [Header("Boss Defeat")]
     [SerializeField] private GameObject gameplayHudCanvas;
     [SerializeField] private CameraShake cameraShakeEffect;
+    [SerializeField, Min(0f)] private float defeatUiHideDelay = 0.25f;
     [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
     [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
     [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
@@ -81,6 +82,42 @@ public class BossEnemy : MonoBehaviour
     private bool introMovementComplete;
 
     public int ProgressUnits => aksaraPerState * 2;
+
+    private bool CanSpawnStandardEnemies()
+    {
+        return state == 1 && introMovementComplete && !isTransitioning;
+    }
+
+    private void RemoveDestroyedStandardEnemies()
+    {
+        for (int i = standardEnemies.Count - 1; i >= 0; i--)
+        {
+            EnemyGestureCommand enemy = standardEnemies[i];
+            if (enemy != null)
+                continue;
+
+            standardEnemies.RemoveAt(i);
+        }
+
+        List<EnemyGestureCommand> destroyedKeys = null;
+        foreach (KeyValuePair<EnemyGestureCommand, int> entry in standardEnemySlots)
+        {
+            if (entry.Key != null)
+                continue;
+
+            if (destroyedKeys == null)
+                destroyedKeys = new List<EnemyGestureCommand>();
+
+            destroyedKeys.Add(entry.Key);
+            occupiedStandardSlots[entry.Value] = false;
+        }
+
+        if (destroyedKeys != null)
+        {
+            foreach (EnemyGestureCommand destroyedEnemy in destroyedKeys)
+                standardEnemySlots.Remove(destroyedEnemy);
+        }
+    }
 
     public void ConfigureAksaraPool(IEnumerable<AksaraData> availableAksara)
     {
@@ -152,6 +189,8 @@ public class BossEnemy : MonoBehaviour
 
         StopAllCoroutines();
         state = 1;
+        introMovementComplete = false;
+        standardRespawnCoroutine = null;
         HasActiveBoss = true;
         EnemyGestureCommand.EnemyDefeatedWithSource -= HandleStandardEnemyDefeated;
         EnemyGestureCommand.EnemyDefeatedWithSource += HandleStandardEnemyDefeated;
@@ -187,6 +226,12 @@ public class BossEnemy : MonoBehaviour
             return;
 
         movementBehavior.Tick(CameraIntroManager.GameStarted);
+        RemoveDestroyedStandardEnemies();
+
+        if (CanSpawnStandardEnemies() && standardEnemies.Count == 0 && standardRespawnCoroutine == null)
+        {
+            standardRespawnCoroutine = StartCoroutine(RespawnStandardPairAfterDelay());
+        }
     }
 
     private void OnDisable()
@@ -274,7 +319,7 @@ public class BossEnemy : MonoBehaviour
             standardEnemy.ConfigureChallenge(standardAksara.GestureShape, 1);
         }
 
-        enemyVisual?.SetDropEnabled(false);
+        enemyVisual?.SetDropEnabled(true);
 
         standardEnemy.SyncSpawnPosition();
         standardEnemy.IssueCommand();
@@ -306,7 +351,7 @@ public class BossEnemy : MonoBehaviour
         standardEnemies.Remove(defeatedEnemy);
         occupiedStandardSlots[slot] = false;
 
-        if (state == 1 && !isTransitioning && standardEnemies.Count == 0 &&
+        if (CanSpawnStandardEnemies() && standardEnemies.Count == 0 &&
             standardRespawnCoroutine == null)
         {
             standardRespawnCoroutine = StartCoroutine(RespawnStandardPairAfterDelay());
@@ -357,19 +402,32 @@ public class BossEnemy : MonoBehaviour
 
     private IEnumerator RespawnStandardPairAfterDelay()
     {
-        yield return new WaitForSeconds(standardEnemyRespawnDelay);
+        if (standardEnemyRespawnDelay > 0f)
+            yield return new WaitForSeconds(standardEnemyRespawnDelay);
+
+        while (CanSpawnStandardEnemies())
+        {
+            RemoveDestroyedStandardEnemies();
+
+            while (CanSpawnStandardEnemies() && standardEnemies.Count < 2)
+            {
+                int countBeforeSpawn = standardEnemies.Count;
+                SpawnStandardEnemy();
+
+                if (standardEnemies.Count == countBeforeSpawn)
+                    break;
+
+                if (standardEnemies.Count < 2 && initialStandardEnemySpawnDelay > 0f)
+                    yield return new WaitForSeconds(initialStandardEnemySpawnDelay);
+            }
+
+            if (standardEnemies.Count >= 2)
+                break;
+
+            yield return null;
+        }
+
         standardRespawnCoroutine = null;
-
-        if (state != 1 || isTransitioning)
-            yield break;
-
-        SpawnStandardEnemy();
-
-        if (initialStandardEnemySpawnDelay > 0f)
-            yield return new WaitForSeconds(initialStandardEnemySpawnDelay);
-
-        if (state == 1 && !isTransitioning)
-            SpawnStandardEnemy();
     }
 
     private AksaraData ChooseStandardAksara(int index)
@@ -480,6 +538,14 @@ public class BossEnemy : MonoBehaviour
             return;
 
         solvedAksara[matchedIndex] = true;
+
+        if (currentAksara[matchedIndex] != null &&
+            !PermanentCollectionManager.IsCollected(currentAksara[matchedIndex]))
+        {
+            PermanentCollectionManager.SaveCollected(currentAksara[matchedIndex]);
+            Debug.Log($"[Boss] Aksara boss {currentAksara[matchedIndex].AksaraName} dikoleksi dan disimpan.");
+        }
+
         LevelProgressManager.Instance?.OnEnemyProcessed();
         PlayAksaraSFX(currentAksara[matchedIndex].GestureShape);
         Debug.Log($"[Boss] Aksara {currentAksara[matchedIndex].GestureShape} benar. Sisa: {GetRequestedAksaraLog()}");
@@ -698,8 +764,17 @@ public class BossEnemy : MonoBehaviour
 
         yield return BlinkWhileProgressVfxRuns(() => progressVfxComplete);
 
+        if (LevelProgressManager.Instance != null)
+            yield return LevelProgressManager.Instance.WaitUntilProgressBarFilled();
+
+        if (defeatUiHideDelay > 0f)
+            yield return new WaitForSeconds(defeatUiHideDelay);
+
         if (gameplayHudCanvas != null)
             gameplayHudCanvas.SetActive(false);
+
+        if (defeatUiHideDelay > 0f)
+            yield return new WaitForSeconds(defeatUiHideDelay);
 
         if (cameraShakeEffect != null)
             cameraShakeEffect.PlayShake();

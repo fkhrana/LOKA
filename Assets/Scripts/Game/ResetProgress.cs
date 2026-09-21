@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -61,6 +62,21 @@ public class AutoResetProgress : MonoBehaviour
         {
             PlayerPrefs.DeleteKey("LevelUnlocked_" + i);
             PlayerPrefs.DeleteKey("LevelCompleted_" + i);
+        }
+
+        foreach (string shape in Enum.GetNames(typeof(GestureShape)))
+            PlayerPrefs.DeleteKey("PermanentCollected_" + shape);
+
+        for (int i = 0; i <= 3; i++)
+            PlayerPrefs.DeleteKey("LevelCollectedAksara_L" + i);
+
+        // Review final book / level summary data.
+        for (int i = 1; i <= 3; i++)
+        {
+            PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i);
+            PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i + "_Name");
+            PlayerPrefs.DeleteKey("FinalBook_RewardDesc_L" + i);
+            PlayerPrefs.DeleteKey("FinalBook_Aksara_L" + i);
         }
 
         PlayerPrefs.DeleteKey("CurrentLevelIndex");

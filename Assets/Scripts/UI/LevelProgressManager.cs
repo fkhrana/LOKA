@@ -177,6 +177,20 @@ public class LevelProgressManager : MonoBehaviour
             OnReachedLevelComplete?.Invoke();
     }
 
+    public bool IsProgressBarFilled()
+    {
+        if (progressBar != null)
+            return progressBar.value >= 1f;
+
+        return processedEnemies >= totalEnemies;
+    }
+
+    public IEnumerator WaitUntilProgressBarFilled()
+    {
+        while (!IsProgressBarFilled())
+            yield return null;
+    }
+
     public void CompletePendingProgress()
     {
         if (pendingProgress <= 0 || processedEnemies >= totalEnemies)

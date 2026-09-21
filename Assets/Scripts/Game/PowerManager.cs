@@ -20,6 +20,8 @@ public class PowerManager : MonoBehaviour
         public Image powerUpProgressImage;
         public Button powerUpButton;
         public PowerUpType powerUpType = PowerUpType.Freeze;
+        public Sprite rewardNameSprite;
+        [TextArea(2, 4)] public string rewardDescription;
 
         [Header("Freeze")]
         public float freezeDuration = 5f;
@@ -183,6 +185,24 @@ public class PowerManager : MonoBehaviour
     {
         PowerUpSlot slot = slots.Find(s => s.powerUpType == type);
         return slot?.powerUpImage != null ? slot.powerUpImage.transform : null;
+    }
+
+    public Sprite GetPowerUpSprite(PowerUpType type)
+    {
+        PowerUpSlot slot = slots.Find(s => s.powerUpType == type);
+        return slot?.powerUpImage != null ? slot.powerUpImage.sprite : null;
+    }
+
+    public Sprite GetPowerUpNameSprite(PowerUpType type)
+    {
+        PowerUpSlot slot = slots.Find(s => s.powerUpType == type);
+        return slot?.rewardNameSprite;
+    }
+
+    public string GetPowerUpRewardDescription(PowerUpType type)
+    {
+        PowerUpSlot slot = slots.Find(s => s.powerUpType == type);
+        return slot?.rewardDescription;
     }
 
     public static void UnlockPowerUp(PowerUpType type = PowerUpType.Freeze)

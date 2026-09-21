@@ -251,6 +251,11 @@ public class LevelManager : MonoBehaviour
 
     private List<AksaraData> GetAksaraList(int index)
     {
+        return GetAksaraListForLevel(index);
+    }
+
+    public List<AksaraData> GetAksaraListForLevel(int index)
+    {
         if (levelAksaraConfigs == null) return null;
         if (index < 0 || index >= levelAksaraConfigs.Count) return null;
 
@@ -292,6 +297,24 @@ public class LevelManager : MonoBehaviour
         if (totalLevels <= 0) return 0;
 
         return Mathf.Clamp(PlayerPrefs.GetInt(CURRENT_KEY, 0), 0, totalLevels - 1);
+    }
+
+    public int GetLevelIndexForAksara(AksaraData data)
+    {
+        if (data == null || levelAksaraConfigs == null)
+            return -1;
+
+        for (int i = 0; i < levelAksaraConfigs.Count; i++)
+        {
+            LevelAksaraConfig config = levelAksaraConfigs[i];
+            if (config == null || config.aksaraList == null)
+                continue;
+
+            if (config.aksaraList.Contains(data))
+                return i;
+        }
+
+        return -1;
     }
 
     public string GetSceneNameForLevel(int index)

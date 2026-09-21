@@ -415,6 +415,8 @@ MonoBehaviour:
     powerUpProgressImage: {fileID: 8218189891204006566}
     powerUpButton: {fileID: 8101159333380298169}
     powerUpType: 0
+    rewardNameSprite: {fileID: 21300000, guid: a081418892526024f9a669355e81d6b3, type: 3}
+    rewardDescription: Suara merdunya membuat roh jadi patung
     freezeDuration: 8
     comboRadius: 0
     comboDuration: 0
@@ -429,6 +431,8 @@ MonoBehaviour:
     powerUpProgressImage: {fileID: 3780584333995107753}
     powerUpButton: {fileID: 3094892661624249185}
     powerUpType: 1
+    rewardNameSprite: {fileID: 21300000, guid: b24be8c8f0273054d83c2f08e79c6311, type: 3}
+    rewardDescription: Getarannya mengalahkan banyak roh sekaligus
     freezeDuration: 0
     comboRadius: 3.5
     comboDuration: 8
@@ -443,6 +447,8 @@ MonoBehaviour:
     powerUpProgressImage: {fileID: 6807660457423955288}
     powerUpButton: {fileID: 1244428189440098083}
     powerUpType: 2
+    rewardNameSprite: {fileID: 21300000, guid: 4ee8996d7a0be354c8e13617a872fb05, type: 3}
+    rewardDescription: Suara besarnya memantulkan roh jauh-jauh
     freezeDuration: 0
     comboRadius: 0
     comboDuration: 0

@@ -1105,6 +1105,7 @@ GameObject:
   - component: {fileID: 192531131}
   - component: {fileID: 192531133}
   - component: {fileID: 192531132}
+  - component: {fileID: 192531134}
   m_Layer: 5
   m_Name: WinPanel new
   m_TagString: Untagged
@@ -1171,6 +1172,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192531130}
   m_CullTransparentMesh: 1
+--- !u!114 &192531134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192531130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d339f74978b84e14a8ade37d7165d506, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelWinAksaraStatusUI
+  targetLevelIndex: 1
+  allAksaraData:
+  - {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
+  - {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+  - {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+  - {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
+  - {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+  slots:
+  - aksaraData: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
+    image: {fileID: 1428398562}
+    collectedSprite: {fileID: 21300000, guid: bd1d4c42ffe7a944faec7077896f29d0, type: 3}
+    uncollectedSprite: {fileID: 21300000, guid: bd1d4c42ffe7a944faec7077896f29d0, type: 3}
+    uncollectedAlpha: 0.5
+  - aksaraData: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+    image: {fileID: 1929788543}
+    collectedSprite: {fileID: 21300000, guid: cfff7a3931de61043ba8e0f4cb7fe3ff, type: 3}
+    uncollectedSprite: {fileID: 21300000, guid: cfff7a3931de61043ba8e0f4cb7fe3ff, type: 3}
+    uncollectedAlpha: 0.5
+  - aksaraData: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
+    image: {fileID: 1653500434}
+    collectedSprite: {fileID: 21300000, guid: 2adca3877482c5a48abaf7a684222967, type: 3}
+    uncollectedSprite: {fileID: 21300000, guid: 2adca3877482c5a48abaf7a684222967, type: 3}
+    uncollectedAlpha: 0.5
+  - aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
+    image: {fileID: 2049339702}
+    collectedSprite: {fileID: 21300000, guid: 5a2ce08f9ddd91742a2e75a8575dcebf, type: 3}
+    uncollectedSprite: {fileID: 21300000, guid: 5a2ce08f9ddd91742a2e75a8575dcebf, type: 3}
+    uncollectedAlpha: 0.5
+  - aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
+    image: {fileID: 776013910}
+    collectedSprite: {fileID: 21300000, guid: 9eb5b138f7caf8e4eb2d9e067509de41, type: 3}
+    uncollectedSprite: {fileID: 21300000, guid: 9eb5b138f7caf8e4eb2d9e067509de41, type: 3}
+    uncollectedAlpha: 0.5
+  refreshOnEnable: 1
 --- !u!1 &218772020
 GameObject:
   m_ObjectHideFlags: 0
@@ -3059,7 +3106,6 @@ GameObject:
   - component: {fileID: 474344866}
   - component: {fileID: 474344868}
   - component: {fileID: 474344867}
-  - component: {fileID: 474344869}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -3129,35 +3175,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &474344869
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 474344865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2741c5afc1cd9d4c8459e558304e7e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WinAksaraStatusUI
-  slots:
-  - aksaraData: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
-    image: {fileID: 1428398562}
-    collectedSprite: {fileID: 0}
-  - aksaraData: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
-    image: {fileID: 1929788543}
-    collectedSprite: {fileID: 0}
-  - aksaraData: {fileID: 11400000, guid: 7ac80bee86bc84f4dae22059b62d3e74, type: 2}
-    image: {fileID: 1653500434}
-    collectedSprite: {fileID: 0}
-  - aksaraData: {fileID: 11400000, guid: 702e762c652b04a4ba1f58cef27de5ab, type: 2}
-    image: {fileID: 2049339702}
-    collectedSprite: {fileID: 0}
-  - aksaraData: {fileID: 11400000, guid: a0c17ec059236f04cb43c17860fb19b3, type: 2}
-    image: {fileID: 776013910}
-    collectedSprite: {fileID: 0}
-  refreshOnEnable: 1
 --- !u!1 &496284078
 GameObject:
   m_ObjectHideFlags: 0
@@ -6348,7 +6365,7 @@ MonoBehaviour:
   puzzlePanel: {fileID: 1887073322}
   rewardPanel: {fileID: 738363146}
   powerManager: {fileID: 4207086250871307407}
-  rewardPowerUpType: 0
+  rewardPowerUpType: 1
   puzzleCompleteVfx: {fileID: 1855647552}
   winSfx: {fileID: 8300000, guid: 03cd2db8f94c5a64c817cce7a8fa8800, type: 3}
   delayBeforeWinPanel: 2

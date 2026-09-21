@@ -27,21 +27,27 @@ public class WinAksaraStatusUI : MonoBehaviour
             RefreshStatus();
     }
 
+    private int ResolveLevelIndex()
+    {
+        if (LevelManager.Instance != null)
+            return LevelManager.Instance.GetCurrentLevelIndex();
+
+        return 0;
+    }
+
     public void RefreshStatus()
     {
         if (slots == null || slots.Count == 0)
             return;
 
-        if (CollectedAksaraManager.Instance == null)
-            return;
+        int levelIndex = ResolveLevelIndex();
 
         foreach (StatusSlot slot in slots)
         {
             if (slot == null || slot.image == null || slot.aksaraData == null)
                 continue;
 
-            bool collected =
-                CollectedAksaraManager.Instance.IsCollected(slot.aksaraData);
+            bool collected = PermanentCollectionManager.IsCollectedInLevel(levelIndex, slot.aksaraData);
 
             if (collected)
             {
@@ -49,6 +55,10 @@ public class WinAksaraStatusUI : MonoBehaviour
                     slot.image.sprite = slot.collectedSprite;
 
                 slot.image.color = Color.white;
+            }
+            else
+            {
+                slot.image.color = new Color(0.4f, 0.4f, 0.4f, 0.45f);
             }
         }
     }

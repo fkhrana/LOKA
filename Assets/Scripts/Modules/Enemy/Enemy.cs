@@ -153,10 +153,12 @@ public class Enemy : MonoBehaviour
         PlayEnemyDefeatSFX();
         PlayAksaraDefeatSFX();
 
-        if (enemyData != null &&
+        bool shouldDropItem =
             dropEnabled &&
-            enemyData.DropsAksaraFragment &&
-            aksaraData != null)
+            aksaraData != null &&
+            !PermanentCollectionManager.IsCollected(aksaraData);
+
+        if (shouldDropItem)
         {
             bool registeredDrop =
                 CollectedAksaraManager.Instance != null
@@ -191,17 +193,13 @@ public class Enemy : MonoBehaviour
 
                 PlayAksaraDropSFX();
                 LevelProgressManager.Instance?.CompletePendingProgress();
+                return;
             }
 
-            if (!registeredDrop)
-            {
-                PlayNonCollectibleItemVfx();
-
-                Debug.Log(
-                    $"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped."
-                );
-            }
-
+            PlayNonCollectibleItemVfx();
+            Debug.Log(
+                $"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped this wave."
+            );
             return;
         }
 
@@ -211,6 +209,13 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogWarning(
                 $"Enemy {name} set to drop fragment but AksaraData null."
+            );
+        }
+
+        if (aksaraData != null)
+        {
+            Debug.Log(
+                $"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already collected."
             );
         }
 

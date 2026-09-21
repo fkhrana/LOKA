@@ -50,6 +50,9 @@ public class PuzzleManager : MonoBehaviour
         if (gestureDrawer == null)
             gestureDrawer = FindAnyObjectByType<GestureDrawer>();
 
+        if (powerManager == null)
+            powerManager = FindAnyObjectByType<PowerManager>(FindObjectsInactive.Include);
+
         if (saveCurrentProgress == null)
             saveCurrentProgress = FindFirstObjectByType<SaveCurrentProgress>();
     }
@@ -277,6 +280,18 @@ public class PuzzleManager : MonoBehaviour
         {
             powerManager.SetUnlocked(rewardPowerUpType);
 
+            int levelIndex = LevelManager.Instance != null
+                ? LevelManager.Instance.GetCurrentLevelIndex()
+                : PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+
+            BooksFinal.SaveAutomaticPowerUpReward(
+                levelIndex,
+                rewardPowerUpType,
+                powerManager.GetPowerUpSprite(rewardPowerUpType),
+                powerManager.GetPowerUpNameSprite(rewardPowerUpType),
+                powerManager.GetPowerUpRewardDescription(rewardPowerUpType)
+            );
+
             Transform target =
                 powerManager.GetSlotTransform(rewardPowerUpType);
 
@@ -286,6 +301,20 @@ public class PuzzleManager : MonoBehaviour
         else
         {
             PowerManager.UnlockPowerUp(rewardPowerUpType);
+
+            int levelIndex = LevelManager.Instance != null
+                ? LevelManager.Instance.GetCurrentLevelIndex()
+                : PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+
+            BooksFinal.SaveAutomaticPowerUpReward(
+                levelIndex,
+                rewardPowerUpType,
+                null,
+                null,
+                null
+            );
+
+            Debug.LogWarning("PuzzleManager: PowerManager tidak terhubung; reward disimpan tanpa ikon dan tidak bisa dipakai di scene ini.");
         }
 
         yield return new WaitForSeconds(delayBeforeWinPanel);
