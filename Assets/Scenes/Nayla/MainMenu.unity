@@ -340,6 +340,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 491237729}
     m_Modifications:
+    - target: {fileID: 629271539277239403, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 2023150821291935191, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: SenaraiIntrover
+      objectReference: {fileID: 0}
     - target: {fileID: 3319583882869532253, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -424,6 +432,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 67993241}
+    - target: {fileID: 3437128371835576960, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
+    - target: {fileID: 3963568835645602240, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
     - target: {fileID: 5190582514668597107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 40
@@ -432,6 +448,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -40
       objectReference: {fileID: 0}
+    - target: {fileID: 6159294329191441538, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
+      objectReference: {fileID: 0}
     - target: {fileID: 7919921704380169891, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_Name
       value: CreditPanel
@@ -439,6 +459,10 @@ PrefabInstance:
     - target: {fileID: 7919921704380169891, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8555699527463465107, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      propertyPath: clickSound
+      value: ButtonHover
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2761,8 +2785,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2381823958426288633, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2449263796628606716, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -9181324082861698006, guid: 4b0d1dc5a923bfe4da9df869e0187f12, type: 3}
+    - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_SpriteState.m_DisabledSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 4136222206464352738, guid: 43dd98212d62e354eb552950d427ecfa, type: 3}
+    - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      propertyPath: m_SpriteState.m_HighlightedSprite
+      value: 
+      objectReference: {fileID: 4302820658603322204, guid: 08b6b3fbd5642a94098aa1346292d417, type: 3}
     - target: {fileID: 4243288224150044693, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
