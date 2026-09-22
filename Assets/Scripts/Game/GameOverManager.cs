@@ -98,7 +98,26 @@ public class GameOverManager : MonoBehaviour
     public void PlayAgain()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(gameplayScene);
+
+        string targetScene = gameplayScene;
+
+        if (LevelManager.Instance != null)
+        {
+            int currentLevel = LevelManager.Instance.GetCurrentLevelIndex();
+            GameProgressManager.ClearGameState(currentLevel);
+
+            string configuredScene =
+                LevelManager.Instance.GetSceneNameForLevel(currentLevel);
+
+            if (!string.IsNullOrEmpty(configuredScene))
+                targetScene = configuredScene;
+        }
+        else
+        {
+            GameProgressManager.ClearGameState();
+        }
+
+        SceneManager.LoadScene(targetScene);
     }
 
     public void OpenTutorial()
