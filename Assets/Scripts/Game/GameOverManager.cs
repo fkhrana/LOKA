@@ -15,6 +15,9 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private GameObject losePanel;
     [SerializeField] private LoseAksaraStatusUI loseAksaraStatusUI;
 
+    [Header("Lose Animation")]
+    [SerializeField, Min(0f)] private float loseAnimationDuration = 1.52f;
+
     [Header("Lose SFX")]
     [SerializeField] private bool useLoseSFX = true;
     [SerializeField] private string loseSFXName = "Lose";
@@ -57,6 +60,7 @@ public class GameOverManager : MonoBehaviour
         if (playerHealth != null)
             playerHealth.Died -= HandlePlayerDied;
 
+        EnemyMovementBehavior.SetAllMovementPaused(false);
         Time.timeScale = 1f;
     }
 
@@ -67,8 +71,7 @@ public class GameOverManager : MonoBehaviour
 
         isGameOver = true;
 
-        if (losePanel != null)
-            losePanel.SetActive(true);
+        EnemyMovementBehavior.SetAllMovementPaused(true);
 
         if (useLoseSFX && AudioManager.Instance != null)
         {
@@ -77,6 +80,16 @@ public class GameOverManager : MonoBehaviour
                 loseSFXVolume
             );
         }
+
+        StartCoroutine(ShowLosePanelAfterAnimation());
+    }
+
+    private IEnumerator ShowLosePanelAfterAnimation()
+    {
+        yield return new WaitForSecondsRealtime(loseAnimationDuration);
+
+        if (losePanel != null)
+            losePanel.SetActive(true);
 
         Time.timeScale = 0f;
 
