@@ -16,6 +16,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     [SerializeField] private float knockbackForceMax = 1.5f;
     private float knockbackForce = 1.25f;
     [SerializeField] private float knockbackHeight = 0.02f;
+    [SerializeField] private float knockbackMaxVerticalDisplacement = 0.12f;
     [SerializeField] private float knockbackAngleVariance = 6f;
     [SerializeField] private float knockbackExtraCooldown = 0.2f;
 
@@ -36,6 +37,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     private float knockbackTimer;
     private Vector2 knockbackStartPosition;
     private Vector2 knockbackTargetPosition;
+    private float knockbackBaseY;
     private Vector2 spawnPosition;
     private Vector2 movementTarget;
     private bool hasMovementTarget;
@@ -203,16 +205,22 @@ public class EnemyMovementBehavior : MonoBehaviour
         {
             knockbackTimer += Time.deltaTime;
             float progress = Mathf.Clamp01(knockbackTimer / knockbackDuration);
+            float easedProgress = Mathf.SmoothStep(0f, 1f, progress);
             float arc = Mathf.Sin(progress * Mathf.PI) * knockbackHeight;
-            Vector2 newPosition = Vector2.Lerp(knockbackStartPosition, knockbackTargetPosition, progress);
+            Vector2 newPosition = Vector2.Lerp(knockbackStartPosition, knockbackTargetPosition, easedProgress);
             newPosition.y += arc;
+            newPosition.y = Mathf.Clamp(
+                newPosition.y,
+                knockbackStartPosition.y - knockbackMaxVerticalDisplacement,
+                knockbackStartPosition.y + knockbackMaxVerticalDisplacement
+            );
             MoveToPosition(newPosition);
 
             if (progress >= 1f)
             {
                 isKnockedBack = false;
                 isActive = true;
-                baseY = newPosition.y;
+                baseY = knockbackBaseY;
                 bobTimer = 0f;
             }
 
@@ -336,6 +344,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         knockbackDuration = strong ? 0.48f : 0.28f;
         float force = strong ? knockbackForce * 1.4f : knockbackForce;
         Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
+        knockbackBaseY = baseY;
 
         Vector2 away = Vector2.right * -moveDirection;
         if (playerTransform != null)
@@ -352,6 +361,12 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         knockbackStartPosition = currentPosition;
         knockbackTargetPosition = FindSafeKnockbackTarget(currentPosition, direction, force);
+        float verticalDisplacement = Mathf.Clamp(
+            knockbackTargetPosition.y - currentPosition.y,
+            -knockbackMaxVerticalDisplacement,
+            knockbackMaxVerticalDisplacement
+        );
+        knockbackTargetPosition.y = currentPosition.y + verticalDisplacement;
         Debug.Log($"EnemyMovementBehavior.PlayKnockback start={knockbackStartPosition} target={knockbackTargetPosition} angle={angle:F1} duration={knockbackDuration}");
         return knockbackDuration;
     }
