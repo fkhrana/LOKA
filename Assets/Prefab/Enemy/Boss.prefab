@@ -221,7 +221,8 @@ MonoBehaviour:
   knockbackDuration: 0.28
   knockbackForceMin: 4
   knockbackForceMax: 5
-  knockbackHeight: 0.02
+  knockbackHeight: 0.1
+  knockbackMaxVerticalDisplacement: 0.12
   knockbackAngleVariance: 6
   knockbackExtraCooldown: 0.2
 --- !u!114 &3518485702179395210
