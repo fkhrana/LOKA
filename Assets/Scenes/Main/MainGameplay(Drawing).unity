@@ -3421,11 +3421,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -4249,7 +4249,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 218}
+  m_AnchoredPosition: {x: 0, y: 200}
   m_SizeDelta: {x: 920.2163, y: 199.8632}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1415337700
@@ -5057,11 +5057,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -5995,8 +5995,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneTag: NA
   isFilled: 0
-  correctSFX: {fileID: 8300000, guid: d598052716c50864c88e0723d64eddbe, type: 3}
-  wrongSFX: {fileID: 8300000, guid: e808d54b00f4bcd41a18a93aa3967b31, type: 3}
+  correctSFX: {fileID: 8300000, guid: 08800ca8e3725c24d826559ca9646449, type: 3}
+  wrongSFX: {fileID: 8300000, guid: 2c2483e74b047264ba728ee313e67ea9, type: 3}
   correctVFX: {fileID: 880333706}
   shakeDuration: 0.3
   shakeMagnitude: 15
@@ -6451,11 +6451,61 @@ PrefabInstance:
       propertyPath: m_Name
       value: WinPanel new
       objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3776963260044943736}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayRewardSFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: RewardButtonSFX, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4172777272872362499, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4216625353198621703, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3776963260044943736}
   m_SourcePrefab: {fileID: 100100000, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+--- !u!1 &3776963260044943735 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4216625353198621703, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+  m_PrefabInstance: {fileID: 3776963260044943734}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3776963260044943736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3776963260044943735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32e0f07a71125cd41b334d09ea5d4fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RewardButtonSFX
+  rewardSFX:
+  - {fileID: 8300000, guid: 1e12f06c7d00c0943889f72ec99465f3, type: 3}
 --- !u!1001 &4172573866909488800
 PrefabInstance:
   m_ObjectHideFlags: 0

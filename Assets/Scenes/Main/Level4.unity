@@ -1592,7 +1592,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 319354730}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &319354730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,7 +1977,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 0.8431373, b: 0, a: 1}
@@ -1975,10 +1987,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: -6016525816910662471, guid: 0cef32bb978c2b34cac4a0b2e8a5d494, type: 3}
+    m_PressedSprite: {fileID: 2320810922803390442, guid: 792c59d9d21bbe647a148a92b5379673, type: 3}
+    m_SelectedSprite: {fileID: 2320810922803390442, guid: 792c59d9d21bbe647a148a92b5379673, type: 3}
+    m_DisabledSprite: {fileID: 2320810922803390442, guid: 792c59d9d21bbe647a148a92b5379673, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -2054,7 +2066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectHover
   targetTransform: {fileID: 340210654}
   hoverScale: 1.1
-  hoverMoveY: 10
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5
@@ -2208,8 +2220,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1888406628}
     - target: {fileID: 7908010246914549157, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 291.7954
+      objectReference: {fileID: 0}
+    - target: {fileID: 7908010246914549157, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150.3187
+      objectReference: {fileID: 0}
+    - target: {fileID: 7908010246914549157, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 26.18335
+      value: 53.0537
+      objectReference: {fileID: 0}
+    - target: {fileID: 7908010246914549157, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 22.1058
       objectReference: {fileID: 0}
     - target: {fileID: 8318990986544926984, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -3367,7 +3391,6 @@ RectTransform:
   m_Children:
   - {fileID: 1183816724}
   - {fileID: 340210654}
-  - {fileID: 1212567133}
   m_Father: {fileID: 1240289986}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4295,7 +4318,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 1, g: 0.8431373, b: 0, a: 1}
@@ -4305,10 +4328,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1982479704968680254, guid: 69e38ad47506a314cbd9bdf8e5898e0b, type: 3}
+    m_PressedSprite: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
+    m_SelectedSprite: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
+    m_DisabledSprite: {fileID: -680870387105634439, guid: 312379141be5602418a11eaad3802bfd, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -4384,7 +4407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectHover
   targetTransform: {fileID: 1183816724}
   hoverScale: 1.1
-  hoverMoveY: 10
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5
@@ -4530,162 +4553,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185547369}
   m_CullTransparentMesh: 1
---- !u!1 &1212567132
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1212567133}
-  - component: {fileID: 1212567136}
-  - component: {fileID: 1212567135}
-  - component: {fileID: 1212567134}
-  - component: {fileID: 1212567137}
-  m_Layer: 5
-  m_Name: TutorialButton
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!224 &1212567133
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212567132}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 857988696}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 648.38336, y: -83.49}
-  m_SizeDelta: {x: 58.553326, y: 166.98}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1212567134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212567132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 1, g: 0.8431373, b: 0, a: 1}
-    m_PressedColor: {r: 0.1, g: 0.1, b: 0.1, a: 1}
-    m_SelectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1212567135}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 910368818}
-        m_TargetAssemblyTypeName: GameOverManager, Assembly-CSharp
-        m_MethodName: OpenTutorial
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &1212567135
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212567132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: -5760800205442128486, guid: f8c981d6d7fac2749bcdb2e770a6fd00, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1212567136
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212567132}
-  m_CullTransparentMesh: 1
---- !u!114 &1212567137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1212567132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
-  targetTransform: {fileID: 1212567133}
-  hoverScale: 1.1
-  hoverMoveY: 10
-  animDuration: 0.2
-  collectPulseScale: 1.2
-  collectPulseDuration: 0.5
-  easeType: 27
-  hoverSound: Hover
-  clickSound: ButtonHover
-  hoverVolume: 0.1
-  clickVolume: 1
 --- !u!1 &1240289985
 GameObject:
   m_ObjectHideFlags: 0
@@ -5713,7 +5580,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 218}
+  m_AnchoredPosition: {x: 0, y: 136}
   m_SizeDelta: {x: 920.2163, y: 199.8632}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1415337700
