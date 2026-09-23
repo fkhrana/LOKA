@@ -75,6 +75,9 @@ public class EnemyWaveSpawner : MonoBehaviour
     [Tooltip("Buffer tambahan (detik) di atas estimasi durasi intro CameraIntroManager, sebelum GameStarted dipaksa true. " +
              "Dalam kondisi normal fail-safe ini tidak akan pernah terpakai; hanya jaga-jaga kalau CameraIntroManager error/hilang.")]
     [SerializeField, Min(1f)] private float gameStartedFailSafeBuffer = 5f;
+    [Header("Tutorial Gate")]
+    [Tooltip("Kalau true, wave sequence tidak auto-start saat scene load jika tutorial belum selesai.")]
+    [SerializeField] private bool waitForTutorialBeforeStart = false;
 
     private readonly List<EnemyGestureCommand> spawnedEnemies =
         new List<EnemyGestureCommand>();
@@ -101,6 +104,12 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private void Start()
     {
+         if (waitForTutorialBeforeStart && !GameProgressManager.IsTutorialCompleted())
+    {
+        Debug.Log("[EnemyWaveSpawner] Menunggu tutorial selesai — wave sequence di-skip.");
+        return;
+    }
+
         StartCoroutine(FailSafeGameStarted());
 
         if (startFromWave2OnStart)
@@ -1513,5 +1522,72 @@ public class EnemyWaveSpawner : MonoBehaviour
                 GestureShape.Na,
                 GestureShape.Ka
             };
+    }
+
+        // ============ TUTORIAL ============
+
+    public List<EnemyGestureCommand> SpawnTutorialEnemies(
+        int count,
+        EnemyData forcedEnemyData,
+        AksaraData forcedAksara,
+        System.Action onAnyDied)
+    {
+        var result = new List<EnemyGestureCommand>();
+
+        if (enemyPrefab == null || count <= 0)
+        {
+            Debug.LogWarning("EnemyWaveSpawner.SpawnTutorialEnemies: enemyPrefab null atau count <= 0.");
+            return result;
+        }
+
+        var usedPositions = new List<Vector3>();
+
+        for (int i = 0; i < count; i++)
+        {
+            EnemyData enemyData = forcedEnemyData;
+            AksaraData aksaraData = forcedAksara;
+
+            if (enemyData == null || aksaraData == null)
+            {
+                EnemySpawnEntry entry = GetRandomEntry();
+                if (enemyData == null && entry != null) enemyData = entry.enemyData;
+                if (aksaraData == null && entry != null) aksaraData = entry.aksaraData;
+            }
+
+            SpawnEnemy(enemyData, aksaraData, i, count, usedPositions);
+
+            if (spawnedEnemies.Count > 0)
+                result.Add(spawnedEnemies[spawnedEnemies.Count - 1]);
+        }
+
+        if (onAnyDied != null && result.Count > 0)
+            StartCoroutine(WatchDeathsRoutine(result, onAnyDied));
+
+        return result;
+    }
+
+    private IEnumerator WatchDeathsRoutine(
+        List<EnemyGestureCommand> tracked,
+        System.Action onAnyDied)
+    {
+        int lastAlive = tracked.Count;
+
+        while (lastAlive > 0)
+        {
+            int alive = 0;
+            for (int i = 0; i < tracked.Count; i++)
+                if (tracked[i] != null) alive++;
+
+            if (alive < lastAlive)
+            {
+                int died = lastAlive - alive;
+                for (int d = 0; d < died; d++)
+                    onAnyDied?.Invoke();
+                lastAlive = alive;
+            }
+
+            if (alive == 0) yield break;
+            yield return new WaitForSeconds(0.2f);
+        }
     }
 }

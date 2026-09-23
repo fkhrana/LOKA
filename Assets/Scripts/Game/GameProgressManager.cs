@@ -18,6 +18,7 @@ public static class GameProgressManager
     private const string PREFIX_POS_Z = "SavedPos_Z_L";
     private const string PREFIX_HAS_POS = "HasPlayerPos_L";
     private const string PREFIX_HAS_ENTERED = "HasEnteredGameplay_L";
+    private const string KEY_TUTORIAL_POWERUP_DONE = "TutorialPowerUpDone";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void MigrateLegacyKeys()
@@ -198,8 +199,24 @@ public static class GameProgressManager
     {
         PlayerPrefs.DeleteKey(KEY_LAST_SCENE);
         PlayerPrefs.DeleteKey(KEY_CUTSCENE_COMPLETED);
+        PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE);
         PlayerPrefs.Save();
 
         Debug.Log("[GameProgressManager] Global progress di-reset.");
+    }
+
+     public static bool IsTutorialCompleted() =>
+        PlayerPrefs.GetInt(KEY_TUTORIAL_POWERUP_DONE, 0) == 1;
+
+    public static void MarkTutorialCompleted()
+    {
+        PlayerPrefs.SetInt(KEY_TUTORIAL_POWERUP_DONE, 1);
+        PlayerPrefs.Save();
+    }
+
+    public static void ResetTutorial()
+    {
+        PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE);
+        PlayerPrefs.Save();
     }
 }

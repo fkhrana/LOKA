@@ -568,4 +568,40 @@ public class PowerManager : MonoBehaviour
         }
     }
 
+     public void ResetAllPowerUpsToFull()
+    {
+        foreach (var slot in slots)
+        {
+            consumedPowerUps.Remove(slot.powerUpType);
+            SetProgress(slot, 1f);
+            RefreshVisual(slot, animate: false);
+            ResetActiveVisual(slot);
+        }
+
+        isFrozen = false;
+        isComboActive = false;
+        isShieldActive = false;
+        ActiveComboRadius = 0f;
+        shieldKnockbackToSpawn = false;
+        shieldKnockbackDistance = 0f;
+
+        EnemyMovementBehavior.SetAllMovementPaused(false);
+
+        StopVfx(timeFreezeVfx);
+        StopVfx(comboVfx);
+        StopVfx(shieldVfx);
+
+        RefreshButtonsInteractable();
+    }
+
+    public static void ResetAllPowerUpsToFullGlobal()
+    {
+        PowerManager[] managers = FindObjectsByType<PowerManager>(FindObjectsSortMode.None);
+        foreach (PowerManager manager in managers)
+        {
+            manager.ResetAllPowerUpsToFull();
+            break;
+        }
+    }
+
 }
