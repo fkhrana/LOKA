@@ -11,11 +11,17 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private string initiateAttackStateName = "playerInitiateAttack";
     [SerializeField] private string attackUpStateName = "playerAttackUp";
     [SerializeField] private string gotHitStateName = "playerGotHit";
+    [SerializeField] private string winStateName = "playerWin";
+    [SerializeField] private string loseStateName = "playerLose";
 
     private int idleStateHash;
     private int initiateAttackStateHash;
     private int attackUpStateHash;
     private int gotHitStateHash;
+    private int winStateHash;
+    private int loseStateHash;
+    private LevelProgressManager levelProgressManager;
+    private bool winAnimationPlayed;
 
     private void Awake()
     {
@@ -28,10 +34,14 @@ public class PlayerAnimationController : MonoBehaviour
         if (playerHealth == null)
             playerHealth = GetComponent<PlayerHealth>();
 
+        levelProgressManager = FindAnyObjectByType<LevelProgressManager>();
+
         idleStateHash = Animator.StringToHash(idleStateName);
         initiateAttackStateHash = Animator.StringToHash(initiateAttackStateName);
         attackUpStateHash = Animator.StringToHash(attackUpStateName);
         gotHitStateHash = Animator.StringToHash(gotHitStateName);
+        winStateHash = Animator.StringToHash(winStateName);
+        loseStateHash = Animator.StringToHash(loseStateName);
     }
 
     private void OnEnable()
@@ -43,7 +53,13 @@ public class PlayerAnimationController : MonoBehaviour
         }
 
         if (playerHealth != null)
+        {
             playerHealth.DamageTaken += HandleDamageTaken;
+            playerHealth.Died += PlayLose;
+        }
+
+        if (levelProgressManager != null)
+            levelProgressManager.OnReachedLevelComplete.AddListener(PlayWin);
 
         EnemyGestureCommand.EnemyDefeated += PlayAttackUp;
     }
@@ -57,7 +73,13 @@ public class PlayerAnimationController : MonoBehaviour
         }
 
         if (playerHealth != null)
+        {
             playerHealth.DamageTaken -= HandleDamageTaken;
+            playerHealth.Died -= PlayLose;
+        }
+
+        if (levelProgressManager != null)
+            levelProgressManager.OnReachedLevelComplete.RemoveListener(PlayWin);
 
         EnemyGestureCommand.EnemyDefeated -= PlayAttackUp;
     }
@@ -69,6 +91,7 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void PlayInitiateAttack()
     {
+        winAnimationPlayed = false;
         PlayState(initiateAttackStateHash, initiateAttackStateName);
     }
 
@@ -85,6 +108,20 @@ public class PlayerAnimationController : MonoBehaviour
     private void PlayAttackUp()
     {
         PlayState(attackUpStateHash, attackUpStateName);
+    }
+
+    private void PlayWin()
+    {
+        if (winAnimationPlayed)
+            return;
+
+        winAnimationPlayed = true;
+        PlayState(winStateHash, winStateName);
+    }
+
+    private void PlayLose()
+    {
+        PlayState(loseStateHash, loseStateName);
     }
 
     private void PlayState(int stateHash, string stateName)

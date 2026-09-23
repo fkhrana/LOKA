@@ -2244,6 +2244,7 @@ MonoBehaviour:
   minSpawnDistance: 2
   maxSpawnDistance: 3
   gameStartedFailSafeBuffer: 5
+  waitForTutorialBeforeStart: 0
 --- !u!4 &441064578
 Transform:
   m_ObjectHideFlags: 0
@@ -7728,27 +7729,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1920
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1080
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_LocalPosition.x
