@@ -22,6 +22,7 @@ public static class TutorialLetterPaths
         GestureShape.Sa,
         GestureShape.Za,
         GestureShape.Ta,
+        GestureShape.Love,
     };
 
     public static bool IsSupported(GestureShape shape) => supportedShapes.Contains(shape);

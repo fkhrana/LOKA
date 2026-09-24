@@ -165,7 +165,23 @@ public class TutorialHintManager : MonoBehaviour
     #endregion
 
     #region Path / Aksara
+    /// <summary>
+    /// Tampilkan dots berdasarkan AksaraData (wrapper lama — tetap kompatibel).
+    /// </summary>
     public void ShowPath(AksaraData aksara)
+    {
+        if (aksara == null)
+        {
+            Debug.LogWarning("[TutorialHintManager] aksara null — skip dots.");
+            return;
+        }
+        ShowPath(aksara.GestureShape);
+    }
+
+    /// <summary>
+    /// Tampilkan dots berdasarkan GestureShape langsung (mis. Love).
+    /// </summary>
+    public void ShowPath(GestureShape shape)
     {
         if (hintContainer == null)
         {
@@ -173,19 +189,12 @@ public class TutorialHintManager : MonoBehaviour
             return;
         }
 
-        if (aksara == null)
-        {
-            Debug.LogWarning("[TutorialHintManager] aksara null — skip dots.");
-            return;
-        }
-
-        // === FIX: Paksa aktifkan hintContainer dan semua parent-nya ===
         ForceActivateHierarchy(hintContainer);
 
-        List<Vector2> path = GetHardcodedPath(aksara.GestureShape);
+        List<Vector2> path = GetHardcodedPath(shape);
         if (path == null || path.Count < 2)
         {
-            Debug.LogWarning($"[TutorialHintManager] Path untuk {aksara.GestureShape} kosong — dots tidak muncul.");
+            Debug.LogWarning($"[TutorialHintManager] Path untuk {shape} kosong — dots tidak muncul.");
             return;
         }
 
@@ -200,7 +209,7 @@ public class TutorialHintManager : MonoBehaviour
 
         if (debugDots)
         {
-            Debug.Log($"[TutorialHintManager] Dots muncul: {spawnedDots.Count} titik, shape={aksara.GestureShape}");
+            Debug.Log($"[TutorialHintManager] Dots muncul: {spawnedDots.Count} titik, shape={shape}");
             Debug.Log($"[THM] container active={hintContainer.gameObject.activeInHierarchy}, " +
                       $"pos={hintContainer.position}, size={hintContainer.rect.size}, " +
                       $"lossyScale={hintContainer.lossyScale}");
@@ -274,7 +283,6 @@ public class TutorialHintManager : MonoBehaviour
             dotsAnimRoutine = null;
         }
 
-        // === FIX: Stop semua coroutine PopInDot yang masih jalan ===
         for (int i = 0; i < popInCoroutines.Count; i++)
         {
             if (popInCoroutines[i] != null)
@@ -331,7 +339,6 @@ public class TutorialHintManager : MonoBehaviour
                 if (spawnedDots[i] == null) continue;
                 if (spawnedDots[i].rectTransform == null) continue;
 
-                // === FIX: simpan coroutine supaya bisa distop saat ClearDots ===
                 popInCoroutines.Add(StartCoroutine(PopInDot(spawnedDots[i].rectTransform)));
                 yield return new WaitForSecondsRealtime(dotStagger);
             }
@@ -377,25 +384,106 @@ public class TutorialHintManager : MonoBehaviour
     #region Path Data
     private List<Vector2> GetHardcodedPath(GestureShape shape)
     {
+        // 1) Coba ambil dari TutorialLetterPaths
         List<Vector2> path = TutorialLetterPaths.GetPath(shape);
         if (path != null && path.Count >= 2)
             return path;
 
+        // 2) Fallback hardcoded
         switch (shape)
         {
             case GestureShape.Na:
                 return new List<Vector2> { new Vector2(-0.6f, 0f), new Vector2(0.6f, 0f) };
+
             case GestureShape.Ka:
-                return new List<Vector2> { new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f) };
+                return new List<Vector2> {
+                    new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                    new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f)
+                };
+
             case GestureShape.Wa:
-                return new List<Vector2> { new Vector2(-0.6f, -0.6f), new Vector2(-0.4f, 0.6f), new Vector2(0f, 0f), new Vector2(0.4f, 0.6f), new Vector2(0.6f, -0.6f) };
+                return new List<Vector2> {
+                    new Vector2(-0.6f, -0.6f), new Vector2(-0.4f, 0.6f),
+                    new Vector2(0f, 0f), new Vector2(0.4f, 0.6f),
+                    new Vector2(0.6f, -0.6f)
+                };
+
             case GestureShape.La:
-                return new List<Vector2> { new Vector2(-0.5f, 0.6f), new Vector2(-0.5f, -0.6f), new Vector2(0.6f, -0.6f) };
+                return new List<Vector2> {
+                    new Vector2(-0.5f, 0.6f), new Vector2(-0.5f, -0.6f),
+                    new Vector2(0.6f, -0.6f)
+                };
+
             case GestureShape.Da:
-                return new List<Vector2> { new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f) };
+                return new List<Vector2> {
+                    new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f),
+                    new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f)
+                };
+
+            // === FIX: Love → path hati (pakai template LOVE.txt yang sudah di-normalize) ===
+            case GestureShape.Love:
+                return GetLoveHeartPath();
+
             default:
                 return new List<Vector2> { new Vector2(-0.6f, 0f), new Vector2(0.6f, 0f) };
         }
+    }
+
+    /// <summary>
+    /// Path hati untuk gesture Love.
+    /// Menggunakan kurva hati klasik lalu di-normalize ke bounding box ±0.6.
+    /// </summary>
+    private static List<Vector2> GetLoveHeartPath()
+    {
+        var heart = new List<Vector2>();
+        const int steps = 64;
+
+        // Parametric heart curve:
+        // x = 16 sin³(t)
+        // y = 13 cos(t) - 5 cos(2t) - 2 cos(3t) - cos(4t)
+        for (int i = 0; i <= steps; i++)
+        {
+            float t = (i / (float)steps) * Mathf.PI * 2f;
+
+            float sinT = Mathf.Sin(t);
+            float x = 16f * sinT * sinT * sinT;
+            float y = 13f * Mathf.Cos(t)
+                    - 5f * Mathf.Cos(2f * t)
+                    - 2f * Mathf.Cos(3f * t)
+                    - Mathf.Cos(4f * t);
+
+            heart.Add(new Vector2(x, y));
+        }
+
+        // Normalize ke bounding box ±0.6 supaya proporsional dengan displaySize
+        return NormalizePath(heart, 0.6f);
+    }
+
+    private static List<Vector2> NormalizePath(List<Vector2> path, float halfExtent)
+    {
+        if (path == null || path.Count == 0) return path;
+
+        Vector2 min = path[0];
+        Vector2 max = path[0];
+
+        for (int i = 1; i < path.Count; i++)
+        {
+            min = Vector2.Min(min, path[i]);
+            max = Vector2.Max(max, path[i]);
+        }
+
+        Vector2 size = max - min;
+        float maxDim = Mathf.Max(size.x, size.y);
+        if (maxDim < 0.0001f) maxDim = 1f;
+
+        Vector2 center = (min + max) * 0.5f;
+        float scale = (halfExtent * 2f) / maxDim;
+
+        var result = new List<Vector2>(path.Count);
+        for (int i = 0; i < path.Count; i++)
+            result.Add((path[i] - center) * scale);
+
+        return result;
     }
 
     private List<Vector2> SamplePath(List<Vector2> path, float spacing)
@@ -425,7 +513,6 @@ public class TutorialHintManager : MonoBehaviour
             Vector2 b = path[i];
             float segmentLength = Vector2.Distance(a, b);
 
-            // === FIX: skip segment dengan panjang 0 supaya tidak NaN ===
             if (segmentLength < 0.0001f)
                 continue;
 

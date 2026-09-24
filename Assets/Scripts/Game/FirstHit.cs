@@ -11,9 +11,9 @@ public class FirstHitTutorialManager : MonoBehaviour
     [SerializeField] private LowHealthHelperController helperController;
     [SerializeField] private TutorialHintManager hintManager;
 
-    [Header("Dots Aksara")]
-    [SerializeField] private AksaraData fallbackAksara;
-    [SerializeField, Min(1f)] private float enemySearchRadius = 20f;
+    [Header("Gesture Hint")]
+    [Tooltip("Gesture yang ditampilkan saat first hit.")]
+    [SerializeField] private GestureShape tutorialGesture = GestureShape.Love;
 
     [Header("Timing")]
     [SerializeField, Min(0f)] private float delayBeforeDots = 0.3f;
@@ -82,50 +82,15 @@ public class FirstHitTutorialManager : MonoBehaviour
         PlayerPrefs.SetInt(KEY_FIRST_HIT, 1);
         PlayerPrefs.Save();
 
-        AksaraData aksara = FindNearestEnemyAksara();
-
-        if (aksara != null)
-            Debug.Log($"[FirstHitTutorial] 🎬 First hit → aksara: {aksara.GestureShape}");
-        else
-            Debug.Log("[FirstHitTutorial] 🎬 First hit → tidak ada musuh, pakai fallback.");
+        Debug.Log($"[FirstHitTutorial] 🎬 First hit → tampilkan gesture: {tutorialGesture}");
 
         if (tutorialRoutine != null) StopCoroutine(tutorialRoutine);
-        tutorialRoutine = StartCoroutine(TutorialRoutine(aksara));
+        tutorialRoutine = StartCoroutine(TutorialRoutine());
     }
 
-    private AksaraData FindNearestEnemyAksara()
+    private IEnumerator TutorialRoutine()
     {
-        if (playerHealth == null) return fallbackAksara;
-
-        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
-        Vector3 playerPos = playerHealth.transform.position;
-
-        Enemy closest = null;
-        float closestDist = float.MaxValue;
-
-        foreach (var enemy in enemies)
-        {
-            if (enemy == null) continue;
-            if (enemy.AksaraData == null) continue;
-
-            float d = Vector3.Distance(playerPos, enemy.transform.position);
-            if (d > enemySearchRadius) continue;
-
-            if (d < closestDist)
-            {
-                closestDist = d;
-                closest = enemy;
-            }
-        }
-
-        if (closest != null && closest.AksaraData != null)
-            return closest.AksaraData;
-
-        return fallbackAksara;
-    }
-
-    private IEnumerator TutorialRoutine(AksaraData aksara)
-    {
+        // 1) Spawn helper (roh baik)
         if (helperController != null)
         {
             bool ok = helperController.TrySpawnHelperForTutorial();
@@ -137,13 +102,15 @@ public class FirstHitTutorialManager : MonoBehaviour
             Debug.LogWarning("[FirstHitTutorial] helperController belum di-assign!");
         }
 
+        // 2) Delay sebelum dots
         if (delayBeforeDots > 0f)
             yield return new WaitForSecondsRealtime(delayBeforeDots);
 
-        if (hintManager != null && aksara != null)
+        // 3) Tampilkan dots gesture
+        if (hintManager != null)
         {
-            Debug.Log($"[FirstHitTutorial] Menampilkan dots: {aksara.GestureShape}");
-            hintManager.ShowPath(aksara);
+            Debug.Log($"[FirstHitTutorial] Menampilkan dots gesture: {tutorialGesture}");
+            hintManager.ShowPath(tutorialGesture);
 
             if (dotsDuration > 0f)
             {
@@ -153,7 +120,7 @@ public class FirstHitTutorialManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("[FirstHitTutorial] aksara / hintManager null — dots tidak muncul.");
+            Debug.LogWarning("[FirstHitTutorial] hintManager null — dots tidak muncul.");
         }
 
         tutorialRoutine = null;

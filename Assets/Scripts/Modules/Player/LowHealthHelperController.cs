@@ -122,12 +122,6 @@ public class LowHealthHelperController : MonoBehaviour
 
     public bool AllowClickActivation => allowClickActivation;
 
-    // =================================================================
-    // METHOD BARU: Dipakai oleh FirstHitTutorialManager
-    // =================================================================
-    /// <summary>
-    /// Paksa spawn helper untuk keperluan tutorial (tanpa cek HP threshold).
-    /// </summary>
     public bool TrySpawnHelperForTutorial()
     {
         if (playerHealth == null || helperPrefab == null || helperParent == null)
