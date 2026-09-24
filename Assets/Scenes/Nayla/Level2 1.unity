@@ -1221,9 +1221,9 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1008355364}
-  - {fileID: 1826948191}
   - {fileID: 979025420}
+  - {fileID: 1881317063}
+  - {fileID: 1826948191}
   - {fileID: 1962886886}
   - {fileID: 1974854232}
   m_Father: {fileID: 0}
@@ -2041,6 +2041,7 @@ MonoBehaviour:
   minSpawnDistance: 2
   maxSpawnDistance: 3
   gameStartedFailSafeBuffer: 5
+  waitForTutorialBeforeStart: 1
 --- !u!4 &441064578
 Transform:
   m_ObjectHideFlags: 0
@@ -3341,6 +3342,7 @@ Transform:
   - {fileID: 1187938916}
   - {fileID: 496284079}
   - {fileID: 1606926656}
+  - {fileID: 1008355364}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &738363144
@@ -4292,6 +4294,7 @@ MonoBehaviour:
   playerHealth: {fileID: 497076175}
   losePanel: {fileID: 1412617324}
   loseAksaraStatusUI: {fileID: 1412617325}
+  loseAnimationDuration: 1.52
   useLoseSFX: 1
   loseSFXName: Lose
   loseSFXVolume: 1
@@ -4485,7 +4488,7 @@ GameObject:
   - component: {fileID: 979025422}
   - component: {fileID: 979025421}
   m_Layer: 5
-  m_Name: Image
+  m_Name: HintContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4792,6 +4795,7 @@ GameObject:
   - component: {fileID: 1008355364}
   - component: {fileID: 1008355366}
   - component: {fileID: 1008355365}
+  - component: {fileID: 1008355367}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -4808,11 +4812,11 @@ Transform:
   m_GameObject: {fileID: 1008355363}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -960, y: -540, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 263974247}
+  m_Father: {fileID: 703000920}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1008355365
 MonoBehaviour:
@@ -4828,6 +4832,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   enemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   enemyParent: {fileID: 441064578}
+  spawnPoints: []
+  useSpawnArea: 1
+  spawnAreaCenter: {x: 12.5, y: -1.4}
+  spawnAreaSize: {x: 4, y: 4}
+  tutorialTag: TutorialEnemy
+  tutorialLayer: TutorialEnemy
+  crashDetectionRadius: 2
+  failTutorialOnCrash: 0
+  debugSpawn: 0
+  debugDeathTrack: 1
 --- !u!114 &1008355366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4840,19 +4854,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9447956c48c68945990d6039423aa2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  overlayPanel: {fileID: 0}
-  overlayCover: {fileID: 0}
   autoGenerateOverlay: 1
   overlayPadding: 60
   overlayColor: {r: 0, g: 0, b: 0, a: 0.86}
   coverDuration: 1.2
   coverFadeOutDuration: 0.4
-  fingerTapIcon: {fileID: 0}
+  fingerTapIcon: {fileID: 1962886885}
   fingerOffsetY: 80
   fingerTapAmplitude: 25
   fingerTapSpeed: 4
   powerUpButton: {fileID: 1826948192}
   powerUpType: 0
+  requiresAksaraPath: 1
+  hintManager: {fileID: 1008355367}
   tutorialSpawner: {fileID: 1008355365}
   tutorialEnemyCount: 2
   enemySlowSpeed: 0.5
@@ -4860,8 +4874,34 @@ MonoBehaviour:
   spawnNearCameraTarget: 1
   manualSpawnCenter: {x: 0, y: 0, z: 0}
   spawnRadius: 1.5
-  tutorialAksara: {fileID: 11400000, guid: ef5fa1f324ad98445b1b4740443ea041, type: 2}
+  tutorialAksara: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
   tutorialEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
+  blinkInterval: 0.25
+  startPanel: {fileID: 1974854231}
+  yaButton: {fileID: 2071232237}
+  ulangButton: {fileID: 873230477}
+  tutorialTimeLimit: 30
+  waitForCameraIntro: 1
+  maxWaitForIntro: 30
+  fallbackIntroDelay: 10
+  resetTutorialOnPlay: 1
+  autoUncheckReset: 0
+--- !u!114 &1008355367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008355363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4bbb40e18160554c889ac442bab083d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialHintManager
+  circleHighlightObj: {fileID: 1881317062}
+  circlePulseSpeed: 3
+  circlePulseAmount: 0.1
+  circlePadding: 1.5
   hintContainer: {fileID: 979025420}
   dotSprite: {fileID: 0}
   dotColor: {r: 1, g: 0.9, b: 0.2, a: 1}
@@ -4873,17 +4913,7 @@ MonoBehaviour:
   holdAfterComplete: 0.9
   restartDelay: 0.3
   loopDots: 1
-  pulseAfterReveal: 1
-  pulseSpeed: 3.5
-  pulseAmount: 0.18
-  blinkInterval: 0.25
-  startPanel: {fileID: 1974854231}
-  yaButton: {fileID: 2071232237}
-  ulangButton: {fileID: 873230477}
-  tutorialTimeLimit: 30
-  waitForCameraIntro: 1
-  maxWaitForIntro: 30
-  fallbackIntroDelay: 10
+  debugPosition: 1
 --- !u!1 &1049065979
 GameObject:
   m_ObjectHideFlags: 0
@@ -7613,6 +7643,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 263974247}
     m_Modifications:
+    - target: {fileID: 174200977073631372, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: comboVfx
       value: 
@@ -7626,7 +7660,15 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1928033410}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[0].freezeDuration
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[0].unlockOnStartForTesting
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2030334874322383024, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3764647313452886997, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
@@ -7709,9 +7751,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5169375800854242029, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5335546380951494113, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: m_Name
       value: PowerUpButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 6208997588073377913, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7050818537250039183, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8041,6 +8095,81 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5952396586065177963, guid: 1d696eed676647b469b18301c42f2753, type: 3}
   m_PrefabInstance: {fileID: 1787184826}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1881317062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1881317063}
+  - component: {fileID: 1881317065}
+  - component: {fileID: 1881317064}
+  m_Layer: 5
+  m_Name: Circlee
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1881317063
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881317062}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 263974247}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -688.8933, y: 76.818}
+  m_SizeDelta: {x: 347.4156, y: 353.64}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1881317064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881317062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.83921576, g: 0.8470589, b: 0.8588236, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 5207623155023644682, guid: 6a04d244324c34d4c8d19329ed4fb788, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1881317065
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1881317062}
+  m_CullTransparentMesh: 1
 --- !u!1 &1887073322
 GameObject:
   m_ObjectHideFlags: 0
@@ -8235,7 +8364,7 @@ GameObject:
   - component: {fileID: 1962886888}
   - component: {fileID: 1962886887}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

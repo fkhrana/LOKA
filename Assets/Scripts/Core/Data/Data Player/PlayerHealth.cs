@@ -26,15 +26,23 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-         if (TutorialManager.IsTrainingMode)
-        {
-            Debug.Log("[Training] PlayerHealth.TakeDamage diabaikan.");
-            return;
-        }
-
         if (amount <= 0 || IsDead)
             return;
 
+        // === TRAINING MODE: Trigger SFX + event, HP tidak berkurang ===
+        if (TutorialManager.IsTrainingMode)
+        {
+            Debug.Log("[Training] Player damage visual — HP tidak berkurang.");
+
+            if (useHurtSFX && AudioManager.Instance != null)
+                AudioManager.Instance.PlaySFX(hurtSFXName);
+
+            // Trigger event biar VFX sakit / animasi / efek lain muncul
+            DamageTaken?.Invoke(amount);
+            return;
+        }
+
+        // === NORMAL MODE ===
         CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
 
         if (useHurtSFX && AudioManager.Instance != null)

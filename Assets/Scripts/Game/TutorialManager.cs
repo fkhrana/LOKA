@@ -10,7 +10,7 @@ using EasyTransition;
 
 public class TutorialManager : MonoBehaviour
 {
-    public static bool IsTrainingMode { get; private set; } = false;
+    public static bool IsTrainingMode { get; set; } = false;
     public enum SpawnSide { Left, Right }
 
     [Header("Player")]
