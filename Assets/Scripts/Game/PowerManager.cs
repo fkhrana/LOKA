@@ -81,6 +81,13 @@ public class PowerManager : MonoBehaviour
     private float currentAlpha = 0f;
     private float targetAlpha = 0f;
 
+    // === COROUTINE REFERENCES (biar bisa distop saat reset) ===
+    private Coroutine freezeRoutine;
+    private Coroutine shieldRoutine;
+    private Coroutine comboRoutine;
+    private Coroutine freezeProgressRoutine;
+    // ========================================================
+
     public static bool IsComboActive => isComboActive;
     public static bool IsShieldActive => isShieldActive;
     public static bool ShieldKnockbackToSpawn => shieldKnockbackToSpawn;
@@ -244,7 +251,8 @@ public class PowerManager : MonoBehaviour
 
         if (type == PowerUpType.Freeze)
         {
-            StartCoroutine(FreezeRoutine(slot));
+            // === SIMPAN REFERENCE ===
+            freezeRoutine = StartCoroutine(FreezeRoutine(slot));
         }
         else if (type == PowerUpType.Shield)
         {
@@ -254,7 +262,7 @@ public class PowerManager : MonoBehaviour
             SetProgress(slot, 1f);
             PlayVfx(shieldVfx);
             SetActiveVisual(slot);
-            StartCoroutine(ShieldRoutine(slot));
+            shieldRoutine = StartCoroutine(ShieldRoutine(slot));   // ← SIMPAN REFERENCE
         }
         else if (type == PowerUpType.Combo)
         {
@@ -266,8 +274,6 @@ public class PowerManager : MonoBehaviour
             comboRoutine = StartCoroutine(ComboRoutine(slot));
         }
     }
-
-    private Coroutine comboRoutine;
 
     public static void EndComboPowerUp()
     {
@@ -322,7 +328,9 @@ public class PowerManager : MonoBehaviour
         isFrozen = true;
         PlayVfx(timeFreezeVfx);
         SetActiveVisual(slot);
-        StartCoroutine(UpdateProgressRoutine(slot, slot.freezeDuration));
+
+        // === SIMPAN REFERENCE PROGRESS ROUTINE ===
+        freezeProgressRoutine = StartCoroutine(UpdateProgressRoutine(slot, slot.freezeDuration));
 
         EnemyMovementBehavior.SetAllMovementPaused(true);
         yield return new WaitForSeconds(slot.freezeDuration);
@@ -337,6 +345,9 @@ public class PowerManager : MonoBehaviour
         RefreshVisual(slot, animate: true);
         SetProgress(slot, 0f);
         ResetActiveVisual(slot);
+
+        freezeRoutine = null;
+        freezeProgressRoutine = null;
     }
 
     private IEnumerator ShieldRoutine(PowerUpSlot slot)
@@ -353,6 +364,8 @@ public class PowerManager : MonoBehaviour
 
         if (isShieldActive)
             EndShieldPowerUp();
+
+        shieldRoutine = null;
     }
 
     public static void EndShieldPowerUp()
@@ -568,8 +581,23 @@ public class PowerManager : MonoBehaviour
         }
     }
 
-     public void ResetAllPowerUpsToFull()
+    /// <summary>
+    /// Stop semua coroutine power-up yang sedang aktif.
+    /// Dipakai untuk mencegah routine lama menimpa hasil reset.
+    /// </summary>
+    private void StopAllPowerUpRoutines()
     {
+        if (freezeRoutine != null) { StopCoroutine(freezeRoutine); freezeRoutine = null; }
+        if (shieldRoutine != null) { StopCoroutine(shieldRoutine); shieldRoutine = null; }
+        if (comboRoutine != null) { StopCoroutine(comboRoutine); comboRoutine = null; }
+        if (freezeProgressRoutine != null) { StopCoroutine(freezeProgressRoutine); freezeProgressRoutine = null; }
+    }
+
+    public void ResetAllPowerUpsToFull()
+    {
+        // === FIX: STOP SEMUA COROUTINE AKTIF DULU ===
+        StopAllPowerUpRoutines();
+
         foreach (var slot in slots)
         {
             consumedPowerUps.Remove(slot.powerUpType);
@@ -592,16 +620,19 @@ public class PowerManager : MonoBehaviour
         StopVfx(shieldVfx);
 
         RefreshButtonsInteractable();
+
+        Debug.Log($"[PowerManager] ResetAllPowerUpsToFull pada {gameObject.name}");
     }
 
     public static void ResetAllPowerUpsToFullGlobal()
     {
         PowerManager[] managers = FindObjectsByType<PowerManager>(FindObjectsSortMode.None);
+        Debug.Log($"[PowerManager] Reset {managers.Length} manager.");
+
         foreach (PowerManager manager in managers)
         {
             manager.ResetAllPowerUpsToFull();
-            break;
+            // Tidak ada break — semua manager di-reset
         }
     }
-
 }
