@@ -32,7 +32,6 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     [Header("Finger Tap")]
     [SerializeField] private GameObject fingerTapIcon;
-    [SerializeField] private float fingerOffsetY = 80f;
     [SerializeField] private float fingerTapAmplitude = 25f;
     [SerializeField] private float fingerTapSpeed = 4f;
 
@@ -174,7 +173,7 @@ public class PowerUpTutorialManager : MonoBehaviour
                 waveSpawner.StartWaveSequence();
 
             if (debugLog)
-                Debug.Log($"[PowerUpTutorialManager] Wave spawner DI-RESUME.");
+                Debug.Log("[PowerUpTutorialManager] Wave spawner DI-RESUME.");
         }
 
         waveSpawnerPaused = false;
@@ -182,29 +181,34 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Tutorial Flow
-    public void RestartTutorial()
-    {
-        StopAllCoroutines();
+   public void RestartTutorial()
+{
+    StopAllCoroutines();
 
-        IsPowerUpTutorial = true;
-        TutorialManager.IsTrainingMode = true;
+    IsPowerUpTutorial = true;
+    TutorialManager.IsTrainingMode = true;
 
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, true);
-        SetActive(fingerTapIcon, false);
-        SetActive(startPanel, false);
-        hintManager?.HideAll();
+    SetActive(overlayPanel, false);
+    SetActive(overlayCover, true);
+    SetActive(fingerTapIcon, false);
+    SetActive(startPanel, false);
+    hintManager?.HideAll();
 
-        SetGestureEnabled(false);
-        SetPowerUpButtonInteractable(false);
+    SetGestureEnabled(false);
+    SetPowerUpButtonInteractable(false);
 
-        ClearAndRespawnEnemies();
-        SetEnemiesSpeed(enemyNormalSpeed);
+    ClearAndRespawnEnemies();
+    SetEnemiesSpeed(enemyNormalSpeed);
 
-        SetupFingerTapPositionDeferred();
-        revealRoutine = StartCoroutine(RevealHoleRoutine());
-    }
+    // === FIX: reset state biar button bisa diklik ===
+    tutorialSpawner?.ActivateAll();
+    currentStep = TutorialStep.WaitingForPowerUpTap;
+    SetPowerUpButtonInteractable(true);
 
+    revealRoutine = StartCoroutine(RevealHoleRoutine());
+
+    Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
+}
     private void BeginTutorialFlow()
     {
         IsPowerUpTutorial = true;
@@ -217,10 +221,8 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
 
-        SetupFingerTapPositionDeferred();
         revealRoutine = StartCoroutine(RevealHoleRoutine());
 
-        // === Langsung aktifkan musuh + button ===
         tutorialSpawner?.ActivateAll();
         SetEnemiesSpeed(enemyNormalSpeed);
         currentStep = TutorialStep.WaitingForPowerUpTap;
@@ -234,7 +236,6 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (debugLog)
             Debug.Log($"[PowerUpTutorialManager] Button DIKLIK. step={currentStep}");
 
-        // Tolak kalau udah selesai/gagal
         if (currentStep == TutorialStep.Success || currentStep == TutorialStep.Fail)
             return;
 
@@ -483,53 +484,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Finger Tap Animation
-    private void SetupFingerTapPositionDeferred()
-    {
-        StartCoroutine(SetupFingerTapPositionRoutine());
-    }
-
-    private IEnumerator SetupFingerTapPositionRoutine()
-    {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        SetupFingerTapPosition();
-    }
-
-    private void SetupFingerTapPosition()
-    {
-        if (fingerTapIcon == null || powerUpButton == null) return;
-
-        RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
-        RectTransform buttonRect = powerUpButton.GetComponent<RectTransform>();
-        if (fingerRect == null || buttonRect == null) return;
-
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(fingerRect.parent as RectTransform);
-
-        if (fingerRect.parent == buttonRect.parent)
-        {
-            fingerBasePos = buttonRect.anchoredPosition + new Vector2(0f, fingerOffsetY);
-            fingerRect.anchoredPosition = fingerBasePos;
-            return;
-        }
-
-        Canvas buttonCanvas = buttonRect.GetComponentInParent<Canvas>();
-        Canvas fingerCanvas = fingerRect.GetComponentInParent<Canvas>();
-
-        Camera buttonCam = GetCanvasCamera(buttonCanvas);
-        Camera fingerCam = GetCanvasCamera(fingerCanvas);
-
-        Vector3 buttonWorldCenter = buttonRect.TransformPoint(buttonRect.rect.center);
-        Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(buttonCam, buttonWorldCenter);
-        RectTransform fingerParent = fingerRect.parent as RectTransform ?? fingerRect;
-
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            fingerParent, screenPos, fingerCam, out Vector2 localPos);
-
-        fingerBasePos = localPos + new Vector2(0f, fingerOffsetY);
-        fingerRect.anchoredPosition = fingerBasePos;
-    }
-
     private void StartFingerTap()
     {
         if (fingerTapIcon == null) return;
@@ -541,18 +495,15 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void StopFingerTap()
     {
         StopCoroutineSafe(ref fingerTapRoutine);
-
-        if (fingerTapIcon != null)
-        {
-            RectTransform rt = fingerTapIcon.GetComponent<RectTransform>();
-            if (rt != null) rt.anchoredPosition = fingerBasePos;
-        }
     }
 
     private IEnumerator FingerTapRoutine()
     {
         RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
         if (fingerRect == null) yield break;
+
+        // Simpan posisi awal dari Inspector
+        fingerBasePos = fingerRect.anchoredPosition;
 
         while (true)
         {
@@ -606,7 +557,6 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetActive(overlayCover, false);
         SetActive(overlayPanel, true);
 
-        SetupFingerTapPositionDeferred();
         SetActive(fingerTapIcon, true);
         StartFingerTap();
 
@@ -750,9 +700,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void StartGameNormally()
     {
         GameProgressManager.MarkTutorialCompleted();
-        PlayerPrefs.SetInt("TutorialCompleted", 1);
-        PlayerPrefs.Save();
-
         ResumeWaveSpawner(startSequenceIfIdle: true);
 
         Debug.Log("[PowerUpTutorialManager] Gameplay normal dimulai.");
@@ -840,9 +787,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (!resetTutorialOnPlay) return;
 
         GameProgressManager.ResetTutorial();
-        PlayerPrefs.DeleteKey("TutorialCompleted");
         GameProgressManager.ClearGameState();
-        PlayerPrefs.Save();
 
         Debug.Log("[PowerUpTutorialManager] 🔄 Tutorial & GameState di-reset.");
 
