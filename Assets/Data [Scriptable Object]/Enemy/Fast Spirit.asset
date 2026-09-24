@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Fast Spirit
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   enemyName: Enemy
-  moveSpeed: 1.8
+  moveSpeed: 1.4
   damageOnContact: 20
   contactCooldown: 0.35
   requiredCorrectGestures: 1
