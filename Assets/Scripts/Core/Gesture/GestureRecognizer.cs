@@ -61,6 +61,9 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new SaGestureTemplate());
         templateProviders.Add(new SaAlternativeGestureTemplate());
         templateProviders.Add(new LoveGestureTemplate());
+        templateProviders.Add(new LoveAlternativeGestureTemplate());
+        templateProviders.Add(new LoveAlternativeGestureTemplate2());
+        templateProviders.Add(new LoveAlternativeGestureTemplate3());
 
         foreach (var provider in templateProviders)
         {
