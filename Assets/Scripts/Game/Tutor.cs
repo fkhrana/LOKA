@@ -76,10 +76,19 @@ public class PowerUpTutorialManager : MonoBehaviour
     #region Runtime State
     private GameObject overlayPanel;
     private GameObject overlayCover;
+    private GameObject blackTop;
+    private GameObject blackBottom;
+    private GameObject blackLeft;
+    private GameObject blackRight;
+
     private Coroutine revealRoutine;
     private Coroutine blinkRoutine;
     private Coroutine fingerTapRoutine;
     private Vector2 fingerBasePos;
+
+    private int lastScreenW = -1;
+    private int lastScreenH = -1;
+    private ScreenOrientation lastOrientation;
 
     private EnemyWaveSpawner waveSpawner;
     private bool waveSpawnerPaused = false;
@@ -106,7 +115,11 @@ public class PowerUpTutorialManager : MonoBehaviour
             Debug.Log($"[PowerUpTutorialManager] ✅ GestureDrawer: {gestureDrawer.name}");
 
         HookButtons();
-        if (autoGenerateOverlay) GenerateOverlay();
+
+        // Generate struktur overlay saja (hole dihitung nanti saat show)
+        if (autoGenerateOverlay)
+            GenerateOverlay();
+
         DisableRaycastOnTutorialUI();
     }
 
@@ -135,6 +148,23 @@ public class PowerUpTutorialManager : MonoBehaviour
             StartCoroutine(WaitForIntroThenStart());
         else
             BeginTutorialFlow();
+    }
+
+    private void Update()
+    {
+        // Deteksi perubahan resolusi / orientasi (penting di mobile)
+        if (Screen.width != lastScreenW ||
+            Screen.height != lastScreenH ||
+            Screen.orientation != lastOrientation)
+        {
+            lastScreenW = Screen.width;
+            lastScreenH = Screen.height;
+            lastOrientation = Screen.orientation;
+
+            // Recalculate hole kalau overlay sedang aktif
+            if (overlayPanel != null && overlayPanel.activeSelf)
+                RefreshOverlayHole();
+        }
     }
 
     private void OnDestroy()
@@ -181,38 +211,44 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Tutorial Flow
-   public void RestartTutorial()
-{
-    StopAllCoroutines();
+    public void RestartTutorial()
+    {
+        StopAllCoroutines();
 
-    IsPowerUpTutorial = true;
-    TutorialManager.IsTrainingMode = true;
+        IsPowerUpTutorial = true;
+        TutorialManager.IsTrainingMode = true;
 
-    SetActive(overlayPanel, false);
-    SetActive(overlayCover, true);
-    SetActive(fingerTapIcon, false);
-    SetActive(startPanel, false);
-    hintManager?.HideAll();
+        // Refresh hole SEBELUM show (biar posisi pas)
+        RefreshOverlayHole();
 
-    SetGestureEnabled(false);
-    SetPowerUpButtonInteractable(false);
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, true);
+        SetActive(fingerTapIcon, false);
+        SetActive(startPanel, false);
+        hintManager?.HideAll();
 
-    ClearAndRespawnEnemies();
-    SetEnemiesSpeed(enemyNormalSpeed);
+        SetGestureEnabled(false);
+        SetPowerUpButtonInteractable(false);
 
-    // === FIX: reset state biar button bisa diklik ===
-    tutorialSpawner?.ActivateAll();
-    currentStep = TutorialStep.WaitingForPowerUpTap;
-    SetPowerUpButtonInteractable(true);
+        ClearAndRespawnEnemies();
+        SetEnemiesSpeed(enemyNormalSpeed);
 
-    revealRoutine = StartCoroutine(RevealHoleRoutine());
+        tutorialSpawner?.ActivateAll();
+        currentStep = TutorialStep.WaitingForPowerUpTap;
+        SetPowerUpButtonInteractable(true);
 
-    Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
-}
+        revealRoutine = StartCoroutine(RevealHoleRoutine());
+
+        Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
+    }
+
     private void BeginTutorialFlow()
     {
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
+
+        // Refresh hole SEBELUM show
+        RefreshOverlayHole();
 
         SetActive(overlayPanel, false);
         SetActive(overlayCover, true);
@@ -488,6 +524,11 @@ public class PowerUpTutorialManager : MonoBehaviour
     {
         if (fingerTapIcon == null) return;
 
+        // Re-capture base pos setiap kali di-start (penting di mobile)
+        RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
+        if (fingerRect != null)
+            fingerBasePos = fingerRect.anchoredPosition;
+
         StopCoroutineSafe(ref fingerTapRoutine);
         fingerTapRoutine = StartCoroutine(FingerTapRoutine());
     }
@@ -501,9 +542,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     {
         RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
         if (fingerRect == null) yield break;
-
-        // Simpan posisi awal dari Inspector
-        fingerBasePos = fingerRect.anchoredPosition;
 
         while (true)
         {
@@ -537,8 +575,18 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private IEnumerator RevealHoleRoutine()
     {
-        yield return new WaitForSecondsRealtime(coverDuration);
+        // Tunggu layout settle dulu — penting di mobile!
+        yield return null;
+        yield return new WaitForEndOfFrame();
 
+        // Refresh hole dengan posisi button terkini
+        RefreshOverlayHole();
+
+        // Optional delay sebelum fade cover
+        if (coverDuration > 0f)
+            yield return new WaitForSecondsRealtime(coverDuration);
+
+        // Fade out cover
         if (overlayCover != null)
         {
             CanvasGroup cg = overlayCover.GetComponent<CanvasGroup>();
@@ -552,6 +600,8 @@ public class PowerUpTutorialManager : MonoBehaviour
                 cg.alpha = 1f - Mathf.Clamp01(t / coverFadeOutDuration);
                 yield return null;
             }
+
+            cg.alpha = 0f;
         }
 
         SetActive(overlayCover, false);
@@ -573,15 +623,35 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (canvas == null) return;
 
         GameObject panelRoot = CreateEmptyRect("OverlayPanel", canvas.transform);
-        GameObject blackTop = CreateBlackImage("Black_Top", panelRoot.transform);
-        GameObject blackBottom = CreateBlackImage("Black_Bottom", panelRoot.transform);
-        GameObject blackLeft = CreateBlackImage("Black_Left", panelRoot.transform);
-        GameObject blackRight = CreateBlackImage("Black_Right", panelRoot.transform);
+        blackTop    = CreateBlackImage("Black_Top", panelRoot.transform);
+        blackBottom = CreateBlackImage("Black_Bottom", panelRoot.transform);
+        blackLeft   = CreateBlackImage("Black_Left", panelRoot.transform);
+        blackRight  = CreateBlackImage("Black_Right", panelRoot.transform);
         GameObject cover = CreateBlackImage("Black_Cover", panelRoot.transform);
 
-        RectTransform panelRect = panelRoot.GetComponent<RectTransform>();
+        SetupCoverFullScreen(cover.GetComponent<RectTransform>());
+
+        overlayPanel = panelRoot;
+        overlayCover = cover;
+
+        panelRoot.SetActive(false);
+        cover.SetActive(false);
+    }
+
+    /// <summary>
+    /// Hitung ulang posisi 4 panel overlay berdasarkan posisi button saat ini.
+    /// Dipanggil setiap kali overlay mau ditampilkan / resolusi berubah.
+    /// </summary>
+    private void RefreshOverlayHole()
+    {
+        if (overlayPanel == null || powerUpButton == null) return;
+        if (blackTop == null || blackBottom == null ||
+            blackLeft == null || blackRight == null) return;
+
+        RectTransform panelRect = overlayPanel.GetComponent<RectTransform>();
         RectTransform buttonRect = powerUpButton.GetComponent<RectTransform>();
 
+        // Pastikan layout sudah settle
         Canvas.ForceUpdateCanvases();
         LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
 
@@ -598,13 +668,13 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetupStretchHorizontal(blackTop.GetComponent<RectTransform>(), 1f, 1f, cTop - holeTop);
         SetupSidePanel(blackLeft.GetComponent<RectTransform>(), 0f, 0f, holeLeft - cLeft, holeTop, holeBottom);
         SetupSidePanel(blackRight.GetComponent<RectTransform>(), 1f, 1f, cRight - holeRight, holeTop, holeBottom);
-        SetupCoverFullScreen(cover.GetComponent<RectTransform>());
 
-        overlayPanel = panelRoot;
-        overlayCover = cover;
-
-        panelRoot.SetActive(false);
-        cover.SetActive(false);
+        if (debugLog)
+        {
+            Debug.Log($"[PowerUpTutorialManager] RefreshOverlayHole: " +
+                      $"hole L={holeLeft:F1} R={holeRight:F1} " +
+                      $"T={holeTop:F1} B={holeBottom:F1}");
+        }
     }
 
     private void CalculateHoleBounds(
