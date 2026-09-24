@@ -26,11 +26,13 @@ public class TutorialHintManager : MonoBehaviour
     [SerializeField] private bool loopDots = true;
 
     [Header("Debug")]
-    [SerializeField] private bool debugPosition = true;
+    [SerializeField] private bool debugPosition = false;
+    [SerializeField] private bool debugDots = true;
     #endregion
 
     #region Runtime State
     private readonly List<Image> spawnedDots = new List<Image>();
+    private readonly List<Coroutine> popInCoroutines = new List<Coroutine>();
     private Coroutine dotsAnimRoutine;
     private Coroutine circlePulseRoutine;
     private Sprite cachedDotSprite;
@@ -40,6 +42,7 @@ public class TutorialHintManager : MonoBehaviour
     {
         StopCirclePulse();
         StopDotsAnimation();
+        ClearDots();
     }
 
     #region Circle Highlight
@@ -99,65 +102,37 @@ public class TutorialHintManager : MonoBehaviour
     private void PositionAndResizeCircle(Vector3 worldCenter, float worldRadius)
     {
         Canvas canvas = circleHighlightObj.GetComponentInParent<Canvas>();
-        if (canvas == null)
-        {
-            Debug.LogWarning("[TutorialHintManager] CircleHighlight tidak di dalam Canvas!");
-            return;
-        }
+        if (canvas == null) return;
 
         RectTransform canvasRect = canvas.GetComponent<RectTransform>();
         RectTransform circleRect = circleHighlightObj.GetComponent<RectTransform>();
 
-        // 1. PAKSA anchor & pivot middle-center
         circleRect.anchorMin = new Vector2(0.5f, 0.5f);
         circleRect.anchorMax = new Vector2(0.5f, 0.5f);
         circleRect.pivot = new Vector2(0.5f, 0.5f);
 
-        // 2. World → Screen
         Camera worldCam = Camera.main;
-        if (worldCam == null)
-        {
-            Debug.LogWarning("[TutorialHintManager] Camera.main tidak ada!");
-            return;
-        }
+        if (worldCam == null) return;
+
         Vector3 screenPos = worldCam.WorldToScreenPoint(worldCenter);
 
-        // 3. Tentukan UI Camera berdasarkan Render Mode Canvas
         Camera uiCam = null;
         if (canvas.renderMode == RenderMode.ScreenSpaceCamera ||
             canvas.renderMode == RenderMode.WorldSpace)
         {
             uiCam = canvas.worldCamera != null ? canvas.worldCamera : worldCam;
         }
-        // Kalau ScreenSpaceOverlay → uiCam = null (benar)
 
-        // 4. Screen → Local
         Vector2 localPoint;
         bool ok = RectTransformUtility.ScreenPointToLocalPointInRectangle(
             canvasRect, screenPos, uiCam, out localPoint);
 
-        if (!ok)
-        {
-            Debug.LogWarning("[TutorialHintManager] Gagal konversi ScreenPointToLocalPointInRectangle.");
-            return;
-        }
+        if (!ok) return;
 
-        // 5. Set posisi
         circleRect.anchoredPosition = localPoint;
 
-        // 6. Set ukuran
         float screenRadius = worldRadius * (Screen.height / (worldCam.orthographicSize * 2f));
         circleRect.sizeDelta = new Vector2(screenRadius * 2f, screenRadius * 2f);
-
-        if (debugPosition)
-        {
-            Debug.Log(
-                $"[TutorialHintManager] World={worldCenter:F2}, " +
-                $"Screen={screenPos:F0}, Local={localPoint:F0}, " +
-                $"Radius={screenRadius:F0}, Canvas={canvas.name}({canvas.renderMode}), " +
-                $"UiCam={(uiCam != null ? uiCam.name : "null")}"
-            );
-        }
     }
 
     private void StartCirclePulse()
@@ -180,6 +155,8 @@ public class TutorialHintManager : MonoBehaviour
         RectTransform rt = circleHighlightObj.GetComponent<RectTransform>();
         while (true)
         {
+            if (rt == null) yield break;
+
             float scale = 1f + Mathf.Sin(Time.unscaledTime * circlePulseSpeed) * circlePulseAmount;
             rt.localScale = Vector3.one * scale;
             yield return null;
@@ -190,10 +167,27 @@ public class TutorialHintManager : MonoBehaviour
     #region Path / Aksara
     public void ShowPath(AksaraData aksara)
     {
-        if (hintContainer == null || aksara == null) return;
+        if (hintContainer == null)
+        {
+            Debug.LogWarning("[TutorialHintManager] hintContainer belum di-assign.");
+            return;
+        }
+
+        if (aksara == null)
+        {
+            Debug.LogWarning("[TutorialHintManager] aksara null — skip dots.");
+            return;
+        }
+
+        // === FIX: Paksa aktifkan hintContainer dan semua parent-nya ===
+        ForceActivateHierarchy(hintContainer);
 
         List<Vector2> path = GetHardcodedPath(aksara.GestureShape);
-        if (path == null || path.Count < 2) return;
+        if (path == null || path.Count < 2)
+        {
+            Debug.LogWarning($"[TutorialHintManager] Path untuk {aksara.GestureShape} kosong — dots tidak muncul.");
+            return;
+        }
 
         ClearDots();
         List<Vector2> sampledPoints = SamplePath(path, dotSpacing);
@@ -203,6 +197,27 @@ public class TutorialHintManager : MonoBehaviour
             spawnedDots.Add(CreateDotAt(point * scale));
 
         StartDotsAnimation();
+
+        if (debugDots)
+        {
+            Debug.Log($"[TutorialHintManager] Dots muncul: {spawnedDots.Count} titik, shape={aksara.GestureShape}");
+            Debug.Log($"[THM] container active={hintContainer.gameObject.activeInHierarchy}, " +
+                      $"pos={hintContainer.position}, size={hintContainer.rect.size}, " +
+                      $"lossyScale={hintContainer.lossyScale}");
+
+            Canvas c = hintContainer.GetComponentInParent<Canvas>();
+            Debug.Log($"[THM] canvas={(c != null ? c.name : "NULL")}, " +
+                      $"mode={(c != null ? c.renderMode.ToString() : "-")}, " +
+                      $"sortOrder={(c != null ? c.sortingOrder.ToString() : "-")}");
+
+            if (spawnedDots.Count > 0 && spawnedDots[0] != null)
+            {
+                Debug.Log($"[THM] dot[0] worldPos={spawnedDots[0].rectTransform.position}, " +
+                          $"localScale={spawnedDots[0].rectTransform.localScale}, " +
+                          $"color={spawnedDots[0].color}, " +
+                          $"sprite={(spawnedDots[0].sprite != null ? spawnedDots[0].sprite.name : "NULL")}");
+            }
+        }
     }
 
     public void HidePath()
@@ -216,12 +231,38 @@ public class TutorialHintManager : MonoBehaviour
         HideCircleHighlight();
         HidePath();
     }
+
+    /// <summary>
+    /// Aktifkan GameObject ini dan semua parent-nya, supaya UI benar-benar dirender.
+    /// </summary>
+    private void ForceActivateHierarchy(Transform t)
+    {
+        Transform current = t;
+        while (current != null)
+        {
+            if (!current.gameObject.activeSelf)
+            {
+                if (debugDots)
+                    Debug.Log($"[THM] Mengaktifkan hierarchy: {current.name}");
+
+                current.gameObject.SetActive(true);
+            }
+            current = current.parent;
+        }
+    }
     #endregion
 
     #region Dots
     private void StartDotsAnimation()
     {
         StopDotsAnimation();
+
+        if (!isActiveAndEnabled)
+        {
+            Debug.LogError("[THM] Tidak bisa start coroutine — TutorialHintManager tidak aktif!");
+            return;
+        }
+
         dotsAnimRoutine = StartCoroutine(AnimateDotsRoutine());
     }
 
@@ -232,12 +273,26 @@ public class TutorialHintManager : MonoBehaviour
             StopCoroutine(dotsAnimRoutine);
             dotsAnimRoutine = null;
         }
+
+        // === FIX: Stop semua coroutine PopInDot yang masih jalan ===
+        for (int i = 0; i < popInCoroutines.Count; i++)
+        {
+            if (popInCoroutines[i] != null)
+                StopCoroutine(popInCoroutines[i]);
+        }
+        popInCoroutines.Clear();
     }
 
     private void ClearDots()
     {
+        StopDotsAnimation();
+
         for (int i = 0; i < spawnedDots.Count; i++)
-            if (spawnedDots[i] != null) Destroy(spawnedDots[i].gameObject);
+        {
+            if (spawnedDots[i] == null) continue;
+            if (spawnedDots[i].gameObject != null)
+                Destroy(spawnedDots[i].gameObject);
+        }
 
         spawnedDots.Clear();
     }
@@ -274,7 +329,10 @@ public class TutorialHintManager : MonoBehaviour
             for (int i = 0; i < spawnedDots.Count; i++)
             {
                 if (spawnedDots[i] == null) continue;
-                StartCoroutine(PopInDot(spawnedDots[i].rectTransform));
+                if (spawnedDots[i].rectTransform == null) continue;
+
+                // === FIX: simpan coroutine supaya bisa distop saat ClearDots ===
+                popInCoroutines.Add(StartCoroutine(PopInDot(spawnedDots[i].rectTransform)));
                 yield return new WaitForSecondsRealtime(dotStagger);
             }
 
@@ -288,8 +346,12 @@ public class TutorialHintManager : MonoBehaviour
     private void ResetAllDotsScale()
     {
         for (int i = 0; i < spawnedDots.Count; i++)
-            if (spawnedDots[i] != null)
-                spawnedDots[i].rectTransform.localScale = Vector3.zero;
+        {
+            if (spawnedDots[i] == null) continue;
+            if (spawnedDots[i].rectTransform == null) continue;
+
+            spawnedDots[i].rectTransform.localScale = Vector3.zero;
+        }
     }
 
     private IEnumerator PopInDot(RectTransform rt)
@@ -299,18 +361,26 @@ public class TutorialHintManager : MonoBehaviour
         float t = 0f;
         while (t < dotRevealDuration)
         {
+            if (rt == null) yield break;
+
             t += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(t / dotRevealDuration);
             rt.localScale = Vector3.one * EaseOutBack(progress);
             yield return null;
         }
-        rt.localScale = Vector3.one;
+
+        if (rt != null)
+            rt.localScale = Vector3.one;
     }
     #endregion
 
     #region Path Data
     private List<Vector2> GetHardcodedPath(GestureShape shape)
     {
+        List<Vector2> path = TutorialLetterPaths.GetPath(shape);
+        if (path != null && path.Count >= 2)
+            return path;
+
         switch (shape)
         {
             case GestureShape.Na:
@@ -324,7 +394,7 @@ public class TutorialHintManager : MonoBehaviour
             case GestureShape.Da:
                 return new List<Vector2> { new Vector2(-0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f) };
             default:
-                return null;
+                return new List<Vector2> { new Vector2(-0.6f, 0f), new Vector2(0.6f, 0f) };
         }
     }
 
@@ -354,6 +424,10 @@ public class TutorialHintManager : MonoBehaviour
             Vector2 a = path[i - 1];
             Vector2 b = path[i];
             float segmentLength = Vector2.Distance(a, b);
+
+            // === FIX: skip segment dengan panjang 0 supaya tidak NaN ===
+            if (segmentLength < 0.0001f)
+                continue;
 
             while (targetDistance <= walked + segmentLength)
             {

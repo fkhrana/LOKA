@@ -13,6 +13,8 @@ public class PowerManager : MonoBehaviour
         Shield
     }
 
+    public static event System.Action OnAnyPowerUpEnded;
+
     [System.Serializable]
     public class PowerUpSlot
     {
@@ -55,19 +57,19 @@ public class PowerManager : MonoBehaviour
     [SerializeField] private GameObject timeFreezeVfx;
     [SerializeField] private GameObject comboVfx;
     [SerializeField] private GameObject shieldVfx;
-    [Tooltip("Jika aktif, VFX menyala selama power-up aktif. Jika nonaktif, VFX diputar sekali sesuai durasi prefab.")]
     [SerializeField] private bool vfxFollowsPowerUpDuration;
 
-    [Tooltip("Warna tint saat power-up sedang aktif")]
-    [SerializeField] private Color activeColor   = new Color(1f, 0.9f, 0.4f, 1f);
+    [SerializeField] private Color activeColor = new Color(1f, 0.9f, 0.4f, 1f);
 
     [Header("Visual Transition")]
     [SerializeField] private float transitionDuration = 0.3f;
 
     [Header("Hide During Intro")]
-    [Tooltip("Sembunyikan bar saat intro belum selesai")]
     [SerializeField] private bool hideBarDuringIntro = true;
     [SerializeField] private float barFadeDuration = 0.3f;
+
+    [Header("Debug")]
+    [SerializeField] private bool debugLog = false;
 
     private bool isFrozen;
     private static bool isComboActive;
@@ -81,12 +83,14 @@ public class PowerManager : MonoBehaviour
     private float currentAlpha = 0f;
     private float targetAlpha = 0f;
 
-    // === COROUTINE REFERENCES (biar bisa distop saat reset) ===
     private Coroutine freezeRoutine;
     private Coroutine shieldRoutine;
     private Coroutine comboRoutine;
     private Coroutine freezeProgressRoutine;
-    // ========================================================
+    private Coroutine fadeTransitionRoutine;
+
+    // === GUARD: block write dari coroutine lama saat reset ===
+    private bool isResetting = false;
 
     public static bool IsComboActive => isComboActive;
     public static bool IsShieldActive => isShieldActive;
@@ -251,7 +255,6 @@ public class PowerManager : MonoBehaviour
 
         if (type == PowerUpType.Freeze)
         {
-            // === SIMPAN REFERENCE ===
             freezeRoutine = StartCoroutine(FreezeRoutine(slot));
         }
         else if (type == PowerUpType.Shield)
@@ -262,7 +265,7 @@ public class PowerManager : MonoBehaviour
             SetProgress(slot, 1f);
             PlayVfx(shieldVfx);
             SetActiveVisual(slot);
-            shieldRoutine = StartCoroutine(ShieldRoutine(slot));   // ← SIMPAN REFERENCE
+            shieldRoutine = StartCoroutine(ShieldRoutine(slot));
         }
         else if (type == PowerUpType.Combo)
         {
@@ -277,6 +280,8 @@ public class PowerManager : MonoBehaviour
 
     public static void EndComboPowerUp()
     {
+        if (!isComboActive) return;
+
         isComboActive = false;
         ActiveComboRadius = 0f;
 
@@ -303,6 +308,7 @@ public class PowerManager : MonoBehaviour
         }
 
         PlayEndPowerUpSFX();
+        OnAnyPowerUpEnded?.Invoke();
     }
 
     private IEnumerator ComboRoutine(PowerUpSlot slot)
@@ -329,7 +335,6 @@ public class PowerManager : MonoBehaviour
         PlayVfx(timeFreezeVfx);
         SetActiveVisual(slot);
 
-        // === SIMPAN REFERENCE PROGRESS ROUTINE ===
         freezeProgressRoutine = StartCoroutine(UpdateProgressRoutine(slot, slot.freezeDuration));
 
         EnemyMovementBehavior.SetAllMovementPaused(true);
@@ -348,6 +353,8 @@ public class PowerManager : MonoBehaviour
 
         freezeRoutine = null;
         freezeProgressRoutine = null;
+
+        OnAnyPowerUpEnded?.Invoke();
     }
 
     private IEnumerator ShieldRoutine(PowerUpSlot slot)
@@ -393,6 +400,7 @@ public class PowerManager : MonoBehaviour
         }
 
         PlayEndPowerUpSFX();
+        OnAnyPowerUpEnded?.Invoke();
     }
 
     private void PrepareProgressImage(PowerUpSlot slot)
@@ -414,8 +422,14 @@ public class PowerManager : MonoBehaviour
             : slot.powerUpImage;
     }
 
+    /// <summary>
+    /// Set progress fill amount.
+    /// GUARD: skip kalau sedang reset — cegah coroutine lama nimpa hasil reset.
+    /// </summary>
     private void SetProgress(PowerUpSlot slot, float progress)
     {
+        if (isResetting) return;   // ← GUARD
+
         Image progressImage = GetProgressImage(slot);
         if (progressImage != null)
             progressImage.fillAmount = Mathf.Clamp01(progress);
@@ -489,11 +503,26 @@ public class PowerManager : MonoBehaviour
     private void SetActiveVisual(PowerUpSlot slot)
     {
         if (slot.powerUpImage == null) return;
-        StartCoroutine(FadeTransition(slot, activeColor));
+
+        // Stop FadeTransition lama kalau ada
+        if (fadeTransitionRoutine != null)
+        {
+            StopCoroutine(fadeTransitionRoutine);
+            fadeTransitionRoutine = null;
+        }
+
+        fadeTransitionRoutine = StartCoroutine(FadeTransition(slot, activeColor));
     }
 
     private void ResetActiveVisual(PowerUpSlot slot)
     {
+        // Stop FadeTransition yang sedang jalan
+        if (fadeTransitionRoutine != null)
+        {
+            StopCoroutine(fadeTransitionRoutine);
+            fadeTransitionRoutine = null;
+        }
+
         if (slot.powerUpImage != null)
             slot.powerUpImage.color = Color.white;
 
@@ -550,6 +579,8 @@ public class PowerManager : MonoBehaviour
 
         if (slot.powerUpProgressImage != null)
             slot.powerUpProgressImage.color = targetColor;
+
+        fadeTransitionRoutine = null;
     }
 
     private bool IsAvailable(PowerUpType type)
@@ -581,29 +612,45 @@ public class PowerManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Stop semua coroutine power-up yang sedang aktif.
-    /// Dipakai untuk mencegah routine lama menimpa hasil reset.
-    /// </summary>
     private void StopAllPowerUpRoutines()
     {
         if (freezeRoutine != null) { StopCoroutine(freezeRoutine); freezeRoutine = null; }
         if (shieldRoutine != null) { StopCoroutine(shieldRoutine); shieldRoutine = null; }
         if (comboRoutine != null) { StopCoroutine(comboRoutine); comboRoutine = null; }
         if (freezeProgressRoutine != null) { StopCoroutine(freezeProgressRoutine); freezeProgressRoutine = null; }
+        if (fadeTransitionRoutine != null) { StopCoroutine(fadeTransitionRoutine); fadeTransitionRoutine = null; }
     }
 
     public void ResetAllPowerUpsToFull()
     {
-        // === FIX: STOP SEMUA COROUTINE AKTIF DULU ===
-        StopAllPowerUpRoutines();
+        if (debugLog)
+            Debug.Log($"[PowerManager] ResetAllPowerUpsToFull START pada {gameObject.name}");
 
+        // === SET GUARD — block write dari coroutine lama ===
+        isResetting = true;
+
+        // === STOP SEMUA COROUTINE (termasuk FadeTransition) ===
+        StopAllPowerUpRoutines();
+        // Belt & suspenders: stop ALL coroutines
+        StopAllCoroutines();
+
+        // === RESET STATE ===
         foreach (var slot in slots)
         {
             consumedPowerUps.Remove(slot.powerUpType);
-            SetProgress(slot, 1f);
+
+            // Direct set (bukan via SetProgress yang ada guard isResetting)
+            Image progressImage = GetProgressImage(slot);
+            if (progressImage != null)
+                progressImage.fillAmount = 1f;
+
             RefreshVisual(slot, animate: false);
-            ResetActiveVisual(slot);
+
+            // Reset color langsung
+            if (slot.powerUpImage != null)
+                slot.powerUpImage.color = Color.white;
+            if (slot.powerUpProgressImage != null)
+                slot.powerUpProgressImage.color = Color.white;
         }
 
         isFrozen = false;
@@ -621,18 +668,26 @@ public class PowerManager : MonoBehaviour
 
         RefreshButtonsInteractable();
 
-        Debug.Log($"[PowerManager] ResetAllPowerUpsToFull pada {gameObject.name}");
+        // === LEPAS GUARD ===
+        isResetting = false;
+
+        if (debugLog)
+            Debug.Log($"[PowerManager] ResetAllPowerUpsToFull DONE pada {gameObject.name}");
     }
 
     public static void ResetAllPowerUpsToFullGlobal()
     {
         PowerManager[] managers = FindObjectsByType<PowerManager>(FindObjectsSortMode.None);
+
+        if (managers.Length == 0)
+        {
+            Debug.LogWarning("[PowerManager] Tidak ada PowerManager di scene saat reset!");
+            return;
+        }
+
         Debug.Log($"[PowerManager] Reset {managers.Length} manager.");
 
         foreach (PowerManager manager in managers)
-        {
             manager.ResetAllPowerUpsToFull();
-            // Tidak ada break — semua manager di-reset
-        }
     }
 }

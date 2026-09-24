@@ -326,6 +326,67 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3534890}
   m_CullTransparentMesh: 1
+--- !u!1 &12514269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 12514270}
+  - component: {fileID: 12514271}
+  m_Layer: 0
+  m_Name: HintManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &12514270
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12514269}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1095.873, y: 552.66705, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 703000920}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &12514271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12514269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4bbb40e18160554c889ac442bab083d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialHintManager
+  circleHighlightObj: {fileID: 8738376921344467469}
+  circlePulseSpeed: 3
+  circlePulseAmount: 0.1
+  circlePadding: 1.5
+  hintContainer: {fileID: 7017914108991132112}
+  dotSprite: {fileID: 0}
+  dotColor: {r: 1, g: 0.9, b: 0.2, a: 1}
+  dotSize: 18
+  displaySize: 220
+  dotSpacing: 0.1
+  dotRevealDuration: 0.18
+  dotStagger: 0.06
+  holdAfterComplete: 0.9
+  restartDelay: 0.3
+  loopDots: 1
+  debugPosition: 1
+  debugDots: 1
 --- !u!1 &73450732
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectedAksaraManager
   useCollectSFX: 1
-  collectSFXName: CollectAksara
+  collectSFXName: AksaraClicked
   collectSFXVolume: 1
 --- !u!4 &73450734
 Transform:
@@ -1868,7 +1929,7 @@ MonoBehaviour:
   waveTransitionBanner: {fileID: 1415337698}
   waveTransitionBannerDuration: 3
   useWaveInfoSFX: 1
-  waveInfoSFXName: WaveInfo
+  waveInfoSFXName: Warning
   waveInfoSFXVolume: 1
   useSpawnArea: 1
   spawnAreaCenter: {x: 12.5, y: -1.4}
@@ -2150,6 +2211,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6048b9f0de720488365c9ace8e2ba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
+--- !u!1 &521739531
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 521739532}
+  - component: {fileID: 521739533}
+  m_Layer: 0
+  m_Name: FirstHit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &521739532
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521739531}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1095.873, y: 552.66705, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 703000920}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &521739533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521739531}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f083b21701e77d49b571b83498ccae0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstHitTutorialManager
+  playerHealth: {fileID: 497076175}
+  helperController: {fileID: 1187938917}
+  hintManager: {fileID: 12514271}
+  fallbackAksara: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+  enemySearchRadius: 20
+  delayBeforeDots: 0.3
+  dotsDuration: 8
+  resetForTesting: 1
 --- !u!1 &529944351
 GameObject:
   m_ObjectHideFlags: 0
@@ -3237,6 +3350,8 @@ Transform:
   - {fileID: 496284079}
   - {fileID: 1606926656}
   - {fileID: 2779575995282442775}
+  - {fileID: 521739532}
+  - {fileID: 12514270}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &738363144
@@ -5397,7 +5512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977277147243836301, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25.999939
+      value: -26
       objectReference: {fileID: 0}
     - target: {fileID: 4045812945959569027, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_Name
@@ -6550,6 +6665,7 @@ RectTransform:
   - {fileID: 1415337699}
   - {fileID: 6231063146745090166}
   - {fileID: 2145473334}
+  - {fileID: 7017914108991132112}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -8106,7 +8222,8 @@ MonoBehaviour:
   powerUpButton: {fileID: 1585055609}
   powerUpType: 0
   requiresAksaraPath: 1
-  hintManager: {fileID: 8836108092119641637}
+  gestureDrawer: {fileID: 256010449}
+  hintManager: {fileID: 12514271}
   tutorialSpawner: {fileID: 9060713794430538904}
   tutorialEnemyCount: 2
   enemySlowSpeed: 0.5
@@ -8125,6 +8242,7 @@ MonoBehaviour:
   fallbackIntroDelay: 10
   resetTutorialOnPlay: 1
   autoUncheckReset: 0
+  debugLog: 1
 --- !u!224 &348805495316415696
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8137,7 +8255,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 7017914108991132112}
   - {fileID: 5469817152596884578}
   - {fileID: 2299784804269486478}
   - {fileID: 8463186699107918679}
@@ -8425,7 +8542,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1235357457103713725}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0daf770376e700944b61c5a3bf0864b1, type: 3}
   m_Name: 
@@ -8645,7 +8762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.83921576, g: 0.8470589, b: 0.8588236, a: 1}
+  m_Color: {r: 0.83921576, g: 0.8470589, b: 0.8588236, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9012,16 +9129,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8065989954104665640}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 348805495316415696}
+  m_Father: {fileID: 1648195322}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -688.8933, y: 76.818}
+  m_AnchoredPosition: {x: -727.79, y: 96}
   m_SizeDelta: {x: 347.4156, y: 353.64}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7336957998320552411
@@ -9035,7 +9152,6 @@ GameObject:
   - component: {fileID: 2779575995282442775}
   - component: {fileID: 100443001330673980}
   - component: {fileID: 9060713794430538904}
-  - component: {fileID: 8836108092119641637}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -9167,34 +9283,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &8836108092119641637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7336957998320552411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4bbb40e18160554c889ac442bab083d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TutorialHintManager
-  circleHighlightObj: {fileID: 8738376921344467469}
-  circlePulseSpeed: 3
-  circlePulseAmount: 0.1
-  circlePadding: 1.5
-  hintContainer: {fileID: 7017914108991132112}
-  dotSprite: {fileID: 0}
-  dotColor: {r: 1, g: 0.9, b: 0.2, a: 1}
-  dotSize: 18
-  displaySize: 220
-  dotSpacing: 0.1
-  dotRevealDuration: 0.18
-  dotStagger: 0.06
-  holdAfterComplete: 0.9
-  restartDelay: 0.3
-  loopDots: 1
-  debugPosition: 1
 --- !u!224 &9024222443527682869
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9235,6 +9323,7 @@ MonoBehaviour:
   tutorialTag: TutorialEnemy
   tutorialLayer: TutorialEnemy
   crashDetectionRadius: 2
+  crashDamageWindow: 0.5
   debugSpawn: 0
   debugDeathTrack: 1
 --- !u!1660057539 &9223372036854775807

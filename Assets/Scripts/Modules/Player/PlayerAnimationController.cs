@@ -107,11 +107,14 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void PlayAttackUp()
     {
+        if (TutorialManager.IsTrainingMode) return;
         PlayState(attackUpStateHash, attackUpStateName);
     }
 
     private void PlayWin()
     {
+        if (TutorialManager.IsTrainingMode) return;
+
         if (winAnimationPlayed)
             return;
 

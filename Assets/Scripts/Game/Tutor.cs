@@ -43,6 +43,9 @@ public class PowerUpTutorialManager : MonoBehaviour
     [Tooltip("Centang kalau power-up ini butuh pemain menggambar aksara.")]
     [SerializeField] private bool requiresAksaraPath = true;
 
+    [Header("Gesture Drawer")]
+    [SerializeField] private GestureDrawer gestureDrawer;
+
     [Header("Hint Manager")]
     [SerializeField] private TutorialHintManager hintManager;
 
@@ -75,6 +78,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool resetTutorialOnPlay = false;
     [SerializeField] private bool autoUncheckReset = true;
+    [SerializeField] private bool debugLog = true;
     #endregion
 
     #region Runtime State
@@ -98,9 +102,22 @@ public class PowerUpTutorialManager : MonoBehaviour
             return;
         }
 
+        if (gestureDrawer == null)
+            gestureDrawer = FindFirstObjectByType<GestureDrawer>();
+
         HookButtons();
         if (autoGenerateOverlay) GenerateOverlay();
         DisableRaycastOnTutorialUI();
+    }
+
+    private void OnEnable()
+    {
+        PowerManager.OnAnyPowerUpEnded += HandlePowerUpEnded;
+    }
+
+    private void OnDisable()
+    {
+        PowerManager.OnAnyPowerUpEnded -= HandlePowerUpEnded;
     }
 
     private void Start()
@@ -108,6 +125,9 @@ public class PowerUpTutorialManager : MonoBehaviour
         SpawnTutorialEnemies();
         SetEnemiesSpeed(enemySlowSpeed);
         HideAllInitially();
+
+        SetGestureEnabled(false);
+        SetPowerUpButtonInteractable(false);
 
         if (waitForCameraIntro)
             StartCoroutine(WaitForIntroThenStart());
@@ -127,6 +147,8 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void OnDestroy()
     {
         StopAllCoroutines();
+
+        PowerManager.OnAnyPowerUpEnded -= HandlePowerUpEnded;
     }
     #endregion
 
@@ -145,6 +167,9 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetActive(startPanel, false);
         hintManager?.HideAll();
 
+        SetGestureEnabled(false);
+        SetPowerUpButtonInteractable(false);
+
         ClearAndRespawnEnemies();
         SetEnemiesSpeed(enemySlowSpeed);
 
@@ -162,16 +187,24 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetActive(overlayCover, true);
         SetActive(fingerTapIcon, false);
 
+        SetGestureEnabled(false);
+        SetPowerUpButtonInteractable(false);
+
         SetupFingerTapPosition();
         revealRoutine = StartCoroutine(RevealHoleRoutine());
     }
 
     private void OnScreenTapped()
     {
-        SetActive(overlayPanel, false);
         tutorialSpawner?.ActivateAll();
         SetEnemiesSpeed(enemyNormalSpeed);
         currentStep = TutorialStep.WaitingForPowerUpTap;
+
+        SetPowerUpButtonInteractable(true);
+
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] Screen tapped → WaitingForPowerUpTap " +
+                      "(overlay ON, button ON, gesture OFF)");
     }
 
     private void OnPowerUpTapped()
@@ -181,10 +214,19 @@ public class PowerUpTutorialManager : MonoBehaviour
         StopFingerTap();
         SetActive(fingerTapIcon, false);
 
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, false);
+
         TriggerPowerUpEffect();
         ShowEnemyHint();
 
+        SetGestureEnabled(true);
+
         currentStep = TutorialStep.WaitingOutcome;
+
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] Power-up tapped → WaitingOutcome " +
+                      "(overlay OFF, gesture ON)");
     }
 
     private void ShowEnemyHint()
@@ -199,22 +241,47 @@ public class PowerUpTutorialManager : MonoBehaviour
     }
     #endregion
 
+    #region Power-Up Event Handler
+    private void HandlePowerUpEnded()
+    {
+        if (!IsPowerUpTutorial) return;
+        if (currentStep != TutorialStep.WaitingOutcome) return;
+
+        Debug.Log("[PowerUpTutorialManager] Power-up ended → hide circle highlight.");
+        hintManager?.HideCircleHighlight();
+    }
+    #endregion
+
     #region Outcome
-    /// <summary>
-    /// Dipanggil saat SEMUA musuh di-kill player dengan benar → SUCCESS.
-    /// </summary>
     private void OnAllTutorialEnemiesKilled()
     {
-        if (currentStep != TutorialStep.WaitingOutcome) return;
+        if (debugLog)
+            Debug.Log($"[PowerUpTutorialManager] OnAllTutorialEnemiesKilled (step={currentStep})");
+
+        if (currentStep == TutorialStep.Success || currentStep == TutorialStep.Fail)
+            return;
+
+        if (currentStep != TutorialStep.WaitingOutcome)
+        {
+            Debug.LogWarning(
+                $"[PowerUpTutorialManager] Callback kill ter-trigger di step {currentStep} " +
+                "→ musuh pasti nabrak player. Paksa GAGAL."
+            );
+            HandleTutorialFail();
+            return;
+        }
+
         HandleTutorialSuccess();
     }
 
-    /// <summary>
-    /// Dipanggil saat SEMUA musuh nabrak player → GAGAL (panel muncul).
-    /// </summary>
     private void OnAllTutorialEnemiesCrashed()
     {
-        if (currentStep != TutorialStep.WaitingOutcome) return;
+        if (debugLog)
+            Debug.Log($"[PowerUpTutorialManager] OnAllTutorialEnemiesCrashed (step={currentStep})");
+
+        if (currentStep == TutorialStep.Success || currentStep == TutorialStep.Fail)
+            return;
+
         HandleTutorialFail();
     }
 
@@ -224,11 +291,19 @@ public class PowerUpTutorialManager : MonoBehaviour
         StopBlinking();
         hintManager?.HideAll();
 
+        // Gesture tetap ON — gameplay butuh
+
+        SetPowerUpButtonInteractable(true);
+
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, false);
+        SetActive(fingerTapIcon, false);
+
         IsPowerUpTutorial = false;
         TutorialManager.IsTrainingMode = false;
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
-        Debug.Log("[PowerUpTutorialManager] ✅ Tutorial sukses → langsung gameplay.");
+        Debug.Log("[PowerUpTutorialManager] ✅ Tutorial sukses → langsung gameplay (gesture tetap ON).");
         StartGameNormally();
     }
 
@@ -237,6 +312,14 @@ public class PowerUpTutorialManager : MonoBehaviour
         currentStep = TutorialStep.Fail;
         StopBlinking();
         hintManager?.HideAll();
+
+        // Fail → gesture OFF (belum masuk gameplay)
+        SetGestureEnabled(false);
+        SetPowerUpButtonInteractable(false);
+
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, false);
+        SetActive(fingerTapIcon, false);
 
         Debug.LogWarning("[PowerUpTutorialManager] ❌ Tutorial gagal → panel MULAI MAIN? muncul.");
         SetActive(startPanel, true);
@@ -251,19 +334,71 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (ulangButton != null) ulangButton.onClick.AddListener(OnUlangClicked);
     }
 
+    /// <summary>
+    /// Player klik YA di panel MULAI MAIN? → masuk gameplay.
+    /// Gesture HARUS ON di sini biar player bisa main.
+    /// </summary>
     private void OnYaClicked()
     {
+        Debug.Log("[PowerUpTutorialManager] Player klik YA → mulai gameplay.");
+
         IsPowerUpTutorial = false;
         TutorialManager.IsTrainingMode = false;
+
+        // === ENABLE GESTURE — WAJIB untuk gameplay ===
+        SetGestureEnabled(true);
+
+        SetPowerUpButtonInteractable(true);
+
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, false);
+        SetActive(fingerTapIcon, false);
         SetActive(startPanel, false);
+
         StartGameNormally();
     }
 
+    /// <summary>
+    /// Player klik ULANG → restart tutorial dari awal.
+    /// Gesture OFF karena tutorial restart.
+    /// </summary>
     private void OnUlangClicked()
     {
+        Debug.Log("[PowerUpTutorialManager] Player klik ULANG → restart tutorial.");
+
+        SetActive(overlayPanel, false);
+        SetActive(overlayCover, false);
+        SetActive(fingerTapIcon, false);
         SetActive(startPanel, false);
+
         PowerManager.ResetAllPowerUpsToFullGlobal();
         RestartTutorial();
+    }
+    #endregion
+
+    #region Control Helpers
+    private void SetGestureEnabled(bool enabled)
+    {
+        if (gestureDrawer == null) return;
+        if (gestureDrawer.gameObject == null) return;
+
+        if (!enabled)
+            gestureDrawer.ResetGestureInput();
+
+        gestureDrawer.enabled = enabled;
+
+        if (debugLog)
+            Debug.Log($"[PowerUpTutorialManager] GestureDrawer.enabled = {enabled}");
+    }
+
+    private void SetPowerUpButtonInteractable(bool interactable)
+    {
+        if (powerUpButton == null) return;
+
+        powerUpButton.interactable = interactable;
+
+        if (debugLog)
+            Debug.Log($"[PowerUpTutorialManager] PowerUpButton.interactable = {interactable}");
     }
     #endregion
 
