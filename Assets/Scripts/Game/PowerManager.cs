@@ -89,7 +89,6 @@ public class PowerManager : MonoBehaviour
     private Coroutine freezeProgressRoutine;
     private Coroutine fadeTransitionRoutine;
 
-    // === GUARD: block write dari coroutine lama saat reset ===
     private bool isResetting = false;
 
     public static bool IsComboActive => isComboActive;
@@ -142,7 +141,9 @@ public class PowerManager : MonoBehaviour
 
     private void Update()
     {
-        bool canClick = CameraIntroManager.GameStarted;
+        // === FIX: tutorial juga boleh klik ===
+        bool canClick = CameraIntroManager.GameStarted
+                     || PowerUpTutorialManager.IsPowerUpTutorial;
 
         RefreshButtonsInteractable();
 
@@ -168,7 +169,9 @@ public class PowerManager : MonoBehaviour
 
     private void RefreshButtonsInteractable()
     {
-        bool canClick = CameraIntroManager.GameStarted;
+        // === FIX: tutorial juga boleh klik ===
+        bool canClick = CameraIntroManager.GameStarted
+                     || PowerUpTutorialManager.IsPowerUpTutorial;
 
         foreach (var slot in slots)
         {
@@ -228,7 +231,8 @@ public class PowerManager : MonoBehaviour
 
     public void UsePowerUp(PowerUpType type)
     {
-        if (!CameraIntroManager.GameStarted)
+        // === FIX: tutorial juga boleh pakai power-up ===
+        if (!CameraIntroManager.GameStarted && !PowerUpTutorialManager.IsPowerUpTutorial)
             return;
 
         PowerUpSlot slot = slots.Find(s => s.powerUpType == type);
@@ -422,13 +426,9 @@ public class PowerManager : MonoBehaviour
             : slot.powerUpImage;
     }
 
-    /// <summary>
-    /// Set progress fill amount.
-    /// GUARD: skip kalau sedang reset — cegah coroutine lama nimpa hasil reset.
-    /// </summary>
     private void SetProgress(PowerUpSlot slot, float progress)
     {
-        if (isResetting) return;   // ← GUARD
+        if (isResetting) return;
 
         Image progressImage = GetProgressImage(slot);
         if (progressImage != null)
@@ -504,7 +504,6 @@ public class PowerManager : MonoBehaviour
     {
         if (slot.powerUpImage == null) return;
 
-        // Stop FadeTransition lama kalau ada
         if (fadeTransitionRoutine != null)
         {
             StopCoroutine(fadeTransitionRoutine);
@@ -516,7 +515,6 @@ public class PowerManager : MonoBehaviour
 
     private void ResetActiveVisual(PowerUpSlot slot)
     {
-        // Stop FadeTransition yang sedang jalan
         if (fadeTransitionRoutine != null)
         {
             StopCoroutine(fadeTransitionRoutine);
@@ -626,27 +624,21 @@ public class PowerManager : MonoBehaviour
         if (debugLog)
             Debug.Log($"[PowerManager] ResetAllPowerUpsToFull START pada {gameObject.name}");
 
-        // === SET GUARD — block write dari coroutine lama ===
         isResetting = true;
 
-        // === STOP SEMUA COROUTINE (termasuk FadeTransition) ===
         StopAllPowerUpRoutines();
-        // Belt & suspenders: stop ALL coroutines
         StopAllCoroutines();
 
-        // === RESET STATE ===
         foreach (var slot in slots)
         {
             consumedPowerUps.Remove(slot.powerUpType);
 
-            // Direct set (bukan via SetProgress yang ada guard isResetting)
             Image progressImage = GetProgressImage(slot);
             if (progressImage != null)
                 progressImage.fillAmount = 1f;
 
             RefreshVisual(slot, animate: false);
 
-            // Reset color langsung
             if (slot.powerUpImage != null)
                 slot.powerUpImage.color = Color.white;
             if (slot.powerUpProgressImage != null)
@@ -668,7 +660,6 @@ public class PowerManager : MonoBehaviour
 
         RefreshButtonsInteractable();
 
-        // === LEPAS GUARD ===
         isResetting = false;
 
         if (debugLog)

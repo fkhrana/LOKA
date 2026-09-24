@@ -3,17 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Spawner khusus musuh tutorial.
-/// Deteksi nabrak pakai 2 metode:
-/// 1. Timing damage — kalau player baru saja take damage, musuh yang hilang = NABRAK
-/// 2. Distance fallback — cek jarak terakhir musuh ke player
-/// 
-/// Hasil:
-/// - Semua kill → SUCCESS
-/// - Semua crash → GAGAL
-/// - Mix (sebagian kill, sebagian crash) → GAGAL (panel muncul)
-/// </summary>
 public class TutorialEnemySpawner : MonoBehaviour
 {
     #region Inspector Fields
@@ -63,7 +52,6 @@ public class TutorialEnemySpawner : MonoBehaviour
     private Action onAllKilledCallback;
     private Action onAllCrashedCallback;
 
-    // === GUARD ===
     private bool hasFiredCallback = false;
     private bool isSpawning = false;
     #endregion
@@ -283,6 +271,9 @@ public class TutorialEnemySpawner : MonoBehaviour
 
         enemy.SetAutoIssueOnStart(false);
 
+        // === FIX: musuh tutorial TIDAK lapor progress ke LevelProgressManager ===
+        enemy.SetReportProgress(false);
+
         ConfigureEnemy(enemy, enemyData, aksara);
         ConfigureMovement(enemy, position);
         enemy.SyncSpawnPosition();
@@ -455,7 +446,6 @@ public class TutorialEnemySpawner : MonoBehaviour
             {
                 destroyedIds.Add(id);
 
-                // Guard: cegah double-count musuh yang sama
                 if (!countedEnemyIds.Contains(id))
                 {
                     EvaluateEnemyDeath(id);
@@ -529,7 +519,6 @@ public class TutorialEnemySpawner : MonoBehaviour
                       $"Crash: {totalCrashCount}/{expectedKillCount}");
         }
 
-        // === SEMUA DI-KILL → SUCCESS ===
         if (validKillCount >= expectedKillCount)
         {
             Debug.Log("[TutorialEnemySpawner] ✅ Semua musuh di-kill player → SUCCESS.");
@@ -537,7 +526,6 @@ public class TutorialEnemySpawner : MonoBehaviour
             return;
         }
 
-        // === SEMUA NABRAK → GAGAL ===
         if (totalCrashCount >= expectedKillCount)
         {
             Debug.LogWarning("[TutorialEnemySpawner] ❌ Semua musuh nabrak player → GAGAL.");
@@ -545,7 +533,6 @@ public class TutorialEnemySpawner : MonoBehaviour
             return;
         }
 
-        // === MIX (sebagian kill, sebagian crash) → GAGAL ===
         Debug.LogWarning($"[TutorialEnemySpawner] ⚠️ MIX (kill={validKillCount}, " +
                          $"crash={totalCrashCount}) → GAGAL, panel MULAI MAIN? muncul.");
         onAllCrashedCallback?.Invoke();

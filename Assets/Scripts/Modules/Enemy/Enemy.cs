@@ -37,6 +37,11 @@ public class Enemy : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float aksaraDropSFXVolume = 1f;
 
+    // === FIX: field untuk isolasi musuh tutorial ===
+    [Header("Tutorial Isolation")]
+    [Tooltip("Musuh dengan tag ini TIDAK dihitung di progress bar.")]
+    [SerializeField] private string tutorialTag = "TutorialEnemy";
+
     private EnemyGestureCommand gestureCommand;
     private EnemyMovementBehavior movementBehavior;
     private bool hasBeenDefeated;
@@ -74,6 +79,22 @@ public class Enemy : MonoBehaviour
         dropEnabled = enabled;
     }
 
+    // === FIX: helper cek musuh tutorial ===
+    private bool IsTutorialEnemy()
+    {
+        if (string.IsNullOrEmpty(tutorialTag))
+            return false;
+
+        try
+        {
+            return gameObject.CompareTag(tutorialTag);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private void ApplyEnemyData()
     {
         if (enemyData == null)
@@ -82,8 +103,6 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // kalau shielded (requiredCorrectGestures > 1) dan ada shieldedSprite, pakai itu
-        // kalau tidak, pakai enemySprite biasa
         if (bodyRenderer != null)
         {
             bool isShielded =
@@ -120,13 +139,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // dipanggil dari EnemyGestureCommand saat kena hit tapi belum mati
     public void OnHit(int remainingGestures)
     {
         if (enemyData == null || bodyRenderer == null)
             return;
 
-        // shield hilang, ganti ke sprite normal
         if (remainingGestures > 0 && enemyData.EnemySprite != null)
         {
             bodyRenderer.sprite = enemyData.EnemySprite;
@@ -143,6 +160,9 @@ public class Enemy : MonoBehaviour
             return;
 
         hasBeenDefeated = true;
+
+        // === FIX: cek apakah musuh tutorial ===
+        bool isTutorial = IsTutorialEnemy();
 
         if (aksaraIconRenderer != null)
             aksaraIconRenderer.enabled = false;
@@ -192,11 +212,30 @@ public class Enemy : MonoBehaviour
                 }
 
                 PlayAksaraDropSFX();
-                LevelProgressManager.Instance?.CompletePendingProgress();
+
+                // === FIX: skip progress kalau musuh tutorial ===
+                if (!isTutorial)
+                {
+                    LevelProgressManager.Instance?.CompletePendingProgress();
+                }
+                else
+                {
+                    Debug.Log($"[Enemy] ✅ Skip progress — '{name}' musuh tutorial.");
+                }
+
                 return;
             }
 
-            PlayNonCollectibleItemVfx();
+            // === FIX: skip VFX kalau musuh tutorial ===
+            if (!isTutorial)
+            {
+                PlayNonCollectibleItemVfx();
+            }
+            else
+            {
+                Debug.Log($"[Enemy] ✅ Skip non-collectible VFX — '{name}' musuh tutorial.");
+            }
+
             Debug.Log(
                 $"Enemy {name} item is non-collectible because {aksaraData.AksaraName} was already dropped this wave."
             );
@@ -219,7 +258,15 @@ public class Enemy : MonoBehaviour
             );
         }
 
-        PlayNonCollectibleItemVfx();
+        // === FIX: skip VFX final kalau musuh tutorial ===
+        if (!isTutorial)
+        {
+            PlayNonCollectibleItemVfx();
+        }
+        else
+        {
+            Debug.Log($"[Enemy] ✅ Skip final VFX — '{name}' musuh tutorial.");
+        }
     }
 
     public void StartDefeatBlink()

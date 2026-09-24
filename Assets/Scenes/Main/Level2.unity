@@ -8225,14 +8225,13 @@ MonoBehaviour:
   gestureDrawer: {fileID: 256010449}
   hintManager: {fileID: 12514271}
   tutorialSpawner: {fileID: 9060713794430538904}
+  tutorialAksara: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
+  tutorialEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
   tutorialEnemyCount: 2
-  enemySlowSpeed: 0.5
   enemyNormalSpeed: 2
   spawnNearCameraTarget: 1
   manualSpawnCenter: {x: 0, y: 0, z: 0}
   spawnRadius: 1.5
-  tutorialAksara: {fileID: 11400000, guid: 16d40896ead1f8448aac849d5988e9ab, type: 2}
-  tutorialEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
   blinkInterval: 0.25
   startPanel: {fileID: 1235357457103713725}
   yaButton: {fileID: 5211206987307363443}
@@ -8749,36 +8748,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &3799360232250616131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8065989954104665640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.83921576, g: 0.8470589, b: 0.8588236, a: 0}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!224 &4190156947478595576
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9218,7 +9187,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7017914108991132112}
   - component: {fileID: 5614456004467257563}
-  - component: {fileID: 3799360232250616131}
   m_Layer: 5
   m_Name: HintContainer
   m_TagString: Untagged

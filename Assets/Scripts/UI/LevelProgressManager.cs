@@ -149,10 +149,32 @@ public class LevelProgressManager : MonoBehaviour
 
     public void OnEnemyProcessed()
     {
+        if (processedEnemies >= totalEnemies)
+            return;
+
         pendingProgress = Mathf.Min(
             totalEnemies - processedEnemies,
             pendingProgress + 1
         );
+    }
+
+    // === FIX: overload dengan GameObject — skip musuh tutorial ===
+    public void OnEnemyProcessed(GameObject enemy)
+    {
+        if (enemy != null)
+        {
+            try
+            {
+                if (enemy.CompareTag("TutorialEnemy"))
+                {
+                    Debug.Log($"[LevelProgressManager] ✅ SKIP '{enemy.name}' — musuh tutorial.");
+                    return;
+                }
+            }
+            catch { }
+        }
+
+        OnEnemyProcessed();
     }
 
     public void AddTotalProgressUnits(int amount)

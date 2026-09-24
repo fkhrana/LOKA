@@ -14,6 +14,7 @@ public class EnemyGestureCommand : MonoBehaviour
         if (movementBehavior != null)
             movementBehavior.SetSpawnPosition(transform.position);
     }
+
     [SerializeField] private bool autoIssueOnStart = true;
     [SerializeField] private GestureShape gestureToCommand = GestureShape.Na;
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
@@ -230,13 +231,13 @@ public class EnemyGestureCommand : MonoBehaviour
     }
 
     private void LateUpdate()
-{
-    if (!challengeActive)
-        return;
+    {
+        if (!challengeActive)
+            return;
 
-    if (movementBehavior != null)
-        movementBehavior.Tick(CameraIntroManager.GameStarted);
-}
+        if (movementBehavior != null)
+            movementBehavior.Tick(CameraIntroManager.GameStarted);
+    }
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)
     {
@@ -340,7 +341,6 @@ public class EnemyGestureCommand : MonoBehaviour
 
         remainingCorrectGestures--;
 
-        // notify Enemy untuk ganti sprite (shield hilang)
         var enemy = GetComponent<Enemy>();
         if (enemy != null)
             enemy.OnHit(remainingCorrectGestures);
@@ -448,8 +448,20 @@ public class EnemyGestureCommand : MonoBehaviour
         if (hasReportedProcessed)
             return;
 
+        // === FIX: skip musuh tutorial ===
+        try
+        {
+            if (gameObject.CompareTag("TutorialEnemy"))
+            {
+                Debug.Log($"[EnemyGestureCommand] ✅ SKIP '{name}' — musuh tutorial.");
+                hasReportedProcessed = true;
+                return;
+            }
+        }
+        catch { }
+
         hasReportedProcessed = true;
-        LevelProgressManager.Instance?.OnEnemyProcessed();
+        LevelProgressManager.Instance?.OnEnemyProcessed(gameObject);
     }
 
     private void SubscribeToGestureDrawer()
