@@ -23,17 +23,12 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Inspector Fields
-    [Header("Auto-Generate Overlay")]
-    [SerializeField] private bool autoGenerateOverlay = true;
-    [SerializeField] private float overlayPadding = 60f;
-    [SerializeField] private Color overlayColor = new Color(0f, 0f, 0f, 0.86f);
-    [SerializeField] private float coverDuration = 1.2f;
-    [SerializeField] private float coverFadeOutDuration = 0.4f;
+    [Header("Reusable Components")]
+    [SerializeField] private TutorialOverlay overlay;
+    [SerializeField] private TutorialFingerTap fingerTap;
 
-    [Header("Finger Tap")]
-    [SerializeField] private GameObject fingerTapIcon;
-    [SerializeField] private float fingerTapAmplitude = 25f;
-    [SerializeField] private float fingerTapSpeed = 4f;
+    [Header("Cover")]
+    [SerializeField] private float coverDuration = 1.2f;
 
     [Header("Power Up")]
     [SerializeField] private Button powerUpButton;
@@ -67,6 +62,12 @@ public class PowerUpTutorialManager : MonoBehaviour
     [SerializeField, Min(1f)] private float maxWaitForIntro = 30f;
     [SerializeField, Min(0f)] private float fallbackIntroDelay = 10f;
 
+    [Header("Boss Level Mode")]
+    [Tooltip("Kalau true, tutorial di boss level. Setelah sukses = SpawnBoss, bukan resume wave.")]
+    [SerializeField] private bool isBossLevelTutorial = false;
+    [Tooltip("Wajib diisi kalau isBossLevelTutorial = true.")]
+    [SerializeField] private EnemyWaveSpawner bossSpawner;
+
     [Header("Debug")]
     [SerializeField] private bool resetTutorialOnPlay = false;
     [SerializeField] private bool autoUncheckReset = true;
@@ -74,17 +75,8 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Runtime State
-    private GameObject overlayPanel;
-    private GameObject overlayCover;
-    private GameObject blackTop;
-    private GameObject blackBottom;
-    private GameObject blackLeft;
-    private GameObject blackRight;
-
-    private Coroutine revealRoutine;
     private Coroutine blinkRoutine;
-    private Coroutine fingerTapRoutine;
-    private Vector2 fingerBasePos;
+    private Coroutine revealRoutine;
 
     private int lastScreenW = -1;
     private int lastScreenH = -1;
@@ -101,7 +93,19 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         if (ShouldSkipTutorial())
         {
-            Debug.Log("[PowerUpTutorialManager] Tutorial sudah selesai — skip.");
+            if (isBossLevelTutorial && bossSpawner != null)
+            {
+                if (debugLog)
+                    Debug.Log("[PowerUpTutorialManager] Sudah tutorial + boss level → spawn boss.");
+
+                StartCoroutine(SpawnBossDelayed());
+            }
+            else
+            {
+                if (debugLog)
+                    Debug.Log("[PowerUpTutorialManager] Tutorial sudah selesai — skip.");
+            }
+
             gameObject.SetActive(false);
             return;
         }
@@ -109,16 +113,15 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (gestureDrawer == null)
             gestureDrawer = FindFirstObjectByType<GestureDrawer>();
 
-        if (gestureDrawer == null)
-            Debug.LogError("[PowerUpTutorialManager] ❌ GestureDrawer TIDAK DITEMUKAN!");
-        else if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] ✅ GestureDrawer: {gestureDrawer.name}");
+        if (overlay == null)
+            overlay = GetComponentInChildren<TutorialOverlay>(true);
+
+        if (fingerTap == null)
+            fingerTap = GetComponentInChildren<TutorialFingerTap>(true);
+
+        overlay?.Build();
 
         HookButtons();
-
-        // Generate struktur overlay saja (hole dihitung nanti saat show)
-        if (autoGenerateOverlay)
-            GenerateOverlay();
 
         DisableRaycastOnTutorialUI();
     }
@@ -152,7 +155,6 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private void Update()
     {
-        // Deteksi perubahan resolusi / orientasi (penting di mobile)
         if (Screen.width != lastScreenW ||
             Screen.height != lastScreenH ||
             Screen.orientation != lastOrientation)
@@ -161,9 +163,7 @@ public class PowerUpTutorialManager : MonoBehaviour
             lastScreenH = Screen.height;
             lastOrientation = Screen.orientation;
 
-            // Recalculate hole kalau overlay sedang aktif
-            if (overlayPanel != null && overlayPanel.activeSelf)
-                RefreshOverlayHole();
+            overlay?.RefreshHoleIfActive();
         }
     }
 
@@ -174,10 +174,23 @@ public class PowerUpTutorialManager : MonoBehaviour
     }
     #endregion
 
+    #region Boss Spawn (skip path)
+    private IEnumerator SpawnBossDelayed()
+    {
+        yield return null;
+
+        if (bossSpawner != null)
+            bossSpawner.SpawnBoss();
+        else
+            Debug.LogWarning("[PowerUpTutorialManager] bossSpawner belum di-set.");
+    }
+    #endregion
+
     #region Wave Spawner Control
     private void PauseWaveSpawner()
     {
         if (waveSpawnerPaused) return;
+        if (isBossLevelTutorial) return;
 
         waveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
         if (waveSpawner != null)
@@ -218,12 +231,8 @@ public class PowerUpTutorialManager : MonoBehaviour
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
 
-        // Refresh hole SEBELUM show (biar posisi pas)
-        RefreshOverlayHole();
-
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, true);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
         SetActive(startPanel, false);
         hintManager?.HideAll();
 
@@ -239,7 +248,8 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         revealRoutine = StartCoroutine(RevealHoleRoutine());
 
-        Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
     }
 
     private void BeginTutorialFlow()
@@ -247,12 +257,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
 
-        // Refresh hole SEBELUM show
-        RefreshOverlayHole();
-
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, true);
-        SetActive(fingerTapIcon, false);
+        SetActive(startPanel, false);
 
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
@@ -264,7 +269,8 @@ public class PowerUpTutorialManager : MonoBehaviour
         currentStep = TutorialStep.WaitingForPowerUpTap;
         SetPowerUpButtonInteractable(true);
 
-        Debug.Log("[PowerUpTutorialManager] ✅ Tutorial siap — WaitingForPowerUpTap.");
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] ✅ Tutorial siap — WaitingForPowerUpTap.");
     }
 
     private void OnPowerUpTapped()
@@ -275,11 +281,8 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (currentStep == TutorialStep.Success || currentStep == TutorialStep.Fail)
             return;
 
-        StopFingerTap();
-        SetActive(fingerTapIcon, false);
-
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
+        fingerTap?.Hide();
+        overlay?.HideAll();
 
         DisableRaycastOnTutorialUI();
 
@@ -290,7 +293,8 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         currentStep = TutorialStep.WaitingOutcome;
 
-        Debug.Log($"[PowerUpTutorialManager] ✅ Power-up tapped. gesture.enabled={gestureDrawer?.enabled}");
+        if (debugLog)
+            Debug.Log($"[PowerUpTutorialManager] ✅ Power-up tapped. gesture.enabled={gestureDrawer?.enabled}");
     }
 
     private void ShowEnemyHint()
@@ -343,15 +347,16 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         SetPowerUpButtonInteractable(true);
 
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
 
         IsPowerUpTutorial = false;
         TutorialManager.IsTrainingMode = false;
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
-        Debug.Log("[PowerUpTutorialManager] ✅ Tutorial sukses → gameplay.");
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] ✅ Tutorial sukses.");
+
         StartGameNormally();
     }
 
@@ -364,11 +369,12 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
 
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
 
-        Debug.LogWarning("[PowerUpTutorialManager] ❌ Tutorial gagal.");
+        if (debugLog)
+            Debug.LogWarning("[PowerUpTutorialManager] ❌ Tutorial gagal.");
+
         SetActive(startPanel, true);
     }
     #endregion
@@ -379,7 +385,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (powerUpButton != null)
         {
             powerUpButton.onClick.AddListener(OnPowerUpTapped);
-            Debug.Log("[PowerUpTutorialManager] ✅ Listener di-attach.");
+            if (debugLog) Debug.Log("[PowerUpTutorialManager] ✅ Listener di-attach.");
         }
         else
         {
@@ -398,9 +404,8 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetGestureEnabled(true);
         SetPowerUpButtonInteractable(true);
 
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
         SetActive(startPanel, false);
 
         StartGameNormally();
@@ -408,9 +413,8 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private void OnUlangClicked()
     {
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
         SetActive(startPanel, false);
 
         PowerManager.ResetAllPowerUpsToFullGlobal();
@@ -422,7 +426,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void SetGestureEnabled(bool enabled)
     {
         if (gestureDrawer == null) return;
-        if (gestureDrawer.gameObject == null) return;
 
         if (!enabled)
             gestureDrawer.ResetGestureInput();
@@ -519,41 +522,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     }
     #endregion
 
-    #region Finger Tap Animation
-    private void StartFingerTap()
-    {
-        if (fingerTapIcon == null) return;
-
-        // Re-capture base pos setiap kali di-start (penting di mobile)
-        RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
-        if (fingerRect != null)
-            fingerBasePos = fingerRect.anchoredPosition;
-
-        StopCoroutineSafe(ref fingerTapRoutine);
-        fingerTapRoutine = StartCoroutine(FingerTapRoutine());
-    }
-
-    private void StopFingerTap()
-    {
-        StopCoroutineSafe(ref fingerTapRoutine);
-    }
-
-    private IEnumerator FingerTapRoutine()
-    {
-        RectTransform fingerRect = fingerTapIcon.GetComponent<RectTransform>();
-        if (fingerRect == null) yield break;
-
-        while (true)
-        {
-            float sinValue = Mathf.Sin(Time.unscaledTime * fingerTapSpeed);
-            float offset = Mathf.Abs(sinValue) * fingerTapAmplitude;
-            fingerRect.anchoredPosition = fingerBasePos - new Vector2(0f, offset);
-            yield return null;
-        }
-    }
-    #endregion
-
-    #region Overlay / Intro
+    #region Intro / Reveal
     private IEnumerator WaitForIntroThenStart()
     {
         if (CameraIntroManager.Instance != null)
@@ -575,184 +544,29 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private IEnumerator RevealHoleRoutine()
     {
-        // Tunggu layout settle dulu — penting di mobile!
         yield return null;
         yield return new WaitForEndOfFrame();
 
-        // Refresh hole dengan posisi button terkini
-        RefreshOverlayHole();
+        overlay?.ShowCover();
 
-        // Optional delay sebelum fade cover
         if (coverDuration > 0f)
             yield return new WaitForSecondsRealtime(coverDuration);
 
-        // Fade out cover
-        if (overlayCover != null)
+        if (overlay != null)
+            yield return StartCoroutine(overlay.FadeOutCoverRoutine());
+
+        if (overlay != null && powerUpButton != null)
         {
-            CanvasGroup cg = overlayCover.GetComponent<CanvasGroup>();
-            if (cg == null) cg = overlayCover.AddComponent<CanvasGroup>();
-            cg.alpha = 1f;
-
-            float t = 0f;
-            while (t < coverFadeOutDuration)
-            {
-                t += Time.unscaledDeltaTime;
-                cg.alpha = 1f - Mathf.Clamp01(t / coverFadeOutDuration);
-                yield return null;
-            }
-
-            cg.alpha = 0f;
+            RectTransform btnRect = powerUpButton.GetComponent<RectTransform>();
+            overlay.ShowOverlay(btnRect);
         }
 
-        SetActive(overlayCover, false);
-        SetActive(overlayPanel, true);
+        // Pastikan raycast di UI tutorial tetap mati saat overlay tampil
+        DisableRaycastOnTutorialUI();
 
-        SetActive(fingerTapIcon, true);
-        StartFingerTap();
+        fingerTap?.Show();
 
         revealRoutine = null;
-    }
-    #endregion
-
-    #region Overlay Generation
-    private void GenerateOverlay()
-    {
-        if (powerUpButton == null) return;
-
-        Canvas canvas = FindCanvasWithName("Canvas_Tutorial");
-        if (canvas == null) return;
-
-        GameObject panelRoot = CreateEmptyRect("OverlayPanel", canvas.transform);
-        blackTop    = CreateBlackImage("Black_Top", panelRoot.transform);
-        blackBottom = CreateBlackImage("Black_Bottom", panelRoot.transform);
-        blackLeft   = CreateBlackImage("Black_Left", panelRoot.transform);
-        blackRight  = CreateBlackImage("Black_Right", panelRoot.transform);
-        GameObject cover = CreateBlackImage("Black_Cover", panelRoot.transform);
-
-        SetupCoverFullScreen(cover.GetComponent<RectTransform>());
-
-        overlayPanel = panelRoot;
-        overlayCover = cover;
-
-        panelRoot.SetActive(false);
-        cover.SetActive(false);
-    }
-
-    /// <summary>
-    /// Hitung ulang posisi 4 panel overlay berdasarkan posisi button saat ini.
-    /// Dipanggil setiap kali overlay mau ditampilkan / resolusi berubah.
-    /// </summary>
-    private void RefreshOverlayHole()
-    {
-        if (overlayPanel == null || powerUpButton == null) return;
-        if (blackTop == null || blackBottom == null ||
-            blackLeft == null || blackRight == null) return;
-
-        RectTransform panelRect = overlayPanel.GetComponent<RectTransform>();
-        RectTransform buttonRect = powerUpButton.GetComponent<RectTransform>();
-
-        // Pastikan layout sudah settle
-        Canvas.ForceUpdateCanvases();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(panelRect);
-
-        CalculateHoleBounds(panelRect, buttonRect,
-            out float holeLeft, out float holeRight,
-            out float holeTop, out float holeBottom);
-
-        float canvasW = panelRect.rect.width;
-        float canvasH = panelRect.rect.height;
-        float cLeft = -canvasW * 0.5f, cRight = canvasW * 0.5f;
-        float cBottom = -canvasH * 0.5f, cTop = canvasH * 0.5f;
-
-        SetupStretchHorizontal(blackBottom.GetComponent<RectTransform>(), 0f, 0f, holeBottom - cBottom);
-        SetupStretchHorizontal(blackTop.GetComponent<RectTransform>(), 1f, 1f, cTop - holeTop);
-        SetupSidePanel(blackLeft.GetComponent<RectTransform>(), 0f, 0f, holeLeft - cLeft, holeTop, holeBottom);
-        SetupSidePanel(blackRight.GetComponent<RectTransform>(), 1f, 1f, cRight - holeRight, holeTop, holeBottom);
-
-        if (debugLog)
-        {
-            Debug.Log($"[PowerUpTutorialManager] RefreshOverlayHole: " +
-                      $"hole L={holeLeft:F1} R={holeRight:F1} " +
-                      $"T={holeTop:F1} B={holeBottom:F1}");
-        }
-    }
-
-    private void CalculateHoleBounds(
-        RectTransform panelRect, RectTransform buttonRect,
-        out float holeLeft, out float holeRight,
-        out float holeTop, out float holeBottom)
-    {
-        Vector3[] corners = new Vector3[4];
-        buttonRect.GetWorldCorners(corners);
-
-        Vector2 bl = WorldToLocal(panelRect, corners[0]);
-        Vector2 tr = WorldToLocal(panelRect, corners[2]);
-
-        holeLeft = bl.x - overlayPadding;
-        holeRight = tr.x + overlayPadding;
-        holeBottom = bl.y - overlayPadding;
-        holeTop = tr.y + overlayPadding;
-    }
-
-    private static void SetupCoverFullScreen(RectTransform rt)
-    {
-        if (rt == null) return;
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
-    }
-
-    private static void SetupStretchHorizontal(RectTransform rt, float anchorY, float pivotY, float height)
-    {
-        if (rt == null) return;
-        rt.anchorMin = new Vector2(0f, anchorY);
-        rt.anchorMax = new Vector2(1f, anchorY);
-        rt.pivot = new Vector2(0.5f, pivotY);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
-        rt.sizeDelta = new Vector2(0f, height);
-        rt.anchoredPosition = Vector2.zero;
-    }
-
-    private static void SetupSidePanel(RectTransform rt, float anchorX, float pivotX,
-        float width, float top, float bottom)
-    {
-        if (rt == null) return;
-        float centerY = (top + bottom) * 0.5f;
-        rt.anchorMin = new Vector2(anchorX, 0.5f);
-        rt.anchorMax = new Vector2(anchorX, 0.5f);
-        rt.pivot = new Vector2(pivotX, 0.5f);
-        rt.sizeDelta = new Vector2(width, top - bottom);
-        rt.anchoredPosition = new Vector2(0f, centerY);
-    }
-
-    private static GameObject CreateEmptyRect(string name, Transform parent)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-
-        RectTransform rt = go.GetComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
-
-        return go;
-    }
-
-    private GameObject CreateBlackImage(string name, Transform parent)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(Image));
-        go.transform.SetParent(parent, false);
-
-        Image img = go.GetComponent<Image>();
-        img.color = overlayColor;
-        img.raycastTarget = false;
-
-        return go;
     }
     #endregion
 
@@ -770,62 +584,50 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void StartGameNormally()
     {
         GameProgressManager.MarkTutorialCompleted();
+
+        if (isBossLevelTutorial && bossSpawner != null)
+        {
+            if (debugLog)
+                Debug.Log("[PowerUpTutorialManager] Tutorial selesai → spawn boss.");
+
+            bossSpawner.SpawnBoss();
+            return;
+        }
+
         ResumeWaveSpawner(startSequenceIfIdle: true);
 
-        Debug.Log("[PowerUpTutorialManager] Gameplay normal dimulai.");
+        if (debugLog)
+            Debug.Log("[PowerUpTutorialManager] Gameplay normal dimulai.");
     }
     #endregion
 
     #region UI Helpers
     private void HideAllInitially()
     {
-        SetActive(overlayPanel, false);
-        SetActive(overlayCover, false);
-        SetActive(fingerTapIcon, false);
+        overlay?.HideAll();
+        fingerTap?.Hide();
         SetActive(startPanel, false);
         hintManager?.HideAll();
     }
 
+    /// <summary>
+    /// Matikan raycastTarget di seluruh UI tutorial (overlay, fingerTap, hintManager)
+    /// supaya tap tembus ke Button power-up di bawahnya.
+    /// Pakai Graphic (bukan cuma Image) supaya Text / RawImage juga kena.
+    /// </summary>
     private void DisableRaycastOnTutorialUI()
     {
-        DisableRaycast(overlayPanel);
-        DisableRaycast(fingerTapIcon);
-        DisableRaycast(overlayCover);
-
-        if (hintManager != null)
-            DisableRaycast(hintManager.gameObject);
+        DisableRaycast(overlay != null ? overlay.gameObject : null);
+        DisableRaycast(fingerTap != null ? fingerTap.gameObject : null);
+        DisableRaycast(hintManager != null ? hintManager.gameObject : null);
     }
 
     private static void DisableRaycast(GameObject go)
     {
         if (go == null) return;
 
-        foreach (var img in go.GetComponentsInChildren<Image>(true))
-            if (img != null) img.raycastTarget = false;
-    }
-
-    private static Canvas FindCanvasWithName(string name)
-    {
-        foreach (var c in FindObjectsByType<Canvas>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            if (c != null && c.gameObject.name == name) return c;
-
-        return null;
-    }
-
-    private static Camera GetCanvasCamera(Canvas canvas)
-    {
-        if (canvas == null) return null;
-        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay) return null;
-        return canvas.worldCamera;
-    }
-
-    private Vector2 WorldToLocal(RectTransform parent, Vector3 world)
-    {
-        Canvas canvas = parent.GetComponentInParent<Canvas>();
-        Camera cam = GetCanvasCamera(canvas);
-        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, world);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(parent, screenPoint, cam, out Vector2 local);
-        return local;
+        foreach (var g in go.GetComponentsInChildren<Graphic>(true))
+            if (g != null) g.raycastTarget = false;
     }
     #endregion
 

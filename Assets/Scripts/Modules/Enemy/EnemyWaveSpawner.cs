@@ -29,6 +29,10 @@ public class EnemyWaveDefinition
 
 public class EnemyWaveSpawner : MonoBehaviour
 {
+    // === GUARD: boss hanya boleh di-spawn sekali per sesi scene ===
+    public static bool IsBossSpawned { get; private set; }
+    public static void ResetBossSpawned() { IsBossSpawned = false; }
+
     [SerializeField] private EnemyGestureCommand enemyPrefab;
     [SerializeField] private BossEnemy bossPrefab;
     [SerializeField] private bool spawnBossOnStart = false;
@@ -96,6 +100,12 @@ public class EnemyWaveSpawner : MonoBehaviour
     public int CurrentWaveIndex =>
         currentWaveIndex;
 
+    private void Awake()
+    {
+        // Reset guard tiap scene baru — supaya boss bisa spawn lagi setelah reload.
+        IsBossSpawned = false;
+    }
+
     private void OnValidate()
     {
         if (maxSpawnDistance < minSpawnDistance)
@@ -104,10 +114,8 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private void Start()
     {
-        // === TUTORIAL GATE ===
+        // === TUTORIAL GATE (wave) ===
         // Kalau tutorial belum selesai, jangan spawn wave utama.
-        // Tutorial (PowerUpTutorialManager) yang nanti memanggil StartWaveSequence()
-        // setelah player berhasil menyelesaikan tutorial.
         if (waitForTutorialBeforeStart && !GameProgressManager.IsTutorialCompleted())
         {
             Debug.Log("[EnemyWaveSpawner] Menunggu tutorial selesai — wave sequence di-skip.");
@@ -122,8 +130,18 @@ public class EnemyWaveSpawner : MonoBehaviour
             return;
         }
 
+        // === BOSS SPAWN ===
+        // Kalau ada BossLevelPowerUpTutorial di scene, JANGAN spawn boss di sini.
+        // Biar tutorial yang panggil SpawnBoss() setelah player sukses.
         if (bossOnlyMode && spawnBossOnStart)
         {
+            var bossTutorial = FindFirstObjectByType<BossLevelPowerUpTutorial>();
+            if (bossTutorial != null && bossTutorial.enabled)
+            {
+                Debug.Log("[EnemyWaveSpawner] BossLevelPowerUpTutorial ada → boss akan di-spawn oleh tutorial, bukan di Start().");
+                return;
+            }
+
             SpawnBoss();
             return;
         }
@@ -158,12 +176,20 @@ public class EnemyWaveSpawner : MonoBehaviour
         if (spawnOnStart)
             StartWaveSequence();
 
-        if (spawnBossOnStart)
+        // Boss spawn di non-bossOnlyMode (misal boss muncul setelah wave selesai).
+        if (spawnBossOnStart && !bossOnlyMode)
             SpawnBoss();
     }
 
     public void SpawnBoss()
     {
+        // === GUARD: hindari double spawn ===
+        if (IsBossSpawned)
+        {
+            Debug.LogWarning("[EnemyWaveSpawner] Boss sudah pernah di-spawn — skip.");
+            return;
+        }
+
         if (bossPrefab == null)
         {
             Debug.LogWarning("EnemyWaveSpawner: bossPrefab belum di-assign.");
@@ -175,6 +201,8 @@ public class EnemyWaveSpawner : MonoBehaviour
             Debug.LogWarning("EnemyWaveSpawner: bossSpawnPoint belum di-assign.");
             return;
         }
+
+        IsBossSpawned = true;
 
         Vector3 spawnPosition = bossSpawnPoint.position;
         Transform parent = spawnedParent != null ? spawnedParent : transform;
@@ -207,9 +235,7 @@ public class EnemyWaveSpawner : MonoBehaviour
 
     private IEnumerator FailSafeGameStarted()
     {
-        // Hitung estimasi durasi intro terpanjang (skenario fresh start dengan panning) secara dinamis
-        // dari CameraIntroManager.Instance, supaya tidak salah tembak kalau nilai jeda diubah di Inspector.
-        float estimatedIntroDuration = 12f; // fallback kalau CameraIntroManager tidak ditemukan
+        float estimatedIntroDuration = 12f;
 
         if (CameraIntroManager.Instance != null)
         {

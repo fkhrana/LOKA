@@ -1,0 +1,102 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &349227248009069644
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6907855227982796161}
+  - component: {fileID: 4505328295595917838}
+  - component: {fileID: 6764545407631767893}
+  m_Layer: 0
+  m_Name: TutorialManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6907855227982796161
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349227248009069644}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1059.9524, y: 686.0106, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4505328295595917838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349227248009069644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9447956c48c68945990d6039423aa2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  autoGenerateOverlay: 1
+  overlayPadding: 60
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.86}
+  coverDuration: 1.2
+  coverFadeOutDuration: 0.4
+  fingerTapIcon: {fileID: 0}
+  fingerTapAmplitude: 25
+  fingerTapSpeed: 4
+  powerUpButton: {fileID: 0}
+  powerUpType: 1
+  requiresAksaraPath: 1
+  gestureDrawer: {fileID: 0}
+  hintManager: {fileID: 0}
+  tutorialSpawner: {fileID: 6764545407631767893}
+  tutorialAksara: {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
+  tutorialEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
+  tutorialEnemyCount: 3
+  enemyNormalSpeed: 1
+  spawnNearCameraTarget: 1
+  manualSpawnCenter: {x: 0, y: 0, z: 0}
+  spawnRadius: 1.5
+  blinkInterval: 0.25
+  startPanel: {fileID: 0}
+  yaButton: {fileID: 0}
+  ulangButton: {fileID: 0}
+  waitForCameraIntro: 1
+  maxWaitForIntro: 30
+  fallbackIntroDelay: 10
+  resetTutorialOnPlay: 1
+  autoUncheckReset: 0
+  debugLog: 1
+--- !u!114 &6764545407631767893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349227248009069644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50ee8019843cd4b48a6324cb7c9f2c00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  enemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
+  enemyParent: {fileID: 0}
+  spawnPoints: []
+  useSpawnArea: 1
+  spawnAreaCenter: {x: 12.5, y: -1.4}
+  spawnAreaSize: {x: 4, y: 4}
+  tutorialTag: TutorialEnemy
+  tutorialLayer: TutorialEnemy
+  crashDetectionRadius: 2
+  crashDamageWindow: 0.5
+  debugSpawn: 0
+  debugDeathTrack: 1
