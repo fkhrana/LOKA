@@ -13,6 +13,10 @@ public class AksaraCarouselItemUI : MonoBehaviour
     [SerializeField] private Button soundButton;
     [SerializeField] private AksaraSoundLibrary soundLibrary;
 
+    [Tooltip("Multiplier volume, sama seperti aksaraSFXVolume di BossEnemy. " +
+             "Formula: multiplier × library volume × 8, clamp 0..10.")]
+    [SerializeField, Range(0f, 2f)] private float aksaraSFXVolume = 1.5f;
+
     [Header("Colors")]
     [SerializeField] private Color collectedTint = Color.white;
     [SerializeField] private Color lockedTint = new Color(0.55f, 0.55f, 0.55f, 1f);
@@ -34,7 +38,6 @@ public class AksaraCarouselItemUI : MonoBehaviour
         if (soundButton) soundButton.onClick.AddListener(PlayLetterSound);
     }
 
-    // Setup data, sprite, tint, lock state.
     public void Setup(AksaraData newData, AksaraCarouselUI parent, bool collected)
     {
         data = newData;
@@ -58,13 +61,11 @@ public class AksaraCarouselItemUI : MonoBehaviour
         if (soundButton) soundButton.interactable = isCollected;
     }
 
-    // Set scale dari carousel (kecuali sedang bounce).
     public void SetScale(float scale)
     {
         if (!isAnimating) transform.localScale = Vector3.one * scale;
     }
 
-    // Efek bounce saat card di-select.
     public void PlayBounceEffect()
     {
         if (!isCollected || data == null) return;
@@ -84,22 +85,25 @@ public class AksaraCarouselItemUI : MonoBehaviour
             });
     }
 
-    // Forward klik ke carousel.
     private void OnClick()
     {
         if (!isCollected || data == null || carousel == null) return;
         carousel.OnItemSelected(this);
     }
 
-    // Putar suara aksara via sound button.
     private void PlayLetterSound()
     {
         if (!isCollected || data == null || soundLibrary == null) return;
+        if (AudioManager.Instance == null) return;
 
         AudioClip clip = soundLibrary.GetClip(data.GestureShape);
         if (clip == null) return;
 
         float volume = soundLibrary.GetVolume(data.GestureShape);
-        AudioManager.Instance?.PlayAksaraVoice(clip, volume);
+
+        AudioManager.Instance.PlayLoudSFX(
+            clip,
+            Mathf.Clamp(aksaraSFXVolume * volume * 8f, 0f, 10f)
+        );
     }
 }
