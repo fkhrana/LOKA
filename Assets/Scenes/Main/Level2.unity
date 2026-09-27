@@ -6630,7 +6630,9 @@ RectTransform:
   - {fileID: 3534891}
   - {fileID: 837181444}
   - {fileID: 1415337699}
+  - {fileID: 1955341360}
   - {fileID: 6231063146745090166}
+  - {fileID: 3003969769068158941}
   - {fileID: 2145473334}
   - {fileID: 6878849773203121312}
   m_Father: {fileID: 0}
@@ -7498,6 +7500,81 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0.3555}
   m_SizeDelta: {x: -44, y: -6.3976}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1955341359
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1955341360}
+  - component: {fileID: 1955341362}
+  - component: {fileID: 1955341361}
+  m_Layer: 5
+  m_Name: Overlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &1955341360
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955341359}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1648195322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1955341361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955341359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.1, g: 0.1, b: 0.1, a: 0.8627451}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1955341362
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955341359}
+  m_CullTransparentMesh: 1
 --- !u!1 &2010483946
 GameObject:
   m_ObjectHideFlags: 0
@@ -8674,12 +8751,12 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2474263564378234205}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8313654584285270085}
+  m_Father: {fileID: 1648195322}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -8717,7 +8794,6 @@ GameObject:
   - component: {fileID: 7739922811147972983}
   - component: {fileID: 6593525193651213919}
   - component: {fileID: 8770019900425224057}
-  - component: {fileID: 8770019900425224059}
   - component: {fileID: 8770019900425224058}
   m_Layer: 0
   m_Name: TutorialManager
@@ -9083,12 +9159,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9447956c48c68945990d6039423aa2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  overlay: {fileID: 8770019900425224059}
+  overlay: {fileID: 1955341359}
   fingerTap: {fileID: 8770019900425224058}
-  coverDuration: 1.2
+  fingerAppearDelay: 0.3
+  waitUntilEnemiesApproach: 1
+  approachTravelDistance: 3
+  maxWaitForEnemiesApproach: 15
   powerUpButton: {fileID: 1585055609}
   powerUpType: 0
   requiresAksaraPath: 1
+  buttonNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  buttonPressedColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
+  buttonPressedFeedbackDuration: 0.15
   gestureDrawer: {fileID: 256010449}
   hintManager: {fileID: 7073814389241332907}
   tutorialSpawner: {fileID: 8770019900425224057}
@@ -9106,8 +9188,6 @@ MonoBehaviour:
   waitForCameraIntro: 1
   maxWaitForIntro: 30
   fallbackIntroDelay: 10
-  isBossLevelTutorial: 0
-  bossSpawner: {fileID: 0}
   resetTutorialOnPlay: 1
   autoUncheckReset: 0
   debugLog: 1
@@ -9268,7 +9348,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1610720075676530155}
-  - {fileID: 3003969769068158941}
   - {fileID: 14644012994516088}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9346,23 +9425,8 @@ MonoBehaviour:
   fingerIcon: {fileID: 2474263564378234205}
   amplitude: 25
   speed: 4
---- !u!114 &8770019900425224059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3481793009588038039}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fee417605317bbf49bb61c66877f95d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TutorialOverlay
-  targetCanvas: {fileID: 0}
-  canvasName: Canvas_Tutorial
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.86}
-  padding: 60
-  coverFadeOutDuration: 0.4
+  appearDuration: 0.25
+  appearStartScale: 0.5
 --- !u!114 &8909016320055874110
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,16 +13,18 @@ public class AutoResetProgress : MonoBehaviour
     [Header("Aksara Collection")]
     [SerializeField] private AksaraCarouselUI aksaraCarouselUI;
 
+    [Header("Level Count")]
+    [Tooltip("Total level termasuk boss. Dipakai untuk reset progress.")]
+    [SerializeField, Min(1)] private int totalLevels = 4;
+
 #if UNITY_EDITOR
     private bool resetThisPlaySession = false;
 
     private void OnEnable() => EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
     private void OnDisable() => EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
 
-    // Handle event saat Play Mode berubah.
     private void OnPlayModeStateChanged(PlayModeStateChange state)
     {
-        // Saat mulai Play.
         if (state == PlayModeStateChange.EnteredPlayMode)
         {
             resetThisPlaySession = resetOnStop;
@@ -34,7 +36,6 @@ public class AutoResetProgress : MonoBehaviour
             }
         }
 
-        // Saat klik Stop.
         if (state == PlayModeStateChange.EnteredEditMode)
         {
             if (resetThisPlaySession)
@@ -52,13 +53,13 @@ public class AutoResetProgress : MonoBehaviour
         // Reset dikontrol oleh Play Mode.
     }
 
-    // Hapus semua data progress + koleksi.
     private void ResetGameData()
     {
         if (aksaraCarouselUI != null)
             PermanentCollectionManager.ResetAksara(aksaraCarouselUI.AllAksaraData.ToArray());
 
-        for (int i = 0; i < 3; i++)
+        // FIX: pakai totalLevels — include index boss
+        for (int i = 0; i < totalLevels; i++)
         {
             PlayerPrefs.DeleteKey("LevelUnlocked_" + i);
             PlayerPrefs.DeleteKey("LevelCompleted_" + i);
@@ -67,11 +68,19 @@ public class AutoResetProgress : MonoBehaviour
         foreach (string shape in Enum.GetNames(typeof(GestureShape)))
             PlayerPrefs.DeleteKey("PermanentCollected_" + shape);
 
-        for (int i = 0; i <= 3; i++)
+        for (int i = 0; i <= totalLevels; i++)
             PlayerPrefs.DeleteKey("LevelCollectedAksara_L" + i);
 
-        // Review final book / level summary data.
-        for (int i = 1; i <= 3; i++)
+        // Tutorial per-level
+        for (int i = 0; i < totalLevels; i++)
+            PlayerPrefs.DeleteKey("TutorialPowerUpDone_L" + i);
+
+        // Boss tutorial
+        for (int i = 0; i < totalLevels; i++)
+            PlayerPrefs.DeleteKey("BossTutorialDone_L" + i);
+
+        // Review final book / level summary data
+        for (int i = 1; i <= totalLevels; i++)
         {
             PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i);
             PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i + "_Name");
@@ -80,14 +89,18 @@ public class AutoResetProgress : MonoBehaviour
         }
 
         PlayerPrefs.DeleteKey("CurrentLevelIndex");
+        PlayerPrefs.DeleteKey("CutsceneCompleted");
+        PlayerPrefs.DeleteKey("LastSceneName");
 
         GameProgressManager.ResetProgress();
         CameraIntroManager.ResetIntroFlag();
 
         PlayerPrefs.Save();
+
+        Debug.Log("[AutoResetProgress] ✅ Reset selesai. " +
+                  $"totalLevels={totalLevels}, bossIndex={totalLevels - 1}.");
     }
 
-    // Reset manual dari tombol / context menu.
     public void ResetAgain()
     {
         ResetGameData();

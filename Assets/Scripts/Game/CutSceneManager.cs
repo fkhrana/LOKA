@@ -18,7 +18,7 @@ public class CutsceneManager : MonoBehaviour
     [SerializeField] private VideoPlayer videoPlayer;
 
     [Header("Next Scene")]
-    [SerializeField] private string nextSceneName = "MainGameplay(Drawing)";
+    [SerializeField] private string nextSceneName = "MainMenu";
 
     [Header("Skip")]
     [SerializeField] private GameObject skipButton;
@@ -54,9 +54,7 @@ public class CutsceneManager : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        GameProgressManager.SaveLastScene(
-            SceneManager.GetActiveScene().name
-        );
+        GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
 
         transitionManager = TransitionManager.Instance();
 
@@ -69,7 +67,6 @@ public class CutsceneManager : MonoBehaviour
         Debug.LogError($"[CutsceneManager] VideoPlayer error: {message}");
     }
 
-    // Callback saat video selesai.
     private void OnVideoFinished(VideoPlayer vp)
     {
         if (isLoadingNextScene)
@@ -78,7 +75,6 @@ public class CutsceneManager : MonoBehaviour
         LoadNextScene();
     }
 
-    // Tombol skip cutscene.
     public void SkipCutscene()
     {
         if (isLoadingNextScene)
@@ -87,7 +83,6 @@ public class CutsceneManager : MonoBehaviour
         LoadNextScene();
     }
 
-    // Stop video dan load scene berikutnya.
     private void LoadNextScene()
     {
         if (isLoadingNextScene)
@@ -101,9 +96,10 @@ public class CutsceneManager : MonoBehaviour
         if (skipButton != null)
             skipButton.SetActive(false);
 
-        Debug.Log(
-            $"[CutsceneManager] {cutsceneType} selesai → load '{nextSceneName}'."
-        );
+        GameProgressManager.SetCutsceneCompleted();
+        LevelManager.Instance?.UnlockFirstLevel();
+
+        Debug.Log($"[CutsceneManager] {cutsceneType} selesai → load '{nextSceneName}'.");
 
         TransitionManager tm = transitionManager;
 
@@ -112,11 +108,7 @@ public class CutsceneManager : MonoBehaviour
 
         if (tm != null && transitionSettings != null)
         {
-            tm.Transition(
-                nextSceneName,
-                transitionSettings,
-                loadDelay
-            );
+            tm.Transition(nextSceneName, transitionSettings, loadDelay);
         }
         else
         {
@@ -124,25 +116,17 @@ public class CutsceneManager : MonoBehaviour
         }
     }
 
-    // Pause video.
     public void PauseVideo()
     {
-        if (videoPlayer == null)
-            return;
-
-        if (videoPlayer.isPlaying)
-            videoPlayer.Pause();
+        if (videoPlayer == null) return;
+        if (videoPlayer.isPlaying) videoPlayer.Pause();
     }
 
-    // Resume video.
     public void ResumeVideo()
     {
-        if (videoPlayer == null)
-            return;
+        if (videoPlayer == null) return;
 
-        if (videoPlayer.isPrepared &&
-            !videoPlayer.isPlaying &&
-            !isLoadingNextScene)
+        if (videoPlayer.isPrepared && !videoPlayer.isPlaying && !isLoadingNextScene)
         {
             videoPlayer.Play();
         }

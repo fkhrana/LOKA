@@ -2,23 +2,34 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Komponen reusable untuk animasi jari naik-turun.
-/// Semua Graphic di dalam fingerIcon di-set raycastTarget=false supaya
-/// tidak memblokir tap ke Button di bawahnya.
-/// </summary>
 public class TutorialFingerTap : MonoBehaviour
 {
+    [Header("Icon")]
     [SerializeField] private GameObject fingerIcon;
+
+    [Header("Idle Animation")]
     [SerializeField, Min(0f)] private float amplitude = 25f;
     [SerializeField, Min(0f)] private float speed = 4f;
 
+    [Header("Appear Animation")]
+    [Tooltip("Durasi animasi fade + scale saat finger muncul (detik). " +
+             "0 = muncul instan tanpa animasi.")]
+    [SerializeField, Min(0f)] private float appearDuration = 0.25f;
+
+    [Tooltip("Scale awal saat finger mulai muncul (0 = mengecil dari 0).")]
+    [SerializeField, Range(0f, 1f)] private float appearStartScale = 0.5f;
+
     private Coroutine routine;
+    private Coroutine appearRoutine;
+    private CanvasGroup canvasGroup;
     private Vector2 basePos;
+    private bool basePosCached;
 
     private void Awake()
     {
         DisableRaycastOnIcon();
+        EnsureCanvasGroup();
+        CacheBasePosition();
     }
 
     public void Show()
@@ -26,21 +37,86 @@ public class TutorialFingerTap : MonoBehaviour
         if (fingerIcon == null) return;
 
         DisableRaycastOnIcon();
+        EnsureCanvasGroup();
+        CacheBasePosition();
 
         RectTransform rt = fingerIcon.GetComponent<RectTransform>();
-        if (rt != null) basePos = rt.anchoredPosition;
+        if (rt != null) rt.anchoredPosition = basePos;
 
         fingerIcon.SetActive(true);
+
         Stop();
-        routine = StartCoroutine(RunRoutine());
+        StopAppear();
+
+        if (appearDuration > 0f)
+            appearRoutine = StartCoroutine(AppearRoutine());
+        else
+        {
+            if (canvasGroup != null) canvasGroup.alpha = 1f;
+            if (rt != null) rt.localScale = Vector3.one;
+            routine = StartCoroutine(RunRoutine());
+        }
     }
 
     public void Hide()
     {
         Stop();
+        StopAppear();
 
         if (fingerIcon != null)
             fingerIcon.SetActive(false);
+    }
+
+    private IEnumerator AppearRoutine()
+    {
+        RectTransform rt = fingerIcon.GetComponent<RectTransform>();
+        if (rt == null) yield break;
+
+        float t = 0f;
+        while (t < appearDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(t / appearDuration);
+
+            if (canvasGroup != null)
+                canvasGroup.alpha = p;
+
+            float scale = Mathf.Lerp(appearStartScale, 1f, p);
+            rt.localScale = Vector3.one * scale;
+
+            yield return null;
+        }
+
+        if (canvasGroup != null) canvasGroup.alpha = 1f;
+        rt.localScale = Vector3.one;
+
+        appearRoutine = null;
+        routine = StartCoroutine(RunRoutine());
+    }
+
+    private void EnsureCanvasGroup()
+    {
+        if (fingerIcon == null) return;
+        if (canvasGroup != null) return;
+
+        canvasGroup = fingerIcon.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = fingerIcon.AddComponent<CanvasGroup>();
+
+        canvasGroup.blocksRaycasts = false;
+        canvasGroup.interactable = false;
+    }
+
+    private void CacheBasePosition()
+    {
+        if (basePosCached) return;
+        if (fingerIcon == null) return;
+
+        RectTransform rt = fingerIcon.GetComponent<RectTransform>();
+        if (rt == null) return;
+
+        basePos = rt.anchoredPosition;
+        basePosCached = true;
     }
 
     private void Stop()
@@ -52,10 +128,15 @@ public class TutorialFingerTap : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Matikan raycastTarget di semua Graphic (Image, RawImage, Text, dll)
-    /// di dalam fingerIcon, supaya tap tembus ke Button di bawahnya.
-    /// </summary>
+    private void StopAppear()
+    {
+        if (appearRoutine != null)
+        {
+            StopCoroutine(appearRoutine);
+            appearRoutine = null;
+        }
+    }
+
     private void DisableRaycastOnIcon()
     {
         if (fingerIcon == null) return;

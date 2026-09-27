@@ -8,6 +8,7 @@ public static class GameProgressManager
     private const string KEY_LAST_SCENE = "LastSceneName";
     private const string KEY_CUTSCENE_COMPLETED = "CutsceneCompleted";
     private const string KEY_CURRENT_LEVEL_INDEX = "CurrentLevelIndex";
+    private const string KEY_TUTORIAL_POWERUP_DONE_LEGACY = "TutorialPowerUpDone";
 
     private const string PREFIX_GAME_STATE = "GameState_L";
     private const string PREFIX_PUZZLE_INDEX = "LastPuzzleIndex_L";
@@ -18,15 +19,29 @@ public static class GameProgressManager
     private const string PREFIX_POS_Z = "SavedPos_Z_L";
     private const string PREFIX_HAS_POS = "HasPlayerPos_L";
     private const string PREFIX_HAS_ENTERED = "HasEnteredGameplay_L";
-    private const string KEY_TUTORIAL_POWERUP_DONE = "TutorialPowerUpDone";
+    private const string PREFIX_TUTORIAL_DONE = "TutorialPowerUpDone_L";
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void MigrateLegacyKeys()
     {
+        int currentLevel = PlayerPrefs.GetInt(KEY_CURRENT_LEVEL_INDEX, 0);
+
+        if (PlayerPrefs.HasKey(KEY_TUTORIAL_POWERUP_DONE_LEGACY))
+        {
+            int legacyDone = PlayerPrefs.GetInt(KEY_TUTORIAL_POWERUP_DONE_LEGACY, 0);
+
+            if (legacyDone == 1 &&
+                !PlayerPrefs.HasKey(PREFIX_TUTORIAL_DONE + currentLevel))
+            {
+                PlayerPrefs.SetInt(PREFIX_TUTORIAL_DONE + currentLevel, 1);
+            }
+
+            PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE_LEGACY);
+            PlayerPrefs.Save();
+        }
+
         if (!PlayerPrefs.HasKey("GameState") && !PlayerPrefs.HasKey("LastWaveIndex"))
             return;
-
-        int currentLevel = PlayerPrefs.GetInt(KEY_CURRENT_LEVEL_INDEX, 0);
 
         MigrateString("GameState", PREFIX_GAME_STATE + currentLevel);
         MigrateInt("LastPuzzleIndex", PREFIX_PUZZLE_INDEX + currentLevel);
@@ -38,7 +53,6 @@ public static class GameProgressManager
         MigrateInt("HasEnteredGameplay", PREFIX_HAS_ENTERED + currentLevel);
 
         PlayerPrefs.Save();
-        Debug.Log($"[GameProgressManager] Legacy keys migrated ke level {currentLevel}.");
     }
 
     private static void MigrateString(string oldKey, string newKey)
@@ -192,31 +206,42 @@ public static class GameProgressManager
     public static void ResetAllLevelProgress(int totalLevels)
     {
         for (int i = 0; i < totalLevels; i++)
+        {
             ClearGameState(i);
+            PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + i);
+        }
+        PlayerPrefs.Save();
     }
 
     public static void ResetProgress()
     {
         PlayerPrefs.DeleteKey(KEY_LAST_SCENE);
         PlayerPrefs.DeleteKey(KEY_CUTSCENE_COMPLETED);
-        PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE);
+        PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE_LEGACY);
         PlayerPrefs.Save();
-
-        Debug.Log("[GameProgressManager] Global progress di-reset.");
     }
 
-     public static bool IsTutorialCompleted() =>
-        PlayerPrefs.GetInt(KEY_TUTORIAL_POWERUP_DONE, 0) == 1;
+    public static bool IsTutorialCompleted() =>
+        PlayerPrefs.GetInt(PREFIX_TUTORIAL_DONE + ActiveLevel(), 0) == 1;
+
+    public static bool IsTutorialCompleted(int levelIndex) =>
+        PlayerPrefs.GetInt(PREFIX_TUTORIAL_DONE + levelIndex, 0) == 1;
 
     public static void MarkTutorialCompleted()
     {
-        PlayerPrefs.SetInt(KEY_TUTORIAL_POWERUP_DONE, 1);
+        PlayerPrefs.SetInt(PREFIX_TUTORIAL_DONE + ActiveLevel(), 1);
         PlayerPrefs.Save();
     }
 
     public static void ResetTutorial()
     {
-        PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE);
+        PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + ActiveLevel());
+        PlayerPrefs.Save();
+    }
+
+    public static void ResetTutorial(int levelIndex)
+    {
+        PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + levelIndex);
         PlayerPrefs.Save();
     }
 }

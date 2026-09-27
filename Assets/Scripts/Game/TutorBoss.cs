@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PowerUpTutorialManager : MonoBehaviour
+public class BossLevelPowerUpTutorial : MonoBehaviour
 {
     #region Static
-    public static bool IsPowerUpTutorial { get; private set; }
+    public static bool IsBossLevelTutorial { get; private set; }
     #endregion
 
     #region Tutorial State
@@ -30,28 +30,32 @@ public class PowerUpTutorialManager : MonoBehaviour
     [SerializeField] private TutorialFingerTap fingerTap;
 
     [Header("Timing")]
-    [Tooltip("Delay sebelum finger tap muncul setelah overlay on (detik).")]
     [SerializeField, Min(0f)] private float fingerAppearDelay = 0.3f;
 
     [Header("Wait For Enemies Approach")]
-    [Tooltip("Kalau true, overlay + finger muncul setelah musuh jalan mendekat dari targetKanan.")]
     [SerializeField] private bool waitUntilEnemiesApproach = true;
-
-    [Tooltip("Berapa unit musuh harus bergerak dari targetKanan sebelum overlay muncul.")]
     [SerializeField, Min(0.5f)] private float approachTravelDistance = 3f;
-
-    [Tooltip("Timeout safety — kalau musuh tidak kunjung mendekat, tutorial tetap lanjut.")]
     [SerializeField, Min(1f)] private float maxWaitForEnemiesApproach = 15f;
 
     [Header("Power Up")]
     [SerializeField] private Button powerUpButton;
-    [SerializeField] private PowerManager.PowerUpType powerUpType = PowerManager.PowerUpType.Freeze;
+    [Tooltip("Default Shield untuk boss level, tapi bisa diganti via Inspector.")]
+    [SerializeField] private PowerManager.PowerUpType powerUpType = PowerManager.PowerUpType.Shield;
     [SerializeField] private bool requiresAksaraPath = true;
 
     [Header("Feedback Visual Tombol")]
     [SerializeField] private Color buttonNormalColor = Color.white;
     [SerializeField] private Color buttonPressedColor = new Color(0.7f, 0.7f, 0.7f, 1f);
     [SerializeField, Min(0f)] private float buttonPressedFeedbackDuration = 0.15f;
+
+    [Header("Dodge UI")]
+    [SerializeField] private GameObject dodgeUI;
+    [SerializeField, Min(0f)] private float dodgeFadeInDuration = 0.25f;
+    [Tooltip("Minimum hold time (detik). Kalau Shield lebih lama, Dodge UI ikut lebih lama.")]
+    [SerializeField, Min(0f)] private float dodgeHoldDuration = 1.2f;
+    [SerializeField, Min(0f)] private float dodgeFadeOutDuration = 0.4f;
+    [SerializeField, Min(0f)] private float dodgePulseAmplitude = 0.15f;
+    [SerializeField, Min(0f)] private float dodgePulseSpeed = 4f;
 
     [Header("References")]
     [SerializeField] private GestureDrawer gestureDrawer;
@@ -80,6 +84,9 @@ public class PowerUpTutorialManager : MonoBehaviour
     [SerializeField, Min(1f)] private float maxWaitForIntro = 30f;
     [SerializeField, Min(0f)] private float fallbackIntroDelay = 10f;
 
+    [Header("Boss Spawn")]
+    [SerializeField] private EnemyWaveSpawner bossSpawner;
+
     [Header("Debug")]
     [SerializeField] private bool resetTutorialOnPlay = false;
     [SerializeField] private bool autoUncheckReset = true;
@@ -89,12 +96,13 @@ public class PowerUpTutorialManager : MonoBehaviour
     #region Runtime State
     private Coroutine blinkRoutine;
     private Coroutine revealRoutine;
-
-    private EnemyWaveSpawner waveSpawner;
-    private bool waveSpawnerPaused = false;
+    private Coroutine dodgeRoutine;
 
     private Vector3 approachReferencePosition;
     private bool approachReferenceValid = false;
+
+    private CanvasGroup dodgeCanvasGroup;
+    private RectTransform dodgeRect;
     #endregion
 
     #region Unity Lifecycle
@@ -105,14 +113,17 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (ShouldSkipTutorial())
         {
             if (debugLog)
-                Debug.Log("[PowerUpTutorialManager] Tutorial sudah selesai — skip.");
+                Debug.Log("[BossLevelPowerUpTutorial] Tutorial sudah selesai — skip & spawn boss.");
 
+            StartCoroutine(SpawnBossDelayed());
             gameObject.SetActive(false);
             return;
         }
 
         if (gestureDrawer == null)
             gestureDrawer = FindFirstObjectByType<GestureDrawer>();
+
+        CacheDodgeUI();
 
         HookButtons();
         DisableRaycastOnTutorialUI();
@@ -130,8 +141,6 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private void Start()
     {
-        PauseWaveSpawner();
-
         SpawnTutorialEnemies();
         SetEnemiesSpeed(enemyNormalSpeed);
         HideAllInitially();
@@ -152,55 +161,20 @@ public class PowerUpTutorialManager : MonoBehaviour
     }
     #endregion
 
-    #region Wave Spawner Control
-    private void PauseWaveSpawner()
-    {
-        if (waveSpawnerPaused) return;
-
-        waveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
-        if (waveSpawner != null)
-        {
-            waveSpawner.enabled = false;
-            waveSpawnerPaused = true;
-
-            if (debugLog)
-                Debug.Log("[PowerUpTutorialManager] Wave spawner DI-PAUSE.");
-        }
-    }
-
-    private void ResumeWaveSpawner(bool startSequenceIfIdle = false)
-    {
-        if (waveSpawner == null)
-            waveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
-
-        if (waveSpawner != null)
-        {
-            waveSpawner.enabled = true;
-
-            if (startSequenceIfIdle)
-                waveSpawner.StartWaveSequence();
-
-            if (debugLog)
-                Debug.Log("[PowerUpTutorialManager] Wave spawner DI-RESUME.");
-        }
-
-        waveSpawnerPaused = false;
-    }
-    #endregion
-
     #region Tutorial Flow
     public void RestartTutorial()
     {
         StopAllCoroutines();
-        ResetButtonVisual();
 
-        IsPowerUpTutorial = true;
+        IsBossLevelTutorial = true;
         TutorialManager.IsTrainingMode = true;
 
+        ResetButtonVisual();
         SetOverlayActive(false);
         fingerTap?.Hide();
         SetActive(startPanel, false);
         hintManager?.HideAll();
+        HideDodgeUI();
 
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
@@ -212,15 +186,15 @@ public class PowerUpTutorialManager : MonoBehaviour
         currentStep = TutorialStep.WaitingForPowerUpTap;
         SetPowerUpButtonInteractable(true);
 
-        revealRoutine = StartCoroutine(RevealHoleRoutine());
+        revealRoutine = StartCoroutine(RevealRoutine());
 
         if (debugLog)
-            Debug.Log("[PowerUpTutorialManager] 🔄 Restart — WaitingForPowerUpTap.");
+            Debug.Log("[BossLevelPowerUpTutorial] 🔄 Restart — WaitingForPowerUpTap.");
     }
 
     private void BeginTutorialFlow()
     {
-        IsPowerUpTutorial = true;
+        IsBossLevelTutorial = true;
         TutorialManager.IsTrainingMode = true;
 
         SetActive(startPanel, false);
@@ -233,10 +207,10 @@ public class PowerUpTutorialManager : MonoBehaviour
         currentStep = TutorialStep.WaitingForPowerUpTap;
         SetPowerUpButtonInteractable(true);
 
-        revealRoutine = StartCoroutine(RevealHoleRoutine());
+        revealRoutine = StartCoroutine(RevealRoutine());
 
         if (debugLog)
-            Debug.Log("[PowerUpTutorialManager] ✅ Tutorial siap — WaitingForPowerUpTap.");
+            Debug.Log("[BossLevelPowerUpTutorial] ✅ Tutorial siap — WaitingForPowerUpTap.");
     }
 
     private void OnPowerUpTapped()
@@ -244,13 +218,12 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (currentStep != TutorialStep.WaitingForPowerUpTap)
         {
             if (debugLog)
-                Debug.Log($"[PowerUpTutorialManager] Tap diabaikan. step={currentStep}");
-
+                Debug.Log($"[BossLevelPowerUpTutorial] Tap diabaikan. step={currentStep}");
             return;
         }
 
         if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] Button DIKLIK. step={currentStep}");
+            Debug.Log($"[BossLevelPowerUpTutorial] Button DIKLIK. step={currentStep}");
 
         currentStep = TutorialStep.WaitingOutcome;
 
@@ -277,12 +250,14 @@ public class PowerUpTutorialManager : MonoBehaviour
         DisableRaycastOnTutorialUI();
 
         TriggerPowerUpEffect();
+        PlayDodgeUI();
         ShowEnemyHint();
 
         SetGestureEnabled(true);
 
         if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] ✅ Power-up tapped. gesture.enabled={gestureDrawer?.enabled}");
+            Debug.Log($"[BossLevelPowerUpTutorial] ✅ Power-up tapped ({powerUpType}). " +
+                      $"gesture.enabled={gestureDrawer?.enabled}");
     }
 
     private void ShowEnemyHint()
@@ -300,7 +275,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     #region Power-Up Event Handler
     private void HandlePowerUpEnded()
     {
-        if (!IsPowerUpTutorial) return;
+        if (!IsBossLevelTutorial) return;
         if (currentStep != TutorialStep.WaitingOutcome) return;
 
         hintManager?.HideCircleHighlight();
@@ -335,17 +310,20 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         SetOverlayActive(false);
         fingerTap?.Hide();
+        HideDodgeUI();
 
         ResetButtonVisual();
 
-        IsPowerUpTutorial = false;
+        IsBossLevelTutorial = false;
         TutorialManager.IsTrainingMode = false;
+
+        // Konsisten dengan Script 1: reset power-up supaya penuh saat boss fight
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
         if (debugLog)
-            Debug.Log("[PowerUpTutorialManager] ✅ Tutorial sukses.");
+            Debug.Log("[BossLevelPowerUpTutorial] ✅ Tutorial sukses — spawn boss.");
 
-        StartGameNormally();
+        bossSpawner?.SpawnBoss();
     }
 
     private void HandleTutorialFail()
@@ -359,11 +337,12 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         SetOverlayActive(false);
         fingerTap?.Hide();
+        HideDodgeUI();
 
         ResetButtonVisual();
 
         if (debugLog)
-            Debug.LogWarning("[PowerUpTutorialManager] ❌ Tutorial gagal.");
+            Debug.LogWarning("[BossLevelPowerUpTutorial] ❌ Tutorial gagal.");
 
         SetActive(startPanel, true);
     }
@@ -375,11 +354,11 @@ public class PowerUpTutorialManager : MonoBehaviour
         if (powerUpButton != null)
         {
             powerUpButton.onClick.AddListener(OnPowerUpTapped);
-            if (debugLog) Debug.Log("[PowerUpTutorialManager] ✅ Listener di-attach.");
+            if (debugLog) Debug.Log("[BossLevelPowerUpTutorial] ✅ Listener di-attach.");
         }
         else
         {
-            Debug.LogError("[PowerUpTutorialManager] ❌ powerUpButton NULL!");
+            Debug.LogError("[BossLevelPowerUpTutorial] ❌ powerUpButton NULL!");
         }
 
         if (yaButton != null) yaButton.onClick.AddListener(OnYaClicked);
@@ -388,7 +367,7 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private void OnYaClicked()
     {
-        IsPowerUpTutorial = false;
+        IsBossLevelTutorial = false;
         TutorialManager.IsTrainingMode = false;
 
         SetGestureEnabled(true);
@@ -396,17 +375,19 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         SetOverlayActive(false);
         fingerTap?.Hide();
+        HideDodgeUI();
         SetActive(startPanel, false);
 
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
-        StartGameNormally();
+        bossSpawner?.SpawnBoss();
     }
 
     private void OnUlangClicked()
     {
         SetOverlayActive(false);
         fingerTap?.Hide();
+        HideDodgeUI();
         SetActive(startPanel, false);
 
         PowerManager.ResetAllPowerUpsToFullGlobal();
@@ -425,7 +406,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         gestureDrawer.enabled = enabled;
 
         if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] GestureDrawer.enabled = {enabled}");
+            Debug.Log($"[BossLevelPowerUpTutorial] GestureDrawer.enabled = {enabled}");
     }
 
     private void SetPowerUpButtonInteractable(bool interactable)
@@ -434,7 +415,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         powerUpButton.interactable = interactable;
 
         if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] PowerUpButton.interactable = {interactable}");
+            Debug.Log($"[BossLevelPowerUpTutorial] PowerUpButton.interactable = {interactable}");
     }
 
     private void SetOverlayActive(bool active)
@@ -470,12 +451,134 @@ public class PowerUpTutorialManager : MonoBehaviour
     }
     #endregion
 
+    #region Dodge UI
+    private void CacheDodgeUI()
+    {
+        if (dodgeUI == null) return;
+
+        dodgeRect = dodgeUI.GetComponent<RectTransform>();
+
+        dodgeCanvasGroup = dodgeUI.GetComponent<CanvasGroup>();
+        if (dodgeCanvasGroup == null)
+            dodgeCanvasGroup = dodgeUI.AddComponent<CanvasGroup>();
+
+        dodgeCanvasGroup.alpha = 0f;
+        dodgeCanvasGroup.blocksRaycasts = false;
+        dodgeCanvasGroup.interactable = false;
+
+        dodgeUI.SetActive(false);
+    }
+
+    private void PlayDodgeUI()
+    {
+        if (dodgeUI == null) return;
+
+        if (dodgeRoutine != null)
+            StopCoroutine(dodgeRoutine);
+
+        dodgeRoutine = StartCoroutine(DodgeUIRoutine());
+    }
+
+    private void HideDodgeUI()
+    {
+        if (dodgeRoutine != null)
+        {
+            StopCoroutine(dodgeRoutine);
+            dodgeRoutine = null;
+        }
+
+        if (dodgeUI == null) return;
+
+        if (dodgeCanvasGroup != null) dodgeCanvasGroup.alpha = 0f;
+        if (dodgeRect != null) dodgeRect.localScale = Vector3.one;
+
+        dodgeUI.SetActive(false);
+    }
+
+    /// <summary>
+    /// Dodge UI sekarang sinkron dengan durasi Shield:
+    /// Fase 1 (Fade In)  → dodgeFadeInDuration
+    /// Fase 2 (Pulse)    → selama PowerManager.IsShieldActive == true
+    ///                     dengan minimum dodgeHoldDuration
+    /// Fase 3 (Fade Out) → dodgeFadeOutDuration
+    /// </summary>
+    private IEnumerator DodgeUIRoutine()
+    {
+        dodgeUI.SetActive(true);
+
+        if (dodgeRect == null)
+            dodgeRect = dodgeUI.GetComponent<RectTransform>();
+
+        dodgeRect.localScale = Vector3.one;
+
+        // ============================================================
+        // FASE 1: FADE IN
+        // ============================================================
+        float t = 0f;
+        while (t < dodgeFadeInDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(t / Mathf.Max(0.01f, dodgeFadeInDuration));
+            if (dodgeCanvasGroup != null) dodgeCanvasGroup.alpha = p;
+            float s = Mathf.Lerp(0.6f, 1f, p);
+            dodgeRect.localScale = Vector3.one * s;
+            yield return null;
+        }
+
+        if (dodgeCanvasGroup != null) dodgeCanvasGroup.alpha = 1f;
+        dodgeRect.localScale = Vector3.one;
+
+        // ============================================================
+        // FASE 2: PULSE + HOLD — selama Shield masih aktif
+        // Minimal hold = dodgeHoldDuration (safety kalau Shield mati cepat)
+        // ============================================================
+        float pulseTime = 0f;
+        float elapsed = 0f;
+
+        while (true)
+        {
+            bool shieldActive = PowerManager.IsShieldActive;
+            bool minHoldReached = elapsed >= dodgeHoldDuration;
+
+            // Keluar kalau Shield sudah mati DAN minimal hold tercapai
+            if (!shieldActive && minHoldReached)
+                break;
+
+            elapsed += Time.unscaledDeltaTime;
+            pulseTime += Time.unscaledDeltaTime;
+
+            float pulse = 1f + Mathf.Sin(pulseTime * dodgePulseSpeed) * dodgePulseAmplitude;
+            dodgeRect.localScale = Vector3.one * pulse;
+            yield return null;
+        }
+
+        // ============================================================
+        // FASE 3: FADE OUT
+        // ============================================================
+        t = 0f;
+        Vector3 startScale = dodgeRect.localScale;
+        while (t < dodgeFadeOutDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float p = Mathf.Clamp01(t / Mathf.Max(0.01f, dodgeFadeOutDuration));
+            if (dodgeCanvasGroup != null) dodgeCanvasGroup.alpha = 1f - p;
+            dodgeRect.localScale = Vector3.Lerp(startScale, Vector3.one * 0.4f, p);
+            yield return null;
+        }
+
+        if (dodgeCanvasGroup != null) dodgeCanvasGroup.alpha = 0f;
+        dodgeRect.localScale = Vector3.one;
+        dodgeUI.SetActive(false);
+        dodgeRoutine = null;
+    }
+    #endregion
+
     #region Enemy Management
     private void SpawnTutorialEnemies()
     {
         if (tutorialSpawner == null)
         {
-            Debug.LogWarning("[PowerUpTutorialManager] tutorialSpawner belum di-assign.");
+            Debug.LogWarning("[BossLevelPowerUpTutorial] tutorialSpawner belum di-assign.");
             return;
         }
 
@@ -520,7 +623,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         approachReferenceValid = true;
 
         if (debugLog)
-            Debug.Log($"[PowerUpTutorialManager] Approach reference = {spawnCenter}");
+            Debug.Log($"[BossLevelPowerUpTutorial] Approach reference = {spawnCenter}");
     }
     #endregion
 
@@ -577,7 +680,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         BeginTutorialFlow();
     }
 
-    private IEnumerator RevealHoleRoutine()
+    private IEnumerator RevealRoutine()
     {
         yield return null;
         yield return new WaitForEndOfFrame();
@@ -610,9 +713,8 @@ public class PowerUpTutorialManager : MonoBehaviour
             if (HasAnyEnemyTraveledFarEnough())
             {
                 if (debugLog)
-                    Debug.Log($"[PowerUpTutorialManager] ✅ Musuh sudah jalan " +
+                    Debug.Log($"[BossLevelPowerUpTutorial] ✅ Musuh sudah jalan " +
                               $"{approachTravelDistance} unit dari spawn.");
-
                 yield break;
             }
 
@@ -621,7 +723,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         }
 
         if (debugLog)
-            Debug.LogWarning($"[PowerUpTutorialManager] ⏱ Timeout nunggu musuh " +
+            Debug.LogWarning($"[BossLevelPowerUpTutorial] ⏱ Timeout nunggu musuh " +
                              $"({maxWaitForEnemiesApproach}s). Lanjut paksa.");
     }
 
@@ -638,16 +740,21 @@ public class PowerUpTutorialManager : MonoBehaviour
             if (e == null) continue;
 
             float dx = approachReferencePosition.x - e.transform.position.x;
-
-            if (dx >= approachTravelDistance)
-                return true;
+            if (dx >= approachTravelDistance) return true;
 
             float distSq = (e.transform.position - approachReferencePosition).sqrMagnitude;
-            if (distSq >= threshold)
-                return true;
+            if (distSq >= threshold) return true;
         }
 
         return false;
+    }
+    #endregion
+
+    #region Boss Spawn
+    private IEnumerator SpawnBossDelayed()
+    {
+        yield return null;
+        bossSpawner?.SpawnBoss();
     }
     #endregion
 
@@ -661,15 +768,6 @@ public class PowerUpTutorialManager : MonoBehaviour
             break;
         }
     }
-
-    private void StartGameNormally()
-    {
-        GameProgressManager.MarkTutorialCompleted();
-        ResumeWaveSpawner(startSequenceIfIdle: true);
-
-        if (debugLog)
-            Debug.Log("[PowerUpTutorialManager] Gameplay normal dimulai.");
-    }
     #endregion
 
     #region UI Helpers
@@ -679,6 +777,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         fingerTap?.Hide();
         SetActive(startPanel, false);
         hintManager?.HideAll();
+        HideDodgeUI();
     }
 
     private void DisableRaycastOnTutorialUI()
@@ -686,6 +785,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         DisableRaycast(overlay);
         DisableRaycast(fingerTap != null ? fingerTap.gameObject : null);
         DisableRaycast(hintManager != null ? hintManager.gameObject : null);
+        DisableRaycast(dodgeUI);
     }
 
     private static void DisableRaycast(GameObject go)
@@ -727,13 +827,13 @@ public class PowerUpTutorialManager : MonoBehaviour
         GameProgressManager.ResetTutorial();
         GameProgressManager.ClearGameState();
 
-        Debug.Log("[PowerUpTutorialManager] 🔄 Tutorial & GameState di-reset.");
+        Debug.Log("[BossLevelPowerUpTutorial] 🔄 Tutorial & GameState di-reset.");
 
         if (autoUncheckReset)
             resetTutorialOnPlay = false;
 #else
         if (resetTutorialOnPlay)
-            Debug.LogWarning("[PowerUpTutorialManager] 'Reset Tutorial On Play' hanya berfungsi di Editor.");
+            Debug.LogWarning("[BossLevelPowerUpTutorial] 'Reset Tutorial On Play' hanya berfungsi di Editor.");
 #endif
     }
     #endregion

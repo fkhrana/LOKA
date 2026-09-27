@@ -58,15 +58,13 @@ public class LevelProgressManager : MonoBehaviour
     private int processedEnemies = 0;
     private int pendingProgress = 0;
 
-    private HashSet<int> triggeredMilestones =
-        new HashSet<int>();
-
-    private List<int> milestones =
-        new List<int>();
+    private HashSet<int> triggeredMilestones = new HashSet<int>();
+    private List<int> milestones = new List<int>();
 
     private Coroutine progressAnimation;
     private Transform activeLevelBarStarTarget;
     private bool suppressLevelCompleteEvent;
+    private bool levelCompletionSaved = false;
 
     private void Awake()
     {
@@ -98,8 +96,9 @@ public class LevelProgressManager : MonoBehaviour
         int initialProcessedEnemies = 0
     )
     {
-        totalEnemies =
-            Mathf.Max(1, totalEnemiesInLevel);
+        levelCompletionSaved = false;
+
+        totalEnemies = Mathf.Max(1, totalEnemiesInLevel);
 
         if (resumeFromSave)
         {
@@ -158,7 +157,6 @@ public class LevelProgressManager : MonoBehaviour
         );
     }
 
-    // === FIX: overload dengan GameObject — skip musuh tutorial ===
     public void OnEnemyProcessed(GameObject enemy)
     {
         if (enemy != null)
@@ -166,10 +164,7 @@ public class LevelProgressManager : MonoBehaviour
             try
             {
                 if (enemy.CompareTag("TutorialEnemy"))
-                {
-                    Debug.Log($"[LevelProgressManager] ✅ SKIP '{enemy.name}' — musuh tutorial.");
                     return;
-                }
             }
             catch { }
         }
@@ -310,9 +305,7 @@ public class LevelProgressManager : MonoBehaviour
         );
     }
 
-    public void SetLevelBarTargetForWave(
-        int waveIndex
-    )
+    public void SetLevelBarTargetForWave(int waveIndex)
     {
         if (
             levelBarStarTargetsByWave == null ||
@@ -322,8 +315,7 @@ public class LevelProgressManager : MonoBehaviour
         )
             return;
 
-        activeLevelBarStarTarget =
-            levelBarStarTargetsByWave[waveIndex];
+        activeLevelBarStarTarget = levelBarStarTargetsByWave[waveIndex];
     }
 
     public void SetLevelBarTarget(Transform target)
@@ -331,9 +323,7 @@ public class LevelProgressManager : MonoBehaviour
         activeLevelBarStarTarget = target;
     }
 
-    public void PlayNonCollectibleItemVfx(
-        Vector3 itemPosition
-    )
+    public void PlayNonCollectibleItemVfx(Vector3 itemPosition)
     {
         PlayNonCollectibleItemVfx(itemPosition, null);
     }
@@ -350,11 +340,7 @@ public class LevelProgressManager : MonoBehaviour
                     ? progressBar.transform
                     : null;
 
-        if (
-            target == null ||
-            barItemTrailVfx == null ||
-            trailCollectItemVfx == null
-        )
+        if (target == null || barItemTrailVfx == null || trailCollectItemVfx == null)
         {
             CompletePendingProgress();
             onComplete?.Invoke();
@@ -372,10 +358,7 @@ public class LevelProgressManager : MonoBehaviour
 
     private void PlayNonCollectibleVfxSFX()
     {
-        if (
-            useNonCollectibleVfxSFX &&
-            AudioManager.Instance != null
-        )
+        if (useNonCollectibleVfxSFX && AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySFX(
                 nonCollectibleVfxSFXName,
@@ -390,104 +373,77 @@ public class LevelProgressManager : MonoBehaviour
         System.Action onComplete
     )
     {
-        Vector3 spawnPosition =
-            itemPosition + barItemTrailSpawnOffset;
+        Vector3 spawnPosition = itemPosition + barItemTrailSpawnOffset;
 
-        GameObject barTrail =
-            Instantiate(
-                barItemTrailVfx,
-                spawnPosition,
-                barItemTrailVfx.transform.rotation
-            );
-
-        PlayNonCollectibleVfxSFX();
-
-        PlayParticleSystems(barTrail);
-
-        yield return new WaitForSeconds(
-            barItemTrailDuration
+        GameObject barTrail = Instantiate(
+            barItemTrailVfx,
+            spawnPosition,
+            barItemTrailVfx.transform.rotation
         );
 
-        if (barTrail != null)
-            Destroy(barTrail);
+        PlayNonCollectibleVfxSFX();
+        PlayParticleSystems(barTrail);
 
-        GameObject collectTrail =
-            Instantiate(
-                trailCollectItemVfx,
-                spawnPosition,
-                trailCollectItemVfx.transform.rotation
-            );
+        yield return new WaitForSeconds(barItemTrailDuration);
 
-        collectTrail.transform.localScale *=
-            trailCollectItemScale;
+        if (barTrail != null) Destroy(barTrail);
 
-        Vector3 collectTrailStartPosition =
-            collectTrail.transform.position;
+        GameObject collectTrail = Instantiate(
+            trailCollectItemVfx,
+            spawnPosition,
+            trailCollectItemVfx.transform.rotation
+        );
+
+        collectTrail.transform.localScale *= trailCollectItemScale;
+
+        Vector3 collectTrailStartPosition = collectTrail.transform.position;
         float collectTrailElapsed = 0f;
 
-        while (
-            collectTrail != null &&
-            target != null
-        )
+        while (collectTrail != null && target != null)
         {
-            Vector3 targetPosition =
-                GetWorldTargetPosition(
-                    target,
-                    collectTrail.transform.position.z
-                );
+            Vector3 targetPosition = GetWorldTargetPosition(
+                target,
+                collectTrail.transform.position.z
+            );
 
             collectTrailElapsed += Time.deltaTime;
 
-            float flightProgress =
-                Mathf.Clamp01(
-                    collectTrailElapsed /
-                    Mathf.Max(0.01f, trailCollectItemFlightDuration)
-                );
+            float flightProgress = Mathf.Clamp01(
+                collectTrailElapsed / Mathf.Max(0.01f, trailCollectItemFlightDuration)
+            );
 
-            float curvedProgress =
-                trailCollectItemFlightCurve.Evaluate(
-                    flightProgress
-                );
+            float curvedProgress = trailCollectItemFlightCurve.Evaluate(flightProgress);
 
-            Vector3 midpoint =
-                collectTrailStartPosition +
-                (targetPosition - collectTrailStartPosition) /
-                2f;
-            Vector3 controlPoint =
-                midpoint +
-                new Vector3(
-                    trailCollectItemSideOffset,
-                    trailCollectItemArcHeight,
-                    0f
-                );
+            Vector3 midpoint = collectTrailStartPosition +
+                (targetPosition - collectTrailStartPosition) / 2f;
 
-            Vector3 firstSegment =
-                Vector3.Lerp(
-                    collectTrailStartPosition,
-                    controlPoint,
-                    curvedProgress
-                );
-            Vector3 secondSegment =
-                Vector3.Lerp(
-                    controlPoint,
-                    targetPosition,
-                    curvedProgress
-                );
+            Vector3 controlPoint = midpoint + new Vector3(
+                trailCollectItemSideOffset,
+                trailCollectItemArcHeight,
+                0f
+            );
 
-            collectTrail.transform.position =
-                Vector3.Lerp(
-                    firstSegment,
-                    secondSegment,
-                    curvedProgress
-                );
+            Vector3 firstSegment = Vector3.Lerp(
+                collectTrailStartPosition,
+                controlPoint,
+                curvedProgress
+            );
 
-            if (
-                flightProgress >= 1f ||
-                Vector3.Distance(
-                    collectTrail.transform.position,
-                    targetPosition
-                ) <= trailCollectItemArrivalDistance
-            )
+            Vector3 secondSegment = Vector3.Lerp(
+                controlPoint,
+                targetPosition,
+                curvedProgress
+            );
+
+            collectTrail.transform.position = Vector3.Lerp(
+                firstSegment,
+                secondSegment,
+                curvedProgress
+            );
+
+            if (flightProgress >= 1f ||
+                Vector3.Distance(collectTrail.transform.position, targetPosition)
+                    <= trailCollectItemArrivalDistance)
                 break;
 
             yield return null;
@@ -495,16 +451,12 @@ public class LevelProgressManager : MonoBehaviour
 
         if (collectTrail != null)
         {
-            collectTrail.transform.position =
-                GetWorldTargetPosition(
-                    target,
-                    collectTrail.transform.position.z
-                );
-
-            yield return new WaitForSeconds(
-                trailCollectItemEndDelay
+            collectTrail.transform.position = GetWorldTargetPosition(
+                target,
+                collectTrail.transform.position.z
             );
 
+            yield return new WaitForSeconds(trailCollectItemEndDelay);
             Destroy(collectTrail);
         }
 
@@ -512,70 +464,45 @@ public class LevelProgressManager : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    private void PlayParticleSystems(
-        GameObject effect
-    )
+    private void PlayParticleSystems(GameObject effect)
     {
-        ParticleSystem[] particleSystems =
-            effect.GetComponentsInChildren<ParticleSystem>(
-                true
-            );
+        ParticleSystem[] particleSystems = effect.GetComponentsInChildren<ParticleSystem>(true);
 
-        foreach (
-            ParticleSystem particleSystem
-            in particleSystems
-        )
+        foreach (ParticleSystem particleSystem in particleSystems)
         {
             particleSystem.Play(true);
         }
     }
 
-    private Vector3 GetWorldTargetPosition(
-        Transform target,
-        float sourceZ
-    )
+    private Vector3 GetWorldTargetPosition(Transform target, float sourceZ)
     {
-        RectTransform targetRect =
-            target as RectTransform;
-
+        RectTransform targetRect = target as RectTransform;
         Camera worldCamera = Camera.main;
 
-        if (
-            targetRect == null ||
-            worldCamera == null
-        )
+        if (targetRect == null || worldCamera == null)
             return target.position;
 
-        Canvas canvas =
-            targetRect.GetComponentInParent<Canvas>();
+        Canvas canvas = targetRect.GetComponentInParent<Canvas>();
 
         Camera canvasCamera =
-            canvas != null &&
-            canvas.renderMode !=
-                RenderMode.ScreenSpaceOverlay
+            canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
                 ? canvas.worldCamera
                 : null;
 
-        Vector2 screenPosition =
-            RectTransformUtility.WorldToScreenPoint(
-                canvasCamera,
-                targetRect.position
-            );
+        Vector2 screenPosition = RectTransformUtility.WorldToScreenPoint(
+            canvasCamera,
+            targetRect.position
+        );
 
-        float cameraDistance =
-            Mathf.Abs(
-                worldCamera.transform.position.z -
-                sourceZ
-            );
+        float cameraDistance = Mathf.Abs(worldCamera.transform.position.z - sourceZ);
 
-        Vector3 worldPosition =
-            worldCamera.ScreenToWorldPoint(
-                new Vector3(
-                    screenPosition.x,
-                    screenPosition.y,
-                    cameraDistance
-                )
-            );
+        Vector3 worldPosition = worldCamera.ScreenToWorldPoint(
+            new Vector3(
+                screenPosition.x,
+                screenPosition.y,
+                cameraDistance
+            )
+        );
 
         worldPosition.z = sourceZ;
 
@@ -586,79 +513,80 @@ public class LevelProgressManager : MonoBehaviour
     {
         if (progressBar != null)
         {
-            float targetValue =
-                (float)processedEnemies /
-                (float)totalEnemies;
+            float targetValue = (float)processedEnemies / (float)totalEnemies;
 
             if (progressBar.fillRect != null)
             {
-                progressBar.fillRect.gameObject.SetActive(
-                    processedEnemies > 0
-                );
+                progressBar.fillRect.gameObject.SetActive(processedEnemies > 0);
             }
 
             if (progressAnimation != null)
                 StopCoroutine(progressAnimation);
 
-            if (
-                targetValue <= 0f ||
-                progressAnimationDuration <= 0f
-            )
+            if (targetValue <= 0f || progressAnimationDuration <= 0f)
             {
                 progressBar.value = targetValue;
             }
             else
             {
-                progressAnimation =
-                    StartCoroutine(
-                        AnimateProgressBar(
-                            targetValue
-                        )
-                    );
+                progressAnimation = StartCoroutine(AnimateProgressBar(targetValue));
             }
         }
 
         if (progressText != null)
         {
-            progressText.text =
-                $"{processedEnemies}/{totalEnemies}";
+            progressText.text = $"{processedEnemies}/{totalEnemies}";
         }
 
-        for (
-            int i = 0;
-            i < milestones.Count;
-            i++
-        )
+        for (int i = 0; i < milestones.Count; i++)
         {
             int m = milestones[i];
 
-            if (
-                !triggeredMilestones.Contains(m) &&
-                processedEnemies >= m
-            )
+            if (!triggeredMilestones.Contains(m) && processedEnemies >= m)
             {
                 triggeredMilestones.Add(m);
-
                 PlayMilestoneVfx(i);
-
                 OnReachedWaveMilestone?.Invoke();
             }
         }
 
         if (processedEnemies >= totalEnemies && !suppressLevelCompleteEvent)
         {
+            if (!levelCompletionSaved)
+            {
+                levelCompletionSaved = true;
+                SaveLevelCompletionToPrefs();
+            }
+
             OnReachedLevelComplete?.Invoke();
+        }
+    }
+
+    private void SaveLevelCompletionToPrefs()
+    {
+        int currentLevel = PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+
+        PlayerPrefs.SetInt("LevelCompleted_" + currentLevel, 1);
+        PlayerPrefs.SetInt("LevelUnlocked_" + currentLevel, 1);
+        PlayerPrefs.SetInt("LevelUnlocked_" + (currentLevel + 1), 1);
+        PlayerPrefs.Save();
+
+        Debug.Log($"[LevelProgressManager] ✅ Level {currentLevel + 1} COMPLETED — " +
+                  $"LevelUnlocked_{currentLevel + 1} = 1");
+
+        if (LevelManager.Instance != null)
+        {
+            LevelManager.Instance.CompleteLevel(currentLevel);
+            Debug.Log($"[LevelProgressManager] LevelManager.CompleteLevel({currentLevel}) dipanggil.");
         }
     }
 
     private void PlayMilestoneVfx(int milestoneIndex)
     {
-        if (
-            milestoneVfxByWave == null ||
+        if (milestoneVfxByWave == null ||
             milestoneIndex < 0 ||
             milestoneIndex >= milestoneVfxByWave.Length ||
-            milestoneVfxByWave[milestoneIndex] == null
-        )
+            milestoneVfxByWave[milestoneIndex] == null)
             return;
 
         GameObject milestoneVfx = milestoneVfxByWave[milestoneIndex];
@@ -670,46 +598,25 @@ public class LevelProgressManager : MonoBehaviour
 
     private IEnumerator DisableMilestoneVfxAfterDelay(GameObject milestoneVfx)
     {
-        yield return new WaitForSeconds(
-            Mathf.Max(0.1f, milestoneVfxLifetime)
-        );
+        yield return new WaitForSeconds(Mathf.Max(0.1f, milestoneVfxLifetime));
 
         if (milestoneVfx != null)
             milestoneVfx.SetActive(false);
     }
 
-    private IEnumerator AnimateProgressBar(
-        float targetValue
-    )
+    private IEnumerator AnimateProgressBar(float targetValue)
     {
-        float startValue =
-            progressBar.value;
-
+        float startValue = progressBar.value;
         float elapsed = 0f;
 
-        while (
-            elapsed <
-            progressAnimationDuration
-        )
+        while (elapsed < progressAnimationDuration)
         {
             elapsed += Time.deltaTime;
 
-            float t =
-                Mathf.Clamp01(
-                    elapsed /
-                    progressAnimationDuration
-                );
+            float t = Mathf.Clamp01(elapsed / progressAnimationDuration);
+            t = t * t * (3f - 2f * t);
 
-            t =
-                t * t *
-                (3f - 2f * t);
-
-            progressBar.value =
-                Mathf.Lerp(
-                    startValue,
-                    targetValue,
-                    t
-                );
+            progressBar.value = Mathf.Lerp(startValue, targetValue, t);
 
             yield return null;
         }

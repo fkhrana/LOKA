@@ -31,18 +31,12 @@ public class PauseOverlay : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
-
-    [Tooltip("Scene latihan. Dipakai oleh tombol Tutorial.")]
     [SerializeField] private string tutorialSceneName = "Latihan";
-
-    [Tooltip("Scene cutscene. Dipakai kalau player belum pernah nonton cutscene.")]
     [SerializeField] private string cutsceneSceneName = "CutScenee";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
     [SerializeField] private float loadDelay = 0f;
-
-    [Tooltip("Durasi fade out BGM sebelum pindah scene.")]
     [SerializeField] private float bgmFadeOutDuration = 0.8f;
 
     private PanelType currentPanel = PanelType.None;
@@ -50,6 +44,7 @@ public class PauseOverlay : MonoBehaviour
     private bool isTransitioning = false;
 
     private TutorialManager cachedTutorialManager;
+    private bool levelCompletionSaved = false;
 
     private const string KEY_RETURN_SCENE = "ReturnSceneAfterTutorial";
 
@@ -60,6 +55,8 @@ public class PauseOverlay : MonoBehaviour
 
         if (playButton != null)
             playButton.onClick.AddListener(ResumeGame);
+
+        SubscribeLevelComplete();
     }
 
     private void OnDestroy()
@@ -69,13 +66,42 @@ public class PauseOverlay : MonoBehaviour
 
         if (playButton != null)
             playButton.onClick.RemoveListener(ResumeGame);
+
+        UnsubscribeLevelComplete();
+    }
+
+    private void SubscribeLevelComplete()
+    {
+        if (LevelProgressManager.Instance == null)
+        {
+            Debug.LogWarning("[PauseOverlay] LevelProgressManager.Instance null — skip subscribe.");
+            return;
+        }
+
+        LevelProgressManager.Instance.OnReachedLevelComplete.RemoveListener(OnLevelComplete);
+        LevelProgressManager.Instance.OnReachedLevelComplete.AddListener(OnLevelComplete);
+
+        Debug.Log("[PauseOverlay] Subscribe OnReachedLevelComplete ✅");
+    }
+
+    private void UnsubscribeLevelComplete()
+    {
+        if (LevelProgressManager.Instance == null) return;
+        LevelProgressManager.Instance.OnReachedLevelComplete.RemoveListener(OnLevelComplete);
+    }
+
+    private void OnLevelComplete()
+    {
+        if (levelCompletionSaved) return;
+        levelCompletionSaved = true;
+
+        Debug.Log("[PauseOverlay] OnReachedLevelComplete fired ✅");
     }
 
     private TutorialManager GetTutorialManager()
     {
         if (cachedTutorialManager == null)
-            cachedTutorialManager =
-                FindFirstObjectByType<TutorialManager>();
+            cachedTutorialManager = FindFirstObjectByType<TutorialManager>();
 
         return cachedTutorialManager;
     }
@@ -84,17 +110,12 @@ public class PauseOverlay : MonoBehaviour
     {
         foreach (var p in panels)
         {
-            if (p.type == type)
-                return p;
+            if (p.type == type) return p;
         }
-
         return null;
     }
 
-    private GameObject GetPanel(PanelType type)
-    {
-        return GetPanelData(type)?.panel;
-    }
+    private GameObject GetPanel(PanelType type) => GetPanelData(type)?.panel;
 
     private void SetIntroUIVisible(bool visible)
     {
@@ -104,40 +125,26 @@ public class PauseOverlay : MonoBehaviour
 
     private void OpenPanel(PanelType type)
     {
-        if (currentPanel == type ||
-            isClosing ||
-            isTransitioning)
-            return;
+        if (currentPanel == type || isClosing || isTransitioning) return;
 
         CloseAllPanels();
 
         if (type != PanelType.None)
         {
             Time.timeScale = 0f;
-
             cutsceneManager?.PauseVideo();
-
             DisableGestureInput();
-
             SetIntroUIVisible(false);
-
-            GetTutorialManager()?.
-                SetTutorialVisualsVisible(false);
+            GetTutorialManager()?.SetTutorialVisualsVisible(false);
         }
 
         GetPanel(type)?.SetActive(true);
-
         currentPanel = type;
     }
 
-    private void ClosePanel(
-        PanelType type,
-        System.Action onComplete = null
-    )
+    private void ClosePanel(PanelType type, System.Action onComplete = null)
     {
-        if (currentPanel != type ||
-            isClosing ||
-            isTransitioning)
+        if (currentPanel != type || isClosing || isTransitioning)
         {
             onComplete?.Invoke();
             return;
@@ -148,18 +155,11 @@ public class PauseOverlay : MonoBehaviour
         if (type == PanelType.Pause)
         {
             CloseAllPanels();
-
             Time.timeScale = 1f;
-
             cutsceneManager?.ResumeVideo();
-
             EnableGestureInput();
-
             SetIntroUIVisible(true);
-
-            GetTutorialManager()?.
-                SetTutorialVisualsVisible(true);
-
+            GetTutorialManager()?.SetTutorialVisualsVisible(true);
             currentPanel = PanelType.None;
         }
         else
@@ -167,7 +167,6 @@ public class PauseOverlay : MonoBehaviour
             CloseAllPanels();
 
             var pausePanel = GetPanel(PanelType.Pause);
-
             if (pausePanel != null)
             {
                 pausePanel.SetActive(true);
@@ -178,7 +177,6 @@ public class PauseOverlay : MonoBehaviour
         }
 
         isClosing = false;
-
         onComplete?.Invoke();
     }
 
@@ -186,8 +184,7 @@ public class PauseOverlay : MonoBehaviour
     {
         foreach (var data in panels)
         {
-            if (data.panel != null)
-                data.panel.SetActive(false);
+            if (data.panel != null) data.panel.SetActive(false);
         }
     }
 
@@ -195,41 +192,25 @@ public class PauseOverlay : MonoBehaviour
     {
         var panel = GetPanel(type);
 
-        if (panel == null ||
-            currentPanel != type)
-            return;
+        if (panel == null || currentPanel != type) return;
 
         var effect = panel.GetComponent<EffectPanel>();
 
         if (effect != null)
-        {
-            effect.CloseDialog(
-                () => ClosePanel(type)
-            );
-        }
+            effect.CloseDialog(() => ClosePanel(type));
         else
-        {
             ClosePanel(type);
-        }
     }
 
     private void FadeIn(GameObject obj)
     {
-        if (obj == null)
-            return;
+        if (obj == null) return;
 
         var cg = obj.GetComponent<CanvasGroup>();
-
-        if (cg == null)
-            cg = obj.AddComponent<CanvasGroup>();
+        if (cg == null) cg = obj.AddComponent<CanvasGroup>();
 
         cg.alpha = 0f;
-
-        LeanTween.alphaCanvas(
-            cg,
-            1f,
-            0.25f
-        ).setIgnoreTimeScale(true);
+        LeanTween.alphaCanvas(cg, 1f, 0.25f).setIgnoreTimeScale(true);
     }
 
     private void DisableGestureInput()
@@ -243,65 +224,30 @@ public class PauseOverlay : MonoBehaviour
 
     private void EnableGestureInput()
     {
-        if (gestureDrawer != null)
-            gestureDrawer.enabled = true;
+        if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
-    public void OpenPause()
-    {
-        OpenPanel(PanelType.Pause);
-    }
-
-    public void ClosePause()
-    {
-        CloseWithEffect(PanelType.Pause);
-    }
+    public void OpenPause() => OpenPanel(PanelType.Pause);
+    public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
     public void OpenTutorial()
     {
-        if (isTransitioning)
-            return;
+        if (isTransitioning) return;
 
         SaveGameplayProgress();
 
-        string activeSceneName =
-            SceneManager.GetActiveScene().name;
-
-        PlayerPrefs.SetString(
-            KEY_RETURN_SCENE,
-            activeSceneName
-        );
-
+        string activeSceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetString(KEY_RETURN_SCENE, activeSceneName);
         PlayerPrefs.Save();
 
-        Debug.Log(
-            $"[PauseOverlay] ReturnSceneAfterTutorial = '{activeSceneName}'"
-        );
-
-        bool cutsceneCompleted =
-            GameProgressManager.IsCutsceneCompleted();
-
-        string targetScene =
-            cutsceneCompleted
-                ? tutorialSceneName
-                : cutsceneSceneName;
-
-        Debug.Log(
-            $"[PauseOverlay] Tutorial button → target: {targetScene} " +
-            $"(cutsceneCompleted={cutsceneCompleted})"
-        );
+        bool cutsceneCompleted = GameProgressManager.IsCutsceneCompleted();
+        string targetScene = cutsceneCompleted ? tutorialSceneName : cutsceneSceneName;
 
         PrepareForTransition();
-
-        StartCoroutine(
-            FadeAndLoadScene(targetScene)
-        );
+        StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
-    public void CloseTutorial()
-    {
-        CloseWithEffect(PanelType.Tutorial);
-    }
+    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
 
     public void ResumeGame()
     {
@@ -312,36 +258,42 @@ public class PauseOverlay : MonoBehaviour
         else if (currentPanel == PanelType.Tutorial)
         {
             CloseAllPanels();
-
             Time.timeScale = 1f;
-
             cutsceneManager?.ResumeVideo();
-
             EnableGestureInput();
-
             SetIntroUIVisible(true);
-
-            GetTutorialManager()?.
-                SetTutorialVisualsVisible(true);
-
+            GetTutorialManager()?.SetTutorialVisualsVisible(true);
             currentPanel = PanelType.None;
         }
         else
         {
             Time.timeScale = 1f;
-
             cutsceneManager?.ResumeVideo();
-
             EnableGestureInput();
-
             SetIntroUIVisible(true);
         }
     }
 
     public void GoToMainMenu()
     {
-        if (isTransitioning)
-            return;
+        if (isTransitioning) return;
+
+        // Safety: kalau player sudah menang tapi belum ke-save, save sekarang
+        if (!levelCompletionSaved &&
+            LevelProgressManager.Instance != null &&
+            LevelProgressManager.Instance.IsProgressBarFilled())
+        {
+            int currentLevel = PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+            PlayerPrefs.SetInt("LevelCompleted_" + currentLevel, 1);
+            PlayerPrefs.SetInt("LevelUnlocked_" + currentLevel, 1);
+            PlayerPrefs.SetInt("LevelUnlocked_" + (currentLevel + 1), 1);
+            PlayerPrefs.Save();
+
+            LevelManager.Instance?.CompleteLevel(currentLevel);
+            levelCompletionSaved = true;
+
+            Debug.Log($"[PauseOverlay] ✅ Safety save Level {currentLevel + 1} COMPLETED.");
+        }
 
         SaveGameplayProgress();
 
@@ -351,65 +303,35 @@ public class PauseOverlay : MonoBehaviour
             pauseButton.interactable = false;
 
         LeanTween.cancel(gameObject);
-
         CloseAllPanels();
-
         DisableGestureInput();
-
         cutsceneManager?.PauseVideo();
-
         SetIntroUIVisible(false);
-
-        GetTutorialManager()?.
-            SetTutorialVisualsVisible(false);
-
+        GetTutorialManager()?.SetTutorialVisualsVisible(false);
         Time.timeScale = 0f;
 
         if (string.IsNullOrEmpty(mainMenuSceneName))
         {
-            Debug.LogError(
-                "[PauseOverlay] Main Menu Scene Name kosong!",
-                this
-            );
-
             isTransitioning = false;
-
             Time.timeScale = 1f;
-
-            if (pauseButton != null)
-                pauseButton.interactable = true;
-
+            if (pauseButton != null) pauseButton.interactable = true;
             return;
         }
 
-        StartCoroutine(
-            FadeAndLoadScene(mainMenuSceneName)
-        );
+        StartCoroutine(FadeAndLoadScene(mainMenuSceneName));
     }
 
     private void SaveGameplayProgress()
     {
-        EnemyWaveSpawner enemyWaveSpawner =
-            FindFirstObjectByType<EnemyWaveSpawner>();
+        EnemyWaveSpawner enemyWaveSpawner = FindFirstObjectByType<EnemyWaveSpawner>();
+        if (enemyWaveSpawner != null) enemyWaveSpawner.SaveCurrentWave();
 
-        if (enemyWaveSpawner != null)
-            enemyWaveSpawner.SaveCurrentWave();
-
-        SaveCurrentProgress saveProgress =
-            FindFirstObjectByType<SaveCurrentProgress>();
-
-        if (saveProgress != null)
-            saveProgress.SavePlayerPositionNow();
+        SaveCurrentProgress saveProgress = FindFirstObjectByType<SaveCurrentProgress>();
+        if (saveProgress != null) saveProgress.SavePlayerPositionNow();
 
         GameProgressManager.SetHasEnteredGameplay(true);
-
-        GameProgressManager.SaveLastScene(
-            SceneManager.GetActiveScene().name
-        );
-
-        GameProgressManager.SaveGameState(
-            "Gameplay"
-        );
+        GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
+        GameProgressManager.SaveGameState("Gameplay");
     }
 
     private void PrepareForTransition()
@@ -420,47 +342,27 @@ public class PauseOverlay : MonoBehaviour
             pauseButton.interactable = false;
 
         LeanTween.cancel(gameObject);
-
         Time.timeScale = 1f;
-
         StopAllCoroutines();
-
         CloseAllPanels();
-
         EnableGestureInput();
     }
 
-    private IEnumerator FadeAndLoadScene(
-        string sceneName
-    )
+    private IEnumerator FadeAndLoadScene(string sceneName)
     {
         if (AudioManager.Instance != null)
-        {
-            yield return
-                AudioManager.Instance
-                    .FadeOutBGMAndWait(
-                        bgmFadeOutDuration
-                    );
-        }
+            yield return AudioManager.Instance.FadeOutBGMAndWait(bgmFadeOutDuration);
 
-        TransitionManager tm =
-            TransitionManager.Instance();
+        TransitionManager tm = TransitionManager.Instance();
 
-        if (tm != null &&
-            transitionSettings != null)
+        if (tm != null && transitionSettings != null)
         {
-            tm.Transition(
-                sceneName,
-                transitionSettings,
-                loadDelay
-            );
+            tm.Transition(sceneName, transitionSettings, loadDelay);
         }
         else
         {
             Time.timeScale = 1f;
-
             SceneManager.LoadScene(sceneName);
-
             isTransitioning = false;
         }
     }

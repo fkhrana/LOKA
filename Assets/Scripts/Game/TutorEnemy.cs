@@ -275,7 +275,7 @@ public class TutorialEnemySpawner : MonoBehaviour
         enemy.SetReportProgress(false);
 
         ConfigureEnemy(enemy, enemyData, aksara);
-        ConfigureMovement(enemy, position);
+        ConfigureMovement(enemy, position);   // ← instance method (diubah dari static)
         enemy.SyncSpawnPosition();
 
         enemy.IssueCommand();
@@ -360,18 +360,57 @@ public class TutorialEnemySpawner : MonoBehaviour
             enemy.ConfigureChallenge(aksara.GestureShape, 1);
     }
 
-    private static void ConfigureMovement(EnemyGestureCommand enemy, Vector3 spawnPos)
+    /// <summary>
+    /// Setup movement tutorial enemy.
+    /// FIX PENTING: panggil Initialize() supaya playerHealth, collider,
+    /// spriteRenderer, dan Rigidbody2D ter-set. Tanpa ini,
+    /// HandlePlayerContact() akan bail out karena playerHealth == null
+    /// sehingga Shield knockback & damage TIDAK bekerja.
+    /// </summary>
+    private void ConfigureMovement(EnemyGestureCommand enemy, Vector3 spawnPos)
     {
         var movement = enemy.GetComponent<EnemyMovementBehavior>()
                     ?? enemy.GetComponentInChildren<EnemyMovementBehavior>(true);
-        if (movement == null) return;
 
+        if (movement == null)
+        {
+            Debug.LogWarning($"[TutorialEnemySpawner] {enemy.name} tidak punya " +
+                             "EnemyMovementBehavior — knockback/damage tidak akan jalan.");
+            return;
+        }
+
+        // === FIX UTAMA: panggil Initialize() ===
+        PlayerHealth playerHealth = trackedPlayerHealth != null
+            ? trackedPlayerHealth
+            : FindFirstObjectByType<PlayerHealth>();
+
+        Collider2D enemyCollider = enemy.GetComponent<Collider2D>()
+                                ?? enemy.GetComponentInChildren<Collider2D>(true);
+
+        SpriteRenderer spriteRenderer = enemy.GetComponentInChildren<SpriteRenderer>(true);
+
+        if (playerHealth == null)
+            Debug.LogWarning("[TutorialEnemySpawner] ⚠️ PlayerHealth tidak ditemukan — " +
+                             "damage & shield knockback TIDAK akan bekerja!");
+
+        if (enemyCollider == null)
+            Debug.LogWarning($"[TutorialEnemySpawner] ⚠️ {enemy.name} tidak punya Collider2D — " +
+                             "contact event tidak akan fire!");
+
+        movement.Initialize(playerHealth, enemyCollider, spriteRenderer);
+
+        // Setup setelah Initialize
         movement.SetSpawnPosition(spawnPos);
         movement.SetActive(false);
         movement.SetMovementPaused(false);
+
+        if (debugSpawn)
+            Debug.Log($"[TutorialEnemySpawner] {enemy.name} Initialize OK " +
+                      $"(playerHealth={(playerHealth != null)}, " +
+                      $"collider={(enemyCollider != null)})");
     }
 
-    private static void SetEnemyActive(EnemyGestureCommand enemy, bool active)
+    private void SetEnemyActive(EnemyGestureCommand enemy, bool active)
     {
         var movement = enemy.GetComponent<EnemyMovementBehavior>()
                     ?? enemy.GetComponentInChildren<EnemyMovementBehavior>(true);

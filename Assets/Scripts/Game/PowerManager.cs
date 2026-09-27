@@ -97,6 +97,19 @@ public class PowerManager : MonoBehaviour
     public static float ShieldKnockbackDistance => shieldKnockbackDistance;
     public static float ActiveComboRadius { get; private set; }
 
+    #region Tutorial Gate Helper
+    /// <summary>
+    /// Cek apakah salah satu tutorial power-up sedang aktif.
+    /// Dipakai supaya tombol power-up bisa diklik selama tutorial
+    /// (baik tutorial biasa maupun tutorial boss).
+    /// </summary>
+    private static bool IsAnyPowerUpTutorialActive()
+    {
+        return PowerUpTutorialManager.IsPowerUpTutorial
+            || BossLevelPowerUpTutorial.IsBossLevelTutorial;
+    }
+    #endregion
+
     private void Awake()
     {
         isShieldActive = false;
@@ -141,9 +154,9 @@ public class PowerManager : MonoBehaviour
 
     private void Update()
     {
-        // === FIX: tutorial juga boleh klik ===
+        // === FIX: tutorial biasa DAN tutorial boss boleh klik ===
         bool canClick = CameraIntroManager.GameStarted
-                     || PowerUpTutorialManager.IsPowerUpTutorial;
+                     || IsAnyPowerUpTutorialActive();
 
         RefreshButtonsInteractable();
 
@@ -169,9 +182,9 @@ public class PowerManager : MonoBehaviour
 
     private void RefreshButtonsInteractable()
     {
-        // === FIX: tutorial juga boleh klik ===
+        // === FIX: tutorial biasa DAN tutorial boss boleh klik ===
         bool canClick = CameraIntroManager.GameStarted
-                     || PowerUpTutorialManager.IsPowerUpTutorial;
+                     || IsAnyPowerUpTutorialActive();
 
         foreach (var slot in slots)
         {
@@ -231,8 +244,8 @@ public class PowerManager : MonoBehaviour
 
     public void UsePowerUp(PowerUpType type)
     {
-        // === FIX: tutorial juga boleh pakai power-up ===
-        if (!CameraIntroManager.GameStarted && !PowerUpTutorialManager.IsPowerUpTutorial)
+        // === FIX: tutorial biasa DAN tutorial boss boleh pakai power-up ===
+        if (!CameraIntroManager.GameStarted && !IsAnyPowerUpTutorialActive())
             return;
 
         PowerUpSlot slot = slots.Find(s => s.powerUpType == type);

@@ -24,15 +24,11 @@ public class MainMenu : MonoBehaviour
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "CutScenee";
-
-    [Tooltip("Scene latihan. Dipakai oleh tombol Tutorial.")]
     [SerializeField] private string tutorialSceneName = "Latihan";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
     [SerializeField] private float loadDelay = 0.5f;
-
-    [Tooltip("Durasi fade out BGM sebelum pindah scene.")]
     [SerializeField] private float bgmFadeOutDuration = 1.2f;
 
     [Header("Main Menu Content")]
@@ -82,8 +78,7 @@ public class MainMenu : MonoBehaviour
 
     private void OpenPanel(PanelType type)
     {
-        if (currentPanel == type || isPanelAnimating || isTransitioning)
-            return;
+        if (currentPanel == type || isPanelAnimating || isTransitioning) return;
 
         PlayClickSFX();
 
@@ -106,12 +101,10 @@ public class MainMenu : MonoBehaviour
     private void OpenPanelDirect(PanelType type)
     {
         var data = GetPanelData(type);
-
         if (data == null) return;
 
         data.panel?.SetActive(true);
         data.button?.SetActive(false);
-
         currentPanel = type;
     }
 
@@ -175,7 +168,6 @@ public class MainMenu : MonoBehaviour
     public void OpenCredit()     => OpenPanel(PanelType.Credits);
     public void CloseCredit()    => ClosePanel(PanelType.Credits);
 
-    // Tombol Tutorial: cek cutscene, fade BGM, lalu load Latihan/Cutscene.
     public void OpenTutorial()
     {
         if (isTransitioning) return;
@@ -185,24 +177,20 @@ public class MainMenu : MonoBehaviour
         bool cutsceneCompleted = GameProgressManager.IsCutsceneCompleted();
         string targetScene = cutsceneCompleted ? tutorialSceneName : nextSceneName;
 
-        Debug.Log($"[MainMenu] Tutorial button → target: {targetScene} " +
-                  $"(cutsceneCompleted={cutsceneCompleted})");
-
         isTransitioning = true;
         StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
-    // Tetap ada untuk backward compatibility (mis. tombol close panel).
     public void CloseTutorial() => ClosePanel(PanelType.Tutorial);
 
-    // Tap to Start: routing sesuai kondisi save, lalu fade BGM + transisi.
     public void TapToStart()
     {
         if (isTransitioning) return;
 
         PlayClickSFX();
 
-        bool tutorialCompleted = PlayerPrefs.GetInt("TutorialCompleted", 0) == 1;
+        int currentLevel = PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+        bool tutorialCompleted = GameProgressManager.IsTutorialCompleted(currentLevel);
         string targetScene = nextSceneName;
 
         if (!tutorialCompleted)
@@ -219,16 +207,11 @@ public class MainMenu : MonoBehaviour
                 Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
             }
         }
-        else
-        {
-            Debug.Log($"[MainMenu] Player lama, tidak ada last scene → {targetScene}");
-        }
 
         isTransitioning = true;
         StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
-    // Fade out BGM lalu load scene via TransitionManager.
     private IEnumerator FadeAndLoadScene(string sceneName)
     {
         if (AudioManager.Instance != null)
@@ -251,8 +234,7 @@ public class MainMenu : MonoBehaviour
     {
         foreach (var canvas in FindObjectsByType<Canvas>(FindObjectsSortMode.None))
         {
-            if (canvas == null ||
-                canvas.gameObject.scene.name != gameObject.scene.name)
+            if (canvas == null || canvas.gameObject.scene.name != gameObject.scene.name)
                 continue;
 
             canvas.sortingOrder = 0;
@@ -271,11 +253,7 @@ public class MainMenu : MonoBehaviour
 
     private void ForceShowMainMenu()
     {
-        if (mainMenuContent == null)
-        {
-            Debug.LogError("[MainMenu] mainMenuContent tidak di-assign!");
-            return;
-        }
+        if (mainMenuContent == null) return;
 
         mainMenuContent.SetActive(true);
 

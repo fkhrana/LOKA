@@ -975,7 +975,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &511750229
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1623,9 +1623,9 @@ RectTransform:
   m_Father: {fileID: 511750229}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0.00024414062, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &791794528
 CanvasGroup:
@@ -1746,17 +1746,21 @@ MonoBehaviour:
   - {fileID: -8271439518806972371, guid: a11205f260c1d87449403d89ab67dae8, type: 3}
   - {fileID: -3571278149730965589, guid: 72925e4a5a5c4404384e15dffd511b5a, type: 3}
   - {fileID: 8127168267730269012, guid: b59e2dacc08fd6a4ba57ab81a5f77025, type: 3}
+  - {fileID: -4239645594926956074, guid: 6f59cecb04f23bb40900049804e5c1f9, type: 3}
   unlockedLevelIcons:
   - {fileID: 7028842072390148906, guid: ce8b0fd1e4c0df54babac1ceb00e033c, type: 3}
   - {fileID: -3002448445795776205, guid: d728b46ca7798d64e8526f1db36322a9, type: 3}
   - {fileID: -5472879786514868279, guid: 043c056ef9963e848a5a19bb5a4d08f0, type: 3}
+  - {fileID: 4726450619418919149, guid: 372a4060548aef943897731219dc7762, type: 3}
   lockedLevelBackgrounds:
   - {fileID: 2155178182265740938, guid: 84bd5acea45bbd249b0dafc4a9a302bf, type: 3}
   - {fileID: -592246342153662809, guid: 079b4f93f0cf1f947a41a3afbab830a2, type: 3}
   - {fileID: 21300000, guid: c38a0df97db8dfe42b219ea5cd9040a6, type: 3}
+  - {fileID: 21300000, guid: c38a0df97db8dfe42b219ea5cd9040a6, type: 3}
   unlockedLevelBackgrounds:
   - {fileID: -6161477142026420901, guid: 8c2e070f68e1bee499593e336fb4e75b, type: 3}
   - {fileID: -3922444203956005767, guid: 720b737d13746d146b5171867e8300a3, type: 3}
+  - {fileID: 21300000, guid: 82281cec0d2ba7448814c7cf5ea74cc1, type: 3}
   - {fileID: 21300000, guid: 82281cec0d2ba7448814c7cf5ea74cc1, type: 3}
   levelAksaraConfigs:
   - label: MainGameplay(Drawing)
@@ -1780,12 +1784,20 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
     - {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
     - {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+  - label: Level4
+    aksaraList:
+    - {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
+    - {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
+    - {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
+    - {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
+    - {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
   failureSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
   successSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   gameplaySceneNames:
   - MainGameplay(Drawing)
   - Level2
   - Level3
+  - Level4
   mainMenuSceneName: MainMenu
 --- !u!1 &812645196
 GameObject:
@@ -2310,6 +2322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AutoResetProgress
   resetOnStop: 1
   aksaraCarouselUI: {fileID: 662237689}
+  totalLevels: 4
 --- !u!224 &885725104
 RectTransform:
   m_ObjectHideFlags: 0
