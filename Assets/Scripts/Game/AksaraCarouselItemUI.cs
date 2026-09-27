@@ -10,12 +10,9 @@ public class AksaraCarouselItemUI : MonoBehaviour
     [SerializeField] private AksaraCardVisualLibrary cardVisualLibrary;
 
     [Header("Audio")]
+    [Tooltip("Tombol terpisah untuk memutar suara aksara. " +
+             "Event-nya di-forward ke AksaraCarouselUI.OnSoundButtonClicked().")]
     [SerializeField] private Button soundButton;
-    [SerializeField] private AksaraSoundLibrary soundLibrary;
-
-    [Tooltip("Multiplier volume, sama seperti aksaraSFXVolume di BossEnemy. " +
-             "Formula: multiplier × library volume × 8, clamp 0..10.")]
-    [SerializeField, Range(0f, 2f)] private float aksaraSFXVolume = 1.5f;
 
     [Header("Colors")]
     [SerializeField] private Color collectedTint = Color.white;
@@ -33,9 +30,9 @@ public class AksaraCarouselItemUI : MonoBehaviour
     private void Awake()
     {
         mainButton = GetComponent<Button>();
-        mainButton.onClick.AddListener(OnClick);
+        mainButton.onClick.AddListener(OnMainClicked);
 
-        if (soundButton) soundButton.onClick.AddListener(PlayLetterSound);
+        if (soundButton) soundButton.onClick.AddListener(OnSoundClicked);
     }
 
     public void Setup(AksaraData newData, AksaraCarouselUI parent, bool collected)
@@ -85,25 +82,17 @@ public class AksaraCarouselItemUI : MonoBehaviour
             });
     }
 
-    private void OnClick()
+    // Klik kartu utama → forward ke carousel (audio + bounce + snap).
+    private void OnMainClicked()
     {
         if (!isCollected || data == null || carousel == null) return;
         carousel.OnItemSelected(this);
     }
 
-    private void PlayLetterSound()
+    // Klik sound button → forward ke carousel (audio saja).
+    private void OnSoundClicked()
     {
-        if (!isCollected || data == null || soundLibrary == null) return;
-        if (AudioManager.Instance == null) return;
-
-        AudioClip clip = soundLibrary.GetClip(data.GestureShape);
-        if (clip == null) return;
-
-        float volume = soundLibrary.GetVolume(data.GestureShape);
-
-        AudioManager.Instance.PlayLoudSFX(
-            clip,
-            Mathf.Clamp(aksaraSFXVolume * volume * 8f, 0f, 10f)
-        );
+        if (!isCollected || data == null || carousel == null) return;
+        carousel.OnSoundButtonClicked(this);
     }
 }

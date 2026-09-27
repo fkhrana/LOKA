@@ -184,7 +184,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: -1496244677365247846, guid: ea32ec96189290142b8cbdcce8d67d43, type: 3}
-    m_PressedSprite: {fileID: 5888632954620296110, guid: 351ab35cfd9c2f54c9389edbe4e77aba, type: 3}
+    m_PressedSprite: {fileID: -1496244677365247846, guid: ea32ec96189290142b8cbdcce8d67d43, type: 3}
     m_SelectedSprite: {fileID: -1516508022938475743, guid: 74850682ed8f5be48b9842e269421c1b, type: 3}
     m_DisabledSprite: {fileID: 5888632954620296110, guid: 351ab35cfd9c2f54c9389edbe4e77aba, type: 3}
   m_AnimationTriggers:
@@ -412,7 +412,7 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: -3596750135699128658, guid: 3aec6cc2f83c4094a82d7521f79176fd, type: 3}
-    m_PressedSprite: {fileID: -1501595144084750757, guid: f461c90d7901cd94393515f95168355d, type: 3}
+    m_PressedSprite: {fileID: -3596750135699128658, guid: 3aec6cc2f83c4094a82d7521f79176fd, type: 3}
     m_SelectedSprite: {fileID: 6938652463038702320, guid: d5ba49d4b3ac3d0419ee086c6e4429cd, type: 3}
     m_DisabledSprite: {fileID: -1501595144084750757, guid: f461c90d7901cd94393515f95168355d, type: 3}
   m_AnimationTriggers:
@@ -597,7 +597,7 @@ MonoBehaviour:
   scaleFalloffDistance: 300
   snapLerpSpeed: 10
   soundLibrary: {fileID: 11400000, guid: 753ec4f2e65cf104bb52c64cf96a4f4f, type: 2}
-  aksaraSoundVolume: 1
+  aksaraSFXVolume: 1.5
   gestureDrawer: {fileID: 0}
 --- !u!1 &6213464017615318399
 GameObject:

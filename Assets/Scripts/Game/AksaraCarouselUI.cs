@@ -27,8 +27,12 @@ public class AksaraCarouselUI : MonoBehaviour
     [SerializeField] private float snapLerpSpeed = 10f;
 
     [Header("Audio")]
+    [Tooltip("Satu-satunya sumber audio untuk semua item carousel.")]
     [SerializeField] private AksaraSoundLibrary soundLibrary;
-    [Range(0f, 1f)] [SerializeField] private float aksaraSoundVolume = 1f;
+
+    [Tooltip("Multiplier volume, sama seperti aksaraSFXVolume di BossEnemy. " +
+             "Formula: aksaraSFXVolume × library volume × 8, clamp 0..10.")]
+    [SerializeField, Range(0f, 2f)] private float aksaraSFXVolume = 1.5f;
 
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
@@ -54,7 +58,6 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private void OnDisable() => EnableGestureInput();
 
-    // Matikan gesture input sementara.
     private void DisableGestureInput()
     {
         if (gestureDrawer != null)
@@ -64,13 +67,11 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Nyalakan gesture input lagi.
     private void EnableGestureInput()
     {
         if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
-    // Bangun list item dari data.
     private void BuildList()
     {
         if (content == null || itemPrefab == null || allAksaraData == null)
@@ -95,7 +96,6 @@ public class AksaraCarouselUI : MonoBehaviour
         ApplyCenteringPadding();
     }
 
-    // Padding kiri-kanan biar item tengah pas di center viewport.
     private void ApplyCenteringPadding()
     {
         if (contentLayoutGroup == null || viewport == null || itemPrefab == null) return;
@@ -132,7 +132,6 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Skala item membesar di tengah, mengecil di pinggir.
     private void UpdateScales()
     {
         if (viewport == null || spawnedItems.Count == 0) return;
@@ -148,7 +147,6 @@ public class AksaraCarouselUI : MonoBehaviour
         }
     }
 
-    // Cari item yang paling dekat dengan center viewport.
     private AksaraCarouselItemUI GetNearestCenterItem()
     {
         if (viewport == null || spawnedItems.Count == 0) return null;
@@ -172,7 +170,6 @@ public class AksaraCarouselUI : MonoBehaviour
         return nearest;
     }
 
-    // Geser satu langkah ke kiri/kanan.
     private void SnapStep(int direction)
     {
         AksaraCarouselItemUI current = GetNearestCenterItem();
@@ -184,7 +181,6 @@ public class AksaraCarouselUI : MonoBehaviour
         ScrollToItem(spawnedItems[targetIndex]);
     }
 
-    // Set target normalized position biar item pas di tengah.
     private void ScrollToItem(AksaraCarouselItemUI item)
     {
         if (scrollRect == null || content == null || viewport == null) return;
@@ -204,26 +200,24 @@ public class AksaraCarouselUI : MonoBehaviour
         isSnapping = true;
     }
 
-    // Klik card: putar suara aksara + bounce + auto-center.
+    // ============================================================
+    // AUDIO — single source of truth
+    // ============================================================
+
+    /// <summary>
+    /// Klik kartu: play audio + bounce + snap ke tengah.
+    /// </summary>
     public void OnItemSelected(AksaraCarouselItemUI item)
     {
+        if (item == null || item.Data == null) return;
+
         if (!PermanentCollectionManager.IsCollected(item.Data))
         {
             Debug.Log($"[AksaraCarouselUI] {item.Data.name} locked.");
             return;
         }
 
-        if (soundLibrary != null)
-        {
-            AudioClip clip = soundLibrary.GetClip(item.Data.GestureShape);
-
-            if (clip != null)
-            {
-                float entryVolume = soundLibrary.GetVolume(item.Data.GestureShape);
-                float finalVolume = Mathf.Clamp01(entryVolume * aksaraSoundVolume);
-                AudioManager.Instance?.PlayAksaraVoice(clip, finalVolume);
-            }
-        }
+        PlayAksaraAudio(item.Data);
 
         item.PlayBounceEffect();
 
@@ -231,7 +225,36 @@ public class AksaraCarouselUI : MonoBehaviour
         if (item != centerItem) ScrollToItem(item);
     }
 
-    // Update interactable panah kiri/kanan sesuai posisi.
+    /// <summary>
+    /// Klik tombol sound: play audio saja (tanpa bounce/snap).
+    /// </summary>
+    public void OnSoundButtonClicked(AksaraCarouselItemUI item)
+    {
+        if (item == null || item.Data == null) return;
+        if (!PermanentCollectionManager.IsCollected(item.Data)) return;
+
+        PlayAksaraAudio(item.Data);
+    }
+
+    /// <summary>
+    /// Helper audio terpusat — SAMA PERSIS dengan BossEnemy.PlayAksaraSFX().
+    /// </summary>
+    private void PlayAksaraAudio(AksaraData data)
+    {
+        if (soundLibrary == null || data == null) return;
+        if (AudioManager.Instance == null) return;
+
+        AudioClip clip = soundLibrary.GetClip(data.GestureShape);
+        if (clip == null) return;
+
+        float libraryVolume = soundLibrary.GetVolume(data.GestureShape);
+        float finalVolume = Mathf.Clamp(aksaraSFXVolume * libraryVolume * 8f, 0f, 10f);
+
+        AudioManager.Instance.PlayLoudSFX(clip, finalVolume);
+    }
+
+    // ============================================================
+
     private void UpdateButtons()
     {
         if (spawnedItems.Count == 0) return;
@@ -243,6 +266,5 @@ public class AksaraCarouselUI : MonoBehaviour
         if (rightArrowButton) rightArrowButton.interactable = currentIndex < spawnedItems.Count - 1;
     }
 
-    // Dipanggil dari event OnEndDrag ScrollRect.
     public void OnEndDrag() => UpdateButtons();
 }
