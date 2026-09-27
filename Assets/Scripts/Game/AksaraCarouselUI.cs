@@ -42,6 +42,7 @@ public class AksaraCarouselUI : MonoBehaviour
 
     private bool isSnapping;
     private float snapTargetNormalized;
+    private int currentIndex = 0;
 
     private void Awake()
     {
@@ -52,7 +53,7 @@ public class AksaraCarouselUI : MonoBehaviour
     private void OnEnable()
     {
         BuildList();
-        UpdateButtons();
+        UpdateButtonsByIndex(0);
         DisableGestureInput();
     }
 
@@ -94,6 +95,7 @@ public class AksaraCarouselUI : MonoBehaviour
         }
 
         ApplyCenteringPadding();
+        currentIndex = 0;
     }
 
     private void ApplyCenteringPadding()
@@ -128,7 +130,7 @@ public class AksaraCarouselUI : MonoBehaviour
         {
             scrollRect.horizontalNormalizedPosition = snapTargetNormalized;
             isSnapping = false;
-            UpdateButtons();
+            // Update tombol sudah dilakukan instant di SnapStep/OnEndDrag
         }
     }
 
@@ -170,15 +172,22 @@ public class AksaraCarouselUI : MonoBehaviour
         return nearest;
     }
 
+    // ============================================================
+    // NAVIGATION — state-driven (instant button update)
+    // ============================================================
+
     private void SnapStep(int direction)
     {
-        AksaraCarouselItemUI current = GetNearestCenterItem();
-        if (current == null) return;
+        if (spawnedItems.Count == 0) return;
 
-        int index = spawnedItems.IndexOf(current);
-        int targetIndex = Mathf.Clamp(index + direction, 0, spawnedItems.Count - 1);
+        int targetIndex = Mathf.Clamp(currentIndex + direction, 0, spawnedItems.Count - 1);
+        if (targetIndex == currentIndex) return;
 
-        ScrollToItem(spawnedItems[targetIndex]);
+        currentIndex = targetIndex;
+        ScrollToItem(spawnedItems[currentIndex]);
+
+        // Update tombol INSTANT — tidak tunggu animasi selesai
+        UpdateButtonsByIndex(currentIndex);
     }
 
     private void ScrollToItem(AksaraCarouselItemUI item)
@@ -198,6 +207,22 @@ public class AksaraCarouselUI : MonoBehaviour
         float targetX = Mathf.Clamp(itemCenterX - viewportWidth * 0.5f, 0f, contentWidth - viewportWidth);
         snapTargetNormalized = targetX / (contentWidth - viewportWidth);
         isSnapping = true;
+    }
+
+    private void UpdateButtonsByIndex(int index)
+    {
+        if (leftArrowButton) leftArrowButton.interactable = index > 0;
+        if (rightArrowButton) rightArrowButton.interactable = index < spawnedItems.Count - 1;
+    }
+
+    // Dipanggil dari event ScrollRect.OnEndDrag di Inspector
+    public void OnEndDrag()
+    {
+        AksaraCarouselItemUI nearest = GetNearestCenterItem();
+        if (nearest == null) return;
+
+        currentIndex = spawnedItems.IndexOf(nearest);
+        UpdateButtonsByIndex(currentIndex);
     }
 
     // ============================================================
@@ -220,6 +245,14 @@ public class AksaraCarouselUI : MonoBehaviour
         PlayAksaraAudio(item.Data);
 
         item.PlayBounceEffect();
+
+        // Sync currentIndex dengan kartu yang diklik
+        int clickedIndex = spawnedItems.IndexOf(item);
+        if (clickedIndex >= 0)
+        {
+            currentIndex = clickedIndex;
+            UpdateButtonsByIndex(currentIndex);
+        }
 
         AksaraCarouselItemUI centerItem = GetNearestCenterItem();
         if (item != centerItem) ScrollToItem(item);
@@ -252,19 +285,4 @@ public class AksaraCarouselUI : MonoBehaviour
 
         AudioManager.Instance.PlayLoudSFX(clip, finalVolume);
     }
-
-    // ============================================================
-
-    private void UpdateButtons()
-    {
-        if (spawnedItems.Count == 0) return;
-
-        int currentIndex = spawnedItems.IndexOf(GetNearestCenterItem());
-        if (currentIndex < 0) return;
-
-        if (leftArrowButton) leftArrowButton.interactable = currentIndex > 0;
-        if (rightArrowButton) rightArrowButton.interactable = currentIndex < spawnedItems.Count - 1;
-    }
-
-    public void OnEndDrag() => UpdateButtons();
 }
