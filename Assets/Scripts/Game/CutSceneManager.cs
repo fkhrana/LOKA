@@ -17,6 +17,9 @@ public class CutsceneManager : MonoBehaviour
     [Header("Video")]
     [SerializeField] private VideoPlayer videoPlayer;
 
+    [Tooltip("Path relatif dari folder StreamingAssets, contoh: Video/startscene.mp4")]
+    [SerializeField] private string videoFileName = "Video/startscene.mp4";
+
     [Header("Next Scene")]
     [SerializeField] private string nextSceneName = "MainMenu";
 
@@ -36,6 +39,7 @@ public class CutsceneManager : MonoBehaviour
         {
             videoPlayer.loopPointReached += OnVideoFinished;
             videoPlayer.errorReceived += OnVideoError;
+            videoPlayer.prepareCompleted += OnVideoPrepared;
         }
     }
 
@@ -45,6 +49,7 @@ public class CutsceneManager : MonoBehaviour
         {
             videoPlayer.loopPointReached -= OnVideoFinished;
             videoPlayer.errorReceived -= OnVideoError;
+            videoPlayer.prepareCompleted -= OnVideoPrepared;
         }
 
         transitionManager = null;
@@ -60,6 +65,34 @@ public class CutsceneManager : MonoBehaviour
 
         if (skipButton != null)
             skipButton.SetActive(true);
+
+        SetupAndPlayVideo();
+    }
+
+    private void SetupAndPlayVideo()
+    {
+        if (videoPlayer == null)
+        {
+            Debug.LogError("[CutsceneManager] VideoPlayer belum di-assign.");
+            return;
+        }
+
+        // Jangan autoplay, kita play manual setelah Prepare selesai
+        videoPlayer.playOnAwake = false;
+        videoPlayer.source = VideoSource.Url;
+        videoPlayer.url = Application.streamingAssetsPath + "/" + videoFileName;
+
+        Debug.Log($"[CutsceneManager] Video URL: {videoPlayer.url}");
+
+        videoPlayer.Prepare();
+    }
+
+    private void OnVideoPrepared(VideoPlayer vp)
+    {
+        if (isLoadingNextScene)
+            return;
+
+        vp.Play();
     }
 
     private void OnVideoError(VideoPlayer source, string message)
