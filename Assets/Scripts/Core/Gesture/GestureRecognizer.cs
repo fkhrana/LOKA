@@ -18,6 +18,7 @@ public class GestureRecognizer : MonoBehaviour
     private int maxAllowedCorners = 12;
     [Tooltip("Rasio minimum pemisahan antara hasil terbaik dan kedua terbaik agar bentuk dianggap jelas.")]
     public float recognitionMarginRatio = 0.90f;
+    [SerializeField] private FaGaGestureDisambiguator faGaDisambiguator = new FaGaGestureDisambiguator();
     [Tooltip("Rasio jarak titik awal-akhir terhadap ukuran gesture. Makin kecil makin ketat untuk menolak garis terbuka.")]
     public float maxEndpointDistanceRatio = 0.18f;
 
@@ -44,6 +45,7 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new NaGestureTemplate());
         templateProviders.Add(new NaAlternativeGestureTemplate());
         templateProviders.Add(new KaGestureTemplate());
+        templateProviders.Add(new ZaAlternativeGestureTemplate());
         templateProviders.Add(new DaGestureTemplate());
         templateProviders.Add(new DaAlternativeGestureTemplate());
         templateProviders.Add(new WaGestureTemplate());
@@ -59,6 +61,7 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new QaGestureTemplate());
         templateProviders.Add(new QaSingleStrokeTemplate());
         templateProviders.Add(new GaGestureTemplate());
+        templateProviders.Add(new GaAlternativeGestureTemplate());
         templateProviders.Add(new HaGestureTemplate());
         templateProviders.Add(new PaGestureTemplate());
         templateProviders.Add(new ZaGestureTemplate());
@@ -160,6 +163,11 @@ public class GestureRecognizer : MonoBehaviour
             {
                 totalDistance += GestureNormalizationHelper.DistanceAtBestAngle(candidateStrokes[i], template.Strokes[i], -angleRange, angleRange);
             }
+
+            totalDistance += faGaDisambiguator.GetPenalty(
+                template.Shape,
+                candidateStrokes,
+                template.Strokes);
 
             if (totalDistance < bestDistance)
             {

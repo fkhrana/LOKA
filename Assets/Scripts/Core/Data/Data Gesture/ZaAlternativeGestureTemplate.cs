@@ -1,0 +1,84 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// Template alternatif untuk gesture Za dengan arah stroke berbeda.
+/// </summary>
+public class ZaAlternativeGestureTemplate : IGestureTemplateProvider
+{
+    public GestureShape Shape => GestureShape.Za;
+
+    public List<List<Vector2>> GetStrokes()
+    {
+        return new List<List<Vector2>>
+        {
+            new List<Vector2>
+            {
+                new Vector2(126.651000f, -92.814510f),
+                new Vector2(125.136000f, -82.768860f),
+                new Vector2(125.136000f, -72.536710f),
+                new Vector2(123.340300f, -62.848280f),
+                new Vector2(121.266200f, -53.093310f),
+                new Vector2(117.602800f, -43.636060f),
+                new Vector2(115.435400f, -34.019490f),
+                new Vector2(110.123100f, -25.322660f),
+                new Vector2(103.529400f, -17.935590f),
+                new Vector2(93.829040f, -14.872570f),
+                new Vector2(84.354480f, -12.164610f),
+                new Vector2(74.357990f, -11.385300f),
+                new Vector2(64.749390f, -14.026640f),
+                new Vector2(55.314350f, -17.876820f),
+                new Vector2(46.144910f, -22.242870f),
+                new Vector2(36.860380f, -26.445430f),
+                new Vector2(30.431990f, -33.751530f),
+                new Vector2(26.864880f, -43.251390f),
+                new Vector2(24.323300f, -52.828190f),
+                new Vector2(20.590440f, -62.028820f),
+                new Vector2(16.640760f, -71.006670f),
+                new Vector2(11.909070f, -78.318190f),
+                new Vector2(2.125923f, -80.093990f),
+                new Vector2(-7.957603f, -79.178150f),
+                new Vector2(-17.943860f, -77.662980f),
+                new Vector2(-28.176000f, -77.662980f),
+                new Vector2(-38.408150f, -77.662980f),
+                new Vector2(-48.640290f, -77.662980f),
+                new Vector2(-58.872440f, -77.662980f),
+                new Vector2(-69.104580f, -77.662980f),
+                new Vector2(-74.864060f, -73.190320f),
+                new Vector2(-71.965800f, -64.158680f),
+                new Vector2(-65.935010f, -55.936050f),
+                new Vector2(-61.227740f, -47.129170f),
+                new Vector2(-55.589710f, -39.660480f),
+                new Vector2(-49.608660f, -31.362810f),
+                new Vector2(-42.379820f, -24.391140f),
+                new Vector2(-37.052140f, -15.675480f),
+                new Vector2(-31.888970f, -6.864349f),
+                new Vector2(-27.668480f, 2.447189f),
+                new Vector2(-22.629070f, 11.295590f),
+                new Vector2(-18.494110f, 20.544230f),
+                new Vector2(-16.012430f, 30.470860f),
+                new Vector2(-11.787220f, 39.679570f),
+                new Vector2(-9.128876f, 49.497990f),
+                new Vector2(-6.373085f, 59.319050f),
+                new Vector2(-0.719185f, 67.694020f),
+                new Vector2(2.533875f, 77.070240f),
+                new Vector2(8.970871f, 84.959820f),
+                new Vector2(14.476240f, 93.441840f),
+                new Vector2(7.631172f, 100.673500f),
+                new Vector2(-2.218445f, 102.640000f),
+                new Vector2(-12.450580f, 102.640000f),
+                new Vector2(-22.682720f, 102.640000f),
+                new Vector2(-32.914870f, 102.640000f),
+                new Vector2(-42.901140f, 101.124900f),
+                new Vector2(-52.887410f, 99.609710f),
+                new Vector2(-63.119550f, 99.609710f),
+                new Vector2(-73.351690f, 99.609710f),
+                new Vector2(-82.666340f, 96.579410f),
+                new Vector2(-92.898480f, 96.579410f),
+                new Vector2(-103.130600f, 96.579410f),
+                new Vector2(-113.331000f, 96.383380f),
+                new Vector2(-123.349000f, 95.064250f)
+            }
+        };
+    }
+}

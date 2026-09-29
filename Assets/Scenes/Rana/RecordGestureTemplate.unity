@@ -170,6 +170,8 @@ MonoBehaviour:
   cornerThresholdDegrees: 45
   maxAllowedCorners: 5
   recognitionMarginRatio: 0.9
+  faGaDisambiguator:
+    endpointGapWeight: 0.05
   maxEndpointDistanceRatio: 0.18
 --- !u!1 &1025386415
 GameObject:
@@ -216,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureTemplateRecorder
   drawer: {fileID: 1392741719}
-  gestureName: FA
+  gestureName: ZA
   targetStrokeCount: 1
 --- !u!1 &1368193397
 GameObject:
