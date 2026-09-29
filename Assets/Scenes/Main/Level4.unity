@@ -780,11 +780,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4671185613160274458, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 237.30005
+      value: 237
       objectReference: {fileID: 0}
     - target: {fileID: 4671185613160274458, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.399994
+      value: -4.6
       objectReference: {fileID: 0}
     - target: {fileID: 4671185613160274458, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: m_LocalPosition.z
@@ -834,8 +834,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: VFX_BarStar (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5438673334048910197, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: moveWithTransform
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8886838764703052975, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
@@ -4081,7 +4089,6 @@ MonoBehaviour:
   milestoneVfxLifetime: 2
   hideProgressBarDuringPowerUpTutorial: 1
   levelBarStarTargetsByWave:
-  - {fileID: 574818412}
   - {fileID: 1153645661}
   barItemTrailVfx: {fileID: 5279508769069451888, guid: b560ca91eb308794a969b4e6c09bed81, type: 3}
   trailCollectItemVfx: {fileID: 8757289190187547843, guid: 1eebc901001a2e0469d496a343ecde69, type: 3}

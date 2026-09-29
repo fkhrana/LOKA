@@ -1263,8 +1263,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: VFX_BarStar
       objectReference: {fileID: 0}
+    - target: {fileID: 5438673334048910197, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: moveWithTransform
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8886838764703052975, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
@@ -3287,8 +3295,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: VFX_BarStar (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5438673334048910197, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
       propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
+      propertyPath: moveWithTransform
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8886838764703052975, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
@@ -3565,6 +3581,8 @@ MonoBehaviour:
   progressBarVfx: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
   progressText: {fileID: 1096968999}
   progressBarRoot: {fileID: 1894410913}
+  progressBarAppearDuration: 0.35
+  progressBarAppearStartScale: 0.94
   progressAnimationDuration: 0.25
   progressBarGlowFadeSpeed: 2
   progressBarGlowStartFill: 0.06
