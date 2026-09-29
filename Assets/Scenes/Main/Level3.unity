@@ -278,7 +278,7 @@ RectTransform:
   m_GameObject: {fileID: 18504181}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 313431128}
@@ -716,11 +716,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -1707,11 +1707,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -3448,7 +3448,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &773527641
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4781,6 +4781,9 @@ MonoBehaviour:
   progressBarGlow: {fileID: 1352637317}
   progressBarVfx: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
   progressText: {fileID: 224622513}
+  progressBarRoot: {fileID: 2105857010}
+  progressBarAppearDuration: 0.35
+  progressBarAppearStartScale: 0.94
   progressAnimationDuration: 0.25
   progressBarGlowFadeSpeed: 2
   progressBarGlowStartFill: 0.06
@@ -4789,6 +4792,7 @@ MonoBehaviour:
   - {fileID: 1395852654}
   - {fileID: 173918560}
   milestoneVfxLifetime: 2
+  hideProgressBarDuringPowerUpTutorial: 1
   levelBarStarTargetsByWave:
   - {fileID: 574818412}
   - {fileID: 1153645661}
@@ -6634,6 +6638,8 @@ MonoBehaviour:
   cornerThresholdDegrees: 45
   maxAllowedCorners: 5
   recognitionMarginRatio: 0.9
+  faGaDisambiguator:
+    endpointGapWeight: 0.05
   maxEndpointDistanceRatio: 0.18
 --- !u!114 &1483876491
 MonoBehaviour:
@@ -7776,11 +7782,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7291629824973067261, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8150239280531502476, guid: 6343344292b37534081b8b9a45f5e969, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

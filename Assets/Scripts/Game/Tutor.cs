@@ -665,6 +665,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void StartGameNormally()
     {
         GameProgressManager.MarkTutorialCompleted();
+        LevelProgressManager.Instance?.SetProgressBarVisible(true);
         ResumeWaveSpawner(startSequenceIfIdle: true);
 
         if (debugLog)

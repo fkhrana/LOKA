@@ -4069,14 +4069,17 @@ MonoBehaviour:
   progressBarGlow: {fileID: 1352637317}
   progressBarVfx: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
   progressText: {fileID: 224622513}
+  progressBarRoot: {fileID: 2105857010}
+  progressBarAppearDuration: 0.35
+  progressBarAppearStartScale: 0.94
   progressAnimationDuration: 0.25
   progressBarGlowFadeSpeed: 2
   progressBarGlowStartFill: 0.06
   progressBarGlowEndFill: 0.95
   milestoneVfxByWave:
-  - {fileID: 0}
   - {fileID: 173918560}
   milestoneVfxLifetime: 2
+  hideProgressBarDuringPowerUpTutorial: 1
   levelBarStarTargetsByWave:
   - {fileID: 574818412}
   - {fileID: 1153645661}
@@ -6115,6 +6118,8 @@ MonoBehaviour:
   cornerThresholdDegrees: 45
   maxAllowedCorners: 5
   recognitionMarginRatio: 0.9
+  faGaDisambiguator:
+    endpointGapWeight: 0.05
   maxEndpointDistanceRatio: 0.18
 --- !u!114 &1483876491
 MonoBehaviour:
@@ -7094,8 +7099,8 @@ MonoBehaviour:
   maxWaitForIntro: 30
   fallbackIntroDelay: 10
   bossSpawner: {fileID: 441064577}
-  resetTutorialOnPlay: 0
-  autoUncheckReset: 1
+  resetTutorialOnPlay: 1
+  autoUncheckReset: 0
   debugLog: 1
 --- !u!1001 &1836577841
 PrefabInstance:

@@ -316,6 +316,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
 
         IsBossLevelTutorial = false;
         TutorialManager.IsTrainingMode = false;
+        LevelProgressManager.Instance?.SetProgressBarVisible(true);
 
         // Konsisten dengan Script 1: reset power-up supaya penuh saat boss fight
         PowerManager.ResetAllPowerUpsToFullGlobal();

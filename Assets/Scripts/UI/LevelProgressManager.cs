@@ -14,6 +14,9 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private Image progressBarGlow;
     [SerializeField] private ParticleSystem progressBarVfx;
     [SerializeField] private TMP_Text progressText;
+    [SerializeField] private GameObject progressBarRoot;
+    [SerializeField, Min(0.01f)] private float progressBarAppearDuration = 0.35f;
+    [SerializeField, Range(0.5f, 1f)] private float progressBarAppearStartScale = 0.94f;
     [SerializeField] private float progressAnimationDuration = 0.25f;
     [SerializeField] private float progressBarGlowFadeSpeed = 2f;
     [Range(0f, 1f)]
@@ -22,6 +25,7 @@ public class LevelProgressManager : MonoBehaviour
     [SerializeField] private float progressBarGlowEndFill = 1f;
     [SerializeField] private GameObject[] milestoneVfxByWave;
     [SerializeField] private float milestoneVfxLifetime = 2f;
+    [SerializeField] private bool hideProgressBarDuringPowerUpTutorial = true;
 
     [Header("Non-Collectible Item VFX")]
     [SerializeField] private Transform[] levelBarStarTargetsByWave;
@@ -75,6 +79,44 @@ public class LevelProgressManager : MonoBehaviour
         }
 
         Instance = this;
+
+        bool hasPowerUpTutorial =
+            FindFirstObjectByType<PowerUpTutorialManager>() != null ||
+            FindFirstObjectByType<BossLevelPowerUpTutorial>() != null;
+
+        if (hideProgressBarDuringPowerUpTutorial &&
+            hasPowerUpTutorial &&
+            !GameProgressManager.IsTutorialCompleted())
+            SetProgressBarVisible(false);
+    }
+
+    public void SetProgressBarVisible(bool visible)
+    {
+        if (progressBarRoot == null)
+            return;
+
+        if (!visible)
+        {
+            progressBarRoot.GetComponent<ProgressBarRevealAnimation>()?.ResetAnimation();
+            progressBarRoot.SetActive(false);
+            return;
+        }
+
+        if (progressBarRoot.activeSelf)
+            return;
+
+        progressBarRoot.SetActive(true);
+
+        if (progressBarAppearDuration > 0f)
+        {
+            ProgressBarRevealAnimation animation =
+                progressBarRoot.GetComponent<ProgressBarRevealAnimation>();
+
+            if (animation == null)
+                animation = progressBarRoot.AddComponent<ProgressBarRevealAnimation>();
+
+            animation.Play(progressBarAppearDuration, progressBarAppearStartScale);
+        }
     }
 
     private void OnEnable()

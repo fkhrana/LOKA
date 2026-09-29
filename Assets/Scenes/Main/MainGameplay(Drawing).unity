@@ -3564,6 +3564,7 @@ MonoBehaviour:
   progressBarGlow: {fileID: 1412529871}
   progressBarVfx: {fileID: 7768980010648910948, guid: 89220af255d72894cbe6b4323ec78f10, type: 3}
   progressText: {fileID: 1096968999}
+  progressBarRoot: {fileID: 1894410913}
   progressAnimationDuration: 0.25
   progressBarGlowFadeSpeed: 2
   progressBarGlowStartFill: 0.06
@@ -3572,6 +3573,7 @@ MonoBehaviour:
   - {fileID: 263058423}
   - {fileID: 1019592676}
   milestoneVfxLifetime: 2
+  hideProgressBarDuringPowerUpTutorial: 0
   levelBarStarTargetsByWave:
   - {fileID: 727570668}
   - {fileID: 1804891773}
@@ -4554,6 +4556,8 @@ MonoBehaviour:
   cornerThresholdDegrees: 45
   maxAllowedCorners: 5
   recognitionMarginRatio: 0.9
+  faGaDisambiguator:
+    endpointGapWeight: 0.05
   maxEndpointDistanceRatio: 0.18
 --- !u!114 &1483876491
 MonoBehaviour:
