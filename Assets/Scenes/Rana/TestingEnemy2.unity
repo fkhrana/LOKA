@@ -1882,7 +1882,7 @@ MonoBehaviour:
     groups:
     - groupName: test1
       enemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
-      aksaraData: {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
+      aksaraData: {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
       enemyCount: 8
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3

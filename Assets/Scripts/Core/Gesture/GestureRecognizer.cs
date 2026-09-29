@@ -63,6 +63,7 @@ public class GestureRecognizer : MonoBehaviour
         templateProviders.Add(new GaGestureTemplate());
         templateProviders.Add(new GaAlternativeGestureTemplate());
         templateProviders.Add(new HaGestureTemplate());
+        templateProviders.Add(new HaAlternativeGestureTemplate());
         templateProviders.Add(new PaGestureTemplate());
         templateProviders.Add(new ZaGestureTemplate());
         templateProviders.Add(new TaGestureTemplate());
