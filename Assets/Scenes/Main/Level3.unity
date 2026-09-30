@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 3534894}
   - component: {fileID: 3534893}
   - component: {fileID: 3534892}
+  - component: {fileID: 3534895}
   m_Layer: 5
   m_Name: PauseButton
   m_TagString: Untagged
@@ -235,7 +236,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -5629063888563510368, guid: 014b4aa5f3b369142a031e888815f781, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -251,6 +252,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3534890}
   m_CullTransparentMesh: 1
+--- !u!114 &3534895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3534890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c64e8ca0de885bb4d83ed83472ccc843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EffectHover
+  targetTransform: {fileID: 3534891}
+  hoverScale: 1.1
+  hoverMoveY: 0
+  animDuration: 0.2
+  collectPulseScale: 1.2
+  collectPulseDuration: 0.5
+  easeType: 27
+  hoverSound: Hover
+  clickSound: ButtonHover
+  hoverVolume: 0.1
+  clickVolume: 1
 --- !u!1 &18504181
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,6 +1782,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 415459589}
     m_Modifications:
+    - target: {fileID: 1500884140137692332, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2872305146258497815, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_Name
       value: KoleksiPanel
@@ -1854,6 +1882,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3861376710749458875, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: gestureDrawer
       value: 
@@ -1866,6 +1898,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: c38a0df97db8dfe42b219ea5cd9040a6, type: 3}
+    - target: {fileID: 6451394534333072162, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7613461940656258855, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1988,7 +2028,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 203162921598163271, guid: 8dedf84eafbf7f3409f97923775a4049, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -2018,7 +2058,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectHover
   targetTransform: {fileID: 375499978}
   hoverScale: 1.1
-  hoverMoveY: 5
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5
@@ -3796,6 +3836,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 415459589}
     m_Modifications:
+    - target: {fileID: 273658359106587507, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 282865415944215886, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: targetLevelIndex
       value: 2
@@ -3996,6 +4040,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2488830420710044827, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3033131282243100257, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3094087196560474576, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
@@ -4060,6 +4112,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4351071856913045260, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5133942162327143816, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -4088,6 +4144,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -50
       objectReference: {fileID: 0}
+    - target: {fileID: 5306072648870996029, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5775402501790704347, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -4096,6 +4156,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: -2491789914713302949, guid: d5c131b88d4eb6b4eac62c4f98a8c20f, type: 3}
+    - target: {fileID: 6976854808007866334, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7424204407777273290, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
@@ -4120,6 +4184,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -50
       objectReference: {fileID: 0}
+    - target: {fileID: 8255624213816991506, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9151413942964523496, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: nextScene
       value: Level4
@@ -4127,6 +4195,10 @@ PrefabInstance:
     - target: {fileID: 9151413942964523496, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
       propertyPath: gameplayScene
       value: Level3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9216163933266490693, guid: 4c4ca472f33a23c408fd0fe7aa99b4e7, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -6779,12 +6851,32 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: PlayAgain
       objectReference: {fileID: 0}
+    - target: {fileID: 3250933354536343674, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3253753726480153059, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4045812945959569027, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_Name
       value: LosePanel
       objectReference: {fileID: 0}
     - target: {fileID: 4045812945959569027, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5517668675068960263, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6745779986629414863, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7014329846987335421, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: hoverMoveY
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7093739301347649737, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
@@ -7964,6 +8056,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2515819588390726662, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3260052394711118925, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -7979,6 +8075,10 @@ PrefabInstance:
     - target: {fileID: 3346671739938012197, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3404829874969845913, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3450520724091905555, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Name
@@ -7996,6 +8096,14 @@ PrefabInstance:
       propertyPath: gestureDrawer
       value: 
       objectReference: {fileID: 256010449}
+    - target: {fileID: 4575297756432923135, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 8922474716085648379, guid: ab0e429334f9f7148891869796c01a71, type: 3}
+    - target: {fileID: 4575297756432923135, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: 4978346421133410088, guid: 456587c7e9d4a154c965b0b27fe9718b, type: 3}
     - target: {fileID: 4952868479610292942, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -8076,9 +8184,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5459908364512923318, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5521010539138929266, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6415155974142129657, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7595739592489369727, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: m_AnchorMax.y
@@ -8100,6 +8216,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8434923308517067571, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: -7732096318345744595, guid: 986963c34e9b03940b5d9983b32ddc46, type: 3}
+    - target: {fileID: 8434923308517067571, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: m_SpriteState.m_SelectedSprite
+      value: 
+      objectReference: {fileID: -6418761637037860768, guid: 3b4ddc948dfd6e74692a58cd097e4648, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
