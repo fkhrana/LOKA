@@ -1,7 +1,12 @@
+using Action = System.Action;
 using UnityEngine;
 
 public class EnemyMovementBehavior : MonoBehaviour
 {
+    private const float MovementTargetTolerance = 0.05f;
+
+    public event Action PlayerDamagedByContact;
+
     [SerializeField] private float moveSpeed = 1.5f;
     [SerializeField] private int damageOnContact = 20;
     [SerializeField] private float contactCooldown = 0.35f;
@@ -179,7 +184,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         hasMovementTarget = false;
     }
 
-    public bool HasReachedMovementTarget(float tolerance = 0.05f)
+    public bool HasReachedMovementTarget(float tolerance = MovementTargetTolerance)
     {
         Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
         return hasMovementTarget && Vector2.Distance(currentPosition, movementTarget) <= tolerance;
@@ -241,7 +246,8 @@ public class EnemyMovementBehavior : MonoBehaviour
                 horizontalStep = deltaX;
 
             moveDelta = new Vector2(horizontalStep, 0f);
-            moveDirection = deltaX < 0f ? -1f : 1f;
+            if (!hasMovementTarget || Mathf.Abs(deltaX) > MovementTargetTolerance)
+                moveDirection = deltaX < 0f ? -1f : 1f;
 
             baseY = Mathf.MoveTowards(baseY, target.y, heightAdjustSpeed * Time.deltaTime);
         }
@@ -346,7 +352,10 @@ public class EnemyMovementBehavior : MonoBehaviour
             return;
         }
 
+        int healthBeforeDamage = playerHealth.CurrentHealth;
         playerHealth.TakeDamage(damageOnContact);
+        if (playerHealth.CurrentHealth < healthBeforeDamage)
+            PlayerDamagedByContact?.Invoke();
 
         if (knockbackOnPlayerContact)
         {

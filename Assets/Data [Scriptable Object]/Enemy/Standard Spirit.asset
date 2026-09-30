@@ -17,7 +17,7 @@ MonoBehaviour:
   damageOnContact: 20
   contactCooldown: 0.35
   requiredCorrectGestures: 1
-  enemySprite: {fileID: 21300000, guid: 1a0da8966c6e3074f919bdbcbabbc240, type: 3}
+  enemySprite: {fileID: 21300000, guid: 5eaabbd5a95016c41a5cb90fff339d62, type: 3}
   dropsAksaraFragment: 1
   dropForce: 1
   shieldedSprite: {fileID: 0}

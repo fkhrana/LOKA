@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(EnemyMovementBehavior))]
+[RequireComponent(typeof(BossAnimationController))]
 public class BossEnemy : MonoBehaviour
 {
     public static bool HasActiveBoss { get; private set; }
@@ -57,8 +58,7 @@ public class BossEnemy : MonoBehaviour
 
     [SerializeField] private GestureDrawer gestureDrawer;
     [SerializeField] private EnemyMovementBehavior movementBehavior;
-    [SerializeField] private SpriteRenderer bodyRenderer;
-    [SerializeField] private Animator animator;
+    [SerializeField] private BossAnimationController animationController;
     [SerializeField] private SpriteRenderer[] aksaraIconRenderers = new SpriteRenderer[3];
     [SerializeField] private List<AksaraData> aksaraPool = new List<AksaraData>();
     [SerializeField, Min(0.1f)] private float stateTwoMoveSpeed = 0.45f;
@@ -85,11 +85,6 @@ public class BossEnemy : MonoBehaviour
     [SerializeField] private GameObject gameplayHudCanvas;
     [SerializeField] private CameraShake cameraShakeEffect;
     [SerializeField, Min(0f)] private float defeatUiHideDelay = 0.25f;
-    [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
-    [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
-    [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
-    [SerializeField, Range(0f, 1f)] private float defeatShrinkTargetScale = 0.1f;
-    [SerializeField] private string defeatAnimationStateName = "enemyDieBlubub";
 
     private readonly AksaraData[] currentAksara = new AksaraData[3];
     private readonly bool[] solvedAksara = new bool[3];
@@ -189,8 +184,8 @@ public class BossEnemy : MonoBehaviour
 
         PlayerHealth playerHealth = FindAnyObjectByType<PlayerHealth>();
         Collider2D bossCollider = GetComponent<Collider2D>();
-        SpriteRenderer bossRenderer = GetComponentInChildren<SpriteRenderer>(true);
-        movementBehavior.Initialize(playerHealth, bossCollider, bossRenderer);
+        movementBehavior.Initialize(playerHealth, bossCollider, animationController.BodyRenderer);
+        animationController.BindTo(movementBehavior);
         movementBehavior.SetKnockbackOnPlayerContact(true);
 
         EnemyGestureCommand regularChallenge = GetComponent<EnemyGestureCommand>();
@@ -238,11 +233,11 @@ public class BossEnemy : MonoBehaviour
         if (movementBehavior == null)
             movementBehavior = GetComponent<EnemyMovementBehavior>();
 
-        if (bodyRenderer == null)
-            bodyRenderer = GetComponentInChildren<SpriteRenderer>(true);
+        if (animationController == null)
+            animationController = GetComponent<BossAnimationController>();
 
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>(true);
+        if (animationController == null)
+            animationController = gameObject.AddComponent<BossAnimationController>();
     }
 
     private void LateUpdate()
@@ -787,7 +782,7 @@ public class BossEnemy : MonoBehaviour
         bool progressVfxComplete = false;
         PlayFinalIconVfx(finalIconIndex, () => progressVfxComplete = true);
 
-        yield return BlinkWhileProgressVfxRuns(() => progressVfxComplete);
+        yield return animationController.BlinkWhile(() => progressVfxComplete);
 
         if (LevelProgressManager.Instance != null)
             yield return LevelProgressManager.Instance.WaitUntilProgressBarFilled();
@@ -804,7 +799,8 @@ public class BossEnemy : MonoBehaviour
         if (cameraShakeEffect != null)
             cameraShakeEffect.PlayShake();
 
-        yield return BossDefeatRoutine();
+        yield return animationController.PlayDefeatSequence();
+        Destroy(gameObject);
         LevelProgressManager.Instance?.ReleaseLevelCompleteEvent();
     }
 
@@ -822,24 +818,6 @@ public class BossEnemy : MonoBehaviour
             LevelProgressManager.Instance.PlayNonCollectibleItemVfx(iconPosition, onComplete);
         else
             onComplete?.Invoke();
-    }
-
-    private IEnumerator BlinkWhileProgressVfxRuns(System.Func<bool> isComplete)
-    {
-        bool isVisible = true;
-        float interval = Mathf.Max(0.01f, defeatBlinkInterval);
-
-        while (!isComplete())
-        {
-            yield return new WaitForSeconds(interval);
-            isVisible = !isVisible;
-
-            if (bodyRenderer != null)
-                bodyRenderer.enabled = isVisible;
-        }
-
-        if (bodyRenderer != null)
-            bodyRenderer.enabled = true;
     }
 
     private void PlayDefeatSFX()
@@ -862,82 +840,6 @@ public class BossEnemy : MonoBehaviour
                 Mathf.Clamp(aksaraSFXVolume * volume * 8f, 0f, 10f)
             );
         }
-    }
-
-    private IEnumerator BossDefeatRoutine()
-    {
-        float elapsed = 0f;
-        bool isVisible = true;
-        float interval = Mathf.Max(0.01f, defeatBlinkInterval);
-
-        while (elapsed < defeatBlinkDuration)
-        {
-            yield return new WaitForSeconds(interval);
-            elapsed += interval;
-            isVisible = !isVisible;
-
-            if (bodyRenderer != null)
-                bodyRenderer.enabled = isVisible;
-        }
-
-        if (bodyRenderer != null)
-            bodyRenderer.enabled = true;
-
-        yield return ShrinkBossRoutine();
-
-        if (bodyRenderer != null)
-            bodyRenderer.enabled = false;
-
-        PlayDefeatAnimation();
-        yield return new WaitForSeconds(GetDefeatAnimationDuration());
-        Destroy(gameObject);
-    }
-
-    private IEnumerator ShrinkBossRoutine()
-    {
-        if (bodyRenderer == null || defeatShrinkDuration <= 0f)
-            yield break;
-
-        Transform bodyTransform = bodyRenderer.transform;
-        Vector3 initialScale = bodyTransform.localScale;
-        Vector3 targetScale = initialScale * defeatShrinkTargetScale;
-        float elapsed = 0f;
-
-        while (elapsed < defeatShrinkDuration)
-        {
-            elapsed += Time.deltaTime;
-            float progress = Mathf.Clamp01(elapsed / defeatShrinkDuration);
-            progress = 1f - Mathf.Pow(1f - progress, 3f);
-            bodyTransform.localScale = Vector3.Lerp(initialScale, targetScale, progress);
-            yield return null;
-        }
-
-        bodyTransform.localScale = targetScale;
-    }
-
-    private void PlayDefeatAnimation()
-    {
-        if (animator == null || animator.runtimeAnimatorController == null)
-            return;
-
-        int stateHash = Animator.StringToHash(defeatAnimationStateName);
-        if (animator.HasState(0, stateHash))
-            animator.Play(stateHash, 0, 0f);
-    }
-
-    private float GetDefeatAnimationDuration()
-    {
-        if (animator == null || animator.runtimeAnimatorController == null)
-            return 0f;
-
-        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
-        for (int i = 0; i < clips.Length; i++)
-        {
-            if (clips[i] != null && clips[i].name == defeatAnimationStateName)
-                return clips[i].length;
-        }
-
-        return 0f;
     }
 
     private bool IsVisibleOnCamera()
