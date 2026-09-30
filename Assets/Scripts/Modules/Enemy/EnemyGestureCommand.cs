@@ -15,6 +15,11 @@ public class EnemyGestureCommand : MonoBehaviour
             movementBehavior.SetSpawnPosition(transform.position);
     }
 
+    public void SetAllowMovementBeforeGameStarted(bool allow)
+    {
+        allowMovementBeforeGameStarted = allow;
+    }
+
     [SerializeField] private bool autoIssueOnStart = true;
     [SerializeField] private GestureShape gestureToCommand = GestureShape.Na;
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
@@ -22,6 +27,7 @@ public class EnemyGestureCommand : MonoBehaviour
     [SerializeField] private TMP_Text promptText;
     [SerializeField] private int healOnSuccess = 0;
     private bool canReceiveChallengeDuringBoss;
+    private bool allowMovementBeforeGameStarted;
     private bool reportProgress = true;
     private PlayerHealth playerHealth;
     private Transform playerTransform;
@@ -250,7 +256,7 @@ public class EnemyGestureCommand : MonoBehaviour
     private void LateUpdate()
     {
         if (challengeActive && movementBehavior != null)
-            movementBehavior.Tick(CameraIntroManager.GameStarted);
+            movementBehavior.Tick(CameraIntroManager.GameStarted || allowMovementBeforeGameStarted);
     }
 
     public static bool HasOtherActiveEnemyWithin(EnemyGestureCommand source, float radius)
@@ -271,6 +277,47 @@ public class EnemyGestureCommand : MonoBehaviour
         }
 
         return false;
+    }
+
+    public static Vector2 GetSeparationDirection(
+        EnemyGestureCommand source,
+        Vector2 position,
+        float radius
+    )
+    {
+        if (source == null || radius <= 0f)
+            return Vector2.zero;
+
+        Vector2 separation = Vector2.zero;
+        float radiusSqr = radius * radius;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            EnemyGestureCommand other = activeEnemies[i];
+            if (other == null || other == source || !other.gameObject.activeInHierarchy)
+                continue;
+
+            Vector2 offset = position - (Vector2)other.transform.position;
+            float distanceSqr = offset.sqrMagnitude;
+            if (distanceSqr >= radiusSqr)
+                continue;
+
+            if (distanceSqr < 0.0001f)
+            {
+                offset = source.GetInstanceID() < other.GetInstanceID()
+                    ? Vector2.up
+                    : Vector2.down;
+            }
+            else
+            {
+                offset /= Mathf.Sqrt(distanceSqr);
+            }
+
+            float strength = 1f - Mathf.Sqrt(distanceSqr) / radius;
+            separation += offset * strength;
+        }
+
+        return Vector2.ClampMagnitude(separation, 1f);
     }
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)

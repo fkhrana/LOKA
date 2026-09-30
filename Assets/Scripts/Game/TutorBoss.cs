@@ -80,11 +80,6 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
     [SerializeField] private Button yaButton;
     [SerializeField] private Button ulangButton;
 
-    [Header("Intro Wait")]
-    [SerializeField] private bool waitForCameraIntro = true;
-    [SerializeField, Min(1f)] private float maxWaitForIntro = 30f;
-    [SerializeField, Min(0f)] private float fallbackIntroDelay = 10f;
-
     [Header("Boss Spawn")]
     [SerializeField] private EnemyWaveSpawner bossSpawner;
 
@@ -101,6 +96,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
 
     private Vector3 approachReferencePosition;
     private bool approachReferenceValid = false;
+    private bool isStartingBossFight;
 
     private CanvasGroup dodgeCanvasGroup;
     private RectTransform dodgeRect;
@@ -120,6 +116,9 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
             gameObject.SetActive(false);
             return;
         }
+
+        IsBossLevelTutorial = true;
+        TutorialManager.IsTrainingMode = true;
 
         if (gestureDrawer == null)
             gestureDrawer = FindFirstObjectByType<GestureDrawer>();
@@ -149,10 +148,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
 
-        if (waitForCameraIntro)
-            StartCoroutine(WaitForIntroThenStart());
-        else
-            BeginTutorialFlow();
+        BeginTutorialFlow();
     }
 
     private void OnDestroy()
@@ -317,7 +313,6 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
 
         IsBossLevelTutorial = false;
         TutorialManager.IsTrainingMode = false;
-        LevelProgressManager.Instance?.SetProgressBarVisible(true);
 
         // Konsisten dengan Script 1: reset power-up supaya penuh saat boss fight
         PowerManager.ResetAllPowerUpsToFullGlobal();
@@ -325,7 +320,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
         if (debugLog)
             Debug.Log("[BossLevelPowerUpTutorial] ✅ Tutorial sukses — spawn boss.");
 
-        bossSpawner?.SpawnBoss();
+        StartBossFightAfterTutorial();
     }
 
     private void HandleTutorialFail()
@@ -379,11 +374,10 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
         fingerTap?.Hide();
         HideDodgeUI();
         SetActive(startPanel, false);
-        LevelProgressManager.Instance?.SetProgressBarVisible(true);
 
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
-        bossSpawner?.SpawnBoss();
+        StartBossFightAfterTutorial();
     }
 
     private void OnUlangClicked()
@@ -664,25 +658,6 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
     #endregion
 
     #region Intro / Reveal
-    private IEnumerator WaitForIntroThenStart()
-    {
-        if (CameraIntroManager.Instance != null)
-        {
-            float elapsed = 0f;
-            while (!CameraIntroManager.GameStarted && elapsed < maxWaitForIntro)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-        else
-        {
-            yield return new WaitForSeconds(fallbackIntroDelay);
-        }
-
-        BeginTutorialFlow();
-    }
-
     private IEnumerator RevealRoutine()
     {
         yield return null;
@@ -754,6 +729,29 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
     #endregion
 
     #region Boss Spawn
+    private void StartBossFightAfterTutorial()
+    {
+        if (isStartingBossFight)
+            return;
+
+        isStartingBossFight = true;
+        bossSpawner?.SpawnBoss();
+
+        if (CameraIntroManager.Instance != null)
+        {
+            CameraIntroManager.Instance.StartIntroAfterTutorial(ShowProgressBarAfterIntro);
+            return;
+        }
+
+        CameraIntroManager.GameStarted = true;
+        ShowProgressBarAfterIntro();
+    }
+
+    private void ShowProgressBarAfterIntro()
+    {
+        LevelProgressManager.Instance?.SetProgressBarVisible(true);
+    }
+
     private IEnumerator SpawnBossDelayed()
     {
         yield return null;

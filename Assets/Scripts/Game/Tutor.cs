@@ -75,11 +75,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     [SerializeField] private Button yaButton;
     [SerializeField] private Button ulangButton;
 
-    [Header("Intro Wait")]
-    [SerializeField] private bool waitForCameraIntro = true;
-    [SerializeField, Min(1f)] private float maxWaitForIntro = 30f;
-    [SerializeField, Min(0f)] private float fallbackIntroDelay = 10f;
-
     [Header("Debug")]
     [SerializeField] private bool resetTutorialOnPlay = false;
     [SerializeField] private bool autoUncheckReset = true;
@@ -92,6 +87,7 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private EnemyWaveSpawner waveSpawner;
     private bool waveSpawnerPaused = false;
+    private bool isStartingGameplay;
 
     private Vector3 approachReferencePosition;
     private bool approachReferenceValid = false;
@@ -104,12 +100,17 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         if (ShouldSkipTutorial())
         {
+            IsPowerUpTutorial = false;
+
             if (debugLog)
                 Debug.Log("[PowerUpTutorialManager] Tutorial sudah selesai — skip.");
 
             gameObject.SetActive(false);
             return;
         }
+
+        IsPowerUpTutorial = true;
+        TutorialManager.IsTrainingMode = true;
 
         if (gestureDrawer == null)
             gestureDrawer = FindFirstObjectByType<GestureDrawer>();
@@ -139,10 +140,7 @@ public class PowerUpTutorialManager : MonoBehaviour
         SetGestureEnabled(false);
         SetPowerUpButtonInteractable(false);
 
-        if (waitForCameraIntro)
-            StartCoroutine(WaitForIntroThenStart());
-        else
-            BeginTutorialFlow();
+        BeginTutorialFlow();
     }
 
     private void OnDestroy()
@@ -558,25 +556,6 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Intro / Reveal
-    private IEnumerator WaitForIntroThenStart()
-    {
-        if (CameraIntroManager.Instance != null)
-        {
-            float elapsed = 0f;
-            while (!CameraIntroManager.GameStarted && elapsed < maxWaitForIntro)
-            {
-                elapsed += Time.deltaTime;
-                yield return null;
-            }
-        }
-        else
-        {
-            yield return new WaitForSeconds(fallbackIntroDelay);
-        }
-
-        BeginTutorialFlow();
-    }
-
     private IEnumerator RevealHoleRoutine()
     {
         yield return null;
@@ -664,9 +643,26 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private void StartGameNormally()
     {
+        if (isStartingGameplay)
+            return;
+
+        isStartingGameplay = true;
         GameProgressManager.MarkTutorialCompleted();
-        LevelProgressManager.Instance?.SetProgressBarVisible(true);
         ResumeWaveSpawner(startSequenceIfIdle: true);
+
+        if (CameraIntroManager.Instance != null)
+        {
+            CameraIntroManager.Instance.StartIntroAfterTutorial(StartGameplayAfterIntro);
+            return;
+        }
+
+        CameraIntroManager.GameStarted = true;
+        StartGameplayAfterIntro();
+    }
+
+    private void StartGameplayAfterIntro()
+    {
+        LevelProgressManager.Instance?.SetProgressBarVisible(true);
 
         if (debugLog)
             Debug.Log("[PowerUpTutorialManager] Gameplay normal dimulai.");

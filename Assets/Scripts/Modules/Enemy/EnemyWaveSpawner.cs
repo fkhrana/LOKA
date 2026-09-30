@@ -125,7 +125,8 @@ public class EnemyWaveSpawner : MonoBehaviour
             return;
         }
 
-        StartCoroutine(FailSafeGameStarted());
+        if (!PowerUpTutorialManager.IsPowerUpTutorial)
+            StartCoroutine(FailSafeGameStarted());
 
         if (startFromWave2OnStart)
         {

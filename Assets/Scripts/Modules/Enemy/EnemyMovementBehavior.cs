@@ -8,6 +8,8 @@ public class EnemyMovementBehavior : MonoBehaviour
     public event Action PlayerDamagedByContact;
 
     [SerializeField] private float moveSpeed = 1.5f;
+    [SerializeField, Min(0f)] private float separationRadius = 1.1f;
+    [SerializeField, Min(0f)] private float separationSpeed = 1.5f;
     [SerializeField] private int damageOnContact = 20;
     [SerializeField] private float contactCooldown = 0.35f;
     [SerializeField] private bool moveLeft = true;
@@ -27,6 +29,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
     private PlayerHealth playerHealth;
     private Transform playerTransform;
+    private EnemyGestureCommand enemyCommand;
     private Collider2D enemyCollider;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -117,6 +120,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         playerHealth = playerHealthReference;
         enemyCollider = collider;
         spriteRenderer = renderer;
+        enemyCommand = GetComponent<EnemyGestureCommand>();
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
             rb = GetComponentInChildren<Rigidbody2D>(true);
@@ -250,6 +254,18 @@ public class EnemyMovementBehavior : MonoBehaviour
                 moveDirection = deltaX < 0f ? -1f : 1f;
 
             baseY = Mathf.MoveTowards(baseY, target.y, heightAdjustSpeed * Time.deltaTime);
+
+            if (enemyCommand != null && separationRadius > 0f && separationSpeed > 0f)
+            {
+                Vector2 separation = EnemyGestureCommand.GetSeparationDirection(
+                    enemyCommand,
+                    currentPosition,
+                    separationRadius
+                );
+                Vector2 separationStep = separation * separationSpeed * Time.deltaTime;
+                moveDelta.x += separationStep.x;
+                baseY += separationStep.y;
+            }
         }
 
         bobTimer += Time.deltaTime * bobFrequency;
@@ -354,7 +370,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         int healthBeforeDamage = playerHealth.CurrentHealth;
         playerHealth.TakeDamage(damageOnContact);
-        if (playerHealth.CurrentHealth < healthBeforeDamage)
+        if (playerHealth.CurrentHealth < healthBeforeDamage || TutorialManager.IsTrainingMode)
             PlayerDamagedByContact?.Invoke();
 
         if (knockbackOnPlayerContact)
