@@ -249,11 +249,28 @@ public class EnemyGestureCommand : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!challengeActive)
-            return;
-
-        if (movementBehavior != null)
+        if (challengeActive && movementBehavior != null)
             movementBehavior.Tick(CameraIntroManager.GameStarted);
+    }
+
+    public static bool HasOtherActiveEnemyWithin(EnemyGestureCommand source, float radius)
+    {
+        if (source == null || !source.challengeActive)
+            return false;
+
+        float radiusSqr = Mathf.Max(0f, radius);
+        radiusSqr *= radiusSqr;
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            EnemyGestureCommand other = activeEnemies[i];
+            if (other == null || other == source || !other.challengeActive)
+                continue;
+
+            if (((Vector2)other.transform.position - (Vector2)source.transform.position).sqrMagnitude <= radiusSqr)
+                return true;
+        }
+
+        return false;
     }
 
     public void SetAutoIssueOnStart(bool shouldAutoIssue)

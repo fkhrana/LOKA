@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 4414482415288487583}
   - component: {fileID: 3002505615780287066}
   - component: {fileID: 7536460125606360049}
+  - component: {fileID: 5609091487193889750}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -173,6 +174,7 @@ Transform:
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1938338641078373856}
   - {fileID: 3647067963193568821}
   - {fileID: 1662754613479098791}
   - {fileID: 2156849564786802708}
@@ -410,6 +412,19 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &5609091487193889750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2167346295579457003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d384d647d49e46e8b8f89f3c12f73b70, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyComboSignVfx
+  comboSignVfx: {fileID: 1754907882106986750}
 --- !u!1 &4298091898585307631
 GameObject:
   m_ObjectHideFlags: 0
@@ -765,6 +780,77 @@ MonoBehaviour:
   collectRotationSpeed: 1000
   collectArrivalDistance: 0.5
   collectTrailScale: 2
+--- !u!1001 &789374105962993202
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 553753422824559807}
+    m_Modifications:
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.70471376
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.70471376
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.05812566
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.05812566
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -9.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 1346229919106332364, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: m_Name
+      value: VFX_ComboSignOnEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2584660303614640123, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+--- !u!1 &1754907882106986750 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1346229919106332364, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+  m_PrefabInstance: {fileID: 789374105962993202}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1938338641078373856 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1158048700320390098, guid: 315cd0eeba4a2284aa29087ba07f2048, type: 3}
+  m_PrefabInstance: {fileID: 789374105962993202}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8943843379216120835
 PrefabInstance:
   m_ObjectHideFlags: 0
