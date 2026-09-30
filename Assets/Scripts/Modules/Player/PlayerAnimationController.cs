@@ -11,6 +11,8 @@ public class PlayerAnimationController : MonoBehaviour
     [SerializeField] private string initiateAttackStateName = "playerInitiateAttack";
     [SerializeField] private string attackUpStateName = "playerAttackUp";
     [SerializeField] private string gotHitStateName = "playerGotHit";
+    [SerializeField] private string healStateName = "playerHeal";
+    [SerializeField] private string powerUpStateName = "playerPowerUp";
     [SerializeField] private string winStateName = "playerWin";
     [SerializeField] private string loseStateName = "playerLose";
 
@@ -18,6 +20,8 @@ public class PlayerAnimationController : MonoBehaviour
     private int initiateAttackStateHash;
     private int attackUpStateHash;
     private int gotHitStateHash;
+    private int healStateHash;
+    private int powerUpStateHash;
     private int winStateHash;
     private int loseStateHash;
     private LevelProgressManager levelProgressManager;
@@ -40,6 +44,8 @@ public class PlayerAnimationController : MonoBehaviour
         initiateAttackStateHash = Animator.StringToHash(initiateAttackStateName);
         attackUpStateHash = Animator.StringToHash(attackUpStateName);
         gotHitStateHash = Animator.StringToHash(gotHitStateName);
+        healStateHash = Animator.StringToHash(healStateName);
+        powerUpStateHash = Animator.StringToHash(powerUpStateName);
         winStateHash = Animator.StringToHash(winStateName);
         loseStateHash = Animator.StringToHash(loseStateName);
     }
@@ -55,6 +61,7 @@ public class PlayerAnimationController : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.DamageTaken += HandleDamageTaken;
+            playerHealth.Healed += PlayHeal;
             playerHealth.Died += PlayLose;
         }
 
@@ -62,6 +69,7 @@ public class PlayerAnimationController : MonoBehaviour
             levelProgressManager.OnReachedLevelComplete.AddListener(PlayWin);
 
         EnemyGestureCommand.EnemyDefeated += PlayAttackUp;
+        PowerManager.OnAnyPowerUpStarted += PlayPowerUp;
     }
 
     private void OnDisable()
@@ -75,6 +83,7 @@ public class PlayerAnimationController : MonoBehaviour
         if (playerHealth != null)
         {
             playerHealth.DamageTaken -= HandleDamageTaken;
+            playerHealth.Healed -= PlayHeal;
             playerHealth.Died -= PlayLose;
         }
 
@@ -82,6 +91,7 @@ public class PlayerAnimationController : MonoBehaviour
             levelProgressManager.OnReachedLevelComplete.RemoveListener(PlayWin);
 
         EnemyGestureCommand.EnemyDefeated -= PlayAttackUp;
+        PowerManager.OnAnyPowerUpStarted -= PlayPowerUp;
     }
 
     private void HandleDamageTaken(int amount)
@@ -125,6 +135,16 @@ public class PlayerAnimationController : MonoBehaviour
     private void PlayLose()
     {
         PlayState(loseStateHash, loseStateName);
+    }
+
+    private void PlayHeal()
+    {
+        PlayState(healStateHash, healStateName);
+    }
+
+    private void PlayPowerUp()
+    {
+        PlayState(powerUpStateHash, powerUpStateName);
     }
 
     private void PlayState(int stateHash, string stateName)

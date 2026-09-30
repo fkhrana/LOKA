@@ -14,6 +14,7 @@ public class PowerManager : MonoBehaviour
     }
 
     public static event System.Action OnAnyPowerUpEnded;
+    public static event System.Action OnAnyPowerUpStarted;
 
     [System.Serializable]
     public class PowerUpSlot
@@ -259,6 +260,8 @@ public class PowerManager : MonoBehaviour
 
         if (type != PowerUpType.Combo)
             consumedPowerUps.Add(type);
+
+        OnAnyPowerUpStarted?.Invoke();
 
         if (AudioManager.Instance != null)
         {

@@ -16,6 +16,7 @@ public class PlayerHealth : MonoBehaviour
 
     public event Action<int, int> HealthChanged;
     public event Action<int> DamageTaken;
+    public event Action Healed;
     public event Action Died;
 
     private void Awake()
@@ -60,8 +61,14 @@ public class PlayerHealth : MonoBehaviour
         if (amount <= 0 || IsDead)
             return;
 
+        int previousHealth = CurrentHealth;
         CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+
+        if (CurrentHealth == previousHealth)
+            return;
+
         NotifyHealthChanged();
+        Healed?.Invoke();
     }
 
     public void ResetHealth()
