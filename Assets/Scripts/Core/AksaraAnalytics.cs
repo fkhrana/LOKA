@@ -40,15 +40,16 @@ public class AksaraAnalytics : MonoBehaviour
 
         try
         {
-#if DEVELOPMENT_BUILD
-            var initializationOptions = new InitializationOptions();
-            initializationOptions.SetEnvironmentName("development");
-            Debug.Log(LOG_PREFIX + "Initializing Unity Services with DEVELOPMENT environment.");
-            await UnityServices.InitializeAsync(initializationOptions);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            const string environmentName = "development";
 #else
-            Debug.Log(LOG_PREFIX + "Initializing Unity Services with default environment.");
-            await UnityServices.InitializeAsync();
+            const string environmentName = "production";
 #endif
+            var initializationOptions = new InitializationOptions();
+            initializationOptions.SetEnvironmentName(environmentName);
+            Debug.Log(LOG_PREFIX + "Initializing Unity Services. Environment=" + environmentName);
+            await UnityServices.InitializeAsync(initializationOptions);
+
             isInitialized = true;
             Debug.Log(LOG_PREFIX + "Unity Services initialized successfully. isInitialized=" + isInitialized);
 
