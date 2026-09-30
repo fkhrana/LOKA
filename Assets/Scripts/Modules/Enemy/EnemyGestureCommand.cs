@@ -46,6 +46,23 @@ public class EnemyGestureCommand : MonoBehaviour
         return false;
     }
 
+    public static void GetActiveChallengeShapes(List<GestureShape> shapes)
+    {
+        if (shapes == null)
+            return;
+
+        shapes.Clear();
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            var enemy = activeEnemies[i];
+            if (enemy != null && enemy.challengeActive &&
+                !shapes.Contains(enemy.gestureToCommand))
+            {
+                shapes.Add(enemy.gestureToCommand);
+            }
+        }
+    }
+
     public static bool HasActiveEnemyMatchingGesture(GestureShape gestureShape)
     {
         for (int i = 0; i < activeEnemies.Count; i++)
@@ -352,6 +369,8 @@ public class EnemyGestureCommand : MonoBehaviour
 
         if (remainingCorrectGestures <= 0)
         {
+            TrackDefeatedAksara();
+
             EnemyDefeated?.Invoke();
             EnemyDefeatedWithGesture?.Invoke(this, gestureToCommand);
             EnemyDefeatedWithSource?.Invoke(this);
@@ -431,6 +450,7 @@ public class EnemyGestureCommand : MonoBehaviour
             nearbyEnemy.movementBehavior?.SetActive(false);
             nearbyEnemy.movementBehavior?.SetMovementPaused(true);
             nearbyEnemy.ReportProcessed();
+            nearbyEnemy.TrackDefeatedAksara();
             EnemyDefeatedWithSource?.Invoke(nearbyEnemy);
             Enemy nearbyEnemyData = nearbyEnemy.GetComponent<Enemy>();
             nearbyEnemyData?.OnDefeated();
@@ -498,6 +518,17 @@ public class EnemyGestureCommand : MonoBehaviour
         }
 
         return nearest;
+    }
+
+    private void TrackDefeatedAksara()
+    {
+        Enemy enemy = GetComponent<Enemy>();
+        string aksaraName = enemy != null && enemy.AksaraData != null
+            ? enemy.AksaraData.AksaraName
+            : gestureToCommand.ToString();
+
+        Debug.Log("[EnemyGestureCommand] Triggering analytics enemy defeat event => aksaraName=" + aksaraName);
+        AksaraAnalytics.TrackEnemyDefeated(aksaraName);
     }
 
     private static Vector2 GetStrokeCenter(List<Vector2> points)

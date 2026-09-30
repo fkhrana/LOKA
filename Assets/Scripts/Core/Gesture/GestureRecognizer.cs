@@ -214,6 +214,68 @@ public class GestureRecognizer : MonoBehaviour
         return GestureNormalizationHelper.ProcessPoints(points, sampleCount, squareSize);
     }
 
+    public GestureShape GetClosestActiveTarget(
+        List<List<Vector2>> strokes,
+        IReadOnlyList<GestureShape> activeTargets,
+        out float closestDistance)
+    {
+        closestDistance = float.MaxValue;
+        if (strokes == null || strokes.Count == 0 ||
+            activeTargets == null || activeTargets.Count == 0)
+        {
+            return GestureShape.None;
+        }
+
+        var candidateStrokes = new List<List<Vector2>>(strokes.Count);
+        int totalPointCount = 0;
+        foreach (var stroke in strokes)
+        {
+            if (stroke == null || stroke.Count < 2)
+                continue;
+
+            totalPointCount += stroke.Count;
+            candidateStrokes.Add(
+                GestureNormalizationHelper.ProcessPoints(stroke, sampleCount, squareSize));
+        }
+
+        if (candidateStrokes.Count == 0 || totalPointCount < 5)
+            return GestureShape.None;
+
+        GestureShape closestShape = GestureShape.None;
+        float angleRange = Mathf.Deg2Rad * 45f;
+        foreach (var targetShape in activeTargets)
+        {
+            foreach (var template in templates)
+            {
+                if (template.Shape != targetShape ||
+                    template.Strokes.Count != candidateStrokes.Count)
+                {
+                    continue;
+                }
+
+                float totalDistance = 0f;
+                for (int i = 0; i < candidateStrokes.Count; i++)
+                {
+                    totalDistance += GestureNormalizationHelper.DistanceAtBestAngle(
+                        candidateStrokes[i], template.Strokes[i], -angleRange, angleRange);
+                }
+
+                totalDistance += faGaDisambiguator.GetPenalty(
+                    template.Shape,
+                    candidateStrokes,
+                    template.Strokes);
+
+                if (totalDistance < closestDistance)
+                {
+                    closestDistance = totalDistance;
+                    closestShape = template.Shape;
+                }
+            }
+        }
+
+        return closestShape;
+    }
+
     public bool HasTemplateForStrokeCount(GestureShape shape, int strokeCount)
     {
         foreach (var template in templates)

@@ -7,6 +7,31 @@ public class BossEnemy : MonoBehaviour
 {
     public static bool HasActiveBoss { get; private set; }
 
+    public static bool AppendActiveChallengeShapes(
+        List<GestureShape> shapes,
+        out int activePhase)
+    {
+        activePhase = 0;
+        if (shapes == null || !HasActiveBoss)
+            return false;
+
+        BossEnemy boss = FindAnyObjectByType<BossEnemy>();
+        if (boss == null)
+            return false;
+
+        activePhase = boss.state;
+        for (int i = 0; i < boss.currentAksara.Length; i++)
+        {
+            if (!boss.solvedAksara[i] && boss.currentAksara[i] != null &&
+                !shapes.Contains(boss.currentAksara[i].GestureShape))
+            {
+                shapes.Add(boss.currentAksara[i].GestureShape);
+            }
+        }
+
+        return true;
+    }
+
     public static bool HasActiveBossWithMoreStrokes(int strokeCount)
     {
         if (!HasActiveBoss || GestureRecognizer.Instance == null)

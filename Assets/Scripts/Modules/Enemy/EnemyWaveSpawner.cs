@@ -100,6 +100,9 @@ public class EnemyWaveSpawner : MonoBehaviour
     public int CurrentWaveIndex =>
         currentWaveIndex;
 
+    public bool IsBossOnlyMode =>
+        bossOnlyMode;
+
     private void Awake()
     {
         // Reset guard tiap scene baru — supaya boss bisa spawn lagi setelah reload.

@@ -472,9 +472,73 @@ public class GestureDrawer : MonoBehaviour
                 );
             }
 
+            var activeTargets = new List<GestureShape>();
+            if (EnemyGestureCommand.HasActiveEnemyChallenges())
+            {
+                EnemyGestureCommand.GetActiveChallengeShapes(activeTargets);
+            }
+            else if (GestureChallengeManager.Instance != null &&
+                     GestureChallengeManager.Instance.HasActiveChallenge())
+            {
+                activeTargets.Add(
+                    GestureChallengeManager.Instance.CurrentRequiredGesture);
+            }
+
+            bool hasActiveBoss = BossEnemy.AppendActiveChallengeShapes(
+                activeTargets,
+                out int bossPhase
+            );
+
+            GestureShape intendedTarget = GestureRecognizer.Instance.GetClosestActiveTarget(
+                recognizedStrokes,
+                activeTargets,
+                out _
+            );
+
+            int levelIndex = LevelManager.Instance != null
+                ? LevelManager.Instance.GetCurrentLevelIndex()
+                : PlayerPrefs.GetInt("CurrentLevelIndex", 0);
+            EnemyWaveSpawner waveSpawner = FindAnyObjectByType<EnemyWaveSpawner>();
+            int waveIndex = waveSpawner != null && waveSpawner.CurrentWaveIndex >= 0
+                ? waveSpawner.CurrentWaveIndex
+                : GameProgressManager.GetWaveIndex();
+            bool isBossLevel = hasActiveBoss ||
+                (waveSpawner != null && waveSpawner.IsBossOnlyMode);
+            string levelWave = isBossLevel
+                ? bossPhase > 0
+                    ? "L" + (levelIndex + 1) + "_Boss_Phase" + bossPhase
+                    : "L" + (levelIndex + 1) + "_Boss"
+                : "L" + (levelIndex + 1) + "_W" + (waveIndex + 1);
+            string activeTargetsValue = string.Join(",", activeTargets);
+
             GestureRecognized?.Invoke(
                 recognizedStrokes,
                 result
+            );
+
+            Debug.Log(
+                "[GestureDrawer] Triggering analytics gesture event => " +
+                "detectedShape=" + result.DetectedShape +
+                ", expectedShape=" + result.ExpectedShape +
+                ", isRecognized=" + result.IsRecognized +
+                ", isHitTarget=" + (result.IsRecognized &&
+                    EnemyGestureCommand.IsCurrentStrokeHandled(recognizedStrokes))
+            );
+
+            bool isHitTarget = result.IsRecognized &&
+                EnemyGestureCommand.IsCurrentStrokeHandled(recognizedStrokes);
+
+            AksaraAnalytics.TrackGestureAttempt(
+                result.DetectedShape.ToString(),
+                result.ExpectedShape.ToString(),
+                intendedTarget.ToString(),
+                levelWave,
+                activeTargetsValue,
+                result.IsRecognized,
+                isHitTarget,
+                PowerUpTutorialManager.IsPowerUpTutorial ||
+                    BossLevelPowerUpTutorial.IsBossLevelTutorial ||
+                    TutorialManager.IsTrainingMode
             );
         }
         else
