@@ -448,6 +448,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         knockbackDuration = 0.48f;
 
         Vector2 currentPosition = rb != null ? rb.position : (Vector2)transform.position;
+        knockbackBaseY = baseY;
         Vector2 targetPosition;
 
         if (returnToSpawn)

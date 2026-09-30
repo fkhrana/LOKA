@@ -21,6 +21,8 @@ public class GestureRecognizer : MonoBehaviour
     [SerializeField] private FaGaGestureDisambiguator faGaDisambiguator = new FaGaGestureDisambiguator();
     [Tooltip("Rasio jarak titik awal-akhir terhadap ukuran gesture. Makin kecil makin ketat untuk menolak garis terbuka.")]
     public float maxEndpointDistanceRatio = 0.18f;
+    [Tooltip("Rasio maksimum jarak ujung terhadap panjang jalur sebelum stroke dianggap garis lurus.")]
+    public float maxStraightnessRatio = 0.95f;
 
     private readonly List<GestureTemplate> templates = new List<GestureTemplate>();
     private readonly List<IGestureTemplateProvider> templateProviders = new List<IGestureTemplateProvider>();
@@ -125,6 +127,20 @@ public class GestureRecognizer : MonoBehaviour
         {
             Debug.Log("Tidak ada gesture yang valid untuk dikenali.");
             return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
+        }
+
+        if (validStrokes.Count == 1)
+        {
+            var stroke = validStrokes[0];
+            float pathLength = GestureNormalizationHelper.PathLength(stroke);
+            float endpointDistance = Vector2.Distance(stroke[0], stroke[stroke.Count - 1]);
+            float straightness = pathLength > Mathf.Epsilon ? endpointDistance / pathLength : 1f;
+
+            if (straightness >= maxStraightnessRatio)
+            {
+                Debug.Log($"Gesture ditolak karena terlalu lurus. straightness: {straightness:F3}");
+                return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
+            }
         }
 
         var candidateStrokes = new List<List<Vector2>>(validStrokes.Count);
