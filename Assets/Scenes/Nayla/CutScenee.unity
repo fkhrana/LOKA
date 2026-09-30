@@ -908,7 +908,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -9110677919090179814, guid: 2a2f0f89d08ef2141955ac17a3fed78f, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -938,7 +938,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectHover
   targetTransform: {fileID: 2095838925}
   hoverScale: 1.1
-  hoverMoveY: 10
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5
@@ -1016,9 +1016,9 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 3826177280834346107, guid: bff2182e53429f74099ef131625d66e4, type: 3}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 3826177280834346107, guid: bff2182e53429f74099ef131625d66e4, type: 3}
+    m_SelectedSprite: {fileID: -5629063888563510368, guid: 014b4aa5f3b369142a031e888815f781, type: 3}
+    m_DisabledSprite: {fileID: -8375418814744394380, guid: bad36921369893a4ab27c612990b88e1, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -1064,7 +1064,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -5629063888563510368, guid: 014b4aa5f3b369142a031e888815f781, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1094,7 +1094,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EffectHover
   targetTransform: {fileID: 2143156156}
   hoverScale: 1.1
-  hoverMoveY: 10
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5

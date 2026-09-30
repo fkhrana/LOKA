@@ -2362,6 +2362,10 @@ PrefabInstance:
       propertyPath: hoverMoveY
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6595942278403981709, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+      propertyPath: hoverMoveY
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7613461940656258855, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
       propertyPath: m_PreserveAspect
       value: 1
@@ -7298,8 +7302,6 @@ MonoBehaviour:
   spawnAreaSize: {x: 4, y: 4}
   tutorialTag: TutorialEnemy
   tutorialLayer: TutorialEnemy
-  crashDetectionRadius: 5
-  crashDamageWindow: 0.5
   debugSpawn: 0
   debugDeathTrack: 1
 --- !u!114 &1813946100

@@ -146,7 +146,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: -1516508022938475743, guid: 74850682ed8f5be48b9842e269421c1b, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -212,7 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HoverEffect
   targetTransform: {fileID: 1659302371748961564}
   hoverScale: 1.1
-  hoverMoveY: 10
+  hoverMoveY: 0
   animDuration: 0.2
   collectPulseScale: 1.2
   collectPulseDuration: 0.5
@@ -374,7 +374,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 6938652463038702320, guid: d5ba49d4b3ac3d0419ee086c6e4429cd, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1

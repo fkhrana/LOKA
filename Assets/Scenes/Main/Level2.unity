@@ -5116,9 +5116,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7079319479043622315, guid: 64a21016c330e2f4da682d950c7ebfe9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 160
+      objectReference: {fileID: 0}
     - target: {fileID: 8314145575820521025, guid: 64a21016c330e2f4da682d950c7ebfe9, type: 3}
       propertyPath: m_Name
       value: FinishPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 8314145575820521025, guid: 64a21016c330e2f4da682d950c7ebfe9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9325,8 +9333,6 @@ MonoBehaviour:
   spawnAreaSize: {x: 4, y: 4}
   tutorialTag: TutorialEnemy
   tutorialLayer: TutorialEnemy
-  crashDetectionRadius: 2
-  crashDamageWindow: 0.5
   debugSpawn: 0
   debugDeathTrack: 1
 --- !u!114 &8770019900425224058
