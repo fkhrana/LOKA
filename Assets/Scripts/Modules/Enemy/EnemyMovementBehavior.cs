@@ -32,6 +32,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     private static bool allMovementPaused;
     private bool isKnockedBack;
     private bool knockbackOnPlayerContact;
+    private bool wasInsideShieldKnockbackRadius;
     private float bobTimer;
     private float baseY;
     private float knockbackTimer;
@@ -119,6 +120,7 @@ public class EnemyMovementBehavior : MonoBehaviour
             rb = gameObject.AddComponent<Rigidbody2D>();
 
         playerTransform = playerHealth != null ? playerHealth.transform : null;
+        wasInsideShieldKnockbackRadius = false;
 
         if (rb != null)
         {
@@ -254,8 +256,44 @@ public class EnemyMovementBehavior : MonoBehaviour
         if (spriteRenderer != null)
             spriteRenderer.flipX = moveDirection > 0f;
 
+        UpdateShieldKnockbackBoundary(targetPosition);
+
         if (isActive)
             TryDamagePlayerOnContact();
+    }
+
+    private void UpdateShieldKnockbackBoundary(Vector2 enemyPosition)
+    {
+        if (!PowerManager.IsShieldActive || playerTransform == null)
+        {
+            wasInsideShieldKnockbackRadius = false;
+            return;
+        }
+
+        if (!isActive)
+            return;
+
+        float radius = PowerManager.ShieldKnockbackRadius;
+        if (radius <= 0f)
+            return;
+
+        Vector2 playerPosition = playerTransform.position;
+        Vector2 closestPoint = enemyCollider != null
+            ? enemyCollider.ClosestPoint(playerPosition)
+            : enemyPosition;
+        bool isInsideRadius = (closestPoint - playerPosition).sqrMagnitude <= radius * radius;
+
+        if (!isInsideRadius)
+        {
+            wasInsideShieldKnockbackRadius = false;
+            return;
+        }
+
+        if (wasInsideShieldKnockbackRadius || contactCooldownTimer > 0f)
+            return;
+
+        wasInsideShieldKnockbackRadius = true;
+        ApplyShieldKnockback();
     }
 
     private void TryDamagePlayerOnContact()
@@ -304,11 +342,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         if (PowerManager.IsShieldActive)
         {
-            PlayShieldKnockback(
-                PowerManager.ShieldKnockbackDistance,
-                PowerManager.ShieldKnockbackToSpawn
-            );
-            contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+            ApplyShieldKnockback();
             return;
         }
 
@@ -326,6 +360,16 @@ public class EnemyMovementBehavior : MonoBehaviour
         GetComponent<EnemyGestureCommand>()?.ReportProcessed();
         LevelProgressManager.Instance?.CompletePendingProgress();
         Destroy(gameObject);
+    }
+
+    private void ApplyShieldKnockback()
+    {
+        PlayShieldKnockback(
+            PowerManager.ShieldKnockbackDistance,
+            PowerManager.ShieldKnockbackToSpawn
+        );
+        contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+        wasInsideShieldKnockbackRadius = true;
     }
 
     private void MoveToPosition(Vector2 position)

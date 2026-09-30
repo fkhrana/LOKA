@@ -547,7 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   cutsceneType: 0
   videoPlayer: {fileID: 1440382078}
-  videoFileName: Video/startscene.mp4
+  videoFileName: Video/startscene_new.mp4
   nextSceneName: MainGameplay(Drawing)
   skipButton: {fileID: 2095838924}
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
@@ -678,7 +678,7 @@ VideoPlayer:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
-  m_Url: ./startscene.mp4
+  m_Url: ./startscene_new.mp4
   m_EnabledAudioTracks: 01
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
@@ -810,7 +810,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2095838925
 RectTransform:
   m_ObjectHideFlags: 0

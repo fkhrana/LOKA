@@ -3809,6 +3809,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 188866085}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: shieldActiveVfx
+      value: 
+      objectReference: {fileID: 2075046000}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[1].comboSFX
       value: 
       objectReference: {fileID: 8300000, guid: df376d7019f714d4fb8b251f1713d991, type: 3}
@@ -3820,6 +3824,14 @@ PrefabInstance:
       propertyPath: slots.Array.data[2].shieldSFX
       value: 
       objectReference: {fileID: 8300000, guid: fae3499fbf16c0c4f892083f7b672852, type: 3}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[2].shieldDuration
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[2].shieldKnockbackRadius
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[0].unlockOnStartForTesting
       value: 1
@@ -4374,7 +4386,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1172379029
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7082,6 +7094,7 @@ MonoBehaviour:
   buttonNormalColor: {r: 1, g: 1, b: 1, a: 1}
   buttonPressedColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
   buttonPressedFeedbackDuration: 0.15
+  showDodgeUI: 0
   dodgeUI: {fileID: 1172379028}
   dodgeFadeInDuration: 0.25
   dodgeHoldDuration: 1.2
@@ -8106,6 +8119,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049339699}
   m_CullTransparentMesh: 1
+--- !u!1 &2075046000 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1534431083588709087, guid: 1d696eed676647b469b18301c42f2753, type: 3}
+  m_PrefabInstance: {fileID: 1787184826}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2079893224
 GameObject:
   m_ObjectHideFlags: 0

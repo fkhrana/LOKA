@@ -35,6 +35,7 @@ public class PowerManager : MonoBehaviour
 
         [Header("Shield")]
         public float shieldDuration = 5f;
+        [Min(0f)] public float shieldKnockbackRadius = 2f;
         public bool shieldKnockbackToSpawn = true;
         public float shieldKnockbackDistance = 5f;
 
@@ -58,6 +59,7 @@ public class PowerManager : MonoBehaviour
     [SerializeField] private GameObject timeFreezeVfx;
     [SerializeField] private GameObject comboVfx;
     [SerializeField] private GameObject shieldVfx;
+    [SerializeField] private GameObject shieldActiveVfx;
     [SerializeField] private bool vfxFollowsPowerUpDuration;
 
     [SerializeField] private Color activeColor = new Color(1f, 0.9f, 0.4f, 1f);
@@ -77,6 +79,7 @@ public class PowerManager : MonoBehaviour
     private static bool isShieldActive;
     private static bool shieldKnockbackToSpawn;
     private static float shieldKnockbackDistance;
+    private static float shieldKnockbackRadius;
     private readonly HashSet<PowerUpType> unlockedPowerUps = new HashSet<PowerUpType>();
     private readonly HashSet<PowerUpType> consumedPowerUps = new HashSet<PowerUpType>();
 
@@ -96,6 +99,7 @@ public class PowerManager : MonoBehaviour
     public static bool IsShieldActive => isShieldActive;
     public static bool ShieldKnockbackToSpawn => shieldKnockbackToSpawn;
     public static float ShieldKnockbackDistance => shieldKnockbackDistance;
+    public static float ShieldKnockbackRadius => shieldKnockbackRadius;
     public static float ActiveComboRadius { get; private set; }
 
     #region Tutorial Gate Helper
@@ -116,9 +120,11 @@ public class PowerManager : MonoBehaviour
         isShieldActive = false;
         shieldKnockbackToSpawn = false;
         shieldKnockbackDistance = 0f;
+        shieldKnockbackRadius = 0f;
         StopVfx(timeFreezeVfx);
         StopVfx(comboVfx);
         StopVfx(shieldVfx);
+        StopVfx(shieldActiveVfx);
 
         if (hideBarDuringIntro)
         {
@@ -282,8 +288,10 @@ public class PowerManager : MonoBehaviour
             isShieldActive = true;
             shieldKnockbackToSpawn = slot.shieldKnockbackToSpawn;
             shieldKnockbackDistance = Mathf.Max(0f, slot.shieldKnockbackDistance);
+            shieldKnockbackRadius = Mathf.Max(0f, slot.shieldKnockbackRadius);
             SetProgress(slot, 1f);
-            PlayVfx(shieldVfx);
+            PlayVfx(shieldVfx, false);
+            PlayVfx(shieldActiveVfx, true);
             SetActiveVisual(slot);
             shieldRoutine = StartCoroutine(ShieldRoutine(slot));
         }
@@ -292,7 +300,7 @@ public class PowerManager : MonoBehaviour
             isComboActive = true;
             ActiveComboRadius = slot.comboRadius;
             SetProgress(slot, 1f);
-            PlayVfx(comboVfx);
+            PlayVfx(comboVfx, vfxFollowsPowerUpDuration);
             SetActiveVisual(slot);
             comboRoutine = StartCoroutine(ComboRoutine(slot));
         }
@@ -352,7 +360,7 @@ public class PowerManager : MonoBehaviour
     private IEnumerator FreezeRoutine(PowerUpSlot slot)
     {
         isFrozen = true;
-        PlayVfx(timeFreezeVfx);
+        PlayVfx(timeFreezeVfx, vfxFollowsPowerUpDuration);
         SetActiveVisual(slot);
 
         freezeProgressRoutine = StartCoroutine(UpdateProgressRoutine(slot, slot.freezeDuration));
@@ -403,12 +411,12 @@ public class PowerManager : MonoBehaviour
         isShieldActive = false;
         shieldKnockbackToSpawn = false;
         shieldKnockbackDistance = 0f;
+        shieldKnockbackRadius = 0f;
 
         PowerManager[] managers = FindObjectsByType<PowerManager>(FindObjectsSortMode.None);
         foreach (PowerManager manager in managers)
         {
-            if (manager.vfxFollowsPowerUpDuration)
-                manager.StopVfx(manager.shieldVfx);
+            manager.StopVfx(manager.shieldActiveVfx);
 
             PowerUpSlot slot = manager.slots.Find(item => item.powerUpType == PowerUpType.Shield);
             if (slot != null)
@@ -470,7 +478,7 @@ public class PowerManager : MonoBehaviour
         SetProgress(slot, 0f);
     }
 
-    private void PlayVfx(GameObject vfx)
+    private void PlayVfx(GameObject vfx, bool followsPowerUpDuration)
     {
         if (vfx == null)
             return;
@@ -483,9 +491,9 @@ public class PowerManager : MonoBehaviour
         {
             ParticleSystem.MainModule main = particles.main;
             main.playOnAwake = false;
-            main.loop = vfxFollowsPowerUpDuration;
+            main.loop = followsPowerUpDuration;
 
-            if (!vfxFollowsPowerUpDuration)
+            if (!followsPowerUpDuration)
             {
                 longestDuration = Mathf.Max(
                     longestDuration,
@@ -495,7 +503,7 @@ public class PowerManager : MonoBehaviour
             particles.Play(true);
         }
 
-        if (!vfxFollowsPowerUpDuration)
+        if (!followsPowerUpDuration)
             StartCoroutine(StopVfxAfterDuration(vfx, longestDuration));
     }
 
@@ -667,12 +675,14 @@ public class PowerManager : MonoBehaviour
         ActiveComboRadius = 0f;
         shieldKnockbackToSpawn = false;
         shieldKnockbackDistance = 0f;
+        shieldKnockbackRadius = 0f;
 
         EnemyMovementBehavior.SetAllMovementPaused(false);
 
         StopVfx(timeFreezeVfx);
         StopVfx(comboVfx);
         StopVfx(shieldVfx);
+        StopVfx(shieldActiveVfx);
 
         RefreshButtonsInteractable();
 

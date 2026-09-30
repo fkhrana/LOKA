@@ -49,6 +49,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
     [SerializeField, Min(0f)] private float buttonPressedFeedbackDuration = 0.15f;
 
     [Header("Dodge UI")]
+    [SerializeField] private bool showDodgeUI = true;
     [SerializeField] private GameObject dodgeUI;
     [SerializeField, Min(0f)] private float dodgeFadeInDuration = 0.25f;
     [Tooltip("Minimum hold time (detik). Kalau Shield lebih lama, Dodge UI ikut lebih lama.")]
@@ -378,6 +379,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
         fingerTap?.Hide();
         HideDodgeUI();
         SetActive(startPanel, false);
+        LevelProgressManager.Instance?.SetProgressBarVisible(true);
 
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
@@ -472,7 +474,7 @@ public class BossLevelPowerUpTutorial : MonoBehaviour
 
     private void PlayDodgeUI()
     {
-        if (dodgeUI == null) return;
+        if (!showDodgeUI || dodgeUI == null) return;
 
         if (dodgeRoutine != null)
             StopCoroutine(dodgeRoutine);
