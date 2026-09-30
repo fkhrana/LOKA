@@ -354,7 +354,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         int healthBeforeDamage = playerHealth.CurrentHealth;
         playerHealth.TakeDamage(damageOnContact);
-        if (playerHealth.CurrentHealth < healthBeforeDamage)
+        if (playerHealth.CurrentHealth < healthBeforeDamage || TutorialManager.IsTrainingMode)
             PlayerDamagedByContact?.Invoke();
 
         if (knockbackOnPlayerContact)

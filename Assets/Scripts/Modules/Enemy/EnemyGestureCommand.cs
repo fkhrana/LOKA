@@ -15,6 +15,11 @@ public class EnemyGestureCommand : MonoBehaviour
             movementBehavior.SetSpawnPosition(transform.position);
     }
 
+    public void SetAllowMovementBeforeGameStarted(bool allow)
+    {
+        allowMovementBeforeGameStarted = allow;
+    }
+
     [SerializeField] private bool autoIssueOnStart = true;
     [SerializeField] private GestureShape gestureToCommand = GestureShape.Na;
     [SerializeField, Min(1)] private int requiredCorrectGestures = 1;
@@ -22,6 +27,7 @@ public class EnemyGestureCommand : MonoBehaviour
     [SerializeField] private TMP_Text promptText;
     [SerializeField] private int healOnSuccess = 0;
     private bool canReceiveChallengeDuringBoss;
+    private bool allowMovementBeforeGameStarted;
     private bool reportProgress = true;
     private PlayerHealth playerHealth;
     private Transform playerTransform;
@@ -250,7 +256,7 @@ public class EnemyGestureCommand : MonoBehaviour
     private void LateUpdate()
     {
         if (challengeActive && movementBehavior != null)
-            movementBehavior.Tick(CameraIntroManager.GameStarted);
+            movementBehavior.Tick(CameraIntroManager.GameStarted || allowMovementBeforeGameStarted);
     }
 
     public static bool HasOtherActiveEnemyWithin(EnemyGestureCommand source, float radius)

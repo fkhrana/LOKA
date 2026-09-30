@@ -20,15 +20,6 @@ public class TutorialEnemySpawner : MonoBehaviour
     [SerializeField] private string tutorialTag = "TutorialEnemy";
     [SerializeField] private string tutorialLayer = "TutorialEnemy";
 
-    [Header("Anti-Nabrak Filter")]
-    [Tooltip("Kalau musuh hilang saat jaraknya ke player kurang dari ini, dianggap NABRAK. " +
-             "Naikkan kalau musuh nabrak tidak terdeteksi.")]
-    [SerializeField, Min(0.1f)] private float crashDetectionRadius = 5f;
-
-    [Tooltip("Window waktu (detik) setelah player take damage. " +
-             "Kalau musuh hilang dalam window ini, dianggap NABRAK.")]
-    [SerializeField, Min(0.1f)] private float crashDamageWindow = 0.8f;
-
     [Header("Debug")]
     [SerializeField] private bool debugSpawn = false;
     [SerializeField] private bool debugDeathTrack = true;
@@ -37,12 +28,10 @@ public class TutorialEnemySpawner : MonoBehaviour
     #region Runtime State
     private readonly List<EnemyGestureCommand> spawnedEnemies = new List<EnemyGestureCommand>();
     private readonly Dictionary<int, EnemyGestureCommand> enemiesById = new Dictionary<int, EnemyGestureCommand>();
-    private readonly Dictionary<int, Vector3> lastKnownPositions = new Dictionary<int, Vector3>();
     private readonly HashSet<int> countedEnemyIds = new HashSet<int>();
-
-    private Transform playerTransform;
-    private PlayerHealth trackedPlayerHealth;
-    private float lastPlayerDamageTime = -999f;
+    private readonly HashSet<int> enemiesThatDamagedPlayer = new HashSet<int>();
+    private readonly Dictionary<int, EnemyMovementBehavior> trackedEnemyMovements = new Dictionary<int, EnemyMovementBehavior>();
+    private readonly Dictionary<int, Action> enemyDamageHandlers = new Dictionary<int, Action>();
 
     private Coroutine deathTrackerRoutine;
     private int expectedKillCount = 0;
@@ -67,7 +56,7 @@ public class TutorialEnemySpawner : MonoBehaviour
     #region Unity Lifecycle
     private void OnDisable()
     {
-        UnsubscribePlayerHealth();
+        UnsubscribeEnemyDamageHandlers();
         StopDeathTracker();
     }
     #endregion
@@ -90,10 +79,11 @@ public class TutorialEnemySpawner : MonoBehaviour
 
         isSpawning = true;
 
+        UnsubscribeEnemyDamageHandlers();
         spawnedEnemies.Clear();
         enemiesById.Clear();
-        lastKnownPositions.Clear();
         countedEnemyIds.Clear();
+        enemiesThatDamagedPlayer.Clear();
 
         validKillCount = 0;
         totalCrashCount = 0;
@@ -117,13 +107,6 @@ public class TutorialEnemySpawner : MonoBehaviour
             return spawnedEnemies;
         }
 
-        ResolvePlayerReference();
-        SubscribePlayerHealth();
-
-        if (playerTransform == null)
-            Debug.LogWarning("[TutorialEnemySpawner] Player tidak ditemukan — " +
-                             "deteksi crash hanya pakai jarak (mungkin kurang akurat).");
-
         Transform parent = enemyParent != null ? enemyParent : transform;
 
         for (int i = 0; i < count; i++)
@@ -136,7 +119,7 @@ public class TutorialEnemySpawner : MonoBehaviour
 
                 int id = enemy.gameObject.GetInstanceID();
                 enemiesById[id] = enemy;
-                lastKnownPositions[id] = enemy.transform.position;
+                TrackEnemyDamage(id, enemy);
             }
             else
             {
@@ -193,66 +176,60 @@ public class TutorialEnemySpawner : MonoBehaviour
     public void Clear()
     {
         StopDeathTracker();
+        UnsubscribeEnemyDamageHandlers();
 
         foreach (var enemy in spawnedEnemies)
             if (enemy != null) Destroy(enemy.gameObject);
 
         spawnedEnemies.Clear();
         enemiesById.Clear();
-        lastKnownPositions.Clear();
         countedEnemyIds.Clear();
+        enemiesThatDamagedPlayer.Clear();
 
         hasFiredCallback = true;
         isSpawning = false;
     }
     #endregion
 
-    #region Player Reference
-    private void ResolvePlayerReference()
+    #region Enemy Contact Tracking
+    private void TrackEnemyDamage(int id, EnemyGestureCommand enemy)
     {
-        if (playerTransform == null)
-        {
-            GameObject p = null;
-            try { p = GameObject.FindGameObjectWithTag("Player"); } catch { }
+        EnemyMovementBehavior movement = enemy.GetComponent<EnemyMovementBehavior>()
+            ?? enemy.GetComponentInChildren<EnemyMovementBehavior>(true);
+        if (movement == null) return;
 
-            if (p != null)
-                playerTransform = p.transform;
+        Action handler = () => enemiesThatDamagedPlayer.Add(id);
+        movement.PlayerDamagedByContact += handler;
+        trackedEnemyMovements[id] = movement;
+        enemyDamageHandlers[id] = handler;
+    }
+
+    private void UntrackEnemyDamage(int id)
+    {
+        if (trackedEnemyMovements.TryGetValue(id, out EnemyMovementBehavior movement) &&
+            enemyDamageHandlers.TryGetValue(id, out Action handler) &&
+            movement != null)
+        {
+            movement.PlayerDamagedByContact -= handler;
         }
 
-        if (playerTransform == null)
+        trackedEnemyMovements.Remove(id);
+        enemyDamageHandlers.Remove(id);
+    }
+
+    private void UnsubscribeEnemyDamageHandlers()
+    {
+        foreach (var pair in enemyDamageHandlers)
         {
-            PlayerHealth ph = FindFirstObjectByType<PlayerHealth>();
-            if (ph != null)
+            if (trackedEnemyMovements.TryGetValue(pair.Key, out EnemyMovementBehavior movement) &&
+                movement != null)
             {
-                playerTransform = ph.transform;
-                Debug.Log("[TutorialEnemySpawner] Player ditemukan via PlayerHealth fallback.");
+                movement.PlayerDamagedByContact -= pair.Value;
             }
         }
 
-        if (trackedPlayerHealth == null && playerTransform != null)
-            trackedPlayerHealth = playerTransform.GetComponent<PlayerHealth>();
-    }
-
-    private void SubscribePlayerHealth()
-    {
-        if (trackedPlayerHealth == null) return;
-        trackedPlayerHealth.DamageTaken -= OnPlayerDamaged;
-        trackedPlayerHealth.DamageTaken += OnPlayerDamaged;
-    }
-
-    private void UnsubscribePlayerHealth()
-    {
-        if (trackedPlayerHealth != null)
-            trackedPlayerHealth.DamageTaken -= OnPlayerDamaged;
-    }
-
-    private void OnPlayerDamaged(int amount)
-    {
-        lastPlayerDamageTime = Time.unscaledTime;
-
-        if (debugDeathTrack)
-            Debug.Log($"[TutorialEnemySpawner] Player take damage {amount}. " +
-                      $"Damage window aktif {crashDamageWindow}s.");
+        enemyDamageHandlers.Clear();
+        trackedEnemyMovements.Clear();
     }
     #endregion
 
@@ -270,11 +247,13 @@ public class TutorialEnemySpawner : MonoBehaviour
         ApplyIsolationTagAndLayer(enemy.gameObject);
 
         enemy.SetAutoIssueOnStart(false);
+        enemy.SetAllowMovementBeforeGameStarted(true);
 
         // === FIX: musuh tutorial TIDAK lapor progress ke LevelProgressManager ===
         enemy.SetReportProgress(false);
 
         ConfigureEnemy(enemy, enemyData, aksara);
+        enemy.GetComponent<Enemy>()?.SetDropEnabled(false);
         ConfigureMovement(enemy, position);   // ← instance method (diubah dari static)
         enemy.SyncSpawnPosition();
 
@@ -380,9 +359,7 @@ public class TutorialEnemySpawner : MonoBehaviour
         }
 
         // === FIX UTAMA: panggil Initialize() ===
-        PlayerHealth playerHealth = trackedPlayerHealth != null
-            ? trackedPlayerHealth
-            : FindFirstObjectByType<PlayerHealth>();
+        PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
 
         Collider2D enemyCollider = enemy.GetComponent<Collider2D>()
                                 ?? enemy.GetComponentInChildren<Collider2D>(true);
@@ -449,7 +426,6 @@ public class TutorialEnemySpawner : MonoBehaviour
     {
         while (true)
         {
-            UpdateLastKnownPositions();
             DetectDestroyedEnemies();
 
             if (enemiesById.Count == 0)
@@ -459,16 +435,6 @@ public class TutorialEnemySpawner : MonoBehaviour
             }
 
             yield return new WaitForSeconds(0.1f);
-        }
-    }
-
-    private void UpdateLastKnownPositions()
-    {
-        foreach (var kvp in enemiesById)
-        {
-            EnemyGestureCommand enemy = kvp.Value;
-            if (enemy != null)
-                lastKnownPositions[kvp.Key] = enemy.transform.position;
         }
     }
 
@@ -496,50 +462,24 @@ public class TutorialEnemySpawner : MonoBehaviour
         foreach (int id in destroyedIds)
         {
             enemiesById.Remove(id);
-            lastKnownPositions.Remove(id);
+            UntrackEnemyDamage(id);
         }
     }
 
     private void EvaluateEnemyDeath(int id)
     {
-        Vector3 lastPos = lastKnownPositions.ContainsKey(id)
-            ? lastKnownPositions[id]
-            : Vector3.zero;
-
-        bool playerJustDamaged =
-            (Time.unscaledTime - lastPlayerDamageTime) <= crashDamageWindow;
-
-        bool nearPlayer = IsNearPlayer(lastPos);
-
-        bool isCrash = playerJustDamaged || nearPlayer;
+        bool isCrash = enemiesThatDamagedPlayer.Contains(id);
 
         if (debugDeathTrack)
         {
-            float dist = playerTransform != null
-                ? Vector3.Distance(lastPos, playerTransform.position)
-                : -1f;
-
             Debug.Log($"[TutorialEnemySpawner] Enemy #{id} — " +
-                      $"playerJustDamaged={playerJustDamaged}, " +
-                      $"nearPlayer={nearPlayer} (dist={dist:F2}) " +
-                      $"→ {(isCrash ? "NABRAK" : "DI-KILL")}");
+                      $"damagedPlayer={isCrash} → {(isCrash ? "NABRAK" : "DI-KILL")}");
         }
 
         if (isCrash)
             totalCrashCount++;
         else
             validKillCount++;
-    }
-
-    private bool IsNearPlayer(Vector3 position)
-    {
-        if (playerTransform == null) return false;
-
-        float distance = Vector3.Distance(
-            new Vector3(position.x, position.y, 0f),
-            new Vector3(playerTransform.position.x, playerTransform.position.y, 0f));
-
-        return distance < crashDetectionRadius;
     }
 
     private void HandleAllEnemiesGone()

@@ -55,6 +55,12 @@ public class CameraIntroManager : MonoBehaviour
         isCountdownActive = false;
         DisableGesture();
 
+        if (PowerUpTutorialManager.IsPowerUpTutorial || BossLevelPowerUpTutorial.IsBossLevelTutorial)
+        {
+            Debug.Log("[CameraIntroManager] Tutorial power-up aktif → intro ditunda.");
+            return;
+        }
+
         string savedState = GameProgressManager.GetGameState();
 
         Debug.Log($"[CameraIntroManager] Start() dipanggil, savedState='{savedState}'");
@@ -128,7 +134,20 @@ public class CameraIntroManager : MonoBehaviour
             gestureDrawer.enabled = true;
     }
 
-    private IEnumerator MainkanIntro(bool withPanning)
+    public void StartIntroAfterTutorial(System.Action onCompleted)
+    {
+        GameStarted = false;
+        isCountdownActive = false;
+        DisableGesture();
+
+        if (countdownImage != null)
+            countdownImage.gameObject.SetActive(false);
+
+        bool withPanning = mainCamera != null && targetKanan != null;
+        StartCoroutine(MainkanIntro(withPanning, onCompleted));
+    }
+
+    private IEnumerator MainkanIntro(bool withPanning, System.Action onCompleted = null)
     {
         DisableGesture();
 
@@ -158,6 +177,7 @@ public class CameraIntroManager : MonoBehaviour
             Debug.LogWarning("[CameraIntroManager] Countdown Image kosong. Langsung mulai.");
             GameStarted = true;
             EnableGesture();
+            onCompleted?.Invoke();
             yield break;
         }
 
@@ -179,6 +199,7 @@ public class CameraIntroManager : MonoBehaviour
         EnableGesture();
 
         Debug.Log("GAME DIMULAI! GameStarted=" + GameStarted);
+        onCompleted?.Invoke();
     }
 
     private IEnumerator GerakkanKamera(Vector3 posisiAwal, Vector3 posisiAkhir, float durasi)
