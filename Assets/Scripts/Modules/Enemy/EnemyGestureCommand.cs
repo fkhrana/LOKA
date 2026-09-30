@@ -279,6 +279,47 @@ public class EnemyGestureCommand : MonoBehaviour
         return false;
     }
 
+    public static Vector2 GetSeparationDirection(
+        EnemyGestureCommand source,
+        Vector2 position,
+        float radius
+    )
+    {
+        if (source == null || radius <= 0f)
+            return Vector2.zero;
+
+        Vector2 separation = Vector2.zero;
+        float radiusSqr = radius * radius;
+
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            EnemyGestureCommand other = activeEnemies[i];
+            if (other == null || other == source || !other.gameObject.activeInHierarchy)
+                continue;
+
+            Vector2 offset = position - (Vector2)other.transform.position;
+            float distanceSqr = offset.sqrMagnitude;
+            if (distanceSqr >= radiusSqr)
+                continue;
+
+            if (distanceSqr < 0.0001f)
+            {
+                offset = source.GetInstanceID() < other.GetInstanceID()
+                    ? Vector2.up
+                    : Vector2.down;
+            }
+            else
+            {
+                offset /= Mathf.Sqrt(distanceSqr);
+            }
+
+            float strength = 1f - Mathf.Sqrt(distanceSqr) / radius;
+            separation += offset * strength;
+        }
+
+        return Vector2.ClampMagnitude(separation, 1f);
+    }
+
     public void SetAutoIssueOnStart(bool shouldAutoIssue)
     {
         autoIssueOnStart = shouldAutoIssue;
