@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovementBehavior
   moveSpeed: 1.25
+  offscreenSpeedMultiplier: 2.5
   separationRadius: 1.1
   separationSpeed: 1.5
   damageOnContact: 20
@@ -250,7 +251,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  stateTwoMoveSpeed: 0.7
+  stateTwoMoveSpeed: 0.5
   aksaraPerState: 3
   standardEnemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   standardEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}

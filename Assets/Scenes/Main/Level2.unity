@@ -1974,6 +1974,9 @@ MonoBehaviour:
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
+  staggerInitialMovement: 1
+  initialMovementBatchSize: 1
+  initialMovementBatchDelay: 3
   availableAksaraGestures: 040000000500000006000000070000000800000009000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2

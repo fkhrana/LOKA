@@ -1988,7 +1988,7 @@ MonoBehaviour:
   staggerSpawnInterval: 0.6
   staggerInitialMovement: 1
   initialMovementBatchSize: 1
-  initialMovementBatchDelay: 2
+  initialMovementBatchDelay: 3
   availableAksaraGestures: 0400000006000000070000000800000009000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2
