@@ -8,6 +8,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     public event Action PlayerDamagedByContact;
 
     [SerializeField] private float moveSpeed = 1.5f;
+    [SerializeField, Min(1f)] private float offscreenSpeedMultiplier = 2f;
     [SerializeField, Min(0f)] private float separationRadius = 1.1f;
     [SerializeField, Min(0f)] private float separationSpeed = 1.5f;
     [SerializeField] private int damageOnContact = 20;
@@ -245,7 +246,11 @@ public class EnemyMovementBehavior : MonoBehaviour
         {
             Vector2 target = hasMovementTarget ? movementTarget : playerTransform.position;
             float deltaX = target.x - currentPosition.x;
-            float horizontalStep = Mathf.Sign(deltaX) * moveSpeed * Time.deltaTime;
+            float currentMoveSpeed = moveSpeed;
+            if (enemyCommand != null && !enemyCommand.IsVisibleOnCamera())
+                currentMoveSpeed *= offscreenSpeedMultiplier;
+
+            float horizontalStep = Mathf.Sign(deltaX) * currentMoveSpeed * Time.deltaTime;
             if (Mathf.Abs(deltaX) < Mathf.Abs(horizontalStep))
                 horizontalStep = deltaX;
 

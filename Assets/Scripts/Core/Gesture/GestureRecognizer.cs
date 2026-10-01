@@ -167,6 +167,8 @@ public class GestureRecognizer : MonoBehaviour
         GestureShape bestShape = GestureShape.Unknown;
         float bestDistance = float.MaxValue;
         float secondBestDistance = float.MaxValue;
+        float bestFaDistance = float.MaxValue;
+        float bestZaDistance = float.MaxValue;
 
         float angleRange = Mathf.Deg2Rad * 45f;
         foreach (var template in templates)
@@ -187,6 +189,11 @@ public class GestureRecognizer : MonoBehaviour
                 candidateStrokes,
                 template.Strokes);
 
+            if (template.Shape == GestureShape.Fa && totalDistance < bestFaDistance)
+                bestFaDistance = totalDistance;
+            else if (template.Shape == GestureShape.Za && totalDistance < bestZaDistance)
+                bestZaDistance = totalDistance;
+
             if (totalDistance < bestDistance)
             {
                 secondBestDistance = bestDistance;
@@ -198,6 +205,10 @@ public class GestureRecognizer : MonoBehaviour
                 secondBestDistance = totalDistance;
             }
         }
+
+        string faScoreText = bestFaDistance == float.MaxValue ? "n/a" : bestFaDistance.ToString("F2");
+        string zaScoreText = bestZaDistance == float.MaxValue ? "n/a" : bestZaDistance.ToString("F2");
+        Debug.Log($"Gesture scores | FA: {faScoreText}, ZA: {zaScoreText}, winner: {bestShape}");
 
         int totalCandidatePoints = candidateStrokes.Count * sampleCount;
         float averageDistance = bestDistance / totalCandidatePoints;

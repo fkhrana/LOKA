@@ -34,6 +34,7 @@ public class EnemyGestureCommand : MonoBehaviour
     private int remainingCorrectGestures;
     private bool isSubscribed;
     private bool challengeActive;
+    private bool movementActivationBlocked;
     private bool hasReportedProcessed;
     private static List<List<Vector2>> cachedStrokes;
     private static List<Vector2> cachedStrokePoints;
@@ -335,6 +336,18 @@ public class EnemyGestureCommand : MonoBehaviour
         reportProgress = shouldReport;
     }
 
+    public void SetMovementActivationBlocked(bool blocked)
+    {
+        movementActivationBlocked = blocked;
+        ApplyMovementActivation();
+    }
+
+    private void ApplyMovementActivation()
+    {
+        if (movementBehavior != null)
+            movementBehavior.SetActive(challengeActive && !movementActivationBlocked);
+    }
+
     public void IssueCommand()
     {
         if (gestureDrawer == null)
@@ -343,9 +356,8 @@ public class EnemyGestureCommand : MonoBehaviour
         remainingCorrectGestures = Mathf.Max(1, requiredCorrectGestures);
         challengeActive = true;
         Debug.Log($"EnemyGestureCommand.IssueCommand active={challengeActive} movementBehavior={(movementBehavior != null)}");
-        if (movementBehavior != null)
-            movementBehavior.SetActive(true);
-        else
+        ApplyMovementActivation();
+        if (movementBehavior == null)
             Debug.LogWarning("EnemyGestureCommand: EnemyMovementBehavior tidak tersedia.");
 
         UpdatePrompt();
@@ -371,8 +383,7 @@ public class EnemyGestureCommand : MonoBehaviour
         requiredCorrectGestures = Mathf.Max(1, correctGestureCount);
         remainingCorrectGestures = requiredCorrectGestures;
         challengeActive = true;
-        if (movementBehavior != null)
-            movementBehavior.SetActive(true);
+        ApplyMovementActivation();
         UpdatePrompt();
     }
 

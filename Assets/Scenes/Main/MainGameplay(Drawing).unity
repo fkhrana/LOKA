@@ -1986,7 +1986,10 @@ MonoBehaviour:
   delayBetweenWaves: 2
   initialConcurrentEnemies: 3
   staggerSpawnInterval: 0.6
-  availableAksaraGestures: 040000000500000006000000070000000800000009000000
+  staggerInitialMovement: 1
+  initialMovementBatchSize: 1
+  initialMovementBatchDelay: 2
+  availableAksaraGestures: 0400000006000000070000000800000009000000
   requiredCorrectGestures: 1
   minSpawnDistance: 2
   maxSpawnDistance: 3
@@ -4577,6 +4580,7 @@ MonoBehaviour:
   faGaDisambiguator:
     endpointGapWeight: 0.05
   maxEndpointDistanceRatio: 0.18
+  maxStraightnessRatio: 0.95
 --- !u!114 &1483876491
 MonoBehaviour:
   m_ObjectHideFlags: 0

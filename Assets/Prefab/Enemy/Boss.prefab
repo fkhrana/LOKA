@@ -153,6 +153,7 @@ GameObject:
   - component: {fileID: 4414482415288487583}
   - component: {fileID: 3002505615780287066}
   - component: {fileID: 7536460125606360049}
+  - component: {fileID: 6187933259467959974}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Untagged
@@ -210,6 +211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovementBehavior
   moveSpeed: 1.25
+  separationRadius: 1.1
+  separationSpeed: 1.5
   damageOnContact: 20
   contactCooldown: 0.35
   moveLeft: 1
@@ -238,8 +241,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
   gestureDrawer: {fileID: 0}
   movementBehavior: {fileID: 7326386498163401673}
-  bodyRenderer: {fileID: 0}
-  animator: {fileID: 3002505615780287066}
+  animationController: {fileID: 0}
   aksaraIconRenderers:
   - {fileID: 8604418189492127069}
   - {fileID: 672192437658271290}
@@ -248,7 +250,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  stateTwoMoveSpeed: 1
+  stateTwoMoveSpeed: 0.7
   aksaraPerState: 3
   standardEnemyPrefab: {fileID: 589626305576719126, guid: 96d45aa937371944892d7fb2e2476545, type: 3}
   standardEnemyData: {fileID: 11400000, guid: 770b0922aafd087438c321d5d0bea81a, type: 2}
@@ -271,11 +273,6 @@ MonoBehaviour:
   gameplayHudCanvas: {fileID: 0}
   cameraShakeEffect: {fileID: 0}
   defeatUiHideDelay: 0.25
-  defeatBlinkDuration: 0.6
-  defeatBlinkInterval: 0.1
-  defeatShrinkDuration: 0.25
-  defeatShrinkTargetScale: 0.1
-  defeatAnimationStateName: enemyDieBlubub
 --- !u!50 &5015614928917567845
 Rigidbody2D:
   serializedVersion: 5
@@ -430,6 +427,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &6187933259467959974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2167346295579457003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5076a24e9bf48c7ba0a8e0a5d9b0a91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAnimationController
+  animator: {fileID: 0}
+  bodyRenderer: {fileID: 0}
+  idleStateName: bossIdle
+  hitStateName: bossHit
+  defeatStateName: enemyDieBlubub
+  defeatBlinkDuration: 0.6
+  defeatBlinkInterval: 0.1
+  defeatShrinkDuration: 0.25
+  defeatShrinkTargetScale: 0.1
 --- !u!1 &4298091898585307631
 GameObject:
   m_ObjectHideFlags: 0

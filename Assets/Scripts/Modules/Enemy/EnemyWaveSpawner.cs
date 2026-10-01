@@ -68,6 +68,13 @@ public class EnemyWaveSpawner : MonoBehaviour
     [SerializeField, Min(0.1f)] private float delayBetweenWaves = 2f;
     [SerializeField, Min(1)] private int initialConcurrentEnemies = 3;
     [SerializeField, Min(0.1f)] private float staggerSpawnInterval = 0.6f;
+    [Header("Initial Enemy Movement")]
+    [Tooltip("Stagger the movement of enemies spawned at the start of each wave.")]
+    [SerializeField] private bool staggerInitialMovement = true;
+    [Tooltip("How many initial enemies start moving together. Set to 1 for one at a time.")]
+    [SerializeField, Min(1)] private int initialMovementBatchSize = 1;
+    [Tooltip("Delay between movement batches, in seconds.")]
+    [SerializeField, Min(0.1f)] private float initialMovementBatchDelay = 0.75f;
     [SerializeField] private GestureShape[] availableAksaraGestures =
         { GestureShape.Na, GestureShape.Ka };
 
@@ -113,6 +120,9 @@ public class EnemyWaveSpawner : MonoBehaviour
     {
         if (maxSpawnDistance < minSpawnDistance)
             maxSpawnDistance = minSpawnDistance;
+
+        initialMovementBatchSize = Mathf.Max(1, initialMovementBatchSize);
+        initialMovementBatchDelay = Mathf.Max(0.1f, initialMovementBatchDelay);
     }
 
     private void Start()
@@ -260,6 +270,10 @@ public class EnemyWaveSpawner : MonoBehaviour
         Debug.Log($"[EnemyWaveSpawner] Fail-safe GameStarted aktif dalam {timeout:F1} detik jika belum true.");
 
         yield return new WaitForSeconds(timeout);
+
+        CameraIntroManager introManager = CameraIntroManager.Instance;
+        if (introManager != null && introManager.IsCountdownActive)
+            yield return new WaitUntil(() => !introManager.IsCountdownActive);
 
         if (!CameraIntroManager.GameStarted)
         {
@@ -577,6 +591,18 @@ public class EnemyWaveSpawner : MonoBehaviour
             );
         }
 
+        if (staggerInitialMovement && spawnedEnemies.Count > 0)
+        {
+            var initialEnemies = new List<EnemyGestureCommand>(spawnedEnemies);
+            for (int i = 0; i < initialEnemies.Count; i++)
+            {
+                if (initialEnemies[i] != null)
+                    initialEnemies[i].SetMovementActivationBlocked(true);
+            }
+
+            StartCoroutine(ActivateMovementInBatches(initialEnemies));
+        }
+
         if (spawnedEnemies.Count != enemyCount)
         {
             Debug.LogWarning(
@@ -821,6 +847,11 @@ public class EnemyWaveSpawner : MonoBehaviour
         var usedPositions =
             new List<Vector3>();
 
+        List<EnemyGestureCommand> initialMovementEnemies =
+            staggerInitialMovement
+                ? new List<EnemyGestureCommand>()
+                : null;
+
         if (wave.groups == null ||
             wave.groups.Count == 0)
         {
@@ -900,7 +931,7 @@ public class EnemyWaveSpawner : MonoBehaviour
             if (selectedGroup == null)
                 break;
 
-            SpawnEnemy(
+            EnemyGestureCommand spawnedEnemy = SpawnEnemy(
                 selectedGroup.enemyData,
                 selectedGroup.aksaraData,
                 spawnedCount,
@@ -908,8 +939,17 @@ public class EnemyWaveSpawner : MonoBehaviour
                 usedPositions
             );
 
+            if (initialMovementEnemies != null && spawnedEnemy != null)
+            {
+                spawnedEnemy.SetMovementActivationBlocked(true);
+                initialMovementEnemies.Add(spawnedEnemy);
+            }
+
             spawnedCount++;
         }
+
+        if (initialMovementEnemies != null && initialMovementEnemies.Count > 0)
+            StartCoroutine(ActivateMovementInBatches(initialMovementEnemies));
 
         while (spawnedCount < totalEnemiesInWave)
         {
@@ -1025,7 +1065,31 @@ public class EnemyWaveSpawner : MonoBehaviour
         );
     }
 
-    private void SpawnEnemy(
+    private IEnumerator ActivateMovementInBatches(
+        List<EnemyGestureCommand> enemies
+    )
+    {
+        yield return new WaitUntil(() => CameraIntroManager.GameStarted);
+
+        int batchSize = Mathf.Max(1, initialMovementBatchSize);
+        for (int index = 0; index < enemies.Count;)
+        {
+            int batchEnd = Mathf.Min(index + batchSize, enemies.Count);
+            for (; index < batchEnd; index++)
+            {
+                if (enemies[index] != null)
+                    enemies[index].SetMovementActivationBlocked(false);
+            }
+
+            if (index < enemies.Count)
+            {
+                float delay = Mathf.Max(0.1f, initialMovementBatchDelay);
+                yield return new WaitForSeconds(delay);
+            }
+        }
+    }
+
+    private EnemyGestureCommand SpawnEnemy(
         EnemyData enemyData,
         AksaraData aksaraData,
         int spawnIndex,
@@ -1052,6 +1116,9 @@ public class EnemyWaveSpawner : MonoBehaviour
                 Quaternion.identity,
                 parent
             );
+
+        if (enemy == null)
+            return null;
 
         enemy.SetAutoIssueOnStart(false);
 
@@ -1096,6 +1163,8 @@ public class EnemyWaveSpawner : MonoBehaviour
         spawnedEnemies.Add(enemy);
 
         currentWaveEnemies.Add(enemy);
+
+        return enemy;
     }
 
     private void KeepEnemyInsideSpawnArea(

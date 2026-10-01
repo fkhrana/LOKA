@@ -34,6 +34,7 @@ public class CameraIntroManager : MonoBehaviour
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
     private bool isCountdownActive = false;
+    public bool IsCountdownActive => isCountdownActive;
 
     private void Awake()
     {
@@ -181,6 +182,7 @@ public class CameraIntroManager : MonoBehaviour
             yield break;
         }
 
+        GameStarted = false;
         countdownImage.gameObject.SetActive(true);
         isCountdownActive = true;
 
