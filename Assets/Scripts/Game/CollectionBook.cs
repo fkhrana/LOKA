@@ -13,6 +13,12 @@ public class CollectionPanel : MonoBehaviour
     [Tooltip("Tombol pause yang disembunyikan saat collection terbuka.")]
     [SerializeField] private GameObject pauseButton;
 
+    // ✅ Hide guided tutorial panel juga
+    [SerializeField] private GameObject guidedTutorialPanelToHide;
+
+    // ✅ BARU: Tutorial Hint Manager untuk hide circle
+    [SerializeField] private TutorialHintManager tutorialHintManager;
+
     [Header("Collect Animation Target")]
     [SerializeField] private Transform collectBookTarget;
     [SerializeField] private GameObject collectionBookVfx;
@@ -23,26 +29,18 @@ public class CollectionPanel : MonoBehaviour
     {
         get
         {
-            if (Instance == null)
-                return null;
-
-            if (Instance.collectBookTarget != null)
-                return Instance.collectBookTarget;
-
-            return Instance.collectionPanel != null
-                ? Instance.collectionPanel.transform
-                : null;
+            if (Instance == null) return null;
+            if (Instance.collectBookTarget != null) return Instance.collectBookTarget;
+            return Instance.collectionPanel != null ? Instance.collectionPanel.transform : null;
         }
     }
 
     public static void PlayCollectionBookVfx()
     {
-        if (Instance == null || Instance.collectionBookVfx == null)
-            return;
+        if (Instance == null || Instance.collectionBookVfx == null) return;
 
         Transform target = CollectBookTarget;
-        if (target == null)
-            return;
+        if (target == null) return;
 
         Vector3 targetWorldPosition = GetWorldTargetPosition(target) + Instance.collectionBookVfxOffset;
         GameObject vfx = Instantiate(
@@ -74,8 +72,7 @@ public class CollectionPanel : MonoBehaviour
             canvasCamera,
             targetRect.position);
 
-        float cameraDistance = Mathf.Abs(
-            worldCamera.transform.position.z);
+        float cameraDistance = Mathf.Abs(worldCamera.transform.position.z);
 
         Vector3 worldPosition = worldCamera.ScreenToWorldPoint(
             new Vector3(screenPosition.x, screenPosition.y, cameraDistance));
@@ -95,10 +92,7 @@ public class CollectionPanel : MonoBehaviour
             time += Time.deltaTime;
             float progress = Mathf.Clamp01(time / growDuration);
             float rhythm = 1f - Mathf.Pow(1f - progress, 3f);
-            vfx.transform.localScale = Vector3.Lerp(
-                initialScale,
-                initialScale * 1.3f,
-                rhythm);
+            vfx.transform.localScale = Vector3.Lerp(initialScale, initialScale * 1.3f, rhythm);
             yield return null;
         }
 
@@ -110,10 +104,7 @@ public class CollectionPanel : MonoBehaviour
             time += Time.deltaTime;
             float progress = Mathf.Clamp01(time / shrinkDuration);
             float rhythm = 1f - Mathf.Pow(1f - progress, 2f);
-            vfx.transform.localScale = Vector3.Lerp(
-                initialScale * 1.3f,
-                initialScale,
-                rhythm);
+            vfx.transform.localScale = Vector3.Lerp(initialScale * 1.3f, initialScale, rhythm);
             yield return null;
         }
 
@@ -142,12 +133,31 @@ public class CollectionPanel : MonoBehaviour
     {
         if (pauseButton != null)
             pauseButton.SetActive(false);
+
+        // ✅ Hide guided tutorial panel
+        if (guidedTutorialPanelToHide != null)
+            guidedTutorialPanelToHide.SetActive(false);
+
+        // ✅ Hide circle highlight
+        if (tutorialHintManager == null)
+            tutorialHintManager = FindFirstObjectByType<TutorialHintManager>();
+
+        if (tutorialHintManager != null)
+            tutorialHintManager.HideCircleTemporarily();
     }
 
     private void ShowPauseButton()
     {
         if (pauseButton != null)
             pauseButton.SetActive(true);
+
+        // ✅ Show guided tutorial panel
+        if (guidedTutorialPanelToHide != null)
+            guidedTutorialPanelToHide.SetActive(true);
+
+        // ✅ Restore circle highlight
+        if (tutorialHintManager != null)
+            tutorialHintManager.RestoreCircle();
     }
 
     // =========================
@@ -167,10 +177,7 @@ public class CollectionPanel : MonoBehaviour
         if (isOpen) return;
 
         isOpen = true;
-
-        // ⬇️ Sembunyikan tombol pause
         HidePauseButton();
-
         collectionPanel?.SetActive(true);
         Time.timeScale = 0f;
 
@@ -191,10 +198,7 @@ public class CollectionPanel : MonoBehaviour
             {
                 collectionPanel?.SetActive(false);
                 Time.timeScale = 1f;
-
-                // ⬇️ Munculkan tombol pause lagi
                 ShowPauseButton();
-
                 Debug.Log("[Collection 1] Ditutup dengan efek");
             });
         }
@@ -202,11 +206,8 @@ public class CollectionPanel : MonoBehaviour
         {
             collectionPanel?.SetActive(false);
             Time.timeScale = 1f;
-
-            // ⬇️ Munculkan tombol pause lagi
             ShowPauseButton();
-
-            Debug.Log("[Collection 1] Ditutup langsung (tidak ada EffectPanel)");
+            Debug.Log("[Collection 1] Ditutup langsung");
         }
     }
 
@@ -228,9 +229,7 @@ public class CollectionPanel : MonoBehaviour
     {
         if (collectionPanel2 == null) return;
 
-        // ⬇️ Sembunyikan tombol pause
         HidePauseButton();
-
         collectionPanel2.SetActive(true);
         Time.timeScale = 0f;
 
@@ -249,10 +248,7 @@ public class CollectionPanel : MonoBehaviour
             {
                 collectionPanel2.SetActive(false);
                 Time.timeScale = 1f;
-
-                // ⬇️ Munculkan tombol pause lagi
                 ShowPauseButton();
-
                 Debug.Log("[Collection 2] Ditutup dengan efek");
             });
         }
@@ -260,11 +256,8 @@ public class CollectionPanel : MonoBehaviour
         {
             collectionPanel2.SetActive(false);
             Time.timeScale = 1f;
-
-            // ⬇️ Munculkan tombol pause lagi
             ShowPauseButton();
-
-            Debug.Log("[Collection 2] Ditutup langsung (tidak ada EffectPanel)");
+            Debug.Log("[Collection 2] Ditutup langsung");
         }
     }
 }

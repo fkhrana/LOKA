@@ -62,14 +62,11 @@ public class DropZone : MonoBehaviour, IDropHandler
             if (img != null)
                 img.raycastTarget = false;
 
-            // SFX BENAR
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(correctSFX);
 
-            // VFX BENAR
             PlayCorrectEffect();
 
-            // CEK PUZZLE
             if (PuzzleManager.Instance != null)
                 PuzzleManager.Instance.CheckPuzzleComplete();
 
@@ -81,15 +78,35 @@ public class DropZone : MonoBehaviour, IDropHandler
         {
             draggedItem.ReturnToStart();
 
-            // SFX SALAH
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(wrongSFX);
 
-            // SHAKE
             PlayWrongEffect();
 
             Debug.Log("❌ Salah, kembali ke posisi awal");
         }
+    }
+
+    // =========================================================
+    // ✅ BARU: ClearSlot — dipanggil saat reset puzzle
+    // =========================================================
+    public void ClearSlot()
+    {
+        // Cari DragItem yang nempel di slot ini
+        DragItem draggedItem = GetComponentInChildren<DragItem>();
+
+        if (draggedItem != null)
+        {
+            draggedItem.ReturnToOriginal();
+        }
+
+        isFilled = false;
+
+        // Reset posisi slot (kalau kena shake)
+        if (rectTransform != null)
+            rectTransform.anchoredPosition = originalAnchoredPos;
+
+        Debug.Log($"[DropZone] Slot di-clear: {gameObject.name}");
     }
 
     // =========================================================

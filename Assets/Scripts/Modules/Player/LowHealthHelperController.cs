@@ -162,7 +162,6 @@ public class LowHealthHelperController : MonoBehaviour
         Debug.Log("[LowHealthHelperController] Helper di-spawn untuk tutorial.");
         return true;
     }
-    // =================================================================
 
     private void HandleGestureRecognized(
         System.Collections.Generic.List<System.Collections.Generic.List<Vector2>> strokes,
@@ -180,9 +179,17 @@ public class LowHealthHelperController : MonoBehaviour
         activeHelper.Activate();
     }
 
+    // ✅ FIX: Handle lastHealth < 0 dengan benar
     private void HandleHealthChanged(int currentHealth, int maxHealth)
     {
-        bool tookDamage = lastHealth >= 0 && currentHealth < lastHealth;
+        // Kalau lastHealth belum valid, set baseline aja
+        if (lastHealth < 0)
+        {
+            lastHealth = currentHealth;
+            return;
+        }
+
+        bool tookDamage = currentHealth < lastHealth;
         lastHealth = currentHealth;
 
         if (tookDamage)
@@ -228,6 +235,8 @@ public class LowHealthHelperController : MonoBehaviour
         }
 
         helper.Initialize(this);
+
+        Debug.Log($"[LowHealthHelperController] Helper spawn. HP={playerHealth.CurrentHealth}/{playerHealth.MaxHealth}, uses={usesThisScene}");
     }
 
     public void ConsumeHelper(LowHealthHelper helper)
@@ -263,5 +272,31 @@ public class LowHealthHelperController : MonoBehaviour
     {
         if (helper == activeHelper)
             activeHelper = null;
+    }
+
+    // ✅ FIX: Set lastHealth ke current health, bukan -1
+    public void ResetForTutorial()
+    {
+        usesThisScene = 0;
+        nextAllowedSpawnTime = 0f;
+
+        // ✅ Set lastHealth ke current health (bukan -1)
+        if (playerHealth != null)
+        {
+            lastHealth = playerHealth.CurrentHealth;
+            Debug.Log($"[LowHealthHelperController] Reset. lastHealth={lastHealth}");
+        }
+        else
+        {
+            lastHealth = -1;
+        }
+
+        if (activeHelper != null)
+        {
+            Destroy(activeHelper.gameObject);
+            activeHelper = null;
+        }
+
+        Debug.Log("[LowHealthHelperController] ✅ Reset untuk tutorial.");
     }
 }

@@ -36,6 +36,9 @@ public class TutorialHintManager : MonoBehaviour
     private Coroutine dotsAnimRoutine;
     private Coroutine circlePulseRoutine;
     private Sprite cachedDotSprite;
+
+    // ✅ BARU: Simpan state circle sebelum di-hide
+    private bool wasCircleActiveBeforeHide = false;
     #endregion
 
     private void OnDisable()
@@ -68,6 +71,30 @@ public class TutorialHintManager : MonoBehaviour
         if (circleHighlightObj != null)
             circleHighlightObj.SetActive(false);
         StopCirclePulse();
+    }
+
+    // ✅ BARU: Hide circle sementara (simpan state untuk restore)
+    public void HideCircleTemporarily()
+    {
+        wasCircleActiveBeforeHide =
+            circleHighlightObj != null && circleHighlightObj.activeSelf;
+
+        if (circleHighlightObj != null)
+            circleHighlightObj.SetActive(false);
+
+        StopCirclePulse();
+    }
+
+    // ✅ BARU: Restore circle kalau sebelumnya aktif
+    public void RestoreCircle()
+    {
+        if (!wasCircleActiveBeforeHide) return;
+
+        if (circleHighlightObj != null)
+        {
+            circleHighlightObj.SetActive(true);
+            StartCirclePulse();
+        }
     }
 
     private bool TryCalculateEnemyBounds(
@@ -165,9 +192,6 @@ public class TutorialHintManager : MonoBehaviour
     #endregion
 
     #region Path / Aksara
-    /// <summary>
-    /// Tampilkan dots berdasarkan AksaraData (wrapper lama — tetap kompatibel).
-    /// </summary>
     public void ShowPath(AksaraData aksara)
     {
         if (aksara == null)
@@ -178,9 +202,6 @@ public class TutorialHintManager : MonoBehaviour
         ShowPath(aksara.GestureShape);
     }
 
-    /// <summary>
-    /// Tampilkan dots berdasarkan GestureShape langsung (mis. Love).
-    /// </summary>
     public void ShowPath(GestureShape shape)
     {
         if (hintContainer == null)
@@ -210,22 +231,6 @@ public class TutorialHintManager : MonoBehaviour
         if (debugDots)
         {
             Debug.Log($"[TutorialHintManager] Dots muncul: {spawnedDots.Count} titik, shape={shape}");
-            Debug.Log($"[THM] container active={hintContainer.gameObject.activeInHierarchy}, " +
-                      $"pos={hintContainer.position}, size={hintContainer.rect.size}, " +
-                      $"lossyScale={hintContainer.lossyScale}");
-
-            Canvas c = hintContainer.GetComponentInParent<Canvas>();
-            Debug.Log($"[THM] canvas={(c != null ? c.name : "NULL")}, " +
-                      $"mode={(c != null ? c.renderMode.ToString() : "-")}, " +
-                      $"sortOrder={(c != null ? c.sortingOrder.ToString() : "-")}");
-
-            if (spawnedDots.Count > 0 && spawnedDots[0] != null)
-            {
-                Debug.Log($"[THM] dot[0] worldPos={spawnedDots[0].rectTransform.position}, " +
-                          $"localScale={spawnedDots[0].rectTransform.localScale}, " +
-                          $"color={spawnedDots[0].color}, " +
-                          $"sprite={(spawnedDots[0].sprite != null ? spawnedDots[0].sprite.name : "NULL")}");
-            }
         }
     }
 
@@ -241,9 +246,6 @@ public class TutorialHintManager : MonoBehaviour
         HidePath();
     }
 
-    /// <summary>
-    /// Aktifkan GameObject ini dan semua parent-nya, supaya UI benar-benar dirender.
-    /// </summary>
     private void ForceActivateHierarchy(Transform t)
     {
         Transform current = t;
@@ -384,12 +386,10 @@ public class TutorialHintManager : MonoBehaviour
     #region Path Data
     private List<Vector2> GetHardcodedPath(GestureShape shape)
     {
-        // 1) Coba ambil dari TutorialLetterPaths
         List<Vector2> path = TutorialLetterPaths.GetPath(shape);
         if (path != null && path.Count >= 2)
             return path;
 
-        // 2) Fallback hardcoded
         switch (shape)
         {
             case GestureShape.Na:
@@ -420,7 +420,6 @@ public class TutorialHintManager : MonoBehaviour
                     new Vector2(0.5f, -0.5f), new Vector2(-0.5f, -0.5f)
                 };
 
-            // === FIX: Love → path hati (pakai template LOVE.txt yang sudah di-normalize) ===
             case GestureShape.Love:
                 return GetLoveHeartPath();
 
@@ -429,18 +428,11 @@ public class TutorialHintManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Path hati untuk gesture Love.
-    /// Menggunakan kurva hati klasik lalu di-normalize ke bounding box ±0.6.
-    /// </summary>
     private static List<Vector2> GetLoveHeartPath()
     {
         var heart = new List<Vector2>();
         const int steps = 64;
 
-        // Parametric heart curve:
-        // x = 16 sin³(t)
-        // y = 13 cos(t) - 5 cos(2t) - 2 cos(3t) - cos(4t)
         for (int i = 0; i <= steps; i++)
         {
             float t = (i / (float)steps) * Mathf.PI * 2f;
@@ -455,7 +447,6 @@ public class TutorialHintManager : MonoBehaviour
             heart.Add(new Vector2(x, y));
         }
 
-        // Normalize ke bounding box ±0.6 supaya proporsional dengan displaySize
         return NormalizePath(heart, 0.6f);
     }
 

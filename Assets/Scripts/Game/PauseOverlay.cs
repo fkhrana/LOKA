@@ -28,6 +28,10 @@ public class PauseOverlay : MonoBehaviour
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
 
+    // ✅ BARU: Hide guided tutorial panel + circle saat pause
+    [SerializeField] private GameObject guidedTutorialPanelToHide;
+    [SerializeField] private TutorialHintManager tutorialHintManager;
+
     [Header("Scene Names")]
     [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
@@ -119,6 +123,12 @@ public class PauseOverlay : MonoBehaviour
             CameraIntroManager.Instance.SetIntroUIVisible(visible);
     }
 
+    private void SetGuidedTutorialPanelVisible(bool visible)
+    {
+        if (guidedTutorialPanelToHide != null)
+            guidedTutorialPanelToHide.SetActive(visible);
+    }
+
     private void OpenPanel(PanelType type)
     {
         if (currentPanel == type || isClosing || isTransitioning) return;
@@ -132,6 +142,12 @@ public class PauseOverlay : MonoBehaviour
             DisableGestureInput();
             SetIntroUIVisible(false);
             GetTutorialManager()?.SetTutorialVisualsVisible(false);
+
+            // ✅ Hide guided panel + circle
+            SetGuidedTutorialPanelVisible(false);
+
+            if (tutorialHintManager != null)
+                tutorialHintManager.HideCircleTemporarily();
         }
 
         GetPanel(type)?.SetActive(true);
@@ -156,11 +172,17 @@ public class PauseOverlay : MonoBehaviour
             EnableGestureInput();
             SetIntroUIVisible(true);
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
+
+            // ✅ Restore guided panel + circle
+            SetGuidedTutorialPanelVisible(true);
+
+            if (tutorialHintManager != null)
+                tutorialHintManager.RestoreCircle();
+
             currentPanel = PanelType.None;
         }
         else if (type == PanelType.Guided)
         {
-            // Guided ditutup → balik ke Pause
             CloseAllPanels();
 
             var pausePanel = GetPanel(PanelType.Pause);
@@ -174,7 +196,6 @@ public class PauseOverlay : MonoBehaviour
         }
         else
         {
-            // Tutorial (carousel) ditutup → kembali ke panel Pause
             CloseAllPanels();
 
             var pausePanel = GetPanel(PanelType.Pause);
@@ -266,6 +287,12 @@ public class PauseOverlay : MonoBehaviour
             EnableGestureInput();
             SetIntroUIVisible(true);
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
+
+            SetGuidedTutorialPanelVisible(true);
+
+            if (tutorialHintManager != null)
+                tutorialHintManager.RestoreCircle();
+
             currentPanel = PanelType.None;
         }
         else
@@ -274,6 +301,11 @@ public class PauseOverlay : MonoBehaviour
             cutsceneManager?.ResumeVideo();
             EnableGestureInput();
             SetIntroUIVisible(true);
+
+            SetGuidedTutorialPanelVisible(true);
+
+            if (tutorialHintManager != null)
+                tutorialHintManager.RestoreCircle();
         }
     }
 

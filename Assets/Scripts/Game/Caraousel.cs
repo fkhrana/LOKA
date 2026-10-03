@@ -24,13 +24,10 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     private List<CarouselIndicator> _indicators = new List<CarouselIndicator>();
 
     [Header("Video Setup")]
-    [Tooltip("Satu VideoPlayer dipakai bergantian untuk semua slide.")]
     [SerializeField] private VideoPlayer videoPlayer;
-    [Tooltip("Resolusi RenderTexture. Samakan rasionya dengan video (16:9).")]
     [SerializeField] private Vector2Int renderTextureSize = new Vector2Int(1280, 720);
     [SerializeField] private bool loopVideo = true;
 
-    // Satu RawImage per slide (null kalau slide itu tidak punya video)
     private List<RawImage> _videoImages = new List<RawImage>();
     private RenderTexture _renderTexture;
     private Coroutine _videoCoroutine;
@@ -39,10 +36,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     private bool _initialized;
 
     [Header("Special Slide Setup")]
-    [Tooltip("Prefab panel khusus untuk slide yang IsSpecialSlide = true. " +
-             "Konten + tombol YA sudah ada di dalam prefab.")]
     [SerializeField] private GameObject specialSlidePrefab;
-
     private List<GameObject> _specialSlides = new List<GameObject>();
 
     [Header("Animation Setup")]
@@ -53,7 +47,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     private AnimationCurve easeCurve;
 
     [Header("Auto Scroll Setup")]
-    [Tooltip("Sebaiknya OFF kalau slide berisi video, supaya video tidak terpotong.")]
     [SerializeField]
     private bool autoScroll = false;
 
@@ -65,6 +58,10 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     [Header("Info Setup")]
     [SerializeField]
     private CarouselTextBox textBoxController;
+
+    // ✅ BARU: Tutorial Hint Manager untuk hide circle saat carousel buka
+    [SerializeField]
+    private TutorialHintManager tutorialHintManager;
 
     private int _currentIndex = 0;
     private Coroutine _scrollCoroutine;
@@ -90,13 +87,11 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             carouselEntry.sprite = entry.EntryGraphic;
             _imagesForEntries.Add(carouselEntry);
 
-            // RawImage untuk video (hanya kalau entry punya video)
             RawImage videoImage = null;
             if (videoPlayer != null && !string.IsNullOrEmpty(entry.VideoFileName))
                 videoImage = CreateVideoImage(carouselEntry.transform);
             _videoImages.Add(videoImage);
 
-            // Panel khusus (slide tanpa video)
             GameObject specialPanel = null;
             if (entry.IsSpecialSlide && specialSlidePrefab != null)
             {
@@ -133,17 +128,26 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         PlayVideoForCurrent(0f);
     }
 
-    // Panel tutorial dibuka lagi -> putar ulang video slide aktif
     private void OnEnable()
     {
         if (_initialized)
             PlayVideoForCurrent(0f);
+
+        // ✅ Hide circle highlight saat carousel dibuka
+        if (tutorialHintManager == null)
+            tutorialHintManager = FindFirstObjectByType<TutorialHintManager>();
+
+        if (tutorialHintManager != null)
+            tutorialHintManager.HideCircleTemporarily();
     }
 
-    // Panel ditutup -> stop video
     private void OnDisable()
     {
         StopVideo();
+
+        // ✅ Restore circle saat carousel ditutup
+        if (tutorialHintManager != null)
+            tutorialHintManager.RestoreCircle();
     }
 
     private void OnDestroy()
@@ -167,10 +171,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private void SetupSpecialSlide(GameObject panel, CarouselEntry entry, int index)
     {
-        // Konten TitleText & tombol YA sudah ada di prefab.
-        // Tombol YA disambungkan via TutorialButtonBridge (di dalam prefab).
-
-        // Cari bridge di prefab, sambungkan ke TutorialFlowController di scene
         var bridge = panel.GetComponentInChildren<TutorialButtonBridge>(true);
 
         if (bridge != null)
@@ -188,7 +188,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             }
         }
 
-        // Supaya drag carousel tetap tembus, kecuali komponen di dalam Button
         var graphics = panel.GetComponentsInChildren<Graphic>(true);
         foreach (var g in graphics)
         {
@@ -196,7 +195,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             g.raycastTarget = false;
         }
 
-        // Sembunyikan dulu, nanti diaktifkan saat slide-nya aktif
         panel.SetActive(false);
     }
 
@@ -241,8 +239,8 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         var raw = go.GetComponent<RawImage>();
         raw.texture = _renderTexture;
-        raw.raycastTarget = false; // supaya drag/swipe tetap tembus ke ScrollRect
-        raw.enabled = false;       // muncul setelah video siap
+        raw.raycastTarget = false;
+        raw.enabled = false;
 
         return raw;
     }
@@ -252,7 +250,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         if (videoPlayer == null || _currentIndex < 0 || _currentIndex >= entries.Count)
             return;
 
-        // Skip kalau slide khusus atau tidak punya video
         var entry = entries[_currentIndex];
         if (entry.IsSpecialSlide || string.IsNullOrEmpty(entry.VideoFileName))
         {
@@ -260,7 +257,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             return;
         }
 
-        // Sudah memutar video slide ini (mis. snap balik setelah drag) -> jangan restart
         if (_activeVideoIndex == _currentIndex && videoPlayer.isPlaying)
             return;
 
@@ -271,7 +267,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private IEnumerator PrepareVideoRoutine(int index, string file, float delay)
     {
-        // Tunggu animasi geser selesai dulu. Realtime supaya jalan walau timeScale = 0
         if (delay > 0f)
             yield return new WaitForSecondsRealtime(delay);
 
@@ -286,7 +281,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private void OnVideoPrepared(VideoPlayer vp)
     {
-        // Abaikan kalau user sudah pindah slide saat video masih loading
         if (_preparingIndex != _currentIndex)
             return;
 
@@ -323,7 +317,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
                 raw.enabled = false;
         }
 
-        // Bersihkan sisa frame video sebelumnya
         if (_renderTexture != null)
         {
             var previous = RenderTexture.active;
@@ -346,12 +339,10 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         if (isSpecial)
         {
-            // Sembunyikan textbox di slide khusus
             textBoxController.gameObject.SetActive(false);
             return;
         }
 
-        // Slide biasa -> tampilkan dan isi teksnya
         if (!textBoxController.gameObject.activeSelf)
             textBoxController.gameObject.SetActive(true);
 
@@ -430,10 +421,8 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             LerpToPos(targetHorizontalPosition)
         );
 
-        // Update textbox (hide kalau slide khusus)
         ApplyTextBoxForIndex(_currentIndex, instant: false);
 
-        // Aktifkan panel khusus hanya untuk slide yang sedang aktif
         for (int i = 0; i < _specialSlides.Count; i++)
         {
             if (_specialSlides[i] == null) continue;
@@ -445,7 +434,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             _indicators[_currentIndex].Activate(duration);
         }
 
-        // Video slide baru diputar setelah animasi geser selesai
         PlayVideoForCurrent(duration);
     }
 

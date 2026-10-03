@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
@@ -9,6 +10,11 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     private Vector3 startPosition;
     private Transform startParent;
+
+    // ✅ Simpan posisi & parent ASLI
+    private Vector3 originalPosition;
+    private Transform originalParent;
+
     private CanvasGroup canvasGroup;
 
     private void Awake()
@@ -17,6 +23,10 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+        // ✅ Simpan posisi & parent asli
+        originalPosition = transform.position;
+        originalParent = transform.parent;
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -55,5 +65,22 @@ public class DragItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     {
         transform.position = startPosition;
         transform.SetParent(startParent);
+    }
+
+    // ✅ Return ke posisi ASLI + re-enable raycast
+    public void ReturnToOriginal()
+    {
+        transform.SetParent(originalParent);
+        transform.position = originalPosition;
+
+        canvasGroup.alpha = 1f;
+        canvasGroup.blocksRaycasts = true;
+
+        // ✅ FIX: Re-enable raycastTarget
+        Image img = GetComponent<Image>();
+        if (img != null)
+            img.raycastTarget = true;
+
+        Debug.Log($"[DragItem] Return ke original + raycast enabled: {gameObject.name}");
     }
 }

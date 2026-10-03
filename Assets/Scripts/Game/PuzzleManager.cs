@@ -128,21 +128,28 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    // ✅ FIX: Reset SEMUA slot (allSlots + tutorialSlots + gameplay)
     public void ResetPuzzleForTutorial()
     {
-        if (allSlots != null)
-        {
-            foreach (var slot in allSlots)
-            {
-                if (slot != null)
-                    slot.isFilled = false;
-            }
-        }
+        ResetSlotList(allSlots);
+        ResetSlotList(tutorialSlots);
+        ResetSlotList(originalGameplaySlots);
 
         puzzleCompleted = false;
         wave1PuzzleShown = false;
 
-        Debug.Log("[PuzzleManager] Puzzle di-reset untuk tutorial.");
+        Debug.Log("[PuzzleManager] Puzzle di-reset untuk tutorial (semua slot).");
+    }
+
+    private void ResetSlotList(List<DropZone> slots)
+    {
+        if (slots == null) return;
+
+        foreach (var slot in slots)
+        {
+            if (slot == null) continue;
+            slot.ClearSlot();
+        }
     }
 
     public void ResetPuzzleStateForGameplay()
@@ -156,12 +163,21 @@ public class PuzzleManager : MonoBehaviour
         ShowFinishPanel();
     }
 
-    // ✅ Hide FinishPanel (dipanggil oleh GuidedTutorialManager)
     public void HideFinishPanel()
     {
         if (finishPanel != null)
             finishPanel.SetActive(false);
         Debug.Log("[PuzzleManager] ✅ Finish panel disembunyikan.");
+    }
+
+    public void HideAllPuzzlePanels()
+    {
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (tutorialPuzzlePanel != null) tutorialPuzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
+        if (finishPanel != null) finishPanel.SetActive(false);
+
+        Debug.Log("[PuzzleManager] ✅ Semua panel puzzle disembunyikan.");
     }
 
     private void ShowFinishPanel()
@@ -192,7 +208,6 @@ public class PuzzleManager : MonoBehaviour
 
         DisableGestureInput();
 
-        // ✅ SKIP TRANSISI kalau tutorial mode
         if (isTutorialMode)
         {
             Debug.Log("[PuzzleManager] Tutorial mode — skip transisi, langsung tampilkan panel.");
@@ -200,7 +215,6 @@ public class PuzzleManager : MonoBehaviour
             return;
         }
 
-        // Transisi normal untuk gameplay
         transitionManager = TransitionManager.Instance();
 
         if (transitionManager != null && transitionSettings != null)
@@ -220,7 +234,6 @@ public class PuzzleManager : MonoBehaviour
 
         DisableGestureInput();
 
-        // ✅ SKIP TRANSISI kalau tutorial mode
         if (isTutorialMode)
         {
             Debug.Log("[PuzzleManager] Tutorial mode — skip transisi, langsung tampilkan panel.");
@@ -228,7 +241,6 @@ public class PuzzleManager : MonoBehaviour
             return;
         }
 
-        // Transisi normal untuk gameplay
         transitionManager = TransitionManager.Instance();
 
         if (transitionManager != null && transitionSettings != null)

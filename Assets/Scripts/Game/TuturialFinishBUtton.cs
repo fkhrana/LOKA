@@ -5,19 +5,25 @@ public class TutorialFinishButton : MonoBehaviour
     [Tooltip("Kalau kosong, akan auto-find di scene.")]
     [SerializeField] private GuidedTutorialManager tutorialManager;
 
-    [Tooltip("Root FinishPanel. Akan disembunyikan saat tombol Ulang diklik.")]
+    [Tooltip("Root FinishPanel. Akan disembunyikan saat tombol YA / Ulang diklik.")]
     [SerializeField] private GameObject finishPanelRoot;
 
     // ✅ Dipasang ke tombol "YA"
     public void OnClickFinish()
     {
+        Debug.Log("[TutorialFinishButton] ✅ Tombol YA diklik.");
+
+        // ✅ FIX: Sembunyikan FinishPanel dulu
+        if (finishPanelRoot != null)
+            finishPanelRoot.SetActive(false);
+
         if (tutorialManager == null)
             tutorialManager = FindFirstObjectByType<GuidedTutorialManager>();
 
         if (tutorialManager != null)
         {
             tutorialManager.OnTutorialFinishConfirmed();
-            Debug.Log("[TutorialFinishButton] ✅ Tombol YA → konfirmasi dikirim.");
+            Debug.Log("[TutorialFinishButton] ✅ Konfirmasi dikirim.");
         }
         else
         {
@@ -30,11 +36,8 @@ public class TutorialFinishButton : MonoBehaviour
     {
         Debug.Log("[TutorialFinishButton] 🔄 Tombol ULANG diklik → restart tutorial.");
 
-        // Sembunyikan FinishPanel dulu
         if (finishPanelRoot != null)
             finishPanelRoot.SetActive(false);
-        else
-            Debug.LogWarning("[TutorialFinishButton] finishPanelRoot belum di-assign.");
 
         if (tutorialManager == null)
             tutorialManager = FindFirstObjectByType<GuidedTutorialManager>();

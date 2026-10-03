@@ -73,6 +73,21 @@ public class GuidedTutorialManager : MonoBehaviour
 
         Log("🎬 Mulai Guided Tutorial.");
 
+        // ✅ Reset HP full
+        if (playerHealth != null)
+        {
+            playerHealth.ResetHealth();
+            Log($"✅ HP direset: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+        }
+
+        // ✅ Reset helper
+        var helper = FindFirstObjectByType<LowHealthHelperController>();
+        if (helper != null)
+        {
+            helper.ResetForTutorial();
+            Log("✅ Helper direset.");
+        }
+
         EnemyMovementBehavior.SetAllMovementPaused(false);
 
         if (enemyWaveSpawner != null)
@@ -390,6 +405,9 @@ public class GuidedTutorialManager : MonoBehaviour
     private void OnPlayerHealed()
     {
         if (currentStep != Step.HpHeal) return;
+
+        Log($"✅ Player heal. HP: {playerHealth?.CurrentHealth}/{playerHealth?.MaxHealth}");
+
         hintManager?.HideAll();
         UnsubscribeHeal();
         SetGestureEnabled(false);
@@ -481,28 +499,42 @@ public class GuidedTutorialManager : MonoBehaviour
         Log("✅ Konfirmasi FinishPanel. Flag guided tutorial di-reset.");
     }
 
-    // ✅ FIX: RestartTutorial — tidak perlu RestoreGameplaySlots
+    // ✅ RestartTutorial — reset semua
     public void RestartTutorial()
     {
         Log("🔄 Restart tutorial dari awal.");
 
-        // Reset flag "sudah selesai" + set active
         GameProgressManager.ResetGuidedTutorial();
         GameProgressManager.SetGuidedTutorialActive(true);
 
+        // Reset HP
+        if (playerHealth != null)
+        {
+            playerHealth.ResetHealth();
+            Log($"✅ HP direset ke full: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+        }
+
+        // Reset helper
+        var helper = FindFirstObjectByType<LowHealthHelperController>();
+        if (helper != null)
+        {
+            helper.ResetForTutorial();
+            Log("✅ LowHealthHelper direset.");
+        }
+
         if (overlay != null) overlay.SetActive(false);
         if (guidedTutorialPanel != null) guidedTutorialPanel.SetActive(true);
-        if (puzzleManager != null) puzzleManager.HideFinishPanel();
-        if (tutorialEnemySpawner != null) tutorialEnemySpawner.Clear();
-        CleanupLeakedEnemies();
 
+        // Reset puzzle
         if (puzzleManager != null)
         {
+            puzzleManager.HideAllPuzzlePanels();
             puzzleManager.SetTutorialMode(true);
             puzzleManager.ResetPuzzleForTutorial();
-            puzzleManager.SetTutorialSlots();
-            // ✅ TIDAK panggil RestoreGameplaySlots — langsung ke tutorial
         }
+
+        if (tutorialEnemySpawner != null) tutorialEnemySpawner.Clear();
+        CleanupLeakedEnemies();
 
         currentStep = Step.Idle;
         tutorialFinishConfirmed = false;
@@ -520,13 +552,13 @@ public class GuidedTutorialManager : MonoBehaviour
     private void StartCameraIntroThenWave()
     {
         Debug.Log("=== [GuidedTutorial] StartCameraIntroThenWave ===");
-        Debug.Log($"[GuidedTutorial] CameraIntroManager.Instance = {(CameraIntroManager.Instance != null ? "ADA" : "NULL")}");
-        Debug.Log($"[GuidedTutorial] IsGuidedTutorialActive = {GameProgressManager.IsGuidedTutorialActive}");
+
+        // Spawn musuh dulu
+        ResumeWaveSpawner();
 
         if (CameraIntroManager.Instance == null)
         {
-            Log("⚠️ CameraIntroManager null — langsung resume wave.");
-            ResumeWaveSpawner();
+            Log("⚠️ CameraIntroManager null — langsung mulai gameplay.");
             return;
         }
 
@@ -534,8 +566,7 @@ public class GuidedTutorialManager : MonoBehaviour
 
         CameraIntroManager.Instance.StartIntroAfterTutorial(() =>
         {
-            Log("✅ Camera intro selesai. Resume wave.");
-            ResumeWaveSpawner();
+            Log("✅ Camera intro selesai.");
         });
     }
 
