@@ -444,11 +444,8 @@ MonoBehaviour:
   bodyRenderer: {fileID: 0}
   idleStateName: bossIdle
   hitStateName: bossHit
-  defeatStateName: enemyDieBlubub
-  defeatBlinkDuration: 0.6
+  defeatStateName: bossDie
   defeatBlinkInterval: 0.1
-  defeatShrinkDuration: 0.25
-  defeatShrinkTargetScale: 0.1
 --- !u!1 &4298091898585307631
 GameObject:
   m_ObjectHideFlags: 0
