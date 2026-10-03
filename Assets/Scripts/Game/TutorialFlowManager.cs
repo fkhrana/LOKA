@@ -7,6 +7,10 @@ public class TutorialFlowController : MonoBehaviour
     [SerializeField] private GameObject tutorialCarouselPanel;
     [SerializeField] private GameObject guidedTutorialPanel;
 
+    [Header("Back Button")]
+    [Tooltip("Tombol back/close di carousel. Disembunyikan saat auto-open untuk player baru.")]
+    [SerializeField] private GameObject backButton;
+
     [Header("Guided Tutorial Manager")]
     [SerializeField] private GuidedTutorialManager guidedTutorialManager;
 
@@ -25,13 +29,11 @@ public class TutorialFlowController : MonoBehaviour
 
     private void Start()
     {
-        // ✅ SkipCarouselOnLoad → cek dulu, kalau tutorial sudah selesai jangan jalan lagi
         if (GameProgressManager.SkipCarouselOnLoad)
         {
             Log("⏭️ Skip carousel (sudah dilihat di MainMenu).");
-            GameProgressManager.SetSkipCarouselOnLoad(false);   // reset flag
+            GameProgressManager.SetSkipCarouselOnLoad(false);
 
-            // ✅ Kalau tutorial sudah selesai → skip guided, jangan jalankan lagi
             if (GameProgressManager.IsGuidedTutorialCompleted())
             {
                 Log("ℹ️ Tutorial sudah selesai — skip guided tutorial, langsung gameplay.");
@@ -92,16 +94,36 @@ public class TutorialFlowController : MonoBehaviour
 
     private void AutoOpenTutorial()
     {
-        if (tutorialCarouselPanel == null) { Log("⚠️ tutorialCarouselPanel null — skip."); return; }
-        if (tutorialCarouselPanel.activeSelf) { Log("ℹ️ Carousel sudah terbuka — skip."); return; }
+        if (tutorialCarouselPanel == null)
+        {
+            Log("⚠️ tutorialCarouselPanel null — skip.");
+            return;
+        }
 
-        Log("📖 Auto-open carousel tutorial.");
+        if (tutorialCarouselPanel.activeSelf)
+        {
+            Log("ℹ️ Carousel sudah terbuka — skip.");
+            return;
+        }
+
+        Log("📖 Auto-open carousel tutorial (back button disembunyikan).");
+
+        SetBackButtonVisible(false);
         tutorialCarouselPanel.SetActive(true);
+    }
+
+    public void OpenTutorialCarouselManually()
+    {
+        Log("📖 Buka carousel manual (back button ditampilkan).");
+
+        SetBackButtonVisible(true);
+
+        if (tutorialCarouselPanel != null)
+            tutorialCarouselPanel.SetActive(true);
     }
 
     public void OnStartLearningClicked()
     {
-        // ✅ Cegah mulai tutorial jika sudah selesai
         if (GameProgressManager.IsGuidedTutorialCompleted())
         {
             Log("⚠️ Tutorial sudah selesai. Tombol Play diabaikan.");
@@ -111,16 +133,18 @@ public class TutorialFlowController : MonoBehaviour
         Log("✅ Tombol YA diklik → mulai guided tutorial.");
 
         Time.timeScale = 1f;
-
-        // ✅ Set flag guided tutorial aktif
         GameProgressManager.SetGuidedTutorialActive(true);
 
-        // Stop countdown kalau ada
         if (CameraIntroManager.Instance != null)
             CameraIntroManager.Instance.StopCountdown();
 
-        if (tutorialCarouselPanel != null) tutorialCarouselPanel.SetActive(false);
-        if (guidedTutorialPanel != null) guidedTutorialPanel.SetActive(true);
+        if (tutorialCarouselPanel != null)
+            tutorialCarouselPanel.SetActive(false);
+
+        SetBackButtonVisible(true);
+
+        if (guidedTutorialPanel != null)
+            guidedTutorialPanel.SetActive(true);
 
         if (guidedTutorialManager != null)
             guidedTutorialManager.BeginTutorial();
@@ -133,9 +157,24 @@ public class TutorialFlowController : MonoBehaviour
         Log("❌ Tutup carousel tanpa lanjut.");
         GameProgressManager.SetGuidedTutorialActive(false);
 
-        if (tutorialCarouselPanel != null) tutorialCarouselPanel.SetActive(false);
-        if (pauseOverlay != null) pauseOverlay.OpenPause();
+        if (tutorialCarouselPanel != null)
+            tutorialCarouselPanel.SetActive(false);
+
+        SetBackButtonVisible(true);
+
+        if (pauseOverlay != null)
+            pauseOverlay.OpenPause();
     }
 
-    private void Log(string msg) { if (debugLog) Debug.Log($"[TutorialFlow] {msg}"); }
+    private void SetBackButtonVisible(bool visible)
+    {
+        if (backButton != null)
+            backButton.SetActive(visible);
+    }
+
+    private void Log(string msg)
+    {
+        if (debugLog)
+            Debug.Log($"[TutorialFlow] {msg}");
+    }
 }

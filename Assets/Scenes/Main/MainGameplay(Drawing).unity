@@ -1091,6 +1091,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 231917907}
   m_CullTransparentMesh: 1
+--- !u!1 &235708920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1078206409484514894, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+  m_PrefabInstance: {fileID: 1784251859}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &256010447
 GameObject:
   m_ObjectHideFlags: 0
@@ -7539,6 +7544,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1871588594 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4497403838379200404, guid: 3ca2be2ab55a2af4a8a3ac8ecf16df26, type: 3}
+  m_PrefabInstance: {fileID: 1962207140}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f690d929badc09499817c2ee2816936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AksaraCarouselUI
 --- !u!1 &1885355641
 GameObject:
   m_ObjectHideFlags: 0
@@ -7940,6 +7956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   tutorialCarouselPanel: {fileID: 100163692}
   guidedTutorialPanel: {fileID: 754906942}
+  backButton: {fileID: 235708920}
   guidedTutorialManager: {fileID: 1885355643}
   pauseOverlay: {fileID: 1383252843}
   autoOpenForNewPlayer: 1
@@ -9841,6 +9858,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4325184033451841479}
   - component: {fileID: 4947248888178049756}
+  - component: {fileID: 7744467503566898758}
   m_Layer: 0
   m_Name: FirstHit
   m_TagString: Untagged
@@ -9848,6 +9866,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7744467503566898758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7744467503566898757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d0e1827457649c44a009c363cc20ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AutoResetProgress
+  resetOnStop: 0
+  aksaraCarouselUI: {fileID: 1871588594}
+  totalLevels: 4
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

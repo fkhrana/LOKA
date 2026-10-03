@@ -6,7 +6,14 @@ using TMPro;
 
 public class GuidedTutorialManager : MonoBehaviour
 {
-    public enum Step { Idle, DrawAksara, HpHeal, Puzzle, Done }
+    public enum Step
+    {
+        Idle,
+        DrawAksara,
+        HpHeal,
+        Puzzle,
+        Done
+    }
 
     [Header("UI Overlay")]
     [SerializeField] private GameObject overlay;
@@ -59,29 +66,32 @@ public class GuidedTutorialManager : MonoBehaviour
     [SerializeField] private bool debugLog = true;
 
     private Step currentStep = Step.Idle;
+
     private bool gestureSubscribed;
     private bool healSubscribed;
     private bool damageSubscribed;
+
     private int retryCount = 0;
+
     private bool tutorialFinishConfirmed = false;
 
     public void BeginTutorial()
     {
-        if (currentStep != Step.Idle) return;
+        if (currentStep != Step.Idle)
+            return;
 
         GameProgressManager.SetGuidedTutorialActive(true);
 
         Log("🎬 Mulai Guided Tutorial.");
 
-        // ✅ Reset HP full
         if (playerHealth != null)
         {
             playerHealth.ResetHealth();
             Log($"✅ HP direset: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
         }
 
-        // ✅ Reset helper
         var helper = FindFirstObjectByType<LowHealthHelperController>();
+
         if (helper != null)
         {
             helper.ResetForTutorial();
@@ -106,11 +116,19 @@ public class GuidedTutorialManager : MonoBehaviour
     private IEnumerator BeginTutorialDelayed()
     {
         yield return null;
+
         CleanupLeakedEnemies();
 
-        if (overlay != null) overlay.SetActive(true);
+        if (overlay != null)
+            overlay.SetActive(true);
+
+        if (guidedTutorialPanel != null)
+            guidedTutorialPanel.SetActive(true);
+
         SetGestureEnabled(false);
-        if (puzzleManager != null) puzzleManager.SetTutorialMode(true);
+
+        if (puzzleManager != null)
+            puzzleManager.SetTutorialMode(true);
 
         GoTo(Step.DrawAksara);
     }
@@ -118,15 +136,22 @@ public class GuidedTutorialManager : MonoBehaviour
     private void CleanupLeakedEnemies()
     {
         var allEnemies = FindObjectsByType<EnemyGestureCommand>(
-            FindObjectsInactive.Include, FindObjectsSortMode.None);
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
 
         int removedCount = 0;
 
         foreach (var enemy in allEnemies)
         {
-            if (enemy == null) continue;
-            if (enemy.CompareTag("TutorialEnemy")) continue;
-            if (enemy.GetComponent<BossEnemy>() != null) continue;
+            if (enemy == null)
+                continue;
+
+            if (enemy.CompareTag("TutorialEnemy"))
+                continue;
+
+            if (enemy.GetComponent<BossEnemy>() != null)
+                continue;
 
             Destroy(enemy.gameObject);
             removedCount++;
@@ -139,29 +164,53 @@ public class GuidedTutorialManager : MonoBehaviour
     private void GoTo(Step step)
     {
         Log($"➡️ Step: {step}");
+
         currentStep = step;
 
         switch (step)
         {
-            case Step.DrawAksara: EnterDrawAksara(); break;
-            case Step.HpHeal: EnterHpHeal(); break;
-            case Step.Puzzle: EnterPuzzle(); break;
-            case Step.Done: EnterDone(); break;
+            case Step.DrawAksara:
+                EnterDrawAksara();
+                break;
+
+            case Step.HpHeal:
+                EnterHpHeal();
+                break;
+
+            case Step.Puzzle:
+                EnterPuzzle();
+                break;
+
+            case Step.Done:
+                EnterDone();
+                break;
         }
     }
 
-    // ===== STEP 1 =====
+    // =========================================================
+    // STEP 1
+    // =========================================================
+
     private void EnterDrawAksara()
     {
-        SetText("Langkah 1", "Gambar aksara ini untuk mengalahkan musuh!");
+        ShowGuidedTutorialUI();
+
+        SetText(
+            "Langkah 1",
+            "Gambar aksara ini untuk mengalahkan musuh!"
+        );
+
         TutorialManager.IsTrainingMode = true;
+
         retryCount = 0;
+
         SpawnTutorialEnemy();
 
         if (hintManager != null && tutorialAksara != null)
             hintManager.ShowPath(tutorialAksara);
 
         SubscribeGesture();
+
         SetGestureEnabled(true);
     }
 
@@ -173,94 +222,160 @@ public class GuidedTutorialManager : MonoBehaviour
             return;
         }
 
-        tutorialEnemySpawner.Spawn(1, GetEnemySpawnCenter(), enemySpawnRadius,
-            tutorialEnemyData, tutorialAksara, true, false, null, OnEnemyCrashed);
+        tutorialEnemySpawner.Spawn(
+            1,
+            GetEnemySpawnCenter(),
+            enemySpawnRadius,
+            tutorialEnemyData,
+            tutorialAksara,
+            true,
+            false,
+            null,
+            OnEnemyCrashed
+        );
 
         tutorialEnemySpawner.SetSpeed(drawPhaseEnemySpeed);
+
         tutorialEnemySpawner.ActivateAll();
     }
 
     private void OnEnemyCrashed()
     {
-        if (currentStep != Step.DrawAksara) return;
+        if (currentStep != Step.DrawAksara)
+            return;
 
         retryCount++;
+
         if (retryCount >= maxRetry)
         {
             hintManager?.HideAll();
+
             UnsubscribeGesture();
+
             SetGestureEnabled(false);
+
             tutorialEnemySpawner?.Clear();
-            StartCoroutine(NextStepRoutine(Step.HpHeal));
+
+            StartCoroutine(
+                NextStepRoutine(Step.HpHeal)
+            );
+
             return;
         }
+
         RetryEnemy();
     }
 
     private Vector3 GetEnemySpawnCenter()
     {
-        if (spawnNearTargetKanan && CameraIntroManager.Instance != null &&
-            CameraIntroManager.Instance.targetKanan != null)
+        if (
+            spawnNearTargetKanan &&
+            CameraIntroManager.Instance != null &&
+            CameraIntroManager.Instance.targetKanan != null
+        )
+        {
             return CameraIntroManager.Instance.targetKanan.position;
+        }
+
         return enemySpawnCenter;
     }
 
     private void SubscribeGesture()
     {
-        if (gestureSubscribed || gestureDrawer == null) return;
+        if (gestureSubscribed || gestureDrawer == null)
+            return;
+
         gestureDrawer.GestureRecognized += OnGestureRecognized;
+
         gestureSubscribed = true;
     }
 
     private void UnsubscribeGesture()
     {
-        if (!gestureSubscribed || gestureDrawer == null) return;
+        if (!gestureSubscribed || gestureDrawer == null)
+            return;
+
         gestureDrawer.GestureRecognized -= OnGestureRecognized;
+
         gestureSubscribed = false;
     }
 
-    private void OnGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
+    private void OnGestureRecognized(
+        List<List<Vector2>> strokes,
+        GestureRecognitionResult result
+    )
     {
-        if (currentStep != Step.DrawAksara) return;
-        if (!result.IsRecognized) return;
+        if (currentStep != Step.DrawAksara)
+            return;
 
-        if (tutorialAksara != null && result.DetectedShape != tutorialAksara.GestureShape)
+        if (!result.IsRecognized)
+            return;
+
+        if (
+            tutorialAksara != null &&
+            result.DetectedShape != tutorialAksara.GestureShape
+        )
         {
             retryCount++;
+
             if (retryCount >= maxRetry)
             {
                 hintManager?.HideAll();
+
                 UnsubscribeGesture();
+
                 SetGestureEnabled(false);
+
                 tutorialEnemySpawner?.Clear();
-                StartCoroutine(NextStepRoutine(Step.HpHeal));
+
+                StartCoroutine(
+                    NextStepRoutine(Step.HpHeal)
+                );
+
                 return;
             }
+
             RetryEnemy();
+
             return;
         }
 
         hintManager?.HideAll();
+
         UnsubscribeGesture();
+
         SetGestureEnabled(false);
-        StartCoroutine(WaitForEnemyDeathAndCollectRoutine());
+
+        StartCoroutine(
+            WaitForEnemyDeathAndCollectRoutine()
+        );
     }
 
-    private void RetryEnemy() { StartCoroutine(RespawnEnemyRoutine()); }
+    private void RetryEnemy()
+    {
+        StartCoroutine(RespawnEnemyRoutine());
+    }
 
     private IEnumerator RespawnEnemyRoutine()
     {
         tutorialEnemySpawner?.Clear();
+
         yield return null;
-        yield return new WaitForSeconds(retryCooldown);
+
+        yield return new WaitForSeconds(
+            retryCooldown
+        );
 
         if (currentStep == Step.DrawAksara)
         {
             SpawnTutorialEnemy();
+
             if (hintManager != null && tutorialAksara != null)
             {
                 hintManager.HideAll();
+
                 yield return new WaitForSeconds(0.3f);
+
                 hintManager.ShowPath(tutorialAksara);
             }
         }
@@ -269,56 +384,117 @@ public class GuidedTutorialManager : MonoBehaviour
     private IEnumerator WaitForEnemyDeathAndCollectRoutine()
     {
         float elapsed = 0f;
+
         while (elapsed < 5f)
         {
-            if (tutorialEnemySpawner == null || tutorialEnemySpawner.AliveCount == 0) break;
+            if (
+                tutorialEnemySpawner == null ||
+                tutorialEnemySpawner.AliveCount == 0
+            )
+            {
+                break;
+            }
+
             elapsed += Time.deltaTime;
+
             yield return null;
         }
 
-        yield return new WaitForSeconds(waitAfterEnemyDeath);
+        yield return new WaitForSeconds(
+            waitAfterEnemyDeath
+        );
 
         elapsed = 0f;
+
         while (elapsed < waitForCollectTimeout)
         {
-            if (CollectedAksaraManager.Instance != null && tutorialAksara != null &&
-                CollectedAksaraManager.Instance.IsCollected(tutorialAksara)) break;
+            if (
+                CollectedAksaraManager.Instance != null &&
+                tutorialAksara != null &&
+                CollectedAksaraManager.Instance.IsCollected(
+                    tutorialAksara
+                )
+            )
+            {
+                break;
+            }
+
             elapsed += Time.deltaTime;
+
             yield return null;
         }
 
-        StartCoroutine(NextStepRoutine(Step.HpHeal));
+        StartCoroutine(
+            NextStepRoutine(Step.HpHeal)
+        );
     }
 
-    // ===== STEP 2 =====
+    // =========================================================
+    // STEP 2
+    // =========================================================
+
     private void EnterHpHeal()
     {
-        SetText("Langkah 2", "Awas! Musuh datang. Kalau kena musuh, HP kamu berkurang.");
+        ShowGuidedTutorialUI();
+
+        SetText(
+            "Langkah 2",
+            "Awas! Musuh datang. Kalau kena musuh, HP kamu berkurang."
+        );
+
         TutorialManager.IsTrainingMode = false;
+
         SpawnChargingEnemy();
+
         SubscribeDamage();
-        StartCoroutine(WaitForPlayerDamageRoutine());
+
+        StartCoroutine(
+            WaitForPlayerDamageRoutine()
+        );
     }
 
     private void SpawnChargingEnemy()
     {
         if (tutorialEnemySpawner == null)
         {
-            StartCoroutine(FallbackDamageRoutine());
+            StartCoroutine(
+                FallbackDamageRoutine()
+            );
+
             return;
         }
 
-        tutorialEnemySpawner.Spawn(1, GetEnemySpawnCenter(), enemySpawnRadius,
-            tutorialEnemyData, null, false, true);
+        tutorialEnemySpawner.Spawn(
+            1,
+            GetEnemySpawnCenter(),
+            enemySpawnRadius,
+            tutorialEnemyData,
+            null,
+            false,
+            true
+        );
 
-        tutorialEnemySpawner.SetSpeed(hpPhaseEnemySpeed);
+        tutorialEnemySpawner.SetSpeed(
+            hpPhaseEnemySpeed
+        );
 
-        foreach (var enemy in tutorialEnemySpawner.SpawnedEnemies)
+        foreach (
+            var enemy in tutorialEnemySpawner.SpawnedEnemies
+        )
         {
-            if (enemy == null) continue;
-            var movement = enemy.GetComponent<EnemyMovementBehavior>()
-                ?? enemy.GetComponentInChildren<EnemyMovementBehavior>(true);
-            movement?.SetDamageFromData(step2Damage);
+            if (enemy == null)
+                continue;
+
+            var movement =
+                enemy.GetComponent<EnemyMovementBehavior>()
+                ??
+                enemy.GetComponentInChildren<EnemyMovementBehavior>(
+                    true
+                );
+
+            movement?.SetDamageFromData(
+                step2Damage
+            );
         }
 
         tutorialEnemySpawner.ActivateAll();
@@ -326,286 +502,543 @@ public class GuidedTutorialManager : MonoBehaviour
 
     private void SubscribeDamage()
     {
-        if (damageSubscribed || playerHealth == null) return;
+        if (
+            damageSubscribed ||
+            playerHealth == null
+        )
+        {
+            return;
+        }
+
         playerHealth.DamageTaken += OnPlayerDamaged;
+
         damageSubscribed = true;
     }
 
     private void UnsubscribeDamage()
     {
-        if (!damageSubscribed || playerHealth == null) return;
+        if (
+            !damageSubscribed ||
+            playerHealth == null
+        )
+        {
+            return;
+        }
+
         playerHealth.DamageTaken -= OnPlayerDamaged;
+
         damageSubscribed = false;
     }
 
     private void OnPlayerDamaged(int amount)
     {
-        if (currentStep != Step.HpHeal) return;
-        if (healSubscribed) return;
+        if (currentStep != Step.HpHeal)
+            return;
+
+        if (healSubscribed)
+            return;
 
         UnsubscribeDamage();
+
         tutorialEnemySpawner?.Clear();
-        StartCoroutine(GoToHealPhaseRoutine());
+
+        StartCoroutine(
+            GoToHealPhaseRoutine()
+        );
     }
 
     private IEnumerator WaitForPlayerDamageRoutine()
     {
         float elapsed = 0f;
-        while (elapsed < waitForEnemyHitTimeout && currentStep == Step.HpHeal && !healSubscribed)
+
+        while (
+            elapsed < waitForEnemyHitTimeout &&
+            currentStep == Step.HpHeal &&
+            !healSubscribed
+        )
         {
             elapsed += Time.deltaTime;
+
             yield return null;
         }
 
-        if (currentStep == Step.HpHeal && !healSubscribed)
+        if (
+            currentStep == Step.HpHeal &&
+            !healSubscribed
+        )
         {
-            if (playerHealth != null) playerHealth.TakeDamage(step2Damage);
+            if (playerHealth != null)
+                playerHealth.TakeDamage(
+                    step2Damage
+                );
+
             tutorialEnemySpawner?.Clear();
-            StartCoroutine(GoToHealPhaseRoutine());
+
+            StartCoroutine(
+                GoToHealPhaseRoutine()
+            );
         }
     }
 
     private IEnumerator FallbackDamageRoutine()
     {
         yield return new WaitForSeconds(1f);
-        if (playerHealth != null) playerHealth.TakeDamage(step2Damage);
-        yield return new WaitForSeconds(delayBeforeHealHint);
+
+        if (playerHealth != null)
+            playerHealth.TakeDamage(
+                step2Damage
+            );
+
+        yield return new WaitForSeconds(
+            delayBeforeHealHint
+        );
+
         EnterHealPhase();
     }
 
     private IEnumerator GoToHealPhaseRoutine()
     {
-        yield return new WaitForSeconds(delayBeforeHealHint);
+        yield return new WaitForSeconds(
+            delayBeforeHealHint
+        );
+
         EnterHealPhase();
     }
 
     private void EnterHealPhase()
     {
-        SetText("Langkah 3", "Sekarang gambar gesture Love untuk heal.");
+        ShowGuidedTutorialUI();
+
+        SetText(
+            "Langkah 3",
+            "Sekarang gambar gesture Love untuk heal."
+        );
+
         TutorialManager.IsTrainingMode = false;
-        if (hintManager != null) hintManager.ShowPath(healGesture);
+
+        if (hintManager != null)
+            hintManager.ShowPath(
+                healGesture
+            );
+
         SubscribeHeal();
+
         SetGestureEnabled(true);
     }
 
     private void SubscribeHeal()
     {
-        if (healSubscribed || playerHealth == null) return;
+        if (
+            healSubscribed ||
+            playerHealth == null
+        )
+        {
+            return;
+        }
+
         playerHealth.Healed += OnPlayerHealed;
+
         healSubscribed = true;
     }
 
     private void UnsubscribeHeal()
     {
-        if (!healSubscribed || playerHealth == null) return;
+        if (
+            !healSubscribed ||
+            playerHealth == null
+        )
+        {
+            return;
+        }
+
         playerHealth.Healed -= OnPlayerHealed;
+
         healSubscribed = false;
     }
 
     private void OnPlayerHealed()
     {
-        if (currentStep != Step.HpHeal) return;
+        if (currentStep != Step.HpHeal)
+            return;
 
-        Log($"✅ Player heal. HP: {playerHealth?.CurrentHealth}/{playerHealth?.MaxHealth}");
+        Log(
+            $"✅ Player heal. HP: {playerHealth?.CurrentHealth}/{playerHealth?.MaxHealth}"
+        );
 
         hintManager?.HideAll();
+
         UnsubscribeHeal();
+
         SetGestureEnabled(false);
-        StartCoroutine(NextStepRoutine(Step.Puzzle));
+
+        StartCoroutine(
+            NextStepRoutine(Step.Puzzle)
+        );
     }
 
-    // ===== STEP 3 =====
+    // =========================================================
+    // STEP 3 / PUZZLE
+    // =========================================================
+
     private void EnterPuzzle()
     {
-        SetText("Langkah 4", "Seret aksara ke slot yang benar!");
+        ShowGuidedTutorialUI();
+
+        SetText(
+            "Langkah 4",
+            "Seret aksara ke slot yang benar!"
+        );
+
         if (puzzleManager == null)
         {
-            StartCoroutine(NextStepRoutine(Step.Done));
+            StartCoroutine(
+                NextStepRoutine(Step.Done)
+            );
+
             return;
         }
-        StartCoroutine(ShowPuzzleWithDelayRoutine());
+
+        StartCoroutine(
+            ShowPuzzleWithDelayRoutine()
+        );
     }
 
     private IEnumerator ShowPuzzleWithDelayRoutine()
     {
-        yield return new WaitForSeconds(waitBeforePuzzle);
+        yield return new WaitForSeconds(
+            waitBeforePuzzle
+        );
 
         puzzleManager.SetTutorialSlots();
+
         puzzleManager.ResetPuzzleForTutorial();
 
         puzzleManager.ShowPuzzlePanel();
 
-        yield return new WaitForSeconds(puzzlePanelAppearDelay);
+        yield return new WaitForSeconds(
+            puzzlePanelAppearDelay
+        );
 
         Log("🎯 Puzzle panel muncul.");
 
         while (currentStep == Step.Puzzle)
         {
-            if (puzzleManager != null && puzzleManager.IsPuzzleCompleted()) break;
-            yield return new WaitForSeconds(0.2f);
+            if (
+                puzzleManager != null &&
+                puzzleManager.IsPuzzleCompleted()
+            )
+            {
+                break;
+            }
+
+            yield return new WaitForSeconds(
+                0.2f
+            );
         }
 
-        yield return new WaitForSeconds(waitAfterPuzzle);
+        yield return new WaitForSeconds(
+            waitAfterPuzzle
+        );
 
         if (puzzleManager != null)
             puzzleManager.ShowFinishPanelForTutorial();
 
-        StartCoroutine(NextStepRoutine(Step.Done));
+        StartCoroutine(
+            NextStepRoutine(Step.Done)
+        );
     }
 
-    // ===== STEP 4 =====
+    // =========================================================
+    // FINISH
+    // =========================================================
+
     private void EnterDone()
     {
-        Log("🎉 Guided Tutorial selesai (menunggu klik FinishPanel).");
+        Log(
+            "🎉 Guided Tutorial selesai (menunggu klik FinishPanel)."
+        );
 
         TutorialManager.IsTrainingMode = false;
 
-        if (overlay != null) overlay.SetActive(false);
-
-        if (guidedTutorialPanel != null)
-        {
-            guidedTutorialPanel.SetActive(false);
-            Log("✅ GuidedTutorialPanel disembunyikan.");
-        }
+        HideGuidedTutorialUI();
 
         if (puzzleManager != null)
         {
             puzzleManager.SetTutorialMode(false);
+
             puzzleManager.ResetPuzzleStateForGameplay();
+
             puzzleManager.RestoreGameplaySlots();
         }
 
         GameProgressManager.MarkGuidedTutorialCompleted();
+
         currentStep = Step.Done;
-        StartCoroutine(WaitForFinishConfirmationRoutine());
+
+        StartCoroutine(
+            WaitForFinishConfirmationRoutine()
+        );
     }
 
     private IEnumerator WaitForFinishConfirmationRoutine()
     {
         tutorialFinishConfirmed = false;
-        yield return new WaitUntil(() => tutorialFinishConfirmed);
+
+        yield return new WaitUntil(
+            () => tutorialFinishConfirmed
+        );
+
         StartCameraIntroThenWave();
     }
 
     public void OnTutorialFinishConfirmed()
     {
+        Log(
+            "✅ Tombol YA diklik. Membersihkan Guided Tutorial UI."
+        );
+
         tutorialFinishConfirmed = true;
 
         GameProgressManager.SetGuidedTutorialActive(false);
 
+        HideGuidedTutorialUI();
+
         if (puzzleManager != null)
             puzzleManager.HideFinishPanel();
 
-        Log("✅ Konfirmasi FinishPanel. Flag guided tutorial di-reset.");
+        Log(
+            "✅ Konfirmasi FinishPanel. Guided Tutorial disembunyikan."
+        );
     }
 
-    // ✅ RestartTutorial — reset semua
+    // =========================================================
+    // RESTART
+    // =========================================================
+
     public void RestartTutorial()
     {
-        Log("🔄 Restart tutorial dari awal.");
+        Log(
+            "🔄 Restart tutorial dari awal."
+        );
 
         GameProgressManager.ResetGuidedTutorial();
+
         GameProgressManager.SetGuidedTutorialActive(true);
 
-        // Reset HP
         if (playerHealth != null)
         {
             playerHealth.ResetHealth();
-            Log($"✅ HP direset ke full: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}");
+
+            Log(
+                $"✅ HP direset ke full: {playerHealth.CurrentHealth}/{playerHealth.MaxHealth}"
+            );
         }
 
-        // Reset helper
-        var helper = FindFirstObjectByType<LowHealthHelperController>();
+        var helper =
+            FindFirstObjectByType<LowHealthHelperController>();
+
         if (helper != null)
         {
             helper.ResetForTutorial();
-            Log("✅ LowHealthHelper direset.");
+
+            Log(
+                "✅ LowHealthHelper direset."
+            );
         }
 
-        if (overlay != null) overlay.SetActive(false);
-        if (guidedTutorialPanel != null) guidedTutorialPanel.SetActive(true);
+        if (overlay != null)
+            overlay.SetActive(false);
 
-        // Reset puzzle
+        if (guidedTutorialPanel != null)
+            guidedTutorialPanel.SetActive(true);
+
         if (puzzleManager != null)
         {
             puzzleManager.HideAllPuzzlePanels();
+
             puzzleManager.SetTutorialMode(true);
+
             puzzleManager.ResetPuzzleForTutorial();
         }
 
-        if (tutorialEnemySpawner != null) tutorialEnemySpawner.Clear();
+        if (tutorialEnemySpawner != null)
+            tutorialEnemySpawner.Clear();
+
         CleanupLeakedEnemies();
 
         currentStep = Step.Idle;
+
         tutorialFinishConfirmed = false;
+
         retryCount = 0;
+
         gestureSubscribed = false;
+
         healSubscribed = false;
+
         damageSubscribed = false;
+
         Time.timeScale = 1f;
+
+        ClearStepText();
 
         BeginTutorial();
 
-        Log("✅ Restart selesai. Tutorial jalan dari Step 1.");
+        Log(
+            "✅ Restart selesai. Tutorial jalan dari Step 1."
+        );
     }
+
+    // =========================================================
+    // GAMEPLAY
+    // =========================================================
 
     private void StartCameraIntroThenWave()
     {
-        Debug.Log("=== [GuidedTutorial] StartCameraIntroThenWave ===");
+        Debug.Log(
+            "=== [GuidedTutorial] StartCameraIntroThenWave ==="
+        );
 
-        // Spawn musuh dulu
         ResumeWaveSpawner();
 
         if (CameraIntroManager.Instance == null)
         {
-            Log("⚠️ CameraIntroManager null — langsung mulai gameplay.");
+            Log(
+                "⚠️ CameraIntroManager null — langsung mulai gameplay."
+            );
+
             return;
         }
 
-        Log("🎥 Mulai camera intro setelah tutorial.");
+        Log(
+            "🎥 Mulai camera intro setelah tutorial."
+        );
 
-        CameraIntroManager.Instance.StartIntroAfterTutorial(() =>
-        {
-            Log("✅ Camera intro selesai.");
-        });
+        CameraIntroManager.Instance.StartIntroAfterTutorial(
+            () =>
+            {
+                Log(
+                    "✅ Camera intro selesai."
+                );
+            }
+        );
     }
 
     private void ResumeWaveSpawner()
     {
-        if (enemyWaveSpawner == null) return;
+        if (enemyWaveSpawner == null)
+            return;
+
         enemyWaveSpawner.enabled = true;
+
         enemyWaveSpawner.StartWaveSequence();
-        Log("▶️ EnemyWaveSpawner di-resume.");
+
+        Log(
+            "▶️ EnemyWaveSpawner di-resume."
+        );
     }
 
-    private void SetText(string title, string desc)
+    // =========================================================
+    // UI
+    // =========================================================
+
+    private void ShowGuidedTutorialUI()
     {
-        if (stepTitle != null) stepTitle.text = title;
-        if (stepDescription != null) stepDescription.text = desc;
+        if (overlay != null)
+            overlay.SetActive(true);
+
+        if (guidedTutorialPanel != null)
+            guidedTutorialPanel.SetActive(true);
     }
 
-    private void SetGestureEnabled(bool enabled)
+    private void HideGuidedTutorialUI()
     {
-        if (gestureDrawer == null) return;
-        if (!enabled) gestureDrawer.ResetGestureInput();
+        if (overlay != null)
+            overlay.SetActive(false);
+
+        if (guidedTutorialPanel != null)
+            guidedTutorialPanel.SetActive(false);
+
+        ClearStepText();
+    }
+
+    private void ClearStepText()
+    {
+        if (stepTitle != null)
+            stepTitle.text = "";
+
+        if (stepDescription != null)
+            stepDescription.text = "";
+    }
+
+    private void SetText(
+        string title,
+        string desc
+    )
+    {
+        if (stepTitle != null)
+            stepTitle.text = title;
+
+        if (stepDescription != null)
+            stepDescription.text = desc;
+    }
+
+    // =========================================================
+    // INPUT
+    // =========================================================
+
+    private void SetGestureEnabled(
+        bool enabled
+    )
+    {
+        if (gestureDrawer == null)
+            return;
+
+        if (!enabled)
+            gestureDrawer.ResetGestureInput();
+
         gestureDrawer.enabled = enabled;
     }
 
-    private IEnumerator NextStepRoutine(Step next)
+    // =========================================================
+    // STEP DELAY
+    // =========================================================
+
+    private IEnumerator NextStepRoutine(
+        Step next
+    )
     {
-        yield return new WaitForSeconds(delayBetweenSteps);
+        yield return new WaitForSeconds(
+            delayBetweenSteps
+        );
+
         GoTo(next);
     }
+
+    // =========================================================
+    // DESTROY
+    // =========================================================
 
     private void OnDestroy()
     {
         UnsubscribeGesture();
+
         UnsubscribeHeal();
+
         UnsubscribeDamage();
     }
 
-    private void Log(string msg)
+    // =========================================================
+    // DEBUG
+    // =========================================================
+
+    private void Log(
+        string msg
+    )
     {
-        if (debugLog) Debug.Log($"[GuidedTutorial] {msg}");
+        if (debugLog)
+            Debug.Log(
+                $"[GuidedTutorial] {msg}"
+            );
     }
 }
