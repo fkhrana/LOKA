@@ -11,7 +11,11 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
-        background-color: #000;
+      }
+      #unity-container {
+        width: 100%;
+        height: 100%;
+        position: relative;
       }
       #unity-canvas {
         width: 100% !important;
@@ -19,15 +23,158 @@
         position: absolute;
         top: 0;
         left: 0;
-        background: url('Build/{{{ BACKGROUND_FILENAME }}}') center / cover;
+      }
+
+      /* --- LOADING SCREEN OVERLAY --- */
+      #loading-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('TemplateData/loading-bg.png') center / cover no-repeat;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        font-family: 'Arial', sans-serif;
+        box-sizing: border-box;
+      }
+
+      /* WRAPPER ELEMEN UI */
+      .loading-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* --- UKURAN DEFAULT DESKTOP --- */
+      .sora-logo {
+        width: 240px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .loading-section {
+        width: 360px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 48px;
+      }
+
+      .loading-header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        color: #ffffff;
+        font-weight: bold;
+        font-size: 14px;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        padding: 0 25px;
+        box-sizing: border-box;
+      }
+
+      .bar-background {
+        position: relative;
+        width: 100%;
+        height: 40px;
+        background: url('TemplateData/bar-bg.png') center / contain no-repeat;
+        display: flex;
+        align-items: center;
+        padding: 12px 25px;
+        box-sizing: border-box;
+      }
+
+      .bar-slot {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        border-radius: 6px;
+        overflow: hidden;
+      }
+
+      .fill-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(180deg, #fff066 0%, #ffcc00 50%, #e69900 100%);
+        border-radius: 6px;
+        box-shadow: inset 0 2px 3px rgba(255,255,255,0.8), 0 0 4px rgba(255, 204, 0, 0.5);
+        transition: width 0.1s linear;
+      }
+
+      .bar-knob {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        left: 7%;
+        width: 48px;
+        height: 48px;
+        background: url('TemplateData/bar-knob.png') center / contain no-repeat;
+        z-index: 20;
+        pointer-events: none;
+      }
+
+      .tips-image {
+        margin-top: 0;
+        width: 340px;
+        height: auto;
+      }
+
+      /* --- UKURAN KHUSUS MOBILE --- */
+      @media screen and (max-width: 768px), screen and (max-height: 500px) {
+        .sora-logo {
+          margin-bottom: 10px;
+        }
+        .loading-section {
+          margin-bottom: 20px;
+        }
+        
+        .loading-content {
+          transform: scale(0.8);
+          transform-origin: center center;
+        }
       }
     </style>
   </head>
   <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width="{{{ WIDTH }}}" height="{{{ HEIGHT }}}" tabindex="-1"></canvas>
-    
+    <div id="unity-container">
+      <canvas id="unity-canvas" width="{{{ WIDTH }}}" height="{{{ HEIGHT }}}" tabindex="-1"></canvas>
+
+      <!-- FULL LOADING SCREEN OVERLAY -->
+      <div id="loading-screen">
+        <div class="loading-content">
+          <img src="TemplateData/logo.png" class="sora-logo" alt="SORA Logo">
+
+          <div class="loading-section">
+            <div class="loading-header">
+              <span>LOADING</span>
+              <span id="loading-percent">0%</span>
+            </div>
+
+            <div class="bar-background">
+              <div class="bar-slot">
+                <div id="fill-bar" class="fill-bar"></div>
+              </div>
+              <div id="knob-domba" class="bar-knob"></div>
+            </div>
+          </div>
+
+          <img src="TemplateData/tips-bg.png" class="tips-image" alt="Tips">
+        </div>
+      </div>
+    </div>
+
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
+      var loadingScreen = document.querySelector("#loading-screen");
+      var fillBar = document.querySelector("#fill-bar");
+      var knobDomba = document.querySelector("#knob-domba");
+      var loadingPercent = document.querySelector("#loading-percent");
+
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         var meta = document.createElement('meta');
         meta.name = 'viewport';
@@ -50,7 +197,17 @@
         companyName: "{{{ COMPANY_NAME }}}",
         productName: "{{{ PRODUCT_NAME }}}",
         productVersion: "{{{ PRODUCT_VERSION }}}",
+      }, (progress) => {
+        var percentage = Math.round(progress * 100);
+        
+        fillBar.style.width = percentage + "%";
+        
+        var dombaPos = 7 + (percentage * 0.86); 
+        knobDomba.style.left = dombaPos + "%";
+        
+        loadingPercent.innerHTML = percentage + "%";
       }).then((unityInstance) => {
+        loadingScreen.style.display = "none";
       }).catch((message) => {
         alert(message);
       });
