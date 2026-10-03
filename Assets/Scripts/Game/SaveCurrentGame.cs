@@ -38,7 +38,8 @@ public class SaveCurrentProgress : MonoBehaviour
 
         GameProgressManager.SaveLastScene(currentSceneAtStartup);
 
-        if (!GameProgressManager.IsTutorialCompleted())
+        // ⬇️ Cek guided tutorial, bukan power-up tutorial
+        if (!GameProgressManager.IsGuidedTutorialCompleted())
             return;
 
         string savedState = GameProgressManager.GetGameState();
@@ -64,9 +65,10 @@ public class SaveCurrentProgress : MonoBehaviour
         string previousScene = previousSceneAtStartup;
         string currentScene = currentSceneAtStartup;
 
-        if (!GameProgressManager.IsTutorialCompleted())
+        // ⬇️ Cek guided tutorial
+        if (!GameProgressManager.IsGuidedTutorialCompleted())
         {
-            Debug.Log("[SaveCurrentProgress] Tutorial belum selesai → skip restore.");
+            Debug.Log("[SaveCurrentProgress] Guided tutorial belum selesai → skip restore.");
             return;
         }
 

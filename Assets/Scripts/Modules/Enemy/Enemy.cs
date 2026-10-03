@@ -37,7 +37,6 @@ public class Enemy : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float aksaraDropSFXVolume = 1f;
 
-    // === FIX: field untuk isolasi musuh tutorial ===
     [Header("Tutorial Isolation")]
     [Tooltip("Musuh dengan tag ini TIDAK dihitung di progress bar.")]
     [SerializeField] private string tutorialTag = "TutorialEnemy";
@@ -46,6 +45,9 @@ public class Enemy : MonoBehaviour
     private EnemyMovementBehavior movementBehavior;
     private bool hasBeenDefeated;
     private bool dropEnabled = true;
+
+    // ✅ FIX: Flag untuk mencegah Start() menimpa config
+    private bool hasBeenConfigured = false;
 
     public EnemyData EnemyData => enemyData;
     public AksaraData AksaraData => aksaraData;
@@ -64,6 +66,14 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        // ✅ FIX: Skip ApplyEnemyData kalau sudah di-Configure via script
+        // Mencegah Start() menimpa config dari TutorialEnemySpawner / EnemyWaveSpawner
+        if (hasBeenConfigured)
+        {
+            Debug.Log($"[Enemy] {name} Start() skip ApplyEnemyData — sudah di-Configure.");
+            return;
+        }
+
         ApplyEnemyData();
     }
 
@@ -71,6 +81,10 @@ public class Enemy : MonoBehaviour
     {
         enemyData = newEnemyData;
         aksaraData = newAksaraData;
+
+        // ✅ Set flag
+        hasBeenConfigured = true;
+
         ApplyEnemyData();
     }
 
@@ -79,7 +93,6 @@ public class Enemy : MonoBehaviour
         dropEnabled = enabled;
     }
 
-    // === FIX: helper cek musuh tutorial ===
     private bool IsTutorialEnemy()
     {
         if (string.IsNullOrEmpty(tutorialTag))
@@ -133,9 +146,14 @@ public class Enemy : MonoBehaviour
         }
         else if (gestureCommand != null)
         {
-            Debug.LogWarning(
-                "[Enemy] gestureCommand exists but aksaraData is null; challenge was not configured."
-            );
+            // ✅ Skip warning untuk musuh tutorial (memang sengaja tanpa aksara)
+            bool isTutorial = IsTutorialEnemy();
+            if (!isTutorial)
+            {
+                Debug.LogWarning(
+                    "[Enemy] gestureCommand exists but aksaraData is null; challenge was not configured."
+                );
+            }
         }
     }
 
@@ -147,10 +165,7 @@ public class Enemy : MonoBehaviour
         if (remainingGestures > 0 && enemyData.EnemySprite != null)
         {
             bodyRenderer.sprite = enemyData.EnemySprite;
-
-            Debug.Log(
-                $"[Enemy] {name} shield broken, switching to normal sprite."
-            );
+            Debug.Log($"[Enemy] {name} shield broken, switching to normal sprite.");
         }
     }
 
@@ -161,15 +176,11 @@ public class Enemy : MonoBehaviour
 
         hasBeenDefeated = true;
 
-        // === FIX: cek apakah musuh tutorial ===
         bool isTutorial = IsTutorialEnemy();
 
         if (aksaraIconRenderer != null)
             aksaraIconRenderer.enabled = false;
 
-        // ========================================
-        // PLAY ENEMY DEFEAT SFX
-        // ========================================
         PlayEnemyDefeatSFX();
         PlayAksaraDefeatSFX();
 
@@ -206,14 +217,11 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogWarning(
-                        $"Enemy {name} fragment prefab null."
-                    );
+                    Debug.LogWarning($"Enemy {name} fragment prefab null.");
                 }
 
                 PlayAksaraDropSFX();
 
-                // === FIX: skip progress kalau musuh tutorial ===
                 if (!isTutorial)
                 {
                     LevelProgressManager.Instance?.CompletePendingProgress();
@@ -226,7 +234,6 @@ public class Enemy : MonoBehaviour
                 return;
             }
 
-            // === FIX: skip VFX kalau musuh tutorial ===
             if (!isTutorial)
             {
                 PlayNonCollectibleItemVfx();
@@ -258,7 +265,6 @@ public class Enemy : MonoBehaviour
             );
         }
 
-        // === FIX: skip VFX final kalau musuh tutorial ===
         if (!isTutorial)
         {
             PlayNonCollectibleItemVfx();

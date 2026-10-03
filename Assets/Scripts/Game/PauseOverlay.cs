@@ -6,7 +6,7 @@ using EasyTransition;
 
 public class PauseOverlay : MonoBehaviour
 {
-    private enum PanelType { None, Pause, Tutorial }
+    private enum PanelType { None, Pause, Tutorial, Guided }
 
     [System.Serializable]
     private class PanelData
@@ -31,8 +31,6 @@ public class PauseOverlay : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string gameplaySceneName = "MainGameplay(Drawing)";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
-    [SerializeField] private string tutorialSceneName = "Latihan";
-    [SerializeField] private string cutsceneSceneName = "CutScenee";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -45,8 +43,6 @@ public class PauseOverlay : MonoBehaviour
 
     private TutorialManager cachedTutorialManager;
     private bool levelCompletionSaved = false;
-
-    private const string KEY_RETURN_SCENE = "ReturnSceneAfterTutorial";
 
     private void Start()
     {
@@ -162,8 +158,23 @@ public class PauseOverlay : MonoBehaviour
             GetTutorialManager()?.SetTutorialVisualsVisible(true);
             currentPanel = PanelType.None;
         }
+        else if (type == PanelType.Guided)
+        {
+            // Guided ditutup → balik ke Pause
+            CloseAllPanels();
+
+            var pausePanel = GetPanel(PanelType.Pause);
+            if (pausePanel != null)
+            {
+                pausePanel.SetActive(true);
+                FadeIn(pausePanel);
+            }
+
+            currentPanel = PanelType.Pause;
+        }
         else
         {
+            // Tutorial (carousel) ditutup → kembali ke panel Pause
             CloseAllPanels();
 
             var pausePanel = GetPanel(PanelType.Pause);
@@ -227,27 +238,18 @@ public class PauseOverlay : MonoBehaviour
         if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
+    // ---------------------------------------------------------------
+    // PUBLIC API
+    // ---------------------------------------------------------------
+
     public void OpenPause() => OpenPanel(PanelType.Pause);
     public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
-    public void OpenTutorial()
-    {
-        if (isTransitioning) return;
-
-        SaveGameplayProgress();
-
-        string activeSceneName = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetString(KEY_RETURN_SCENE, activeSceneName);
-        PlayerPrefs.Save();
-
-        bool cutsceneCompleted = GameProgressManager.IsCutsceneCompleted();
-        string targetScene = cutsceneCompleted ? tutorialSceneName : cutsceneSceneName;
-
-        PrepareForTransition();
-        StartCoroutine(FadeAndLoadScene(targetScene));
-    }
-
+    public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
     public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
+
+    public void OpenGuidedTutorial() => OpenPanel(PanelType.Guided);
+    public void CloseGuidedTutorial() => CloseWithEffect(PanelType.Guided);
 
     public void ResumeGame()
     {
@@ -255,7 +257,8 @@ public class PauseOverlay : MonoBehaviour
         {
             ClosePause();
         }
-        else if (currentPanel == PanelType.Tutorial)
+        else if (currentPanel == PanelType.Tutorial ||
+                 currentPanel == PanelType.Guided)
         {
             CloseAllPanels();
             Time.timeScale = 1f;
@@ -278,7 +281,6 @@ public class PauseOverlay : MonoBehaviour
     {
         if (isTransitioning) return;
 
-        // Safety: kalau player sudah menang tapi belum ke-save, save sekarang
         if (!levelCompletionSaved &&
             LevelProgressManager.Instance != null &&
             LevelProgressManager.Instance.IsProgressBarFilled())
@@ -332,20 +334,6 @@ public class PauseOverlay : MonoBehaviour
         GameProgressManager.SetHasEnteredGameplay(true);
         GameProgressManager.SaveLastScene(SceneManager.GetActiveScene().name);
         GameProgressManager.SaveGameState("Gameplay");
-    }
-
-    private void PrepareForTransition()
-    {
-        isTransitioning = true;
-
-        if (pauseButton != null)
-            pauseButton.interactable = false;
-
-        LeanTween.cancel(gameObject);
-        Time.timeScale = 1f;
-        StopAllCoroutines();
-        CloseAllPanels();
-        EnableGestureInput();
     }
 
     private IEnumerator FadeAndLoadScene(string sceneName)

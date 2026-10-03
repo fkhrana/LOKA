@@ -116,7 +116,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         return 0.5f;
     }
 
-    public void Initialize(PlayerHealth playerHealthReference, Collider2D collider, SpriteRenderer renderer)
+        public void Initialize(PlayerHealth playerHealthReference, Collider2D collider, SpriteRenderer renderer)
     {
         playerHealth = playerHealthReference;
         enemyCollider = collider;
@@ -132,6 +132,14 @@ public class EnemyMovementBehavior : MonoBehaviour
         playerTransform = playerHealth != null ? playerHealth.transform : null;
         wasInsideShieldKnockbackRadius = false;
 
+        // ✅ RESET STATE
+        isKnockedBack = false;
+        isActive = false;
+        isMovementPaused = false;
+        contactCooldownTimer = 0f;
+        hasMovementTarget = false;
+        bobTimer = 0f;
+
         if (rb != null)
         {
             rb.gravityScale = 0f;
@@ -146,6 +154,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         heightAdjustSpeed = Random.Range(heightAdjustSpeedMin, heightAdjustSpeedMax);
         knockbackForce = Random.Range(knockbackForceMin, knockbackForceMax);
     }
+
     public void SetSpawnPosition(Vector2 position)
     {
         spawnPosition = position;
@@ -207,6 +216,12 @@ public class EnemyMovementBehavior : MonoBehaviour
 
     public void Tick(bool approachPlayer = true)
     {
+        Debug.Log($"[Tick] {name} | approach={approachPlayer} | isActive={isActive} | " +
+              $"isPaused={isMovementPaused} | allPaused={allMovementPaused} | " +
+              $"isKnockback={isKnockedBack} | hasPlayer={(playerTransform != null)} | " +
+              $"moveSpeed={moveSpeed} | timeScale={Time.timeScale} | " +
+              $"gameStarted={CameraIntroManager.GameStarted}");
+
         if (isMovementPaused || allMovementPaused)
             return;
 
@@ -355,7 +370,7 @@ public class EnemyMovementBehavior : MonoBehaviour
         HandlePlayerContact(other);
     }
 
-    private void HandlePlayerContact(Collider2D hit)
+            private void HandlePlayerContact(Collider2D hit)
     {
         if (hit == null || playerHealth == null || contactCooldownTimer > 0f)
             return;
@@ -373,20 +388,40 @@ public class EnemyMovementBehavior : MonoBehaviour
             return;
         }
 
+        // ✅ SKIP DAMAGE di training mode (kalau tag TutorialEnemy)
+        bool isTutorialEnemy = false;
+        try { isTutorialEnemy = gameObject.CompareTag("TutorialEnemy"); }
+        catch { }
+
+        if (TutorialManager.IsTrainingMode && isTutorialEnemy)
+        {
+            Debug.Log($"[EnemyMovementBehavior] {name} training mode — skip damage.");
+            PlayerDamagedByContact?.Invoke();
+
+            if (knockbackOnPlayerContact)
+            {
+                PlayKnockback();
+                contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+                return;
+            }
+
+            GetComponent<EnemyGestureCommand>()?.ReportProcessed();
+            Destroy(gameObject);
+            return;
+        }
+
         int healthBeforeDamage = playerHealth.CurrentHealth;
         playerHealth.TakeDamage(damageOnContact);
-        if (playerHealth.CurrentHealth < healthBeforeDamage || TutorialManager.IsTrainingMode)
+        if (playerHealth.CurrentHealth < healthBeforeDamage)
             PlayerDamagedByContact?.Invoke();
 
         if (knockbackOnPlayerContact)
         {
             PlayKnockback();
             contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
-            Debug.Log("EnemyMovementBehavior: Boss hit player and was knocked back.");
             return;
         }
 
-        Debug.Log("EnemyMovementBehavior: Player hit, enemy destroyed after contact.");
         GetComponent<EnemyGestureCommand>()?.ReportProcessed();
         LevelProgressManager.Instance?.CompletePendingProgress();
         Destroy(gameObject);

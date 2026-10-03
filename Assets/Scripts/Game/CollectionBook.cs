@@ -9,6 +9,10 @@ public class CollectionPanel : MonoBehaviour
     [SerializeField] private GameObject collectionPanel;
     [SerializeField] private GameObject collectionPanel2;
 
+    [Header("HUD Elements to Hide")]
+    [Tooltip("Tombol pause yang disembunyikan saat collection terbuka.")]
+    [SerializeField] private GameObject pauseButton;
+
     [Header("Collect Animation Target")]
     [SerializeField] private Transform collectBookTarget;
     [SerializeField] private GameObject collectionBookVfx;
@@ -131,6 +135,22 @@ public class CollectionPanel : MonoBehaviour
     }
 
     // =========================
+    // HUD HELPERS
+    // =========================
+
+    private void HidePauseButton()
+    {
+        if (pauseButton != null)
+            pauseButton.SetActive(false);
+    }
+
+    private void ShowPauseButton()
+    {
+        if (pauseButton != null)
+            pauseButton.SetActive(true);
+    }
+
+    // =========================
     // COLLECTION 1
     // =========================
 
@@ -147,8 +167,11 @@ public class CollectionPanel : MonoBehaviour
         if (isOpen) return;
 
         isOpen = true;
-        collectionPanel?.SetActive(true);
 
+        // ⬇️ Sembunyikan tombol pause
+        HidePauseButton();
+
+        collectionPanel?.SetActive(true);
         Time.timeScale = 0f;
 
         Debug.Log("[Collection 1] Dibuka");
@@ -160,30 +183,32 @@ public class CollectionPanel : MonoBehaviour
 
         isOpen = false;
 
-        // Cek apakah collectionPanel punya EffectPanel
         var effect = collectionPanel?.GetComponent<EffectPanel>();
 
         if (effect != null)
         {
-            // Tutup dengan efek
             effect.CloseDialog(() =>
             {
                 collectionPanel?.SetActive(false);
                 Time.timeScale = 1f;
+
+                // ⬇️ Munculkan tombol pause lagi
+                ShowPauseButton();
 
                 Debug.Log("[Collection 1] Ditutup dengan efek");
             });
         }
         else
         {
-            // Langsung ilang tanpa efek (fallback)
             collectionPanel?.SetActive(false);
             Time.timeScale = 1f;
+
+            // ⬇️ Munculkan tombol pause lagi
+            ShowPauseButton();
 
             Debug.Log("[Collection 1] Ditutup langsung (tidak ada EffectPanel)");
         }
     }
-
 
     // =========================
     // COLLECTION 2
@@ -203,8 +228,10 @@ public class CollectionPanel : MonoBehaviour
     {
         if (collectionPanel2 == null) return;
 
-        collectionPanel2.SetActive(true);
+        // ⬇️ Sembunyikan tombol pause
+        HidePauseButton();
 
+        collectionPanel2.SetActive(true);
         Time.timeScale = 0f;
 
         Debug.Log("[Collection 2] Dibuka");
@@ -214,25 +241,28 @@ public class CollectionPanel : MonoBehaviour
     {
         if (collectionPanel2 == null) return;
 
-        // Cek apakah collectionPanel2 punya EffectPanel
         var effect = collectionPanel2.GetComponent<EffectPanel>();
 
         if (effect != null)
         {
-            // Tutup dengan efek
             effect.CloseDialog(() =>
             {
                 collectionPanel2.SetActive(false);
                 Time.timeScale = 1f;
+
+                // ⬇️ Munculkan tombol pause lagi
+                ShowPauseButton();
 
                 Debug.Log("[Collection 2] Ditutup dengan efek");
             });
         }
         else
         {
-            // Langsung ilang tanpa efek (fallback)
             collectionPanel2.SetActive(false);
             Time.timeScale = 1f;
+
+            // ⬇️ Munculkan tombol pause lagi
+            ShowPauseButton();
 
             Debug.Log("[Collection 2] Ditutup langsung (tidak ada EffectPanel)");
         }

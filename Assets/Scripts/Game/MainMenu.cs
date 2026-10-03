@@ -24,7 +24,6 @@ public class MainMenu : MonoBehaviour
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "CutScenee";
-    [SerializeField] private string tutorialSceneName = "Latihan";
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -58,12 +57,6 @@ public class MainMenu : MonoBehaviour
         ForceShowMainMenu();
         CloseAllPanels();
         PlayEntryAnimation();
-
-        if (PlayerPrefs.GetInt("OpenTutorial", 0) == 1)
-        {
-            OpenTutorial();
-            PlayerPrefs.SetInt("OpenTutorial", 0);
-        }
 
         StartCoroutine(EnsureMainMenuVisible());
     }
@@ -167,21 +160,8 @@ public class MainMenu : MonoBehaviour
     public void CloseLevel()     => ClosePanel(PanelType.Level);
     public void OpenCredit()     => OpenPanel(PanelType.Credits);
     public void CloseCredit()    => ClosePanel(PanelType.Credits);
-
-    public void OpenTutorial()
-    {
-        if (isTransitioning) return;
-
-        PlayClickSFX();
-
-        bool cutsceneCompleted = GameProgressManager.IsCutsceneCompleted();
-        string targetScene = cutsceneCompleted ? tutorialSceneName : nextSceneName;
-
-        isTransitioning = true;
-        StartCoroutine(FadeAndLoadScene(targetScene));
-    }
-
-    public void CloseTutorial() => ClosePanel(PanelType.Tutorial);
+    public void OpenTutorial()   => OpenPanel(PanelType.Tutorial);
+    public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
     public void TapToStart()
     {

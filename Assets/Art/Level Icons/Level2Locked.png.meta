@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Level2_0
+      name: Level2Locked
       rect:
         serializedVersion: 2
         x: 2
@@ -121,7 +121,7 @@ TextureImporter:
         width: 147
         height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ac0a76006a92f8d439fedb76c5bba4f5
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Level2_0: -3571278149730965589
+      Level2Locked: -3571278149730965589
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

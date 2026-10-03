@@ -125,10 +125,15 @@ public class EnemyWaveSpawner : MonoBehaviour
         initialMovementBatchDelay = Mathf.Max(0.1f, initialMovementBatchDelay);
     }
 
-    private void Start()
+        private void Start()
     {
-        // === TUTORIAL GATE (wave) ===
-        // Kalau tutorial belum selesai, jangan spawn wave utama.
+        // ✅ GUARD: Skip kalau guided tutorial aktif
+        if (GameProgressManager.IsGuidedTutorialActive)
+        {
+            Debug.Log("[EnemyWaveSpawner] Guided tutorial aktif — Start() di-skip total.");
+            return;
+        }
+
         if (waitForTutorialBeforeStart && !GameProgressManager.IsTutorialCompleted())
         {
             Debug.Log("[EnemyWaveSpawner] Menunggu tutorial selesai — wave sequence di-skip.");
@@ -144,9 +149,6 @@ public class EnemyWaveSpawner : MonoBehaviour
             return;
         }
 
-        // === BOSS SPAWN ===
-        // Kalau ada BossLevelPowerUpTutorial di scene, JANGAN spawn boss di sini.
-        // Biar tutorial yang panggil SpawnBoss() setelah player sukses.
         if (bossOnlyMode && spawnBossOnStart)
         {
             var bossTutorial = FindFirstObjectByType<BossLevelPowerUpTutorial>();
@@ -155,44 +157,27 @@ public class EnemyWaveSpawner : MonoBehaviour
                 Debug.Log("[EnemyWaveSpawner] BossLevelPowerUpTutorial ada → boss akan di-spawn oleh tutorial, bukan di Start().");
                 return;
             }
-
             SpawnBoss();
             return;
         }
 
-        string savedState =
-            GameProgressManager.GetGameState();
+        string savedState = GameProgressManager.GetGameState();
 
-        if (savedState == "Puzzle" ||
-            savedState == "Reward")
+        if (savedState == "Puzzle" || savedState == "Reward")
         {
-            Debug.Log(
-                "[EnemyWaveSpawner] Resume " +
-                savedState +
-                " → wave tidak dijalankan."
-            );
-
+            Debug.Log("[EnemyWaveSpawner] Resume " + savedState + " → wave tidak dijalankan.");
             return;
         }
 
         if (savedState == "Gameplay")
         {
-            Debug.Log(
-                "[EnemyWaveSpawner] State Gameplay → mulai ulang dari wave 1."
-            );
-
-            if (spawnOnStart)
-                StartWaveSequence();
-
+            Debug.Log("[EnemyWaveSpawner] State Gameplay → mulai ulang dari wave 1.");
+            if (spawnOnStart) StartWaveSequence();
             return;
         }
 
-        if (spawnOnStart)
-            StartWaveSequence();
-
-        // Boss spawn di non-bossOnlyMode (misal boss muncul setelah wave selesai).
-        if (spawnBossOnStart && !bossOnlyMode)
-            SpawnBoss();
+        if (spawnOnStart) StartWaveSequence();
+        if (spawnBossOnStart && !bossOnlyMode) SpawnBoss();
     }
 
     public void SpawnBoss()
@@ -247,21 +232,15 @@ public class EnemyWaveSpawner : MonoBehaviour
         bossProgressInitialized = true;
     }
 
-    private IEnumerator FailSafeGameStarted()
+        private IEnumerator FailSafeGameStarted()
     {
         float estimatedIntroDuration = 12f;
 
         if (CameraIntroManager.Instance != null)
         {
             var intro = CameraIntroManager.Instance;
-
-            float panningDuration =
-                intro.jedaAwal +
-                (intro.durasiPan * 2f) +
-                intro.jedaLihatMusuh;
-
+            float panningDuration = intro.jedaAwal + (intro.durasiPan * 2f) + intro.jedaLihatMusuh;
             float countdownDuration = 4f;
-
             estimatedIntroDuration = panningDuration + countdownDuration;
         }
 
@@ -271,6 +250,20 @@ public class EnemyWaveSpawner : MonoBehaviour
 
         yield return new WaitForSeconds(timeout);
 
+        // ✅ GUARD: Cek flag guided tutorial sebelum paksa
+        if (GameProgressManager.IsGuidedTutorialActive)
+        {
+            Debug.Log("[EnemyWaveSpawner] Guided tutorial aktif — fail-safe batal.");
+            yield break;
+        }
+
+        // ✅ GUARD: Cek guided tutorial belum selesai
+        if (!GameProgressManager.IsGuidedTutorialCompleted())
+        {
+            Debug.Log("[EnemyWaveSpawner] Guided tutorial belum selesai — fail-safe batal.");
+            yield break;
+        }
+
         CameraIntroManager introManager = CameraIntroManager.Instance;
         if (introManager != null && introManager.IsCountdownActive)
             yield return new WaitUntil(() => !introManager.IsCountdownActive);
@@ -279,28 +272,25 @@ public class EnemyWaveSpawner : MonoBehaviour
         {
             if (CameraIntroManager.Instance == null)
             {
-                Debug.LogWarning(
-                    "[EnemyWaveSpawner] CameraIntroManager.Instance tidak ditemukan setelah " +
-                    timeout +
-                    " detik — GameStarted dipaksa true agar musuh tidak macet permanen."
-                );
+                Debug.LogWarning("[EnemyWaveSpawner] CameraIntroManager.Instance tidak ditemukan — GameStarted dipaksa true.");
             }
             else
             {
-                Debug.LogWarning(
-                    "[EnemyWaveSpawner] GameStarted masih false setelah " +
-                    timeout +
-                    " detik meskipun CameraIntroManager ada — kemungkinan intro macet/error. " +
-                    "GameStarted dipaksa true sebagai upaya terakhir."
-                );
+                Debug.LogWarning("[EnemyWaveSpawner] GameStarted masih false — dipaksa true.");
             }
-
             CameraIntroManager.GameStarted = true;
         }
     }
 
-    public void StartWaveSequence()
+        public void StartWaveSequence()
     {
+        // ✅ GUARD: Skip kalau guided tutorial aktif
+        if (GameProgressManager.IsGuidedTutorialActive)
+        {
+            Debug.Log("[EnemyWaveSpawner] Guided tutorial aktif — StartWaveSequence di-skip.");
+            return;
+        }
+
         StartFromWave(0);
     }
 

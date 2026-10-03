@@ -326,7 +326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8298667164989723405
 RectTransform:
   m_ObjectHideFlags: 0
@@ -341,10 +341,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3267651661792972571}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 158.57278, y: 7.4172516}
-  m_SizeDelta: {x: 141, y: 140}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &3778550962688978980
 CanvasRenderer:
@@ -413,10 +413,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
+    m_HighlightedSprite: {fileID: 1904271449201535073, guid: 8a32ea983deadb74b8d98cb7cada64eb, type: 3}
+    m_PressedSprite: {fileID: 1904271449201535073, guid: 8a32ea983deadb74b8d98cb7cada64eb, type: 3}
+    m_SelectedSprite: {fileID: 9126752567118189338, guid: 29a1afa868438aa499d9f6c2458ae8c6, type: 3}
+    m_DisabledSprite: {fileID: 8487527645030104345, guid: d700bbf78ea869048882205465254eb6, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -988,8 +988,6 @@ MonoBehaviour:
   gestureDrawer: {fileID: 0}
   gameplaySceneName: MainGameplay(Drawing)
   mainMenuSceneName: MainMenu
-  tutorialSceneName: Latihan
-  cutsceneSceneName: CutScenee
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   loadDelay: 0.1
   bgmFadeOutDuration: 0.8
@@ -1207,8 +1205,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0.0000088215, y: 198}
-  m_SizeDelta: {x: 361.2017, y: 154.3479}
+  m_AnchoredPosition: {x: 20.29, y: 200.826}
+  m_SizeDelta: {x: 534.0406, y: 179.594}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &569073198592301151
 MonoBehaviour:

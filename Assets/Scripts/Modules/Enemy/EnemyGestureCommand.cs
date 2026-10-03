@@ -254,12 +254,24 @@ public class EnemyGestureCommand : MonoBehaviour
             return;
     }
 
-    private void LateUpdate()
-    {
-        if (challengeActive && movementBehavior != null)
-            movementBehavior.Tick(CameraIntroManager.GameStarted || allowMovementBeforeGameStarted);
-    }
+   private void LateUpdate()
+{
+    if (movementBehavior == null) return;
 
+    bool shouldTick = challengeActive || allowMovementBeforeGameStarted;
+
+    // ✅ DEBUG SEMENTARA
+    Debug.Log($"[LateUpdate] {name} | challengeActive={challengeActive} | " +
+              $"allowMovement={allowMovementBeforeGameStarted} | " +
+              $"shouldTick={shouldTick} | gameStarted={CameraIntroManager.GameStarted} | " +
+              $"TickArg={(CameraIntroManager.GameStarted || allowMovementBeforeGameStarted)}");
+
+    if (!shouldTick) return;
+
+    movementBehavior.Tick(
+        CameraIntroManager.GameStarted || allowMovementBeforeGameStarted
+    );
+}
     public static bool HasOtherActiveEnemyWithin(EnemyGestureCommand source, float radius)
     {
         if (source == null || !source.challengeActive)

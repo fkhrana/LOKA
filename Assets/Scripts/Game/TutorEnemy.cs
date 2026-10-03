@@ -68,6 +68,8 @@ public class TutorialEnemySpawner : MonoBehaviour
         float radius,
         EnemyData enemyData,
         AksaraData aksara,
+        bool enableDrop = false,
+        bool activateOnSpawn = false,
         Action onAllKilled = null,
         Action onAllCrashed = null)
     {
@@ -111,7 +113,11 @@ public class TutorialEnemySpawner : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            EnemyGestureCommand enemy = SpawnSingleEnemy(i, count, center, radius, parent, enemyData, aksara);
+            EnemyGestureCommand enemy = SpawnSingleEnemy(
+                i, count, center, radius, parent, enemyData, aksara,
+                enableDrop,
+                activateOnSpawn
+            );
 
             if (enemy != null)
             {
@@ -173,8 +179,17 @@ public class TutorialEnemySpawner : MonoBehaviour
         return result;
     }
 
-    public void Clear()
+       public void Clear()
     {
+        // ✅ FIX: Set flag PERTAMA — biar HandleAllEnemiesGone tidak fire
+        hasFiredCallback = true;
+        isSpawning = false;
+
+        // Reset counters (safety)
+        validKillCount = 0;
+        totalCrashCount = 0;
+        expectedKillCount = 0;
+
         StopDeathTracker();
         UnsubscribeEnemyDamageHandlers();
 
@@ -186,8 +201,7 @@ public class TutorialEnemySpawner : MonoBehaviour
         countedEnemyIds.Clear();
         enemiesThatDamagedPlayer.Clear();
 
-        hasFiredCallback = true;
-        isSpawning = false;
+        Debug.Log("[TutorialEnemySpawner] Clear — semua musuh dihapus.");
     }
     #endregion
 
@@ -236,7 +250,9 @@ public class TutorialEnemySpawner : MonoBehaviour
     #region Spawn Implementation
     private EnemyGestureCommand SpawnSingleEnemy(
         int index, int totalCount, Vector3 center, float radius,
-        Transform parent, EnemyData enemyData, AksaraData aksara)
+        Transform parent, EnemyData enemyData, AksaraData aksara,
+        bool enableDrop,
+        bool activateOnSpawn)
     {
         Vector3 position = GetSpawnPosition(index, totalCount, center, radius);
 
@@ -248,13 +264,11 @@ public class TutorialEnemySpawner : MonoBehaviour
 
         enemy.SetAutoIssueOnStart(false);
         enemy.SetAllowMovementBeforeGameStarted(true);
-
-        // === FIX: musuh tutorial TIDAK lapor progress ke LevelProgressManager ===
         enemy.SetReportProgress(false);
 
         ConfigureEnemy(enemy, enemyData, aksara);
-        enemy.GetComponent<Enemy>()?.SetDropEnabled(false);
-        ConfigureMovement(enemy, position);   // ← instance method (diubah dari static)
+        enemy.GetComponent<Enemy>()?.SetDropEnabled(enableDrop);
+        ConfigureMovement(enemy, position, activateOnSpawn);
         enemy.SyncSpawnPosition();
 
         enemy.IssueCommand();
@@ -339,26 +353,17 @@ public class TutorialEnemySpawner : MonoBehaviour
             enemy.ConfigureChallenge(aksara.GestureShape, 1);
     }
 
-    /// <summary>
-    /// Setup movement tutorial enemy.
-    /// FIX PENTING: panggil Initialize() supaya playerHealth, collider,
-    /// spriteRenderer, dan Rigidbody2D ter-set. Tanpa ini,
-    /// HandlePlayerContact() akan bail out karena playerHealth == null
-    /// sehingga Shield knockback & damage TIDAK bekerja.
-    /// </summary>
-    private void ConfigureMovement(EnemyGestureCommand enemy, Vector3 spawnPos)
+    private void ConfigureMovement(EnemyGestureCommand enemy, Vector3 spawnPos, bool activateOnSpawn)
     {
         var movement = enemy.GetComponent<EnemyMovementBehavior>()
                     ?? enemy.GetComponentInChildren<EnemyMovementBehavior>(true);
 
         if (movement == null)
         {
-            Debug.LogWarning($"[TutorialEnemySpawner] {enemy.name} tidak punya " +
-                             "EnemyMovementBehavior — knockback/damage tidak akan jalan.");
+            Debug.LogWarning($"[TutorialEnemySpawner] {enemy.name} tidak punya EnemyMovementBehavior.");
             return;
         }
 
-        // === FIX UTAMA: panggil Initialize() ===
         PlayerHealth playerHealth = FindFirstObjectByType<PlayerHealth>();
 
         Collider2D enemyCollider = enemy.GetComponent<Collider2D>()
@@ -367,24 +372,22 @@ public class TutorialEnemySpawner : MonoBehaviour
         SpriteRenderer spriteRenderer = enemy.GetComponentInChildren<SpriteRenderer>(true);
 
         if (playerHealth == null)
-            Debug.LogWarning("[TutorialEnemySpawner] ⚠️ PlayerHealth tidak ditemukan — " +
-                             "damage & shield knockback TIDAK akan bekerja!");
-
-        if (enemyCollider == null)
-            Debug.LogWarning($"[TutorialEnemySpawner] ⚠️ {enemy.name} tidak punya Collider2D — " +
-                             "contact event tidak akan fire!");
+            Debug.LogWarning("[TutorialEnemySpawner] ⚠️ PlayerHealth tidak ditemukan!");
 
         movement.Initialize(playerHealth, enemyCollider, spriteRenderer);
-
-        // Setup setelah Initialize
         movement.SetSpawnPosition(spawnPos);
-        movement.SetActive(false);
-        movement.SetMovementPaused(false);
 
-        if (debugSpawn)
-            Debug.Log($"[TutorialEnemySpawner] {enemy.name} Initialize OK " +
-                      $"(playerHealth={(playerHealth != null)}, " +
-                      $"collider={(enemyCollider != null)})");
+        if (activateOnSpawn)
+        {
+            movement.SetActive(true);
+            Debug.Log($"[TutorialEnemySpawner] {enemy.name} → langsung aktif (activateOnSpawn).");
+        }
+        else
+        {
+            movement.SetActive(false);
+        }
+
+        movement.SetMovementPaused(false);
     }
 
     private void SetEnemyActive(EnemyGestureCommand enemy, bool active)
@@ -485,10 +488,8 @@ public class TutorialEnemySpawner : MonoBehaviour
     private void HandleAllEnemiesGone()
     {
         if (hasFiredCallback)
-        {
-            Debug.Log("[TutorialEnemySpawner] Callback sudah pernah fire — skip.");
             return;
-        }
+
         hasFiredCallback = true;
 
         if (debugDeathTrack)
@@ -500,20 +501,19 @@ public class TutorialEnemySpawner : MonoBehaviour
 
         if (validKillCount >= expectedKillCount)
         {
-            Debug.Log("[TutorialEnemySpawner] ✅ Semua musuh di-kill player → SUCCESS.");
+            Debug.Log("[TutorialEnemySpawner] ✅ Semua musuh di-kill → SUCCESS.");
             onAllKilledCallback?.Invoke();
             return;
         }
 
         if (totalCrashCount >= expectedKillCount)
         {
-            Debug.LogWarning("[TutorialEnemySpawner] ❌ Semua musuh nabrak player → GAGAL.");
+            Debug.LogWarning("[TutorialEnemySpawner] ❌ Semua musuh nabrak → GAGAL.");
             onAllCrashedCallback?.Invoke();
             return;
         }
 
-        Debug.LogWarning($"[TutorialEnemySpawner] ⚠️ MIX (kill={validKillCount}, " +
-                         $"crash={totalCrashCount}) → GAGAL, panel MULAI MAIN? muncul.");
+        Debug.LogWarning($"[TutorialEnemySpawner] ⚠️ MIX (kill={validKillCount}, crash={totalCrashCount}) → GAGAL.");
         onAllCrashedCallback?.Invoke();
     }
     #endregion

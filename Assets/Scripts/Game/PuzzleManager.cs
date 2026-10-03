@@ -7,14 +7,22 @@ public class PuzzleManager : MonoBehaviour
 {
     public static PuzzleManager Instance;
 
-    [Header("Drag semua slot DropZone ke sini")]
+    [Header("Drag semua slot DropZone ke sini (Gameplay)")]
     public List<DropZone> allSlots;
+
+    [Header("Tutorial Slots (opsional)")]
+    [Tooltip("Slot khusus untuk guided tutorial.")]
+    [SerializeField] private List<DropZone> tutorialSlots = new List<DropZone>();
 
     [Header("Referensi UI")]
     public GameObject canvas2;
     public GameObject puzzlePanel;
     public GameObject rewardPanel;
     public PowerManager powerManager;
+
+    [Header("Tutorial Panel")]
+    [Tooltip("Panel PopUp untuk tutorial (SetActive false di awal).")]
+    [SerializeField] private GameObject tutorialPuzzlePanel;
 
     [Header("Reward Power Up")]
     [SerializeField] private PowerManager.PowerUpType rewardPowerUpType =
@@ -39,13 +47,24 @@ public class PuzzleManager : MonoBehaviour
     [Header("Save Integration (opsional)")]
     [SerializeField] private SaveCurrentProgress saveCurrentProgress;
 
+    [Header("Tutorial Mode")]
+    [Tooltip("Kalau true, puzzle selesai → VFX saja, panel tidak pindah, save state di-skip.")]
+    [SerializeField] private bool isTutorialMode = false;
+
+    [Tooltip("Panel finish khusus tutorial.")]
+    [SerializeField] private GameObject finishPanel;
+
     private TransitionManager transitionManager;
     private bool wave1PuzzleShown;
     private bool puzzleCompleted;
 
+    private List<DropZone> originalGameplaySlots;
+
     private void Awake()
     {
         Instance = this;
+
+        originalGameplaySlots = new List<DropZone>(allSlots);
 
         if (gestureDrawer == null)
             gestureDrawer = FindAnyObjectByType<GestureDrawer>();
@@ -57,75 +76,203 @@ public class PuzzleManager : MonoBehaviour
             saveCurrentProgress = FindFirstObjectByType<SaveCurrentProgress>();
     }
 
+    // ================================================================
+    // TUTORIAL MODE API
+    // ================================================================
+
+    public void SetTutorialMode(bool value)
+    {
+        isTutorialMode = value;
+        Debug.Log($"[PuzzleManager] Tutorial mode = {value}");
+    }
+
+    public void SetTutorialSlots()
+    {
+        Debug.Log("[PuzzleManager] SetTutorialSlots() dipanggil.");
+
+        if (tutorialPuzzlePanel != null)
+        {
+            tutorialPuzzlePanel.SetActive(true);
+            Debug.Log("[PuzzleManager] TutorialPuzzlePanel diaktifkan.");
+        }
+        else
+        {
+            Debug.LogWarning("[PuzzleManager] tutorialPuzzlePanel belum di-assign!");
+        }
+
+        if (tutorialSlots != null && tutorialSlots.Count > 0)
+        {
+            allSlots = new List<DropZone>(tutorialSlots);
+            Debug.Log($"[PuzzleManager] Slot diganti ke tutorial ({allSlots.Count} slot).");
+        }
+        else
+        {
+            Debug.LogWarning("[PuzzleManager] tutorialSlots kosong — pakai gameplay slots.");
+        }
+    }
+
+    public void RestoreGameplaySlots()
+    {
+        Debug.Log("[PuzzleManager] RestoreGameplaySlots() dipanggil.");
+
+        if (tutorialPuzzlePanel != null)
+        {
+            tutorialPuzzlePanel.SetActive(false);
+            Debug.Log("[PuzzleManager] TutorialPuzzlePanel dinonaktifkan.");
+        }
+
+        if (originalGameplaySlots != null && originalGameplaySlots.Count > 0)
+        {
+            allSlots = new List<DropZone>(originalGameplaySlots);
+            Debug.Log($"[PuzzleManager] Slot dikembalikan ke gameplay ({allSlots.Count} slot).");
+        }
+    }
+
+    public void ResetPuzzleForTutorial()
+    {
+        if (allSlots != null)
+        {
+            foreach (var slot in allSlots)
+            {
+                if (slot != null)
+                    slot.isFilled = false;
+            }
+        }
+
+        puzzleCompleted = false;
+        wave1PuzzleShown = false;
+
+        Debug.Log("[PuzzleManager] Puzzle di-reset untuk tutorial.");
+    }
+
+    public void ResetPuzzleStateForGameplay()
+    {
+        puzzleCompleted = false;
+        Debug.Log("[PuzzleManager] Puzzle state di-reset untuk gameplay.");
+    }
+
+    public void ShowFinishPanelForTutorial()
+    {
+        ShowFinishPanel();
+    }
+
+    // ✅ Hide FinishPanel (dipanggil oleh GuidedTutorialManager)
+    public void HideFinishPanel()
+    {
+        if (finishPanel != null)
+            finishPanel.SetActive(false);
+        Debug.Log("[PuzzleManager] ✅ Finish panel disembunyikan.");
+    }
+
+    private void ShowFinishPanel()
+    {
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (tutorialPuzzlePanel != null) tutorialPuzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
+        if (finishPanel != null) finishPanel.SetActive(true);
+
+        SetGameStarted(true);
+
+        Debug.Log("[PuzzleManager] Finish panel (tutorial) ditampilkan.");
+    }
+
+    // ================================================================
+    // SHOW PUZZLE
+    // ================================================================
+
     public void ShowPuzzleOnce()
     {
-        if (wave1PuzzleShown)
-            return;
+        if (wave1PuzzleShown) return;
 
         wave1PuzzleShown = true;
         puzzleCompleted = false;
 
-        if (puzzlePanel != null)
+        if (puzzlePanel == null) return;
+
+        DisableGestureInput();
+
+        // ✅ SKIP TRANSISI kalau tutorial mode
+        if (isTutorialMode)
         {
-            DisableGestureInput();
+            Debug.Log("[PuzzleManager] Tutorial mode — skip transisi, langsung tampilkan panel.");
+            ActivatePuzzlePanel();
+            return;
+        }
 
-            transitionManager = TransitionManager.Instance();
+        // Transisi normal untuk gameplay
+        transitionManager = TransitionManager.Instance();
 
-            if (transitionManager != null && transitionSettings != null)
-            {
-                transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(
-                    transitionSettings,
-                    transitionDelay
-                );
-            }
-            else
-            {
-                ActivatePuzzlePanel();
-            }
+        if (transitionManager != null && transitionSettings != null)
+        {
+            transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
+            transitionManager.Transition(transitionSettings, transitionDelay);
+        }
+        else
+        {
+            ActivatePuzzlePanel();
         }
     }
 
     public void ShowPuzzlePanel()
     {
-        if (puzzlePanel != null)
+        if (puzzlePanel == null) return;
+
+        DisableGestureInput();
+
+        // ✅ SKIP TRANSISI kalau tutorial mode
+        if (isTutorialMode)
         {
-            DisableGestureInput();
+            Debug.Log("[PuzzleManager] Tutorial mode — skip transisi, langsung tampilkan panel.");
+            ActivatePuzzlePanel();
+            return;
+        }
 
-            transitionManager = TransitionManager.Instance();
+        // Transisi normal untuk gameplay
+        transitionManager = TransitionManager.Instance();
 
-            if (transitionManager != null && transitionSettings != null)
-            {
-                transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
-                transitionManager.Transition(
-                    transitionSettings,
-                    transitionDelay
-                );
-            }
-            else
-            {
-                ActivatePuzzlePanel();
-            }
+        if (transitionManager != null && transitionSettings != null)
+        {
+            transitionManager.onTransitionCutPointReached += ActivatePuzzlePanel;
+            transitionManager.Transition(transitionSettings, transitionDelay);
+        }
+        else
+        {
+            ActivatePuzzlePanel();
         }
     }
 
     private void ActivatePuzzlePanel()
     {
-        if (canvas2 != null)
-            canvas2.SetActive(true);
+        if (canvas2 != null) canvas2.SetActive(true);
 
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(true);
+        if (isTutorialMode)
+        {
+            if (tutorialPuzzlePanel != null)
+                tutorialPuzzlePanel.SetActive(true);
+        }
+        else
+        {
+            if (puzzlePanel != null)
+                puzzlePanel.SetActive(true);
+        }
 
-        if (rewardPanel != null)
-            rewardPanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(false);
+        if (finishPanel != null) finishPanel.SetActive(false);
 
         SetGameStarted(true);
 
-        if (saveCurrentProgress != null)
-            saveCurrentProgress.MarkPuzzleActive();
+        if (!isTutorialMode)
+        {
+            if (saveCurrentProgress != null)
+                saveCurrentProgress.MarkPuzzleActive();
+            else
+                GameProgressManager.SaveGameState("Puzzle");
+        }
         else
-            GameProgressManager.SaveGameState("Puzzle");
+        {
+            Debug.Log("[PuzzleManager] Tutorial mode — skip save state.");
+        }
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= ActivatePuzzlePanel;
@@ -151,8 +298,7 @@ public class PuzzleManager : MonoBehaviour
 
     private void EnableGestureInput()
     {
-        if (gestureDrawer != null)
-            gestureDrawer.enabled = true;
+        if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
     private void SetGameStarted(bool started)
@@ -160,20 +306,15 @@ public class PuzzleManager : MonoBehaviour
         CameraIntroManager.GameStarted = started;
     }
 
-    public bool IsPuzzleCompleted()
-    {
-        return puzzleCompleted;
-    }
+    // ================================================================
+    // PUZZLE STATE
+    // ================================================================
 
-    public void MarkPuzzleCompleted()
-    {
-        puzzleCompleted = true;
-    }
+    public bool IsPuzzleCompleted() => puzzleCompleted;
 
-    public void PlayWaveCompleteVfx()
-    {
-        PlayPuzzleCompleteVfx();
-    }
+    public void MarkPuzzleCompleted() => puzzleCompleted = true;
+
+    public void PlayWaveCompleteVfx() => PlayPuzzleCompleteVfx();
 
     public IEnumerator PlayWaveCompleteSequence()
     {
@@ -194,13 +335,12 @@ public class PuzzleManager : MonoBehaviour
 
     public void CheckPuzzleComplete()
     {
+        if (allSlots == null) return;
+
         foreach (DropZone slot in allSlots)
         {
-            if (slot == null)
-                continue;
-
-            if (!slot.isFilled)
-                return;
+            if (slot == null) continue;
+            if (!slot.isFilled) return;
         }
 
         OnPuzzleComplete();
@@ -208,8 +348,7 @@ public class PuzzleManager : MonoBehaviour
 
     private void OnPuzzleComplete()
     {
-        if (puzzleCompleted)
-            return;
+        if (puzzleCompleted) return;
 
         Debug.Log("Puzzle selesai!");
 
@@ -220,10 +359,13 @@ public class PuzzleManager : MonoBehaviour
         StartCoroutine(PuzzleCompleteSequence());
     }
 
+    // ================================================================
+    // PUZZLE COMPLETE VFX
+    // ================================================================
+
     private void PlayPuzzleCompleteVfx()
     {
-        if (puzzleCompleteVfx == null)
-            return;
+        if (puzzleCompleteVfx == null) return;
 
         puzzleCompleteVfx.SetActive(true);
 
@@ -235,9 +377,7 @@ public class PuzzleManager : MonoBehaviour
 
         foreach (EfekConfetti confettiEffect in confettiEffects)
         {
-            if (confettiEffect == null)
-                continue;
-
+            if (confettiEffect == null) continue;
             confettiEffect.gameObject.SetActive(true);
             confettiEffect.MuntahkanConfetti();
         }
@@ -247,27 +387,23 @@ public class PuzzleManager : MonoBehaviour
 
         foreach (ParticleSystem particle in particles)
         {
-            if (particle == null)
-                continue;
+            if (particle == null) continue;
 
             particle.gameObject.SetActive(true);
-
-            particle.Stop(
-                true,
-                ParticleSystemStopBehavior.StopEmittingAndClear
-            );
-
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             particle.Play(true);
         }
 
         Debug.Log(
             "Puzzle complete VFX dimainkan: " +
-            confettiEffects.Length +
-            " efek confetti, " +
-            particles.Length +
-            " particle system."
+            confettiEffects.Length + " confetti, " +
+            particles.Length + " particle."
         );
     }
+
+    // ================================================================
+    // PUZZLE COMPLETE SEQUENCE
+    // ================================================================
 
     private IEnumerator PuzzleCompleteSequence()
     {
@@ -275,6 +411,17 @@ public class PuzzleManager : MonoBehaviour
             EnableGestureInput();
 
         SetGameStarted(true);
+
+        if (isTutorialMode)
+        {
+            yield return new WaitForSeconds(delayBeforeWinPanel);
+
+            if (puzzleCompleteVfx != null)
+                puzzleCompleteVfx.SetActive(false);
+
+            Debug.Log("[PuzzleManager] Tutorial puzzle selesai (VFX saja).");
+            yield break;
+        }
 
         if (powerManager != null)
         {
@@ -292,9 +439,7 @@ public class PuzzleManager : MonoBehaviour
                 powerManager.GetPowerUpRewardDescription(rewardPowerUpType)
             );
 
-            Transform target =
-                powerManager.GetSlotTransform(rewardPowerUpType);
-
+            Transform target = powerManager.GetSlotTransform(rewardPowerUpType);
             if (target != null)
                 StartCoroutine(PopEffect(target));
         }
@@ -307,14 +452,10 @@ public class PuzzleManager : MonoBehaviour
                 : PlayerPrefs.GetInt("CurrentLevelIndex", 0);
 
             BooksFinal.SaveAutomaticPowerUpReward(
-                levelIndex,
-                rewardPowerUpType,
-                null,
-                null,
-                null
+                levelIndex, rewardPowerUpType, null, null, null
             );
 
-            Debug.LogWarning("PuzzleManager: PowerManager tidak terhubung; reward disimpan tanpa ikon dan tidak bisa dipakai di scene ini.");
+            Debug.LogWarning("PuzzleManager: PowerManager tidak terhubung.");
         }
 
         yield return new WaitForSeconds(delayBeforeWinPanel);
@@ -323,13 +464,8 @@ public class PuzzleManager : MonoBehaviour
 
         if (transitionManager != null && transitionSettings != null)
         {
-            transitionManager.onTransitionCutPointReached +=
-                ActivateRewardPanel;
-
-            transitionManager.Transition(
-                transitionSettings,
-                transitionDelay
-            );
+            transitionManager.onTransitionCutPointReached += ActivateRewardPanel;
+            transitionManager.Transition(transitionSettings, transitionDelay);
         }
         else
         {
@@ -337,27 +473,30 @@ public class PuzzleManager : MonoBehaviour
         }
     }
 
+    // ================================================================
+    // REWARD PANEL (NORMAL)
+    // ================================================================
+
     private void ActivateRewardPanel()
     {
-        if (canvas2 != null)
-            canvas2.SetActive(true);
-
-        if (puzzlePanel != null)
-            puzzlePanel.SetActive(false);
-
-        if (rewardPanel != null)
-            rewardPanel.SetActive(true);
+        if (canvas2 != null) canvas2.SetActive(true);
+        if (puzzlePanel != null) puzzlePanel.SetActive(false);
+        if (tutorialPuzzlePanel != null) tutorialPuzzlePanel.SetActive(false);
+        if (rewardPanel != null) rewardPanel.SetActive(true);
+        if (finishPanel != null) finishPanel.SetActive(false);
 
         SetGameStarted(true);
 
-        if (saveCurrentProgress != null)
-            saveCurrentProgress.MarkRewardActive();
-        else
-            GameProgressManager.SaveGameState("Reward");
+        if (!isTutorialMode)
+        {
+            if (saveCurrentProgress != null)
+                saveCurrentProgress.MarkRewardActive();
+            else
+                GameProgressManager.SaveGameState("Reward");
+        }
 
         if (transitionManager != null)
-            transitionManager.onTransitionCutPointReached -=
-                ActivateRewardPanel;
+            transitionManager.onTransitionCutPointReached -= ActivateRewardPanel;
     }
 
     private IEnumerator PopEffect(Transform target)
@@ -371,13 +510,7 @@ public class PuzzleManager : MonoBehaviour
         while (time < duration / 2)
         {
             time += Time.unscaledDeltaTime;
-
-            target.localScale = Vector3.Lerp(
-                originalScale,
-                punchScale,
-                time / (duration / 2)
-            );
-
+            target.localScale = Vector3.Lerp(originalScale, punchScale, time / (duration / 2));
             yield return null;
         }
 
@@ -386,13 +519,7 @@ public class PuzzleManager : MonoBehaviour
         while (time < duration / 2)
         {
             time += Time.unscaledDeltaTime;
-
-            target.localScale = Vector3.Lerp(
-                punchScale,
-                originalScale,
-                time / (duration / 2)
-            );
-
+            target.localScale = Vector3.Lerp(punchScale, originalScale, time / (duration / 2));
             yield return null;
         }
 
