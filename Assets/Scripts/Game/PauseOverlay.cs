@@ -28,8 +28,9 @@ public class PauseOverlay : MonoBehaviour
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
 
-    // ✅ Hide guided tutorial panel + circle saat pause
+    [Header("Hide On Pause")]
     [SerializeField] private GameObject guidedTutorialPanelToHide;
+    [SerializeField] private GameObject finishPanelToHide;
     [SerializeField] private TutorialHintManager tutorialHintManager;
 
     [Header("Scene Names")]
@@ -47,6 +48,9 @@ public class PauseOverlay : MonoBehaviour
 
     private TutorialManager cachedTutorialManager;
     private bool levelCompletionSaved = false;
+
+    // ✅ Simpan state FinishPanel sebelum pause
+    private bool wasFinishPanelActive = false;
 
     private void Start()
     {
@@ -80,8 +84,6 @@ public class PauseOverlay : MonoBehaviour
 
         LevelProgressManager.Instance.OnReachedLevelComplete.RemoveListener(OnLevelComplete);
         LevelProgressManager.Instance.OnReachedLevelComplete.AddListener(OnLevelComplete);
-
-        Debug.Log("[PauseOverlay] Subscribe OnReachedLevelComplete ✅");
     }
 
     private void UnsubscribeLevelComplete()
@@ -94,8 +96,6 @@ public class PauseOverlay : MonoBehaviour
     {
         if (levelCompletionSaved) return;
         levelCompletionSaved = true;
-
-        Debug.Log("[PauseOverlay] OnReachedLevelComplete fired ✅");
     }
 
     private TutorialManager GetTutorialManager()
@@ -129,6 +129,34 @@ public class PauseOverlay : MonoBehaviour
             guidedTutorialPanelToHide.SetActive(visible);
     }
 
+    // ✅ FINISH PANEL: hide saat pause, ingat state-nya
+    private void HideFinishPanelForPause()
+    {
+        if (finishPanelToHide == null) return;
+
+        wasFinishPanelActive = finishPanelToHide.activeSelf;
+
+        if (wasFinishPanelActive)
+        {
+            finishPanelToHide.SetActive(false);
+            Debug.Log("[PauseOverlay] FinishPanel disembunyikan sementara.");
+        }
+    }
+
+    // ✅ FINISH PANEL: restore saat resume
+    private void RestoreFinishPanelAfterPause()
+    {
+        if (finishPanelToHide == null) return;
+
+        if (wasFinishPanelActive)
+        {
+            finishPanelToHide.SetActive(true);
+            Debug.Log("[PauseOverlay] FinishPanel dikembalikan.");
+        }
+
+        wasFinishPanelActive = false;
+    }
+
     private void OpenPanel(PanelType type)
     {
         if (currentPanel == type || isClosing || isTransitioning) return;
@@ -148,13 +176,15 @@ public class PauseOverlay : MonoBehaviour
 
             if (tutorialHintManager != null)
                 tutorialHintManager.HideCircleTemporarily();
+
+            // ✅ Hide finish panel
+            HideFinishPanelForPause();
         }
 
         GetPanel(type)?.SetActive(true);
         currentPanel = type;
     }
 
-    // ✅ Helper: resume gameplay penuh (dipakai Pause & Tutorial)
     private void ResumeGameplay()
     {
         CloseAllPanels();
@@ -169,6 +199,9 @@ public class PauseOverlay : MonoBehaviour
 
         if (tutorialHintManager != null)
             tutorialHintManager.RestoreCircle();
+
+        // ✅ Restore finish panel
+        RestoreFinishPanelAfterPause();
 
         currentPanel = PanelType.None;
     }
@@ -185,22 +218,7 @@ public class PauseOverlay : MonoBehaviour
 
         if (type == PanelType.Pause || type == PanelType.Tutorial)
         {
-            // ✅ Pause DAN Tutorial → langsung resume gameplay
             ResumeGameplay();
-        }
-        else if (type == PanelType.Guided)
-        {
-            // Guided tetap balik ke Pause (biar user bisa pilih menu lain)
-            CloseAllPanels();
-
-            var pausePanel = GetPanel(PanelType.Pause);
-            if (pausePanel != null)
-            {
-                pausePanel.SetActive(true);
-                FadeIn(pausePanel);
-            }
-
-            currentPanel = PanelType.Pause;
         }
         else
         {
@@ -275,27 +293,19 @@ public class PauseOverlay : MonoBehaviour
     public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
     public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
-    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);  // ✅ sekarang resume gameplay
+    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
 
     public void OpenGuidedTutorial() => OpenPanel(PanelType.Guided);
-    public void CloseGuidedTutorial() => CloseWithEffect(PanelType.Guided);  // tetap balik ke Pause
+    public void CloseGuidedTutorial() => CloseWithEffect(PanelType.Guided);
 
     public void ResumeGame()
     {
         switch (currentPanel)
         {
-            case PanelType.Pause:
-                ClosePause();
-                break;
-            case PanelType.Tutorial:
-                CloseTutorial();
-                break;
-            case PanelType.Guided:
-                CloseGuidedTutorial();
-                break;
-            default:
-                ResumeGameplay();
-                break;
+            case PanelType.Pause:    ClosePause(); break;
+            case PanelType.Tutorial: CloseTutorial(); break;
+            case PanelType.Guided:   CloseGuidedTutorial(); break;
+            default:                 ResumeGameplay(); break;
         }
     }
 

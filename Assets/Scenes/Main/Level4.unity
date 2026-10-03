@@ -6354,6 +6354,7 @@ MonoBehaviour:
   collectionPanel2: {fileID: 0}
   pauseButton: {fileID: 1407952589}
   guidedTutorialPanelToHide: {fileID: 0}
+  finishPanelToHide: {fileID: 998969181}
   tutorialHintManager: {fileID: 1010932619}
   collectBookTarget: {fileID: 154833366}
   collectionBookVfx: {fileID: 872456707504311595, guid: 0b7c4b4b28eb7514589d8bc83e8ef570, type: 3}

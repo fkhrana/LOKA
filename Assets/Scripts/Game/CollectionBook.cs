@@ -16,7 +16,10 @@ public class CollectionPanel : MonoBehaviour
     // ✅ Hide guided tutorial panel juga
     [SerializeField] private GameObject guidedTutorialPanelToHide;
 
-    // ✅ BARU: Tutorial Hint Manager untuk hide circle
+    // ✅ BARU: FinishPanel yang disembunyikan sementara
+    [SerializeField] private GameObject finishPanelToHide;
+
+    // ✅ Tutorial Hint Manager untuk hide circle
     [SerializeField] private TutorialHintManager tutorialHintManager;
 
     [Header("Collect Animation Target")]
@@ -114,6 +117,9 @@ public class CollectionPanel : MonoBehaviour
 
     private bool isOpen = false;
 
+    // ✅ State penyimpanan FinishPanel
+    private bool wasFinishPanelActive = false;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -144,6 +150,9 @@ public class CollectionPanel : MonoBehaviour
 
         if (tutorialHintManager != null)
             tutorialHintManager.HideCircleTemporarily();
+
+        // ✅ Hide FinishPanel
+        HideFinishPanelForCollection();
     }
 
     private void ShowPauseButton()
@@ -158,6 +167,37 @@ public class CollectionPanel : MonoBehaviour
         // ✅ Restore circle highlight
         if (tutorialHintManager != null)
             tutorialHintManager.RestoreCircle();
+
+        // ✅ Restore FinishPanel
+        RestoreFinishPanelAfterCollection();
+    }
+
+    // ✅ FINISH PANEL: hide saat collection buka
+    private void HideFinishPanelForCollection()
+    {
+        if (finishPanelToHide == null) return;
+
+        wasFinishPanelActive = finishPanelToHide.activeSelf;
+
+        if (wasFinishPanelActive)
+        {
+            finishPanelToHide.SetActive(false);
+            Debug.Log("[CollectionPanel] FinishPanel disembunyikan sementara.");
+        }
+    }
+
+    // ✅ FINISH PANEL: restore saat collection tutup
+    private void RestoreFinishPanelAfterCollection()
+    {
+        if (finishPanelToHide == null) return;
+
+        if (wasFinishPanelActive)
+        {
+            finishPanelToHide.SetActive(true);
+            Debug.Log("[CollectionPanel] FinishPanel dikembalikan.");
+        }
+
+        wasFinishPanelActive = false;
     }
 
     // =========================

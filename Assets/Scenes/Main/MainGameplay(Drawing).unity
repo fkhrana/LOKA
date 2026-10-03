@@ -6173,6 +6173,7 @@ MonoBehaviour:
   collectionPanel2: {fileID: 1808268459}
   pauseButton: {fileID: 3534890}
   guidedTutorialPanelToHide: {fileID: 754906942}
+  finishPanelToHide: {fileID: 1115502780}
   tutorialHintManager: {fileID: 0}
   collectBookTarget: {fileID: 375499978}
   collectionBookVfx: {fileID: 872456707504311595, guid: 0b7c4b4b28eb7514589d8bc83e8ef570, type: 3}
@@ -8275,9 +8276,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 256010449}
     - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: finishPanelToHide
+      value: 
+      objectReference: {fileID: 1115502780}
+    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: panels.Array.size
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
+      propertyPath: guidedTutorialPanelToHide
+      value: 
+      objectReference: {fileID: 754906942}
     - target: {fileID: 3498423818391380561, guid: 9eb25a461088728419ace1094ff99bd9, type: 3}
       propertyPath: panels.Array.data[1].type
       value: 2
