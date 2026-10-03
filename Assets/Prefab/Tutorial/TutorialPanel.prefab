@@ -602,7 +602,6 @@ GameObject:
   - component: {fileID: 8297227562320048077}
   - component: {fileID: 5936313472118423489}
   - component: {fileID: 3274993911449599132}
-  - component: {fileID: 7096655553604772108}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -624,10 +623,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 898647578145821989}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8297227562320048077
 CanvasRenderer:
@@ -679,20 +678,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &7096655553604772108
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4188845505626102073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
-  m_AspectMode: 4
-  m_AspectRatio: 1.7777778
 --- !u!1 &6125171362642284567
 GameObject:
   m_ObjectHideFlags: 0

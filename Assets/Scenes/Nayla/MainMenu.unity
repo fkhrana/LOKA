@@ -481,8 +481,30 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2114622336851405661, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 72873635}
   m_SourcePrefab: {fileID: 100100000, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+--- !u!1 &72873634 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2114622336851405661, guid: 3123d4fd56064094fba13c2ea14e6824, type: 3}
+  m_PrefabInstance: {fileID: 72873633}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &72873635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72873634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.777778
 --- !u!1 &165104819
 GameObject:
   m_ObjectHideFlags: 0
@@ -2366,7 +2388,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7790062091122388772, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 0.00024414062
       objectReference: {fileID: 0}
     - target: {fileID: 7790062091122388772, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       propertyPath: m_SizeDelta.y
@@ -2387,12 +2409,34 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2381823958426288633, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1455421461}
+    - targetCorrespondingSourceObject: {fileID: 4188845505626102073, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1366283604}
   m_SourcePrefab: {fileID: 100100000, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
 --- !u!225 &1366283602 stripped
 CanvasGroup:
   m_CorrespondingSourceObject: {fileID: 3274993911449599132, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
   m_PrefabInstance: {fileID: 1366283601}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1366283603 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4188845505626102073, guid: 60c9e60a34700dd4db8a74b34e9881ef, type: 3}
+  m_PrefabInstance: {fileID: 1366283601}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1366283604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366283603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.AspectRatioFitter
+  m_AspectMode: 4
+  m_AspectRatio: 1.777778
 --- !u!1 &1420458609
 GameObject:
   m_ObjectHideFlags: 0
@@ -2635,6 +2679,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialButtonBridge
   level1SceneName: MainGameplay(Drawing)
   mainMenuSceneName: MainMenu
+  cutsceneSceneName: Cutscene
 --- !u!1 &1569412103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7700509207193498279, guid: 912301feea60d7443bf0db5ee671f992, type: 3}

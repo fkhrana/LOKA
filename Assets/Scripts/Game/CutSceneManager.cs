@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
@@ -23,8 +24,20 @@ public class CutsceneManager : MonoBehaviour
     [Header("Next Scene")]
     [SerializeField] private string nextSceneName = "MainMenu";
 
+    [Tooltip("Scene tujuan kalau cutscene dipicu dari tombol Mulai Belajar.")]
+    [SerializeField] private string guidedLevelSceneName = "MainGameplay(Drawing)";
+
     [Header("Skip")]
     [SerializeField] private GameObject skipButton;
+
+    [Tooltip("Tombol pause (opsional).")]
+    [SerializeField] private GameObject pauseButton;
+
+    [Tooltip("Delay sebelum tombol skip & pause muncul (detik, dihitung dari video play).")]
+    [SerializeField, Min(0f)] private float buttonAppearDelay = 3f;
+
+    [Tooltip("Durasi fade in tombol.")]
+    [SerializeField, Min(0f)] private float buttonFadeDuration = 0.3f;
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -32,6 +45,7 @@ public class CutsceneManager : MonoBehaviour
 
     private bool isLoadingNextScene = false;
     private TransitionManager transitionManager;
+    private Coroutine showButtonsCoroutine;
 
     private void OnEnable()
     {
@@ -52,6 +66,7 @@ public class CutsceneManager : MonoBehaviour
             videoPlayer.prepareCompleted -= OnVideoPrepared;
         }
 
+        StopShowButtonsCoroutine();
         transitionManager = null;
     }
 
@@ -63,8 +78,7 @@ public class CutsceneManager : MonoBehaviour
 
         transitionManager = TransitionManager.Instance();
 
-        if (skipButton != null)
-            skipButton.SetActive(true);
+        HideCutsceneButtons();
 
         SetupAndPlayVideo();
     }
@@ -77,7 +91,6 @@ public class CutsceneManager : MonoBehaviour
             return;
         }
 
-        // Jangan autoplay, kita play manual setelah Prepare selesai
         videoPlayer.playOnAwake = false;
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = Application.streamingAssetsPath + "/" + videoFileName;
@@ -93,6 +106,85 @@ public class CutsceneManager : MonoBehaviour
             return;
 
         vp.Play();
+
+        StopShowButtonsCoroutine();
+        showButtonsCoroutine = StartCoroutine(ShowButtonsAfterDelay());
+    }
+
+    private IEnumerator ShowButtonsAfterDelay()
+    {
+        float elapsed = 0f;
+
+        while (elapsed < buttonAppearDelay && !isLoadingNextScene)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (isLoadingNextScene)
+        {
+            showButtonsCoroutine = null;
+            yield break;
+        }
+
+        yield return FadeInButton(skipButton);
+        yield return FadeInButton(pauseButton);
+
+        showButtonsCoroutine = null;
+    }
+
+    private IEnumerator FadeInButton(GameObject button)
+    {
+        if (button == null) yield break;
+
+        button.SetActive(true);
+
+        var cg = button.GetComponent<CanvasGroup>();
+        if (cg == null) cg = button.AddComponent<CanvasGroup>();
+
+        cg.alpha = 0f;
+
+        if (buttonFadeDuration <= 0f)
+        {
+            cg.alpha = 1f;
+            yield break;
+        }
+
+        float t = 0f;
+
+        while (t < buttonFadeDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            cg.alpha = Mathf.Clamp01(t / buttonFadeDuration);
+            yield return null;
+        }
+
+        cg.alpha = 1f;
+    }
+
+    private void HideCutsceneButtons()
+    {
+        SetButtonVisibleInstant(skipButton, false);
+        SetButtonVisibleInstant(pauseButton, false);
+    }
+
+    private void SetButtonVisibleInstant(GameObject button, bool visible)
+    {
+        if (button == null) return;
+
+        var cg = button.GetComponent<CanvasGroup>();
+        if (cg != null) cg.alpha = visible ? 1f : 0f;
+
+        button.SetActive(visible);
+    }
+
+    private void StopShowButtonsCoroutine()
+    {
+        if (showButtonsCoroutine != null)
+        {
+            StopCoroutine(showButtonsCoroutine);
+            showButtonsCoroutine = null;
+        }
     }
 
     private void OnVideoError(VideoPlayer source, string message)
@@ -123,16 +215,19 @@ public class CutsceneManager : MonoBehaviour
 
         isLoadingNextScene = true;
 
+        StopShowButtonsCoroutine();
+
         if (videoPlayer != null)
             videoPlayer.Stop();
 
-        if (skipButton != null)
-            skipButton.SetActive(false);
+        HideCutsceneButtons();
 
         GameProgressManager.SetCutsceneCompleted();
         LevelManager.Instance?.UnlockFirstLevel();
 
-        Debug.Log($"[CutsceneManager] {cutsceneType} selesai → load '{nextSceneName}'.");
+        string targetScene = ResolveNextScene();
+
+        Debug.Log($"[CutsceneManager] {cutsceneType} selesai → load '{targetScene}'.");
 
         TransitionManager tm = transitionManager;
 
@@ -141,12 +236,31 @@ public class CutsceneManager : MonoBehaviour
 
         if (tm != null && transitionSettings != null)
         {
-            tm.Transition(nextSceneName, transitionSettings, loadDelay);
+            tm.Transition(targetScene, transitionSettings, loadDelay);
         }
         else
         {
-            SceneManager.LoadScene(nextSceneName);
+            SceneManager.LoadScene(targetScene);
         }
+    }
+
+    private string ResolveNextScene()
+    {
+        if (GameProgressManager.PendingGuidedAfterCutscene)
+        {
+            GameProgressManager.SetPendingGuidedAfterCutscene(false);
+
+            if (string.IsNullOrEmpty(guidedLevelSceneName))
+            {
+                Debug.LogWarning("[CutsceneManager] guidedLevelSceneName kosong → fallback ke nextSceneName.");
+                return nextSceneName;
+            }
+
+            Debug.Log("[CutsceneManager] PendingGuidedAfterCutscene → lanjut ke level guided.");
+            return guidedLevelSceneName;
+        }
+
+        return nextSceneName;
     }
 
     public void PauseVideo()

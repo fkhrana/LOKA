@@ -49,7 +49,6 @@ public class PauseOverlay : MonoBehaviour
     private TutorialManager cachedTutorialManager;
     private bool levelCompletionSaved = false;
 
-    // ✅ Simpan state FinishPanel sebelum pause
     private bool wasFinishPanelActive = false;
 
     private void Start()
@@ -129,7 +128,6 @@ public class PauseOverlay : MonoBehaviour
             guidedTutorialPanelToHide.SetActive(visible);
     }
 
-    // ✅ FINISH PANEL: hide saat pause, ingat state-nya
     private void HideFinishPanelForPause()
     {
         if (finishPanelToHide == null) return;
@@ -143,7 +141,6 @@ public class PauseOverlay : MonoBehaviour
         }
     }
 
-    // ✅ FINISH PANEL: restore saat resume
     private void RestoreFinishPanelAfterPause()
     {
         if (finishPanelToHide == null) return;
@@ -171,13 +168,11 @@ public class PauseOverlay : MonoBehaviour
             SetIntroUIVisible(false);
             GetTutorialManager()?.SetTutorialVisualsVisible(false);
 
-            // ✅ Hide guided panel + circle
             SetGuidedTutorialPanelVisible(false);
 
             if (tutorialHintManager != null)
                 tutorialHintManager.HideCircleTemporarily();
 
-            // ✅ Hide finish panel
             HideFinishPanelForPause();
         }
 
@@ -194,13 +189,11 @@ public class PauseOverlay : MonoBehaviour
         SetIntroUIVisible(true);
         GetTutorialManager()?.SetTutorialVisualsVisible(true);
 
-        // ✅ Restore guided panel + circle
         SetGuidedTutorialPanelVisible(true);
 
         if (tutorialHintManager != null)
             tutorialHintManager.RestoreCircle();
 
-        // ✅ Restore finish panel
         RestoreFinishPanelAfterPause();
 
         currentPanel = PanelType.None;
@@ -285,10 +278,6 @@ public class PauseOverlay : MonoBehaviour
         if (gestureDrawer != null) gestureDrawer.enabled = true;
     }
 
-    // ---------------------------------------------------------------
-    // PUBLIC API
-    // ---------------------------------------------------------------
-
     public void OpenPause() => OpenPanel(PanelType.Pause);
     public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
@@ -312,6 +301,8 @@ public class PauseOverlay : MonoBehaviour
     public void GoToMainMenu()
     {
         if (isTransitioning) return;
+
+        ResetGuidedTutorialIfMidway();
 
         if (!levelCompletionSaved &&
             LevelProgressManager.Instance != null &&
@@ -353,6 +344,15 @@ public class PauseOverlay : MonoBehaviour
         }
 
         StartCoroutine(FadeAndLoadScene(mainMenuSceneName));
+    }
+
+    private void ResetGuidedTutorialIfMidway()
+    {
+        if (!GameProgressManager.IsGuidedTutorialActive) return;
+        if (GameProgressManager.IsGuidedTutorialCompleted()) return;
+
+        GameProgressManager.SetGuidedTutorialActive(false);
+        Debug.Log("[PauseOverlay] Keluar di tengah guided tutorial → reset flag aktif.");
     }
 
     private void SaveGameplayProgress()

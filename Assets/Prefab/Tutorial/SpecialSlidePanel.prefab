@@ -359,3 +359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37233d2acb6e1234398262603f5fbfae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TutorialButtonBridge
+  level1SceneName: MainGameplay(Drawing)
+  mainMenuSceneName: MainMenu
+  cutsceneSceneName: Cutscenee

@@ -5,7 +5,6 @@ public static class GameProgressManager
     public static bool StartedFromMainMenu { get; private set; }
     public static void MarkStartedFromMainMenu() { StartedFromMainMenu = true; }
 
-    // ✅ Flag guided tutorial aktif (runtime)
     public static bool IsGuidedTutorialActive { get; private set; }
 
     public static void SetGuidedTutorialActive(bool value)
@@ -14,7 +13,6 @@ public static class GameProgressManager
         Debug.Log($"[GameProgressManager] IsGuidedTutorialActive = {value}");
     }
 
-    // ✅ Flag skip carousel saat load Level 1 (karena sudah lihat di MainMenu)
     public static bool SkipCarouselOnLoad { get; private set; }
 
     public static void SetSkipCarouselOnLoad(bool value)
@@ -27,6 +25,8 @@ public static class GameProgressManager
     private const string KEY_CUTSCENE_COMPLETED = "CutsceneCompleted";
     private const string KEY_CURRENT_LEVEL_INDEX = "CurrentLevelIndex";
     private const string KEY_TUTORIAL_POWERUP_DONE_LEGACY = "TutorialPowerUpDone";
+    private const string KEY_GUIDED_TUTORIAL_DONE_GLOBAL = "GuidedTutorialDone_Global";
+    private const string KEY_PENDING_GUIDED_AFTER_CUTSCENE = "PendingGuidedAfterCutscene";
 
     private const string PREFIX_GAME_STATE = "GameState_L";
     private const string PREFIX_PUZZLE_INDEX = "LastPuzzleIndex_L";
@@ -39,6 +39,8 @@ public static class GameProgressManager
     private const string PREFIX_HAS_ENTERED = "HasEnteredGameplay_L";
     private const string PREFIX_TUTORIAL_DONE = "TutorialPowerUpDone_L";
     private const string PREFIX_GUIDED_TUTORIAL_DONE = "GuidedTutorialDone_L";
+
+    private const int MAX_LEVELS_FOR_MIGRATION = 10;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void MigrateLegacyKeys()
@@ -54,6 +56,8 @@ public static class GameProgressManager
             PlayerPrefs.Save();
         }
 
+        MigrateGuidedTutorialToGlobal();
+
         if (!PlayerPrefs.HasKey("GameState") && !PlayerPrefs.HasKey("LastWaveIndex"))
             return;
 
@@ -66,6 +70,29 @@ public static class GameProgressManager
         MigrateInt("HasPlayerPos", PREFIX_HAS_POS + currentLevel);
         MigrateInt("HasEnteredGameplay", PREFIX_HAS_ENTERED + currentLevel);
         PlayerPrefs.Save();
+    }
+
+    private static void MigrateGuidedTutorialToGlobal()
+    {
+        if (PlayerPrefs.GetInt(KEY_GUIDED_TUTORIAL_DONE_GLOBAL, 0) == 1)
+            return;
+
+        bool anyDone = false;
+        for (int i = 0; i < MAX_LEVELS_FOR_MIGRATION; i++)
+        {
+            if (PlayerPrefs.GetInt(PREFIX_GUIDED_TUTORIAL_DONE + i, 0) == 1)
+            {
+                anyDone = true;
+                break;
+            }
+        }
+
+        if (anyDone)
+        {
+            PlayerPrefs.SetInt(KEY_GUIDED_TUTORIAL_DONE_GLOBAL, 1);
+            PlayerPrefs.Save();
+            Debug.Log("[GameProgressManager] Migrasi: guided tutorial ditandai selesai global.");
+        }
     }
 
     private static void MigrateString(string oldKey, string newKey)
@@ -102,6 +129,16 @@ public static class GameProgressManager
 
     public static void SetCutsceneCompleted() { PlayerPrefs.SetInt(KEY_CUTSCENE_COMPLETED, 1); PlayerPrefs.Save(); }
     public static bool IsCutsceneCompleted() => PlayerPrefs.GetInt(KEY_CUTSCENE_COMPLETED, 0) == 1;
+
+    public static bool PendingGuidedAfterCutscene =>
+        PlayerPrefs.GetInt(KEY_PENDING_GUIDED_AFTER_CUTSCENE, 0) == 1;
+
+    public static void SetPendingGuidedAfterCutscene(bool value)
+    {
+        PlayerPrefs.SetInt(KEY_PENDING_GUIDED_AFTER_CUTSCENE, value ? 1 : 0);
+        PlayerPrefs.Save();
+        Debug.Log($"[GameProgressManager] PendingGuidedAfterCutscene = {value}");
+    }
 
     public static void SaveGameState(int levelIndex, string state)
     {
@@ -190,6 +227,9 @@ public static class GameProgressManager
             PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + i);
             PlayerPrefs.DeleteKey(PREFIX_GUIDED_TUTORIAL_DONE + i);
         }
+
+        PlayerPrefs.DeleteKey(KEY_GUIDED_TUTORIAL_DONE_GLOBAL);
+        PlayerPrefs.DeleteKey(KEY_PENDING_GUIDED_AFTER_CUTSCENE);
         PlayerPrefs.Save();
     }
 
@@ -198,6 +238,8 @@ public static class GameProgressManager
         PlayerPrefs.DeleteKey(KEY_LAST_SCENE);
         PlayerPrefs.DeleteKey(KEY_CUTSCENE_COMPLETED);
         PlayerPrefs.DeleteKey(KEY_TUTORIAL_POWERUP_DONE_LEGACY);
+        PlayerPrefs.DeleteKey(KEY_GUIDED_TUTORIAL_DONE_GLOBAL);
+        PlayerPrefs.DeleteKey(KEY_PENDING_GUIDED_AFTER_CUTSCENE);
         PlayerPrefs.Save();
     }
 
@@ -207,9 +249,33 @@ public static class GameProgressManager
     public static void ResetTutorial() { PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + ActiveLevel()); PlayerPrefs.Save(); }
     public static void ResetTutorial(int levelIndex) { PlayerPrefs.DeleteKey(PREFIX_TUTORIAL_DONE + levelIndex); PlayerPrefs.Save(); }
 
-    public static bool IsGuidedTutorialCompleted() => PlayerPrefs.GetInt(PREFIX_GUIDED_TUTORIAL_DONE + ActiveLevel(), 0) == 1;
-    public static bool IsGuidedTutorialCompleted(int levelIndex) => PlayerPrefs.GetInt(PREFIX_GUIDED_TUTORIAL_DONE + levelIndex, 0) == 1;
-    public static void MarkGuidedTutorialCompleted() { PlayerPrefs.SetInt(PREFIX_GUIDED_TUTORIAL_DONE + ActiveLevel(), 1); PlayerPrefs.Save(); }
-    public static void ResetGuidedTutorial() { PlayerPrefs.DeleteKey(PREFIX_GUIDED_TUTORIAL_DONE + ActiveLevel()); PlayerPrefs.Save(); }
-    public static void ResetGuidedTutorial(int levelIndex) { PlayerPrefs.DeleteKey(PREFIX_GUIDED_TUTORIAL_DONE + levelIndex); PlayerPrefs.Save(); }
+    public static bool IsGuidedTutorialCompleted() =>
+        PlayerPrefs.GetInt(KEY_GUIDED_TUTORIAL_DONE_GLOBAL, 0) == 1;
+
+    public static void MarkGuidedTutorialCompleted()
+    {
+        PlayerPrefs.SetInt(KEY_GUIDED_TUTORIAL_DONE_GLOBAL, 1);
+        PlayerPrefs.Save();
+    }
+
+    public static void ResetGuidedTutorial()
+    {
+        PlayerPrefs.DeleteKey(KEY_GUIDED_TUTORIAL_DONE_GLOBAL);
+        PlayerPrefs.Save();
+    }
+
+    public static bool IsGuidedTutorialCompleted(int levelIndex) =>
+        PlayerPrefs.GetInt(PREFIX_GUIDED_TUTORIAL_DONE + levelIndex, 0) == 1;
+
+    public static void MarkGuidedTutorialCompleted(int levelIndex)
+    {
+        PlayerPrefs.SetInt(PREFIX_GUIDED_TUTORIAL_DONE + levelIndex, 1);
+        PlayerPrefs.Save();
+    }
+
+    public static void ResetGuidedTutorial(int levelIndex)
+    {
+        PlayerPrefs.DeleteKey(PREFIX_GUIDED_TUTORIAL_DONE + levelIndex);
+        PlayerPrefs.Save();
+    }
 }

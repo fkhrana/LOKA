@@ -59,15 +59,16 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     [SerializeField]
     private CarouselTextBox textBoxController;
 
-    // ✅ Tutorial Hint Manager untuk hide circle saat carousel buka
     [SerializeField]
     private TutorialHintManager tutorialHintManager;
 
-    // ✅ Daftar entry yang benar-benar dipakai (sudah difilter)
     private List<CarouselEntry> _activeEntries = new List<CarouselEntry>();
 
     private int _currentIndex = 0;
     private Coroutine _scrollCoroutine;
+
+    private bool _wasTutorialDone;
+    private bool _wasTutorialRunning;
 
     private void Reset()
     {
@@ -76,42 +77,56 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         videoPlayer = GetComponent<VideoPlayer>();
     }
 
-    // ✅ Cek apakah player masih "baru" untuk tutorial basic
     private bool IsNewPlayerForTutorial()
     {
-        return !GameProgressManager.IsGuidedTutorialCompleted();
+        if (GameProgressManager.IsGuidedTutorialCompleted()) return false;
+        if (GameProgressManager.IsGuidedTutorialActive) return false;
+        return true;
     }
 
     private void Start()
     {
         SetupVideoPlayer();
 
-        bool isNewPlayer = IsNewPlayerForTutorial();
-        Debug.Log($"[Carousel] isNewPlayer = {isNewPlayer}");
+        _wasTutorialDone = GameProgressManager.IsGuidedTutorialCompleted();
+        _wasTutorialRunning = GameProgressManager.IsGuidedTutorialActive;
 
-        // ✅ Filter entries: skip special slide (tutorial6) kalau bukan new player
+        Debug.Log($"[Carousel] TutorialDone={_wasTutorialDone}, TutorialRunning={_wasTutorialRunning}");
+
+        BuildCarouselEntries();
+
+        if (_indicators.Count > 0)
+            _indicators[0].Activate(0.1f);
+
+        _autoScrollTimer = autoScrollInterval;
+
+        if (_activeEntries.Count > 0)
+            ApplyTextBoxForIndex(0, instant: true);
+
+        _initialized = true;
+        PlayVideoForCurrent(0f);
+    }
+
+    private void BuildCarouselEntries()
+    {
         _activeEntries.Clear();
+
         foreach (var entry in entries)
         {
             if (entry == null) continue;
 
-            if (entry.IsSpecialSlide && !isNewPlayer)
+            if (entry.IsSpecialSlide && (_wasTutorialDone || _wasTutorialRunning))
             {
-                Debug.Log("[Carousel] Bukan new player → skip special slide tutorial6.");
+                Debug.Log($"[Carousel] Skip special slide (done={_wasTutorialDone}, running={_wasTutorialRunning}).");
                 continue;
             }
 
             _activeEntries.Add(entry);
         }
 
-        // ✅ Bangun carousel dari entries yang sudah difilter
         foreach (var entry in _activeEntries)
         {
-            Image carouselEntry = Instantiate(
-                carouselEntryPrefab,
-                contentBoxHorizontal
-            );
-
+            Image carouselEntry = Instantiate(carouselEntryPrefab, contentBoxHorizontal);
             carouselEntry.sprite = entry.EntryGraphic;
             _imagesForEntries.Add(carouselEntry);
 
@@ -128,41 +143,66 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             }
             _specialSlides.Add(specialPanel);
 
-            var indicator = Instantiate(
-                indicatorPrefab,
-                indicatorParent
-            );
+            var indicator = Instantiate(indicatorPrefab, indicatorParent);
 
             int capturedIndex = _activeEntries.IndexOf(entry);
             indicator.Initialize(() => ScrollToSpecificIndex(capturedIndex));
 
             _indicators.Add(indicator);
         }
+    }
+
+    private void RebuildCarousel()
+    {
+        foreach (Transform child in contentBoxHorizontal)
+            Destroy(child.gameObject);
+
+        if (indicatorParent != null)
+        {
+            foreach (Transform child in indicatorParent)
+                Destroy(child.gameObject);
+        }
+
+        _imagesForEntries.Clear();
+        _videoImages.Clear();
+        _specialSlides.Clear();
+        _indicators.Clear();
+        _activeEntries.Clear();
+        _currentIndex = 0;
+
+        BuildCarouselEntries();
 
         if (_indicators.Count > 0)
-        {
             _indicators[0].Activate(0.1f);
-        }
-
-        _autoScrollTimer = autoScrollInterval;
 
         if (_activeEntries.Count > 0)
-        {
             ApplyTextBoxForIndex(0, instant: true);
-        }
+    }
 
-        _initialized = true;
-        PlayVideoForCurrent(0f);
+    private bool DidTutorialStateChange()
+    {
+        bool done = GameProgressManager.IsGuidedTutorialCompleted();
+        bool running = GameProgressManager.IsGuidedTutorialActive;
+
+        bool changed = done != _wasTutorialDone || running != _wasTutorialRunning;
+
+        _wasTutorialDone = done;
+        _wasTutorialRunning = running;
+
+        return changed;
     }
 
     private void OnEnable()
     {
-        if (_initialized)
+        if (_initialized && DidTutorialStateChange())
         {
-            PlayVideoForCurrent(0f);
+            Debug.Log("[Carousel] Tutorial state berubah → rebuild.");
+            RebuildCarousel();
         }
 
-        // ✅ Hide circle highlight saat carousel dibuka
+        if (_initialized)
+            PlayVideoForCurrent(0f);
+
         if (tutorialHintManager == null)
             tutorialHintManager = FindFirstObjectByType<TutorialHintManager>();
 
@@ -174,7 +214,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     {
         StopVideo();
 
-        // ✅ Restore circle saat carousel ditutup
         if (tutorialHintManager != null)
             tutorialHintManager.RestoreCircle();
     }
@@ -193,10 +232,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             Destroy(_renderTexture);
         }
     }
-
-    // ---------------------------------------------------------------
-    // SPECIAL SLIDE
-    // ---------------------------------------------------------------
 
     private void SetupSpecialSlide(GameObject panel, CarouselEntry entry, int index)
     {
@@ -226,10 +261,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         panel.SetActive(false);
     }
-
-    // ---------------------------------------------------------------
-    // VIDEO
-    // ---------------------------------------------------------------
 
     private void SetupVideoPlayer()
     {
@@ -355,10 +386,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         }
     }
 
-    // ---------------------------------------------------------------
-    // TEXTBOX VISIBILITY
-    // ---------------------------------------------------------------
-
     private void ApplyTextBoxForIndex(int index, bool instant)
     {
         if (textBoxController == null || _activeEntries.Count == 0)
@@ -383,10 +410,6 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         else
             textBoxController.SetText(headline, description, duration);
     }
-
-    // ---------------------------------------------------------------
-    // CAROUSEL
-    // ---------------------------------------------------------------
 
     private void ClearCurrentIndex()
     {
@@ -421,9 +444,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         ClearCurrentIndex();
 
-        _currentIndex =
-            (_currentIndex - 1 + _imagesForEntries.Count)
-            % _imagesForEntries.Count;
+        _currentIndex = (_currentIndex - 1 + _imagesForEntries.Count) % _imagesForEntries.Count;
 
         ScrollTo(_currentIndex);
     }
@@ -437,8 +458,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         if (_imagesForEntries.Count > 1)
         {
-            targetHorizontalPosition =
-                (float)_currentIndex / (_imagesForEntries.Count - 1);
+            targetHorizontalPosition = (float)_currentIndex / (_imagesForEntries.Count - 1);
         }
 
         if (_scrollCoroutine != null)
@@ -446,9 +466,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             StopCoroutine(_scrollCoroutine);
         }
 
-        _scrollCoroutine = StartCoroutine(
-            LerpToPos(targetHorizontalPosition)
-        );
+        _scrollCoroutine = StartCoroutine(LerpToPos(targetHorizontalPosition));
 
         ApplyTextBoxForIndex(_currentIndex, instant: false);
 
@@ -475,14 +493,9 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         {
             while (elapsedTime <= duration)
             {
-                float easeValue =
-                    easeCurve.Evaluate(elapsedTime / duration);
+                float easeValue = easeCurve.Evaluate(elapsedTime / duration);
 
-                float newPosition = Mathf.Lerp(
-                    initialPos,
-                    targetHorizontalPosition,
-                    easeValue
-                );
+                float newPosition = Mathf.Lerp(initialPos, targetHorizontalPosition, easeValue);
 
                 scrollRect.horizontalNormalizedPosition = newPosition;
 
@@ -491,8 +504,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             }
         }
 
-        scrollRect.horizontalNormalizedPosition =
-            targetHorizontalPosition;
+        scrollRect.horizontalNormalizedPosition = targetHorizontalPosition;
     }
 
     private void Update()
