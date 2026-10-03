@@ -25,11 +25,21 @@ public class TutorialFlowController : MonoBehaviour
 
     private void Start()
     {
-        // ✅ Kalau SkipCarouselOnLoad → langsung guided (karena sudah lihat di MainMenu)
+        // ✅ SkipCarouselOnLoad → cek dulu, kalau tutorial sudah selesai jangan jalan lagi
         if (GameProgressManager.SkipCarouselOnLoad)
         {
-            Log("⏭️ Skip carousel (sudah dilihat di MainMenu) → langsung guided tutorial.");
+            Log("⏭️ Skip carousel (sudah dilihat di MainMenu).");
             GameProgressManager.SetSkipCarouselOnLoad(false);   // reset flag
+
+            // ✅ Kalau tutorial sudah selesai → skip guided, jangan jalankan lagi
+            if (GameProgressManager.IsGuidedTutorialCompleted())
+            {
+                Log("ℹ️ Tutorial sudah selesai — skip guided tutorial, langsung gameplay.");
+                if (tutorialCarouselPanel != null)
+                    tutorialCarouselPanel.SetActive(false);
+                return;
+            }
+
             GameProgressManager.SetGuidedTutorialActive(true);
 
             if (tutorialCarouselPanel != null)
@@ -91,6 +101,13 @@ public class TutorialFlowController : MonoBehaviour
 
     public void OnStartLearningClicked()
     {
+        // ✅ Cegah mulai tutorial jika sudah selesai
+        if (GameProgressManager.IsGuidedTutorialCompleted())
+        {
+            Log("⚠️ Tutorial sudah selesai. Tombol Play diabaikan.");
+            return;
+        }
+
         Log("✅ Tombol YA diklik → mulai guided tutorial.");
 
         Time.timeScale = 1f;

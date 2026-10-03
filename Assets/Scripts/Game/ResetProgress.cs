@@ -75,6 +75,10 @@ public class AutoResetProgress : MonoBehaviour
         for (int i = 0; i < totalLevels; i++)
             PlayerPrefs.DeleteKey("TutorialPowerUpDone_L" + i);
 
+        // ✅ TAMBAHAN: reset flag guided tutorial basic
+        for (int i = 0; i < totalLevels; i++)
+            PlayerPrefs.DeleteKey("GuidedTutorialDone_L" + i);
+
         // Boss tutorial
         for (int i = 0; i < totalLevels; i++)
             PlayerPrefs.DeleteKey("BossTutorialDone_L" + i);

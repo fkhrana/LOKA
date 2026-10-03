@@ -59,9 +59,12 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     [SerializeField]
     private CarouselTextBox textBoxController;
 
-    // ✅ BARU: Tutorial Hint Manager untuk hide circle saat carousel buka
+    // ✅ Tutorial Hint Manager untuk hide circle saat carousel buka
     [SerializeField]
     private TutorialHintManager tutorialHintManager;
+
+    // ✅ Daftar entry yang benar-benar dipakai (sudah difilter)
+    private List<CarouselEntry> _activeEntries = new List<CarouselEntry>();
 
     private int _currentIndex = 0;
     private Coroutine _scrollCoroutine;
@@ -73,11 +76,36 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         videoPlayer = GetComponent<VideoPlayer>();
     }
 
+    // ✅ Cek apakah player masih "baru" untuk tutorial basic
+    private bool IsNewPlayerForTutorial()
+    {
+        return !GameProgressManager.IsGuidedTutorialCompleted();
+    }
+
     private void Start()
     {
         SetupVideoPlayer();
 
+        bool isNewPlayer = IsNewPlayerForTutorial();
+        Debug.Log($"[Carousel] isNewPlayer = {isNewPlayer}");
+
+        // ✅ Filter entries: skip special slide (tutorial6) kalau bukan new player
+        _activeEntries.Clear();
         foreach (var entry in entries)
+        {
+            if (entry == null) continue;
+
+            if (entry.IsSpecialSlide && !isNewPlayer)
+            {
+                Debug.Log("[Carousel] Bukan new player → skip special slide tutorial6.");
+                continue;
+            }
+
+            _activeEntries.Add(entry);
+        }
+
+        // ✅ Bangun carousel dari entries yang sudah difilter
+        foreach (var entry in _activeEntries)
         {
             Image carouselEntry = Instantiate(
                 carouselEntryPrefab,
@@ -96,7 +124,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             if (entry.IsSpecialSlide && specialSlidePrefab != null)
             {
                 specialPanel = Instantiate(specialSlidePrefab, carouselEntry.transform);
-                SetupSpecialSlide(specialPanel, entry, entries.IndexOf(entry));
+                SetupSpecialSlide(specialPanel, entry, _activeEntries.IndexOf(entry));
             }
             _specialSlides.Add(specialPanel);
 
@@ -105,9 +133,8 @@ public class Carousel : MonoBehaviour, IEndDragHandler
                 indicatorParent
             );
 
-            indicator.Initialize(
-                () => ScrollToSpecificIndex(entries.IndexOf(entry))
-            );
+            int capturedIndex = _activeEntries.IndexOf(entry);
+            indicator.Initialize(() => ScrollToSpecificIndex(capturedIndex));
 
             _indicators.Add(indicator);
         }
@@ -119,7 +146,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
         _autoScrollTimer = autoScrollInterval;
 
-        if (entries.Count > 0)
+        if (_activeEntries.Count > 0)
         {
             ApplyTextBoxForIndex(0, instant: true);
         }
@@ -131,7 +158,9 @@ public class Carousel : MonoBehaviour, IEndDragHandler
     private void OnEnable()
     {
         if (_initialized)
+        {
             PlayVideoForCurrent(0f);
+        }
 
         // ✅ Hide circle highlight saat carousel dibuka
         if (tutorialHintManager == null)
@@ -247,10 +276,10 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private void PlayVideoForCurrent(float delay)
     {
-        if (videoPlayer == null || _currentIndex < 0 || _currentIndex >= entries.Count)
+        if (videoPlayer == null || _currentIndex < 0 || _currentIndex >= _activeEntries.Count)
             return;
 
-        var entry = entries[_currentIndex];
+        var entry = _activeEntries[_currentIndex];
         if (entry.IsSpecialSlide || string.IsNullOrEmpty(entry.VideoFileName))
         {
             StopVideo();
@@ -332,10 +361,10 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private void ApplyTextBoxForIndex(int index, bool instant)
     {
-        if (textBoxController == null || entries.Count == 0)
+        if (textBoxController == null || _activeEntries.Count == 0)
             return;
 
-        bool isSpecial = entries[index].IsSpecialSlide;
+        bool isSpecial = _activeEntries[index].IsSpecialSlide;
 
         if (isSpecial)
         {
@@ -346,8 +375,8 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         if (!textBoxController.gameObject.activeSelf)
             textBoxController.gameObject.SetActive(true);
 
-        var headline = entries[index].Headline;
-        var description = entries[index].Description;
+        var headline = _activeEntries[index].Headline;
+        var description = _activeEntries[index].Description;
 
         if (instant)
             textBoxController.SetTextWithoutFade(headline, description);
@@ -361,7 +390,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
 
     private void ClearCurrentIndex()
     {
-        if (_indicators.Count > 0)
+        if (_indicators.Count > 0 && _currentIndex < _indicators.Count)
         {
             _indicators[_currentIndex].Deactivate(duration);
         }
@@ -429,7 +458,7 @@ public class Carousel : MonoBehaviour, IEndDragHandler
             _specialSlides[i].SetActive(i == _currentIndex);
         }
 
-        if (_indicators.Count > 0)
+        if (_indicators.Count > 0 && _currentIndex < _indicators.Count)
         {
             _indicators[_currentIndex].Activate(duration);
         }
@@ -480,11 +509,11 @@ public class Carousel : MonoBehaviour, IEndDragHandler
         }
     }
 
-    public void OnEndDrag(PointerEventData data)
+    public void OnEndDrag(PointerEventData eventData)
     {
-        if (data.delta.x != 0)
+        if (eventData.delta.x != 0)
         {
-            if (data.delta.x > 0)
+            if (eventData.delta.x > 0)
             {
                 ScrollToPrevious();
             }
