@@ -28,7 +28,7 @@ public class PauseOverlay : MonoBehaviour
     [Header("Gesture")]
     [SerializeField] private GestureDrawer gestureDrawer;
 
-    // ✅ BARU: Hide guided tutorial panel + circle saat pause
+    // ✅ Hide guided tutorial panel + circle saat pause
     [SerializeField] private GameObject guidedTutorialPanelToHide;
     [SerializeField] private TutorialHintManager tutorialHintManager;
 
@@ -154,6 +154,25 @@ public class PauseOverlay : MonoBehaviour
         currentPanel = type;
     }
 
+    // ✅ Helper: resume gameplay penuh (dipakai Pause & Tutorial)
+    private void ResumeGameplay()
+    {
+        CloseAllPanels();
+        Time.timeScale = 1f;
+        cutsceneManager?.ResumeVideo();
+        EnableGestureInput();
+        SetIntroUIVisible(true);
+        GetTutorialManager()?.SetTutorialVisualsVisible(true);
+
+        // ✅ Restore guided panel + circle
+        SetGuidedTutorialPanelVisible(true);
+
+        if (tutorialHintManager != null)
+            tutorialHintManager.RestoreCircle();
+
+        currentPanel = PanelType.None;
+    }
+
     private void ClosePanel(PanelType type, System.Action onComplete = null)
     {
         if (currentPanel != type || isClosing || isTransitioning)
@@ -164,25 +183,14 @@ public class PauseOverlay : MonoBehaviour
 
         isClosing = true;
 
-        if (type == PanelType.Pause)
+        if (type == PanelType.Pause || type == PanelType.Tutorial)
         {
-            CloseAllPanels();
-            Time.timeScale = 1f;
-            cutsceneManager?.ResumeVideo();
-            EnableGestureInput();
-            SetIntroUIVisible(true);
-            GetTutorialManager()?.SetTutorialVisualsVisible(true);
-
-            // ✅ Restore guided panel + circle
-            SetGuidedTutorialPanelVisible(true);
-
-            if (tutorialHintManager != null)
-                tutorialHintManager.RestoreCircle();
-
-            currentPanel = PanelType.None;
+            // ✅ Pause DAN Tutorial → langsung resume gameplay
+            ResumeGameplay();
         }
         else if (type == PanelType.Guided)
         {
+            // Guided tetap balik ke Pause (biar user bisa pilih menu lain)
             CloseAllPanels();
 
             var pausePanel = GetPanel(PanelType.Pause);
@@ -267,45 +275,27 @@ public class PauseOverlay : MonoBehaviour
     public void ClosePause() => CloseWithEffect(PanelType.Pause);
 
     public void OpenTutorial() => OpenPanel(PanelType.Tutorial);
-    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);
+    public void CloseTutorial() => CloseWithEffect(PanelType.Tutorial);  // ✅ sekarang resume gameplay
 
     public void OpenGuidedTutorial() => OpenPanel(PanelType.Guided);
-    public void CloseGuidedTutorial() => CloseWithEffect(PanelType.Guided);
+    public void CloseGuidedTutorial() => CloseWithEffect(PanelType.Guided);  // tetap balik ke Pause
 
     public void ResumeGame()
     {
-        if (currentPanel == PanelType.Pause)
+        switch (currentPanel)
         {
-            ClosePause();
-        }
-        else if (currentPanel == PanelType.Tutorial ||
-                 currentPanel == PanelType.Guided)
-        {
-            CloseAllPanels();
-            Time.timeScale = 1f;
-            cutsceneManager?.ResumeVideo();
-            EnableGestureInput();
-            SetIntroUIVisible(true);
-            GetTutorialManager()?.SetTutorialVisualsVisible(true);
-
-            SetGuidedTutorialPanelVisible(true);
-
-            if (tutorialHintManager != null)
-                tutorialHintManager.RestoreCircle();
-
-            currentPanel = PanelType.None;
-        }
-        else
-        {
-            Time.timeScale = 1f;
-            cutsceneManager?.ResumeVideo();
-            EnableGestureInput();
-            SetIntroUIVisible(true);
-
-            SetGuidedTutorialPanelVisible(true);
-
-            if (tutorialHintManager != null)
-                tutorialHintManager.RestoreCircle();
+            case PanelType.Pause:
+                ClosePause();
+                break;
+            case PanelType.Tutorial:
+                CloseTutorial();
+                break;
+            case PanelType.Guided:
+                CloseGuidedTutorial();
+                break;
+            default:
+                ResumeGameplay();
+                break;
         }
     }
 
