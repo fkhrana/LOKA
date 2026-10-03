@@ -10,13 +10,10 @@ public class BossAnimationController : MonoBehaviour
     [Header("Animator States")]
     [SerializeField] private string idleStateName = "bossIdle";
     [SerializeField] private string hitStateName = "bossHit";
-    [SerializeField] private string defeatStateName = "enemyDieBlubub";
+    [SerializeField] private string defeatStateName = "bossDie";
 
     [Header("Defeat Animation")]
-    [SerializeField, Min(0f)] private float defeatBlinkDuration = 0.6f;
     [SerializeField, Min(0.01f)] private float defeatBlinkInterval = 0.1f;
-    [SerializeField, Min(0f)] private float defeatShrinkDuration = 0.25f;
-    [SerializeField, Range(0f, 1f)] private float defeatShrinkTargetScale = 0.1f;
 
     private Coroutine hitAnimationCoroutine;
     private EnemyMovementBehavior observedMovementBehavior;
@@ -89,26 +86,8 @@ public class BossAnimationController : MonoBehaviour
     public IEnumerator PlayDefeatSequence()
     {
         ResolveReferences();
-        float elapsed = 0f;
-        bool isVisible = true;
-        float interval = Mathf.Max(0.01f, defeatBlinkInterval);
-
-        while (elapsed < defeatBlinkDuration)
-        {
-            yield return new WaitForSeconds(interval);
-            elapsed += interval;
-            isVisible = !isVisible;
-
-            if (bodyRenderer != null)
-                bodyRenderer.enabled = isVisible;
-        }
-
-        if (bodyRenderer != null)
-            bodyRenderer.enabled = true;
-
         PlayDefeat();
         yield return new WaitForSeconds(GetDefeatAnimationDuration());
-        yield return ShrinkBody();
     }
 
     private IEnumerator ReturnToIdleAfterHit(int hitStateHash)
@@ -133,28 +112,6 @@ public class BossAnimationController : MonoBehaviour
         }
 
         hitAnimationCoroutine = null;
-    }
-
-    private IEnumerator ShrinkBody()
-    {
-        if (bodyRenderer == null || defeatShrinkDuration <= 0f)
-            yield break;
-
-        Transform bodyTransform = bodyRenderer.transform;
-        Vector3 initialScale = bodyTransform.localScale;
-        Vector3 targetScale = initialScale * defeatShrinkTargetScale;
-        float elapsed = 0f;
-
-        while (elapsed < defeatShrinkDuration)
-        {
-            elapsed += Time.deltaTime;
-            float progress = Mathf.Clamp01(elapsed / defeatShrinkDuration);
-            progress = 1f - Mathf.Pow(1f - progress, 3f);
-            bodyTransform.localScale = Vector3.Lerp(initialScale, targetScale, progress);
-            yield return null;
-        }
-
-        bodyTransform.localScale = targetScale;
     }
 
     private void PlayDefeat()
