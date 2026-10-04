@@ -210,14 +210,17 @@ public class LowHealthHelperController : MonoBehaviour
         if (currentHealthUnits >= healthThreshold)
             return;
 
-        if (usesThisScene >= maxUsesPerScene || activeHelper != null)
+        bool isGuidedTutorial = GameProgressManager.IsGuidedTutorialActive;
+
+        if ((!isGuidedTutorial && usesThisScene >= maxUsesPerScene) || activeHelper != null)
             return;
 
         if (fromDamage && Time.unscaledTime < nextAllowedSpawnTime)
             return;
 
         nextAllowedSpawnTime = Time.unscaledTime + spawnCooldown;
-        usesThisScene++;
+        if (!isGuidedTutorial)
+            usesThisScene++;
 
         LowHealthHelper helper = Instantiate(helperPrefab, helperParent, false);
         activeHelper = helper;
@@ -236,7 +239,10 @@ public class LowHealthHelperController : MonoBehaviour
 
         helper.Initialize(this);
 
-        Debug.Log($"[LowHealthHelperController] Helper spawn. HP={playerHealth.CurrentHealth}/{playerHealth.MaxHealth}, uses={usesThisScene}");
+        Debug.Log(
+            $"[LowHealthHelperController] Helper spawn. HP={playerHealth.CurrentHealth}/{playerHealth.MaxHealth}, " +
+            $"uses={usesThisScene}, guidedTutorial={isGuidedTutorial}"
+        );
     }
 
     public void ConsumeHelper(LowHealthHelper helper)
