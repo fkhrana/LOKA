@@ -27,6 +27,7 @@ public class EnemyMovementBehavior : MonoBehaviour
     [SerializeField] private float knockbackMaxVerticalDisplacement = 0.12f;
     [SerializeField] private float knockbackAngleVariance = 6f;
     [SerializeField] private float knockbackExtraCooldown = 0.2f;
+    [SerializeField, Min(0f)] private float contactKnockbackDelay;
 
     private PlayerHealth playerHealth;
     private Transform playerTransform;
@@ -45,6 +46,8 @@ public class EnemyMovementBehavior : MonoBehaviour
     private float bobTimer;
     private float baseY;
     private float knockbackTimer;
+    private float contactKnockbackDelayTimer;
+    private bool isWaitingForContactKnockback;
     private Vector2 knockbackStartPosition;
     private Vector2 knockbackTargetPosition;
     private float knockbackBaseY;
@@ -134,6 +137,8 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         // ✅ RESET STATE
         isKnockedBack = false;
+        isWaitingForContactKnockback = false;
+        contactKnockbackDelayTimer = 0f;
         isActive = false;
         isMovementPaused = false;
         contactCooldownTimer = 0f;
@@ -227,6 +232,18 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         if (contactCooldownTimer > 0f)
             contactCooldownTimer -= Time.deltaTime;
+
+        if (isWaitingForContactKnockback)
+        {
+            contactKnockbackDelayTimer -= Time.deltaTime;
+            if (contactKnockbackDelayTimer <= 0f)
+            {
+                isWaitingForContactKnockback = false;
+                PlayKnockback();
+            }
+
+            return;
+        }
 
         if (isKnockedBack)
         {
@@ -400,8 +417,7 @@ public class EnemyMovementBehavior : MonoBehaviour
 
             if (knockbackOnPlayerContact)
             {
-                PlayKnockback();
-                contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+                BeginPlayerContactKnockback();
                 return;
             }
 
@@ -417,14 +433,29 @@ public class EnemyMovementBehavior : MonoBehaviour
 
         if (knockbackOnPlayerContact)
         {
-            PlayKnockback();
-            contactCooldownTimer = knockbackDuration + knockbackExtraCooldown;
+            BeginPlayerContactKnockback();
             return;
         }
 
         GetComponent<EnemyGestureCommand>()?.ReportProcessed();
         LevelProgressManager.Instance?.CompletePendingProgress();
         Destroy(gameObject);
+    }
+
+    private void BeginPlayerContactKnockback()
+    {
+        float delay = Mathf.Max(0f, contactKnockbackDelay);
+        contactCooldownTimer = delay + knockbackDuration + knockbackExtraCooldown;
+
+        if (delay <= 0f)
+        {
+            PlayKnockback();
+            return;
+        }
+
+        isActive = false;
+        isWaitingForContactKnockback = true;
+        contactKnockbackDelayTimer = delay;
     }
 
     private void ApplyShieldKnockback()
