@@ -116,6 +116,7 @@ public class CollectionPanel : MonoBehaviour
     }
 
     private bool isOpen = false;
+    private bool wasGuidedTutorialPanelActive = false;
 
     // ✅ State penyimpanan FinishPanel
     private bool wasFinishPanelActive = false;
@@ -140,9 +141,11 @@ public class CollectionPanel : MonoBehaviour
         if (pauseButton != null)
             pauseButton.SetActive(false);
 
-        // ✅ Hide guided tutorial panel
         if (guidedTutorialPanelToHide != null)
+        {
+            wasGuidedTutorialPanelActive = guidedTutorialPanelToHide.activeSelf;
             guidedTutorialPanelToHide.SetActive(false);
+        }
 
         // ✅ Hide circle highlight
         if (tutorialHintManager == null)
@@ -160,9 +163,8 @@ public class CollectionPanel : MonoBehaviour
         if (pauseButton != null)
             pauseButton.SetActive(true);
 
-        // ✅ Show guided tutorial panel
         if (guidedTutorialPanelToHide != null)
-            guidedTutorialPanelToHide.SetActive(true);
+            guidedTutorialPanelToHide.SetActive(wasGuidedTutorialPanelActive);
 
         // ✅ Restore circle highlight
         if (tutorialHintManager != null)

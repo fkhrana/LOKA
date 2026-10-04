@@ -202,8 +202,8 @@ MonoBehaviour:
   powerUpMoveHeight: 240
   powerUpRotateAngle: 12
   powerUpRotateSpeed: 5
-  rewardBGM: {fileID: 8300000, guid: f355c49ba48b20c4aa7faa97f177ec3a, type: 3}
-  rewardBGMVolume: 0.5
+  rewardSFX: {fileID: 8300000, guid: f355c49ba48b20c4aa7faa97f177ec3a, type: 3}
+  rewardSFXVolume: 0.5
   chestOpenSFX: {fileID: 8300000, guid: c5a7b2ab3530f364eae67fdbe1933a20, type: 3}
   powerUpAppearSFX: {fileID: 8300000, guid: b24bee62ee60fe042a796a08214aa175, type: 3}
   powerUpClickSFX: {fileID: 8300000, guid: e5ddd5e433fdceb49ab0628ef2cc6ec8, type: 3}

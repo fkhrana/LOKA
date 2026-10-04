@@ -18,11 +18,11 @@ public class ChestReward : MonoBehaviour
     [SerializeField] private float powerUpRotateAngle = 12f;
     [SerializeField] private float powerUpRotateSpeed = 5f;
 
-    [Header("Reward BGM")]
-    [SerializeField] private AudioClip rewardBGM;
+    [Header("Reward SFX")]
+    [SerializeField] private AudioClip rewardSFX;
 
     [Range(0f, 1f)]
-    [SerializeField] private float rewardBGMVolume = 0.5f;
+    [SerializeField] private float rewardSFXVolume = 0.5f;
 
     [Header("SFX")]
     [SerializeField] private AudioClip chestOpenSFX;
@@ -65,8 +65,13 @@ public class ChestReward : MonoBehaviour
             powerUp.gameObject.SetActive(false);
         }
 
-        if (AudioManager.Instance != null && rewardBGM != null)
-            AudioManager.Instance.PlayRewardBGM(rewardBGM, rewardBGMVolume);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM();
+
+            if (rewardSFX != null)
+                AudioManager.Instance.PlaySFX(rewardSFX, rewardSFXVolume);
+        }
     }
 
     private void Update()
