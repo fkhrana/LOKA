@@ -104,7 +104,7 @@ public class BooksFinal : MonoBehaviour
                 rewardDescriptionText.text = "Belum ada reward.";
 
             SetRewardImages(null, null);
-            SetAksaraIcons(null);
+            SetAksaraIcons(null, -1);
 
             if (nextButton != null)
                 nextButton.interactable = false;
@@ -122,7 +122,7 @@ public class BooksFinal : MonoBehaviour
         if (rewardDescriptionText != null)
             rewardDescriptionText.text = currentData.RewardDescription;
 
-        SetAksaraIcons(currentData.AksaraIcons);
+        SetAksaraIcons(currentData.AksaraIcons, currentData.LevelIndex);
 
         if (nextButton != null)
             nextButton.interactable = currentReviewIndex < reviewData.Count - 1;
@@ -148,7 +148,7 @@ public class BooksFinal : MonoBehaviour
         }
     }
 
-    private void SetAksaraIcons(IReadOnlyList<Sprite> sprites)
+    private void SetAksaraIcons(IReadOnlyList<Sprite> sprites, int levelIndex)
     {
         for (int i = 0; i < aksaraIcons.Length; i++)
         {
@@ -163,7 +163,12 @@ public class BooksFinal : MonoBehaviour
             {
                 aksaraIcons[i].enabled = true;
                 aksaraIcons[i].SetNativeSize();
-                aksaraIcons[i].color = Color.white;
+                AksaraData aksaraData = FindAksaraData(levelIndex, sprite);
+                bool collected = aksaraData == null ||
+                    PermanentCollectionManager.IsCollectedInLevel(levelIndex, aksaraData);
+                aksaraIcons[i].color = collected
+                    ? Color.white
+                    : new Color(0f, 0f, 0f, 0.5f);
             }
             else
             {
@@ -193,7 +198,8 @@ public class BooksFinal : MonoBehaviour
                 null,
                 null,
                 "Belum ada reward.",
-                new List<Sprite>()));
+                new List<Sprite>(),
+                -1));
         }
 
         currentReviewIndex = Mathf.Clamp(currentReviewIndex, 0, reviewData.Count - 1);
@@ -203,7 +209,8 @@ public class BooksFinal : MonoBehaviour
     {
         if (RuntimeReviewCache.TryGetValue(levelIndex, out var cached))
         {
-            AppendCollectedAksaraIfNeeded(levelIndex, cached);
+            AddAllLevelAksara(levelIndex, cached.AksaraIcons);
+            AppendCollectedAksara(levelIndex, cached.AksaraIcons);
             return cached;
         }
 
@@ -213,6 +220,7 @@ public class BooksFinal : MonoBehaviour
         string aksaraCsv = PlayerPrefs.GetString(GetAksaraKey(levelIndex), string.Empty);
 
         List<Sprite> aksaraSprites = new();
+        AddAllLevelAksara(levelIndex, aksaraSprites);
 
         if (!string.IsNullOrEmpty(aksaraCsv))
         {
@@ -244,15 +252,34 @@ public class BooksFinal : MonoBehaviour
             rewardIcon,
             rewardNameIcon,
             string.IsNullOrEmpty(rewardDescription) ? "Tidak ada reward" : rewardDescription,
-            aksaraSprites);
+            aksaraSprites,
+            levelIndex);
     }
 
-    private static void AppendCollectedAksaraIfNeeded(int levelIndex, LevelReviewData data)
+    private static void AddAllLevelAksara(int levelIndex, List<Sprite> targetSprites)
     {
-        if (data == null || data.AksaraIcons.Count > 0)
+        if (targetSprites == null || LevelManager.Instance == null)
             return;
 
-        AppendCollectedAksara(levelIndex, data.AksaraIcons);
+        List<AksaraData> levelAksara = LevelManager.Instance.GetAksaraListForLevel(levelIndex);
+        if (levelAksara == null)
+            return;
+
+        var orderedSprites = new List<Sprite>();
+        foreach (AksaraData aksara in levelAksara)
+        {
+            if (aksara != null && aksara.IconSprite != null && !orderedSprites.Contains(aksara.IconSprite))
+                orderedSprites.Add(aksara.IconSprite);
+        }
+
+        foreach (Sprite sprite in targetSprites)
+        {
+            if (sprite != null && !orderedSprites.Contains(sprite))
+                orderedSprites.Add(sprite);
+        }
+
+        targetSprites.Clear();
+        targetSprites.AddRange(orderedSprites);
     }
 
     private static void AppendCollectedAksara(int levelIndex, List<Sprite> targetSprites)
@@ -273,6 +300,18 @@ public class BooksFinal : MonoBehaviour
         }
     }
 
+    private static AksaraData FindAksaraData(int levelIndex, Sprite sprite)
+    {
+        if (sprite == null || LevelManager.Instance == null)
+            return null;
+
+        List<AksaraData> levelAksara = LevelManager.Instance.GetAksaraListForLevel(levelIndex);
+        if (levelAksara == null)
+            return null;
+
+        return levelAksara.FirstOrDefault(aksara => aksara != null && aksara.IconSprite == sprite);
+    }
+
     public static void SaveReviewData(
         int levelIndex,
         Sprite rewardIcon,
@@ -290,7 +329,8 @@ public class BooksFinal : MonoBehaviour
             rewardIcon,
             rewardNameIcon,
             string.IsNullOrEmpty(rewardDescription) ? "Tidak ada reward" : rewardDescription,
-            aksaraList);
+            aksaraList,
+            levelIndex);
 
         RuntimeReviewCache[levelIndex] = data;
 
@@ -479,6 +519,7 @@ public class BooksFinal : MonoBehaviour
 
     private class LevelReviewData
     {
+        public int LevelIndex { get; }
         public string LevelLabel { get; }
         public Sprite RewardIcon { get; }
         public Sprite RewardNameIcon { get; }
@@ -490,8 +531,10 @@ public class BooksFinal : MonoBehaviour
             Sprite rewardIcon,
             Sprite rewardNameIcon,
             string rewardDescription,
-            List<Sprite> aksaraIcons)
+            List<Sprite> aksaraIcons,
+            int levelIndex)
         {
+            LevelIndex = levelIndex;
             LevelLabel = levelLabel;
             RewardIcon = rewardIcon;
             RewardNameIcon = rewardNameIcon;
