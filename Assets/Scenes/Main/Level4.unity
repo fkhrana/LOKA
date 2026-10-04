@@ -1485,6 +1485,7 @@ MonoBehaviour:
   brushPrefab: {fileID: 6222970725460223712, guid: de27dc7e0bad1f841ac581e8172ec81b, type: 3}
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
+  completedStrokeFadeDuration: 0.5
   blockWhenPointerOverUI: 1
   blockWhenPointerOverFragment: 1
   fragmentCheckMask:
@@ -2747,6 +2748,7 @@ MonoBehaviour:
   maxSpawnDistance: 3
   gameStartedFailSafeBuffer: 5
   waitForTutorialBeforeStart: 0
+  waitForGuidedTutorialBeforeStart: 0
 --- !u!4 &441064578
 Transform:
   m_ObjectHideFlags: 0
@@ -6972,8 +6974,8 @@ Transform:
   m_GameObject: {fileID: 1684215728}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8, y: -1.9, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalPosition: {x: 0.8, y: -2, z: 0}
+  m_LocalScale: {x: 4, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -7307,8 +7309,8 @@ MonoBehaviour:
   enemyParent: {fileID: 441064578}
   spawnPoints: []
   useSpawnArea: 1
-  spawnAreaCenter: {x: 0.8, y: -1.9}
-  spawnAreaSize: {x: 4, y: 4}
+  spawnAreaCenter: {x: 0.8, y: -2}
+  spawnAreaSize: {x: 4, y: 3}
   tutorialTag: TutorialEnemy
   tutorialLayer: TutorialEnemy
   debugSpawn: 0
@@ -7352,7 +7354,7 @@ MonoBehaviour:
   tutorialEnemyCount: 2
   enemyNormalSpeed: 1.2
   spawnNearCameraTarget: 1
-  manualSpawnCenter: {x: 0, y: 0, z: 0}
+  manualSpawnCenter: {x: 0, y: -2, z: 0}
   spawnRadius: 1.5
   blinkInterval: 0.25
   startPanel: {fileID: 998969181}

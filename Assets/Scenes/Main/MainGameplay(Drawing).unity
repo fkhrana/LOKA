@@ -1145,6 +1145,7 @@ MonoBehaviour:
   brushPrefab: {fileID: 6222970725460223712, guid: de27dc7e0bad1f841ac581e8172ec81b, type: 3}
   minPointDistance: 0.05
   firstStrokeGracePeriod: 0.35
+  completedStrokeFadeDuration: 0.5
   blockWhenPointerOverUI: 1
   blockWhenPointerOverFragment: 1
   fragmentCheckMask:

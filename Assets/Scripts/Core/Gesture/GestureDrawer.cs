@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,6 +18,7 @@ public class GestureDrawer : MonoBehaviour
     [SerializeField] private GameObject brushPrefab;
     public float minPointDistance = 0.05f;
     public float firstStrokeGracePeriod = 0.35f;
+    [SerializeField, Min(0f)] private float completedStrokeFadeDuration = 0.5f;
 
     [Header("Gesture Block")]
     [Tooltip("Blokir gesture kalau pointer di atas UI (button, panel, dll).")]
@@ -79,6 +81,8 @@ public class GestureDrawer : MonoBehaviour
 
     private void Update()
     {
+        MaintainBrushTrails();
+
         if (IsEscapePressed())
         {
             ResetGesture();
@@ -548,7 +552,7 @@ public class GestureDrawer : MonoBehaviour
             );
         }
 
-        ClearRecognizedStrokes();
+        ClearRecognizedStrokes(true);
         ClearCurrentStrokePreview();
 
         isAwaitingNextStroke = false;
@@ -668,7 +672,7 @@ public class GestureDrawer : MonoBehaviour
         lineRenderer.positionCount = 0;
     }
 
-    private void ClearRecognizedStrokes()
+    private void ClearRecognizedStrokes(bool fadeCompletedStrokes = false)
     {
         completedStrokes.Clear();
 
@@ -683,11 +687,72 @@ public class GestureDrawer : MonoBehaviour
         foreach (var brush in brushInstances)
         {
             if (brush != null)
-                Destroy(brush);
+            {
+                if (fadeCompletedStrokes)
+                    StartCoroutine(FadeAndDestroyBrush(brush));
+                else
+                    Destroy(brush);
+            }
         }
 
         brushInstances.Clear();
         activeBrush = null;
+    }
+
+    private void MaintainBrushTrails()
+    {
+        foreach (var brush in brushInstances)
+        {
+            if (brush == null)
+                continue;
+
+            foreach (var trail in brush.GetComponentsInChildren<TrailRenderer>())
+                trail.time += Time.unscaledDeltaTime;
+        }
+    }
+
+    private IEnumerator FadeAndDestroyBrush(GameObject brush)
+    {
+        float duration = completedStrokeFadeDuration;
+        var trails = brush.GetComponentsInChildren<TrailRenderer>();
+        var originalAlphaKeys = new GradientAlphaKey[trails.Length][];
+
+        for (int i = 0; i < trails.Length; i++)
+            originalAlphaKeys[i] = trails[i].colorGradient.alphaKeys;
+
+        if (duration > 0f)
+        {
+            float elapsed = 0f;
+
+            while (elapsed < duration && brush != null)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float fade = Mathf.Clamp01(elapsed / duration);
+
+                for (int i = 0; i < trails.Length; i++)
+                {
+                    if (trails[i] == null)
+                        continue;
+
+                    var gradient = trails[i].colorGradient;
+                    var alphaKeys =
+                        (GradientAlphaKey[])originalAlphaKeys[i].Clone();
+
+                    for (int key = 0; key < alphaKeys.Length; key++)
+                    {
+                        alphaKeys[key].alpha *= 1f - fade;
+                    }
+
+                    gradient.alphaKeys = alphaKeys;
+                    trails[i].colorGradient = gradient;
+                }
+
+                yield return null;
+            }
+        }
+
+        if (brush != null)
+            Destroy(brush);
     }
 
     private void ResetGesture()
