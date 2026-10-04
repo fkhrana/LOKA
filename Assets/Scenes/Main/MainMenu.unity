@@ -822,8 +822,8 @@ MonoBehaviour:
   uiSource: {fileID: 0}
   loopedSfxSource: {fileID: 0}
   aksaraVoiceSource: {fileID: 0}
-  defaultBgmVolume: 1
-  defaultSfxVolume: 1
+  defaultBgmVolume: 0.5
+  defaultSfxVolume: 0.5
   bgmSettings:
   - bgmName: Surat Ajaib Desa
     volume: 0.2
@@ -833,6 +833,12 @@ MonoBehaviour:
     volume: 0.2
   - bgmName: Bgm_tutorial
     volume: 0.1
+  - bgmName: Desa Aksara (main menu)
+    volume: 0.2
+  - bgmName: Petualangan (level 1,2,3)
+    volume: 0.2
+  - bgmName: Melawan Ririwa (level bos)
+    volume: 0.2
   aksaraBgmVolume: 1
   sfxBgmVolume: 0.5
   sfxDuckMinDuration: 0.2

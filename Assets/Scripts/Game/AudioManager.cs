@@ -41,8 +41,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource aksaraVoiceSource;
 
     [Header("Default Volume")]
-    [SerializeField] private float defaultBgmVolume = 1f;
-    [SerializeField] private float defaultSfxVolume = 1f;
+    [SerializeField] private float defaultBgmVolume = 0.5f;
+    [SerializeField] private float defaultSfxVolume = 0.5f;
 
     [Header("BGM Volume Khusus")]
     [SerializeField] private BGMSetting[] bgmSettings;
@@ -135,12 +135,12 @@ public class AudioManager : MonoBehaviour
 
         switch (scene.name)
         {
-            case "MainMenu": PlayBGMWithFade("Surat Ajaib Desa", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
+            case "MainMenu": PlayBGMWithFade("Desa Aksara (main menu)", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
             case "CutScenee": FadeOutBGM(defaultBgmFadeDuration); break;
             case "MainGameplay(Drawing)":
-            case "Level2": PlayBGMWithFade("Broken Festival Kite", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
-            case "Level3": PlayBGMWithFade("Boss Theme", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
-            case "Level4": PlayBGMWithFade("Boss Theme", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
+            case "Level2":
+            case "Level3": PlayBGMWithFade("Petualangan (level 1,2,3)", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
+            case "Level4": PlayBGMWithFade("Melawan Ririwa (level bos)", defaultBgmFadeDuration, defaultBgmFadeDuration); break;
             case "Latihan":PlayBGMWithFade("Bgm_tutorial", defaultBgmFadeDuration, defaultBgmFadeDuration);break;
             default: FadeOutBGM(defaultBgmFadeDuration); break;
         }
@@ -168,9 +168,9 @@ public class AudioManager : MonoBehaviour
         if (!forceRestart && currentBgmName == resourceName) return;
         if (forceRestart) currentBgmName = null;
 
-        var clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+        var clip = LoadBGMClip(resourceName);
         if (clip != null) PlayBGM(clip);
-        else Debug.LogWarning($"[Audio] BGM tidak ditemukan: Audio/BGM/{resourceName}");
+        else Debug.LogWarning($"[Audio] BGM tidak ditemukan di Audio/BGM atau Audio/BGM/new bgm: {resourceName}");
     }
 
     public void StopBGM(float fadeDuration = 0f, System.Action onComplete = null)
@@ -259,10 +259,10 @@ public class AudioManager : MonoBehaviour
 
         bgmSource.Stop();
 
-        var clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+        var clip = LoadBGMClip(resourceName);
         if (clip == null)
         {
-            Debug.LogWarning($"[Audio] BGM tidak ditemukan: Audio/BGM/{resourceName}");
+            Debug.LogWarning($"[Audio] BGM tidak ditemukan di Audio/BGM atau Audio/BGM/new bgm: {resourceName}");
             bgmFadeCoroutine = null;
             yield break;
         }
@@ -289,6 +289,12 @@ public class AudioManager : MonoBehaviour
 
         ApplyRawBGMVolume(target);
         bgmFadeCoroutine = null;
+    }
+
+    private AudioClip LoadBGMClip(string resourceName)
+    {
+        var clip = Resources.Load<AudioClip>($"Audio/BGM/{resourceName}");
+        return clip != null ? clip : Resources.Load<AudioClip>($"Audio/BGM/new bgm/{resourceName}");
     }
 
     private float GetBGMVolume(string bgmName)
