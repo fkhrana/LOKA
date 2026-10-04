@@ -192,9 +192,12 @@ public class Enemy : MonoBehaviour
         if (shouldDropItem)
         {
             bool registeredDrop =
-                CollectedAksaraManager.Instance != null
-                && CollectedAksaraManager.Instance.TryRegisterDrop(
-                    aksaraData.GestureShape
+                isTutorial ||
+                (
+                    CollectedAksaraManager.Instance != null
+                    && CollectedAksaraManager.Instance.TryRegisterDrop(
+                        aksaraData.GestureShape
+                    )
                 );
 
             if (registeredDrop)
@@ -205,7 +208,8 @@ public class Enemy : MonoBehaviour
 
                     aksaraIconFragment.Initialize(
                         aksaraData,
-                        aksaraIconFragment.transform.position
+                        aksaraIconFragment.transform.position,
+                        isTutorial
                     );
 
                     if (aksaraIconRenderer != null)

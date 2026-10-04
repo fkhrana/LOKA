@@ -20,6 +20,7 @@ public class AksaraFragmentItem : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private AksaraData aksaraData;
+    private bool isTutorialItem;
     private Coroutine fallCoroutine;
     private Coroutine autoCollectCoroutine;
     private ParticleSystem[] dropVfxParticles;
@@ -39,12 +40,16 @@ public class AksaraFragmentItem : MonoBehaviour
         }
     }
 
-    public void Initialize(AksaraData data, Vector2 spawnPosition)
+    public void Initialize(
+        AksaraData data,
+        Vector2 spawnPosition,
+        bool tutorialItem = false)
     {
         if (data == null)
             return;
 
         aksaraData = data;
+        isTutorialItem = tutorialItem;
 
         if (spriteRenderer != null)
             spriteRenderer.sprite = data.IconSprite;
@@ -236,7 +241,9 @@ public class AksaraFragmentItem : MonoBehaviour
         if (aksaraData != null && CollectedAksaraManager.Instance != null)
         {
             CollectedAksaraManager.Instance.RegisterCollect(aksaraData);
-            PermanentCollectionManager.SaveCollected(aksaraData);
+
+            if (!isTutorialItem)
+                PermanentCollectionManager.SaveCollected(aksaraData);
         }
 
         Destroy(gameObject);
