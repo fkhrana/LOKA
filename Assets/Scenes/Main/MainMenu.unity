@@ -166,7 +166,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 2806740865155851768, guid: 702cd432c97f06749b221584c75770fd, type: 2}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: 4f37b1ea266b49b438890a70a533a867, type: 3}
+  m_Resource: {fileID: 8300000, guid: 99fba707e21d95c409334c4258b6a930, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -744,8 +744,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e279eee763f15e248bde69e9b13145ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneBGM
-  bgmClip: {fileID: 8300000, guid: 4f37b1ea266b49b438890a70a533a867, type: 3}
-  bgmName: Surat Ajaib Desa
+  bgmClip: {fileID: 8300000, guid: 99fba707e21d95c409334c4258b6a930, type: 3}
+  bgmName: Desa Aksara (main menu)
 --- !u!1 &511750228 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4221233685894886097, guid: d5378036f5e596b4cab84aad75e765ae, type: 3}
