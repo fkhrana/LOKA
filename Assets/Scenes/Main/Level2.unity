@@ -8878,6 +8878,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1928033410}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[1].comboSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: df376d7019f714d4fb8b251f1713d991, type: 3}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[0].freezeSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: 1e12f06c7d00c0943889f72ec99465f3, type: 3}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
+      propertyPath: slots.Array.data[2].shieldSFX
+      value: 
+      objectReference: {fileID: 8300000, guid: ca06cadcf94184840ae5fb210a2e0e61, type: 3}
+    - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[0].unlockOnStartForTesting
       value: 1
       objectReference: {fileID: 0}

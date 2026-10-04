@@ -3841,7 +3841,7 @@ PrefabInstance:
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[2].shieldSFX
       value: 
-      objectReference: {fileID: 8300000, guid: fae3499fbf16c0c4f892083f7b672852, type: 3}
+      objectReference: {fileID: 8300000, guid: ca06cadcf94184840ae5fb210a2e0e61, type: 3}
     - target: {fileID: 1005356059101813858, guid: 7e9402d190e25ce45a20060390b40280, type: 3}
       propertyPath: slots.Array.data[2].shieldDuration
       value: 10
