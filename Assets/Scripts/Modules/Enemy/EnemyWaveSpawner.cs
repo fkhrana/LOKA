@@ -89,6 +89,8 @@ public class EnemyWaveSpawner : MonoBehaviour
     [Header("Tutorial Gate")]
     [Tooltip("Kalau true, wave sequence tidak auto-start saat scene load jika tutorial belum selesai.")]
     [SerializeField] private bool waitForTutorialBeforeStart = false;
+    [Tooltip("Kalau true, guided tutorial yang sudah selesai juga memenuhi tutorial gate.")]
+    [SerializeField] private bool waitForGuidedTutorialBeforeStart = false;
 
     private readonly List<EnemyGestureCommand> spawnedEnemies =
         new List<EnemyGestureCommand>();
@@ -134,7 +136,11 @@ public class EnemyWaveSpawner : MonoBehaviour
             return;
         }
 
-        if (waitForTutorialBeforeStart && !GameProgressManager.IsTutorialCompleted())
+        bool tutorialCompleted = GameProgressManager.IsTutorialCompleted();
+        if (waitForGuidedTutorialBeforeStart)
+            tutorialCompleted |= GameProgressManager.IsGuidedTutorialCompleted();
+
+        if (waitForTutorialBeforeStart && !tutorialCompleted)
         {
             Debug.Log("[EnemyWaveSpawner] Menunggu tutorial selesai — wave sequence di-skip.");
             return;
