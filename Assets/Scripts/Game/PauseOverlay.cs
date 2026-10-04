@@ -51,6 +51,10 @@ public class PauseOverlay : MonoBehaviour
 
     private bool wasFinishPanelActive = false;
 
+    // ⬇️ TAMBAH — simpan state panel guided sebelum di-hide
+    private bool wasGuidedPanelActive = false;
+    // ⬆️ SAMPAI SINI
+
     private void Start()
     {
         Time.timeScale = 1f;
@@ -168,7 +172,13 @@ public class PauseOverlay : MonoBehaviour
             SetIntroUIVisible(false);
             GetTutorialManager()?.SetTutorialVisualsVisible(false);
 
-            SetGuidedTutorialPanelVisible(false);
+            // ⬇️ GANTI — simpan state panel guided sebelum hide
+            if (guidedTutorialPanelToHide != null)
+            {
+                wasGuidedPanelActive = guidedTutorialPanelToHide.activeSelf;
+                guidedTutorialPanelToHide.SetActive(false);
+            }
+            // ⬆️ SAMPAI SINI
 
             if (tutorialHintManager != null)
                 tutorialHintManager.HideCircleTemporarily();
@@ -189,7 +199,14 @@ public class PauseOverlay : MonoBehaviour
         SetIntroUIVisible(true);
         GetTutorialManager()?.SetTutorialVisualsVisible(true);
 
-        SetGuidedTutorialPanelVisible(true);
+        // ⬇️ GANTI — cuma restore kalau tadinya aktif DAN tutorial masih jalan
+        if (guidedTutorialPanelToHide != null)
+        {
+            bool tutorialRunning = GameProgressManager.IsGuidedTutorialActive;
+            guidedTutorialPanelToHide.SetActive(wasGuidedPanelActive && tutorialRunning);
+        }
+        wasGuidedPanelActive = false;
+        // ⬆️ SAMPAI SINI
 
         if (tutorialHintManager != null)
             tutorialHintManager.RestoreCircle();
@@ -303,6 +320,7 @@ public class PauseOverlay : MonoBehaviour
         if (isTransitioning) return;
 
         ResetGuidedTutorialIfMidway();
+        ResetTutorialFlags();
 
         if (!levelCompletionSaved &&
             LevelProgressManager.Instance != null &&
@@ -346,13 +364,25 @@ public class PauseOverlay : MonoBehaviour
         StartCoroutine(FadeAndLoadScene(mainMenuSceneName));
     }
 
+    private void ResetTutorialFlags()
+    {
+        GuidedTutorialManager.ForceReset();
+        PowerUpTutorialManager.ForceReset();
+        BossLevelPowerUpTutorial.ForceReset();
+        TutorialManager.IsTrainingMode = false;
+
+        Debug.Log("[PauseOverlay] 🧹 Semua flag tutorial di-reset.");
+    }
+
     private void ResetGuidedTutorialIfMidway()
     {
         if (!GameProgressManager.IsGuidedTutorialActive) return;
-        if (GameProgressManager.IsGuidedTutorialCompleted()) return;
 
+        // Flag aktif selalu harus mati saat keluar scene,
+        // karena tutorial tidak mungkin lanjut di scene MainMenu.
         GameProgressManager.SetGuidedTutorialActive(false);
-        Debug.Log("[PauseOverlay] Keluar di tengah guided tutorial → reset flag aktif.");
+
+        Debug.Log("[PauseOverlay] Keluar saat guided tutorial aktif → reset flag aktif.");
     }
 
     private void SaveGameplayProgress()

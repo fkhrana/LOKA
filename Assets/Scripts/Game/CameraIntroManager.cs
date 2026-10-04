@@ -33,12 +33,15 @@ public class CameraIntroManager : MonoBehaviour
 
     private Vector3 posisiKiri;
     private Vector3 posisiKanan;
-    private Vector3 cameraStartPosition;       // ✅ BARU
-    private bool cameraStartCaptured = false;   // ✅ BARU
+    private Vector3 cameraStartPosition;
+    private bool cameraStartCaptured = false;
     private bool isCountdownActive = false;
     private Coroutine introCoroutine;
     private bool introCancelled = false;
     public bool IsCountdownActive => isCountdownActive;
+
+    // ⬇️ TAMBAH — buat Fix 2 (blok koleksi selama pan)
+    public bool IsIntroRunning { get; private set; }
 
     private void Awake()
     {
@@ -60,6 +63,16 @@ public class CameraIntroManager : MonoBehaviour
         isCountdownActive = false;
         introCancelled = false;
         DisableGesture();
+
+        // ⬇️ TAMBAH — bersihkan flag training basi dari scene sebelumnya,
+        // kecuali ada tutorial yang memang sedang aktif di scene ini.
+        if (!PowerUpTutorialManager.IsPowerUpTutorial &&
+            !BossLevelPowerUpTutorial.IsBossLevelTutorial &&
+            !GameProgressManager.IsGuidedTutorialActive)
+        {
+            TutorialManager.IsTrainingMode = false;
+        }
+        // ⬆️ SAMPAI SINI
 
         // ✅ Simpan posisi awal kamera
         if (mainCamera != null && !cameraStartCaptured)
@@ -192,6 +205,7 @@ public class CameraIntroManager : MonoBehaviour
 
         isCountdownActive = false;
         GameStarted = false;
+        IsIntroRunning = false;   // ⬅️ TAMBAH
         DisableGesture();
 
         Debug.Log("[CameraIntroManager] ⏹️ Semua intro/panning/countdown di-stop + kamera direset.");
@@ -199,71 +213,79 @@ public class CameraIntroManager : MonoBehaviour
 
     private IEnumerator MainkanIntro(bool withPanning, System.Action onCompleted = null)
     {
+        IsIntroRunning = true;   // ⬅️ TAMBAH
         introCancelled = false;
         DisableGesture();
 
-        if (withPanning)
+        try
         {
-            posisiKiri = mainCamera.transform.position;
-            posisiKanan = new Vector3(targetKanan.position.x, posisiKiri.y, posisiKiri.z);
+            if (withPanning)
+            {
+                posisiKiri = mainCamera.transform.position;
+                posisiKanan = new Vector3(targetKanan.position.x, posisiKiri.y, posisiKiri.z);
 
-            yield return new WaitForSeconds(jedaAwal);
+                yield return new WaitForSeconds(jedaAwal);
+                if (introCancelled) yield break;
+
+                Debug.Log("Intro: Kamera menuju musuh...");
+                yield return StartCoroutine(GerakkanKamera(posisiKiri, posisiKanan, durasiPan));
+                if (introCancelled) yield break;
+
+                Debug.Log("Intro: Melihat musuh...");
+                yield return new WaitForSeconds(jedaLihatMusuh);
+                if (introCancelled) yield break;
+
+                Debug.Log("Intro: Kamera kembali ke tengah...");
+                yield return StartCoroutine(GerakkanKamera(posisiKanan, posisiKiri, durasiPan));
+                if (introCancelled) yield break;
+            }
+            else
+            {
+                yield return new WaitForSeconds(jedaSebelumCountdown);
+                if (introCancelled) yield break;
+            }
+
+            if (countdownImage == null)
+            {
+                Debug.LogWarning("[CameraIntroManager] Countdown Image kosong. Langsung mulai.");
+                GameStarted = true;
+                EnableGesture();
+                onCompleted?.Invoke();
+                yield break;
+            }
+
+            GameStarted = false;
+            countdownImage.gameObject.SetActive(true);
+            isCountdownActive = true;
+
+            if (AudioManager.Instance != null && countdownSFX != null)
+                AudioManager.Instance.PlaySFX(countdownSFX);
+
+            yield return StartCoroutine(TampilkanEfekPopUp(gambar3));
             if (introCancelled) yield break;
 
-            Debug.Log("Intro: Kamera menuju musuh...");
-            yield return StartCoroutine(GerakkanKamera(posisiKiri, posisiKanan, durasiPan));
+            yield return StartCoroutine(TampilkanEfekPopUp(gambar2));
             if (introCancelled) yield break;
 
-            Debug.Log("Intro: Melihat musuh...");
-            yield return new WaitForSeconds(jedaLihatMusuh);
+            yield return StartCoroutine(TampilkanEfekPopUp(gambar1));
             if (introCancelled) yield break;
 
-            Debug.Log("Intro: Kamera kembali ke tengah...");
-            yield return StartCoroutine(GerakkanKamera(posisiKanan, posisiKiri, durasiPan));
+            yield return StartCoroutine(TampilkanEfekPopUp(gambarMulai));
             if (introCancelled) yield break;
-        }
-        else
-        {
-            yield return new WaitForSeconds(jedaSebelumCountdown);
-            if (introCancelled) yield break;
-        }
 
-        if (countdownImage == null)
-        {
-            Debug.LogWarning("[CameraIntroManager] Countdown Image kosong. Langsung mulai.");
+            countdownImage.gameObject.SetActive(false);
+            isCountdownActive = false;
+
             GameStarted = true;
             EnableGesture();
+
+            Debug.Log("GAME DIMULAI! GameStarted=" + GameStarted);
             onCompleted?.Invoke();
-            yield break;
         }
-
-        GameStarted = false;
-        countdownImage.gameObject.SetActive(true);
-        isCountdownActive = true;
-
-        if (AudioManager.Instance != null && countdownSFX != null)
-            AudioManager.Instance.PlaySFX(countdownSFX);
-
-        yield return StartCoroutine(TampilkanEfekPopUp(gambar3));
-        if (introCancelled) yield break;
-
-        yield return StartCoroutine(TampilkanEfekPopUp(gambar2));
-        if (introCancelled) yield break;
-
-        yield return StartCoroutine(TampilkanEfekPopUp(gambar1));
-        if (introCancelled) yield break;
-
-        yield return StartCoroutine(TampilkanEfekPopUp(gambarMulai));
-        if (introCancelled) yield break;
-
-        countdownImage.gameObject.SetActive(false);
-        isCountdownActive = false;
-
-        GameStarted = true;
-        EnableGesture();
-
-        Debug.Log("GAME DIMULAI! GameStarted=" + GameStarted);
-        onCompleted?.Invoke();
+        finally
+        {
+            IsIntroRunning = false;   // ⬅️ TAMBAH — selalu ke-reset, apapun yang terjadi
+        }
     }
 
     private IEnumerator GerakkanKamera(Vector3 posisiAwal, Vector3 posisiAkhir, float durasi)

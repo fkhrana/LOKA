@@ -41,6 +41,17 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         Time.timeScale = 1f;
+
+        // ⬇️ TAMBAH — Main Menu tidak pernah butuh flag tutorial/training.
+        // Flag static bisa nyangkut kalau pemain keluar di tengah tutorial.
+        // Reset di sini = lapis paling awal & paling aman (tidak bergantung nama scene).
+        TutorialManager.IsTrainingMode = false;
+        PowerUpTutorialManager.ForceReset();
+        BossLevelPowerUpTutorial.ForceReset();
+        GuidedTutorialManager.ForceReset();
+        GameProgressManager.SetGuidedTutorialActive(false);
+        // ⬆️ SAMPAI SINI
+
         CloseAllPanels();
     }
 
@@ -164,33 +175,39 @@ public class MainMenu : MonoBehaviour
     public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
     public void TapToStart()
+{
+    if (isTransitioning) return;
+
+    PlayClickSFX();
+
+    string targetScene = nextSceneName;
+
+    // ⬇️ Cutscene cuma muncul kalau BELUM PERNAH nonton
+    if (!GameProgressManager.IsCutsceneCompleted())
     {
-        if (isTransitioning) return;
-
-        PlayClickSFX();
-
-        int currentLevel = PlayerPrefs.GetInt("CurrentLevelIndex", 0);
-        bool tutorialCompleted = GameProgressManager.IsTutorialCompleted(currentLevel);
-        string targetScene = nextSceneName;
-
-        if (!tutorialCompleted)
-        {
-            Debug.Log($"[MainMenu] Player baru → Cutscene: {targetScene}");
-        }
-        else if (GameProgressManager.HasLastScene())
-        {
-            string saved = GameProgressManager.GetLastScene();
-
-            if (!string.IsNullOrEmpty(saved))
-            {
-                targetScene = saved;
-                Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
-            }
-        }
-
-        isTransitioning = true;
-        StartCoroutine(FadeAndLoadScene(targetScene));
+        Debug.Log($"[MainMenu] Cutscene belum nonton → ke Cutscenee: {targetScene}");
     }
+    else if (GameProgressManager.HasLastScene())
+    {
+        // ⬇️ Cutscene udah nonton → resume ke scene terakhir
+        string saved = GameProgressManager.GetLastScene();
+
+        if (!string.IsNullOrEmpty(saved))
+        {
+            targetScene = saved;
+            Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
+        }
+    }
+    else
+    {
+        // ⬇️ Cutscene udah nonton tapi lastScene kosong → fallback gameplay
+        targetScene = "MainGameplay(Drawing)";
+        Debug.Log($"[MainMenu] Cutscene udah nonton, langsung gameplay: {targetScene}");
+    }
+
+    isTransitioning = true;
+    StartCoroutine(FadeAndLoadScene(targetScene));
+}
 
     private IEnumerator FadeAndLoadScene(string sceneName)
     {

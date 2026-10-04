@@ -51,7 +51,17 @@ public static class PermanentCollectionManager
 
         // Training mode → cek memory.
         if (TutorialManager.IsTrainingMode)
+        {
+            // ⬇️ TAMBAH — log diagnostik sementara (Fix 9)
+            // Hapus setelah bug 2 selesai ditrace.
+            Debug.LogWarning($"[PermanentCollection] IsCollected pakai data TRAINING untuk {data.AksaraName}. " +
+                             $"PowerUpTut={PowerUpTutorialManager.IsPowerUpTutorial}, " +
+                             $"BossTut={BossLevelPowerUpTutorial.IsBossLevelTutorial}, " +
+                             $"Guided={GameProgressManager.IsGuidedTutorialActive}");
+            // ⬆️ SAMPAI SINI
+
             return trainingCollected.Contains(key);
+        }
 
         // Normal mode → cek PlayerPrefs.
         return PlayerPrefs.GetInt(key, 0) == 1;

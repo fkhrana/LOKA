@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;   // ⬅️ TAMBAH
 
 public class PowerManager : MonoBehaviour
 {
@@ -103,11 +104,6 @@ public class PowerManager : MonoBehaviour
     public static float ActiveComboRadius { get; private set; }
 
     #region Tutorial Gate Helper
-    /// <summary>
-    /// Cek apakah salah satu tutorial power-up sedang aktif.
-    /// Dipakai supaya tombol power-up bisa diklik selama tutorial
-    /// (baik tutorial biasa maupun tutorial boss).
-    /// </summary>
     private static bool IsAnyPowerUpTutorialActive()
     {
         return PowerUpTutorialManager.IsPowerUpTutorial
@@ -118,6 +114,8 @@ public class PowerManager : MonoBehaviour
     private void Awake()
     {
         isShieldActive = false;
+        isComboActive = false;        // ⬅️ TAMBAH
+        ActiveComboRadius = 0f;       // ⬅️ TAMBAH
         shieldKnockbackToSpawn = false;
         shieldKnockbackDistance = 0f;
         shieldKnockbackRadius = 0f;
@@ -148,7 +146,23 @@ public class PowerManager : MonoBehaviour
             if (slot.powerUpButton != null)
             {
                 PowerUpType capturedType = slot.powerUpType;
-                slot.powerUpButton.onClick.AddListener(() => UsePowerUp(capturedType));
+
+                // ⬇️ GANTI — listener baru dengan EventSystem reset
+                slot.powerUpButton.onClick.AddListener(() =>
+                {
+                    UsePowerUp(capturedType);
+
+                    // Lepas state Selected supaya tint tidak nyangkut
+                    // walau aksinya ditolak (misal isFrozen)
+                    if (EventSystem.current != null)
+                        EventSystem.current.SetSelectedGameObject(null);
+                });
+
+                // Tombol tidak ikut sistem navigation/selected
+                var nav = slot.powerUpButton.navigation;
+                nav.mode = Navigation.Mode.None;
+                slot.powerUpButton.navigation = nav;
+                // ⬆️ SAMPAI SINI
             }
 
             RefreshVisual(slot, animate: false);
@@ -161,7 +175,6 @@ public class PowerManager : MonoBehaviour
 
     private void Update()
     {
-        // === FIX: tutorial biasa DAN tutorial boss boleh klik ===
         bool canClick = CameraIntroManager.GameStarted
                      || IsAnyPowerUpTutorialActive();
 
@@ -189,7 +202,6 @@ public class PowerManager : MonoBehaviour
 
     private void RefreshButtonsInteractable()
     {
-        // === FIX: tutorial biasa DAN tutorial boss boleh klik ===
         bool canClick = CameraIntroManager.GameStarted
                      || IsAnyPowerUpTutorialActive();
 
@@ -251,7 +263,6 @@ public class PowerManager : MonoBehaviour
 
     public void UsePowerUp(PowerUpType type)
     {
-        // === FIX: tutorial biasa DAN tutorial boss boleh pakai power-up ===
         if (!CameraIntroManager.GameStarted && !IsAnyPowerUpTutorialActive())
             return;
 

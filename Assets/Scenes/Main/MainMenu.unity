@@ -1279,12 +1279,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
     - {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
   - label: Level4
-    aksaraList:
-    - {fileID: 11400000, guid: 83426502dea823640824947a21e7d660, type: 2}
-    - {fileID: 11400000, guid: 7d975cdc880be0843b927e08cedc65ac, type: 2}
-    - {fileID: 11400000, guid: 0f8715c454a2f4346bd7da4998aa2dc7, type: 2}
-    - {fileID: 11400000, guid: 2df7735a471baab46869007c77c62854, type: 2}
-    - {fileID: 11400000, guid: e06e5c01bb22e8b4c93049e76e67c8f7, type: 2}
+    aksaraList: []
   failureSound: {fileID: 8300000, guid: 5cf55f2e11878a24c9c232f4e282252f, type: 3}
   successSound: {fileID: 8300000, guid: b86a2ba37c553b54face8f3d5677d112, type: 3}
   gameplaySceneNames:

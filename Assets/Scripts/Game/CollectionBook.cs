@@ -132,6 +132,17 @@ public class CollectionPanel : MonoBehaviour
         Instance = this;
     }
 
+    // ⬇️ TAMBAH — reset Time.timeScale & Instance saat scene ditinggal
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+            Time.timeScale = 1f;
+        }
+    }
+    // ⬆️ SAMPAI SINI
+
     // =========================
     // HUD HELPERS
     // =========================
@@ -218,6 +229,15 @@ public class CollectionPanel : MonoBehaviour
     {
         if (isOpen) return;
 
+        // ⬇️ TAMBAH — blok buka koleksi selama camera intro/pan masih jalan
+        if (CameraIntroManager.Instance != null &&
+            CameraIntroManager.Instance.IsIntroRunning)
+        {
+            Debug.Log("[CollectionPanel] Intro masih jalan → tolak buka koleksi.");
+            return;
+        }
+        // ⬆️ SAMPAI SINI
+
         isOpen = true;
         HidePauseButton();
         collectionPanel?.SetActive(true);
@@ -270,6 +290,15 @@ public class CollectionPanel : MonoBehaviour
     public void OpenCollection2()
     {
         if (collectionPanel2 == null) return;
+
+        // ⬇️ TAMBAH — blok buka koleksi selama camera intro/pan masih jalan
+        if (CameraIntroManager.Instance != null &&
+            CameraIntroManager.Instance.IsIntroRunning)
+        {
+            Debug.Log("[CollectionPanel] Intro masih jalan → tolak buka koleksi 2.");
+            return;
+        }
+        // ⬆️ SAMPAI SINI
 
         HidePauseButton();
         collectionPanel2.SetActive(true);

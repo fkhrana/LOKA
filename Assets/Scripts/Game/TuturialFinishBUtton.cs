@@ -8,12 +8,25 @@ public class TutorialFinishButton : MonoBehaviour
     [Tooltip("Root FinishPanel. Akan disembunyikan saat tombol YA / Ulang diklik.")]
     [SerializeField] private GameObject finishPanelRoot;
 
-    // ✅ Dipasang ke tombol "YA"
     public void OnClickFinish()
     {
         Debug.Log("[TutorialFinishButton] ✅ Tombol YA diklik.");
 
-        // ✅ FIX: Sembunyikan FinishPanel dulu
+        // ⬇️ TAMBAH — log diagnostik (hapus setelah bug selesai)
+        if (finishPanelRoot == null)
+        {
+            Debug.LogError("[TutorialFinishButton] ❌ finishPanelRoot BELUM di-assign di Inspector!");
+        }
+        else
+        {
+            Debug.Log($"[TutorialFinishButton] finishPanelRoot='{finishPanelRoot.name}', " +
+                      $"activeSelf={finishPanelRoot.activeSelf}, " +
+                      $"activeInHierarchy={finishPanelRoot.activeInHierarchy}, " +
+                      $"parent='{(finishPanelRoot.transform.parent != null ? finishPanelRoot.transform.parent.name : "null")}'");
+        }
+        // ⬆️ SAMPAI SINI
+
+        // Sembunyikan FinishPanel
         if (finishPanelRoot != null)
             finishPanelRoot.SetActive(false);
 
@@ -31,7 +44,6 @@ public class TutorialFinishButton : MonoBehaviour
         }
     }
 
-    // ✅ Dipasang ke tombol "ULANG"
     public void OnClickRestart()
     {
         Debug.Log("[TutorialFinishButton] 🔄 Tombol ULANG diklik → restart tutorial.");

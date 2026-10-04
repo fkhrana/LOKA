@@ -65,6 +65,22 @@ public class GuidedTutorialManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool debugLog = true;
 
+    // ⬇️ Static
+    private static GuidedTutorialManager owner;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        owner = null;
+    }
+
+    public static void ForceReset()
+    {
+        owner = null;
+        TutorialManager.IsTrainingMode = false;
+        GameProgressManager.SetGuidedTutorialActive(false);
+    }
+
     private Step currentStep = Step.Idle;
 
     private bool gestureSubscribed;
@@ -75,10 +91,42 @@ public class GuidedTutorialManager : MonoBehaviour
 
     private bool tutorialFinishConfirmed = false;
 
+    // ⬇️ TAMBAH — flag biar intro cuma jalan sekali
+    private bool introStarted = false;
+    // ⬆️ SAMPAI SINI
+
+    // ⬇️ TAMBAH — Awake: hide panel kalau guided tutorial udah selesai
+    private void Awake()
+    {
+        // Tutorial sudah selesai (termasuk keluar sebelum klik YA)
+        // → panel guided tidak boleh tampil saat scene dimuat ulang.
+        if (GameProgressManager.IsGuidedTutorialCompleted())
+            HideGuidedTutorialUI();
+    }
+    // ⬆️ SAMPAI SINI
+
     public void BeginTutorial()
     {
         if (currentStep != Step.Idle)
             return;
+
+        // ⬇️ TAMBAH — kalau udah selesai, skip
+        if (GameProgressManager.IsGuidedTutorialCompleted())
+        {
+            Debug.Log("[GuidedTutorial] Tutorial udah selesai → skip & hide UI.");
+
+            if (overlay != null) overlay.SetActive(false);
+            if (guidedTutorialPanel != null) guidedTutorialPanel.SetActive(false);
+
+            GameProgressManager.SetGuidedTutorialActive(false);
+            TutorialManager.IsTrainingMode = false;
+            currentStep = Step.Done;
+            return;
+        }
+        // ⬆️ SAMPAI SINI
+
+        owner = this;
+        introStarted = false;   // ⬅️ TAMBAH — reset flag intro
 
         GameProgressManager.SetGuidedTutorialActive(true);
 
@@ -111,6 +159,24 @@ public class GuidedTutorialManager : MonoBehaviour
         CleanupLeakedEnemies();
 
         StartCoroutine(BeginTutorialDelayed());
+    }
+
+    public void ForceHideUI()
+    {
+        Debug.Log("[GuidedTutorial] ForceHideUI dipanggil.");
+
+        StopAllCoroutines();
+
+        if (overlay != null) overlay.SetActive(false);
+        if (guidedTutorialPanel != null) guidedTutorialPanel.SetActive(false);
+
+        ClearStepText();
+        SetGestureEnabled(false);
+
+        currentStep = Step.Done;
+        tutorialFinishConfirmed = false;
+        GameProgressManager.SetGuidedTutorialActive(false);
+        TutorialManager.IsTrainingMode = false;
     }
 
     private IEnumerator BeginTutorialDelayed()
@@ -769,36 +835,25 @@ public class GuidedTutorialManager : MonoBehaviour
             puzzleManager.ResetPuzzleStateForGameplay();
 
             puzzleManager.RestoreGameplaySlots();
+
+            // Jaring pengaman: pastikan FinishPanel muncul
+            puzzleManager.ShowFinishPanelForTutorial();
         }
 
         GameProgressManager.MarkGuidedTutorialCompleted();
 
         currentStep = Step.Done;
 
-        StartCoroutine(
-            WaitForFinishConfirmationRoutine()
-        );
-    }
-
-    private IEnumerator WaitForFinishConfirmationRoutine()
-    {
-        tutorialFinishConfirmed = false;
-
-        yield return new WaitUntil(
-            () => tutorialFinishConfirmed
-        );
-
-        StartCameraIntroThenWave();
+        // ⬇️ HAPUS — nggak pakai coroutine lagi
+        // StartCoroutine(WaitForFinishConfirmationRoutine());
+        // ⬆️ SAMPAI SINI
     }
 
     public void OnTutorialFinishConfirmed()
     {
-        Log(
-            "✅ Tombol YA diklik. Membersihkan Guided Tutorial UI."
-        );
+        Log("✅ Tombol YA diklik. Membersihkan Guided Tutorial UI.");
 
         tutorialFinishConfirmed = true;
-
         GameProgressManager.SetGuidedTutorialActive(false);
 
         HideGuidedTutorialUI();
@@ -806,9 +861,12 @@ public class GuidedTutorialManager : MonoBehaviour
         if (puzzleManager != null)
             puzzleManager.HideFinishPanel();
 
-        Log(
-            "✅ Konfirmasi FinishPanel. Guided Tutorial disembunyikan."
-        );
+        // ⬇️ LANGSUNG mulai intro — nggak nunggu coroutine
+        if (introStarted) return;
+        introStarted = true;
+
+        StartCameraIntroThenWave();
+        // ⬆️ SAMPAI SINI
     }
 
     // =========================================================
@@ -817,13 +875,14 @@ public class GuidedTutorialManager : MonoBehaviour
 
     public void RestartTutorial()
     {
-        Log(
-            "🔄 Restart tutorial dari awal."
-        );
+        Log("🔄 Restart tutorial dari awal.");
 
         GameProgressManager.ResetGuidedTutorial();
 
         GameProgressManager.SetGuidedTutorialActive(true);
+
+        owner = this;
+        introStarted = false;   // ⬅️ TAMBAH — reset flag intro
 
         if (playerHealth != null)
         {
@@ -841,9 +900,7 @@ public class GuidedTutorialManager : MonoBehaviour
         {
             helper.ResetForTutorial();
 
-            Log(
-                "✅ LowHealthHelper direset."
-            );
+            Log("✅ LowHealthHelper direset.");
         }
 
         if (overlay != null)
@@ -884,9 +941,7 @@ public class GuidedTutorialManager : MonoBehaviour
 
         BeginTutorial();
 
-        Log(
-            "✅ Restart selesai. Tutorial jalan dari Step 1."
-        );
+        Log("✅ Restart selesai. Tutorial jalan dari Step 1.");
     }
 
     // =========================================================
@@ -895,31 +950,22 @@ public class GuidedTutorialManager : MonoBehaviour
 
     private void StartCameraIntroThenWave()
     {
-        Debug.Log(
-            "=== [GuidedTutorial] StartCameraIntroThenWave ==="
-        );
+        Debug.Log("=== [GuidedTutorial] StartCameraIntroThenWave ===");
 
         ResumeWaveSpawner();
 
         if (CameraIntroManager.Instance == null)
         {
-            Log(
-                "⚠️ CameraIntroManager null — langsung mulai gameplay."
-            );
-
+            Log("⚠️ CameraIntroManager null — langsung mulai gameplay.");
             return;
         }
 
-        Log(
-            "🎥 Mulai camera intro setelah tutorial."
-        );
+        Log("🎥 Mulai camera intro setelah tutorial.");
 
         CameraIntroManager.Instance.StartIntroAfterTutorial(
             () =>
             {
-                Log(
-                    "✅ Camera intro selesai."
-                );
+                Log("✅ Camera intro selesai.");
             }
         );
     }
@@ -933,9 +979,7 @@ public class GuidedTutorialManager : MonoBehaviour
 
         enemyWaveSpawner.StartWaveSequence();
 
-        Log(
-            "▶️ EnemyWaveSpawner di-resume."
-        );
+        Log("▶️ EnemyWaveSpawner di-resume.");
     }
 
     // =========================================================
@@ -971,10 +1015,7 @@ public class GuidedTutorialManager : MonoBehaviour
             stepDescription.text = "";
     }
 
-    private void SetText(
-        string title,
-        string desc
-    )
+    private void SetText(string title, string desc)
     {
         if (stepTitle != null)
             stepTitle.text = title;
@@ -987,9 +1028,7 @@ public class GuidedTutorialManager : MonoBehaviour
     // INPUT
     // =========================================================
 
-    private void SetGestureEnabled(
-        bool enabled
-    )
+    private void SetGestureEnabled(bool enabled)
     {
         if (gestureDrawer == null)
             return;
@@ -1004,9 +1043,7 @@ public class GuidedTutorialManager : MonoBehaviour
     // STEP DELAY
     // =========================================================
 
-    private IEnumerator NextStepRoutine(
-        Step next
-    )
+    private IEnumerator NextStepRoutine(Step next)
     {
         yield return new WaitForSeconds(
             delayBetweenSteps
@@ -1022,23 +1059,24 @@ public class GuidedTutorialManager : MonoBehaviour
     private void OnDestroy()
     {
         UnsubscribeGesture();
-
         UnsubscribeHeal();
-
         UnsubscribeDamage();
+
+        if (owner == this)
+        {
+            owner = null;
+            TutorialManager.IsTrainingMode = false;
+            GameProgressManager.SetGuidedTutorialActive(false);
+        }
     }
 
     // =========================================================
     // DEBUG
     // =========================================================
 
-    private void Log(
-        string msg
-    )
+    private void Log(string msg)
     {
         if (debugLog)
-            Debug.Log(
-                $"[GuidedTutorial] {msg}"
-            );
+            Debug.Log($"[GuidedTutorial] {msg}");
     }
 }

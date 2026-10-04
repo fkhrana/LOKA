@@ -7,6 +7,23 @@ public class PowerUpTutorialManager : MonoBehaviour
 {
     #region Static
     public static bool IsPowerUpTutorial { get; private set; }
+
+    // ⬇️ TAMBAH — owner buat cegah OnDestroy scene lama nimpa flag scene baru
+    private static PowerUpTutorialManager owner;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        IsPowerUpTutorial = false;
+        owner = null;
+    }
+
+    public static void ForceReset()
+    {
+        owner = null;
+        IsPowerUpTutorial = false;
+        TutorialManager.IsTrainingMode = false;
+    }
     #endregion
 
     #region Tutorial State
@@ -91,6 +108,10 @@ public class PowerUpTutorialManager : MonoBehaviour
 
     private Vector3 approachReferencePosition;
     private bool approachReferenceValid = false;
+
+    // ⬇️ TAMBAH — cache warna asli tombol
+    private ColorBlock originalColors;
+    private bool originalColorsCached;
     #endregion
 
     #region Unity Lifecycle
@@ -102,6 +123,10 @@ public class PowerUpTutorialManager : MonoBehaviour
         {
             IsPowerUpTutorial = false;
 
+            // Tutorial ini tidak aktif → jangan biarkan flag training basi
+            if (!GameProgressManager.IsGuidedTutorialActive)
+                TutorialManager.IsTrainingMode = false;
+
             if (debugLog)
                 Debug.Log("[PowerUpTutorialManager] Tutorial sudah selesai — skip.");
 
@@ -111,10 +136,12 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
+        owner = this;
 
         if (gestureDrawer == null)
             gestureDrawer = FindFirstObjectByType<GestureDrawer>();
 
+        CacheOriginalButtonColors();
         HookButtons();
         DisableRaycastOnTutorialUI();
     }
@@ -147,6 +174,14 @@ public class PowerUpTutorialManager : MonoBehaviour
     {
         StopAllCoroutines();
         PowerManager.OnAnyPowerUpEnded -= HandlePowerUpEnded;
+
+        // Scene ditinggal di tengah tutorial → jangan bocor ke scene berikutnya
+        if (owner == this)
+        {
+            owner = null;
+            IsPowerUpTutorial = false;
+            TutorialManager.IsTrainingMode = false;
+        }
     }
     #endregion
 
@@ -194,6 +229,7 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
+        owner = this;
 
         SetOverlayActive(false);
         fingerTap?.Hide();
@@ -220,6 +256,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     {
         IsPowerUpTutorial = true;
         TutorialManager.IsTrainingMode = true;
+        owner = this;
 
         SetActive(startPanel, false);
 
@@ -338,6 +375,8 @@ public class PowerUpTutorialManager : MonoBehaviour
 
         IsPowerUpTutorial = false;
         TutorialManager.IsTrainingMode = false;
+        owner = null;   // ⬅️ TAMBAH — biar OnDestroy nggak reset flag lagi
+
         PowerManager.ResetAllPowerUpsToFullGlobal();
 
         if (debugLog)
@@ -388,6 +427,7 @@ public class PowerUpTutorialManager : MonoBehaviour
     {
         IsPowerUpTutorial = false;
         TutorialManager.IsTrainingMode = false;
+        owner = null;   // ⬅️ TAMBAH — biar OnDestroy nggak reset flag lagi
 
         SetGestureEnabled(true);
         SetPowerUpButtonInteractable(true);
@@ -443,11 +483,19 @@ public class PowerUpTutorialManager : MonoBehaviour
     #endregion
 
     #region Button Visual Feedback
+    private void CacheOriginalButtonColors()
+    {
+        if (powerUpButton == null || originalColorsCached) return;
+        originalColors = powerUpButton.colors;
+        originalColorsCached = true;
+    }
+
     private void PlayButtonPressedFeedback()
     {
         if (powerUpButton == null) return;
+        CacheOriginalButtonColors();
 
-        ColorBlock cb = powerUpButton.colors;
+        ColorBlock cb = originalColors;   // mulai dari warna asli
         cb.normalColor = buttonPressedColor;
         cb.selectedColor = buttonPressedColor;
         cb.highlightedColor = buttonPressedColor;
@@ -458,13 +506,8 @@ public class PowerUpTutorialManager : MonoBehaviour
     private void ResetButtonVisual()
     {
         if (powerUpButton == null) return;
-
-        ColorBlock cb = powerUpButton.colors;
-        cb.normalColor = buttonNormalColor;
-        cb.selectedColor = buttonNormalColor;
-        cb.highlightedColor = buttonNormalColor;
-        cb.disabledColor = buttonNormalColor;
-        powerUpButton.colors = cb;
+        CacheOriginalButtonColors();
+        powerUpButton.colors = originalColors;   // kembalikan persis seperti semula
     }
     #endregion
 

@@ -7740,11 +7740,11 @@ MonoBehaviour:
   step2Damage: 20
   maxRetry: 4
   retryCooldown: 1
-  delayBetweenSteps: 1.5
+  delayBetweenSteps: 0.5
   delayBeforeHealHint: 1
-  waitForCollectTimeout: 15
+  waitForCollectTimeout: 5
   waitForEnemyHitTimeout: 15
-  waitAfterEnemyDeath: 1
+  waitAfterEnemyDeath: 0.5
   waitBeforePuzzle: 2
   waitAfterPuzzle: 1.5
   puzzlePanelAppearDelay: 1
