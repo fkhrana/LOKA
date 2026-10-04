@@ -589,13 +589,22 @@ public class EnemyGestureCommand : MonoBehaviour
         if (activeList.Count == 1)
             return activeList[0];
 
-        Vector2 strokeCenter = GetStrokeCenter(points);
+        Vector2 targetPosition = GetStrokeCenter(points);
+        foreach (var enemy in activeList)
+        {
+            if (enemy.playerTransform != null)
+            {
+                targetPosition = enemy.playerTransform.position;
+                break;
+            }
+        }
+
         EnemyGestureCommand nearest = null;
         float nearestSqr = float.MaxValue;
 
         foreach (var enemy in activeList)
         {
-            var delta = (Vector2)enemy.transform.position - strokeCenter;
+            var delta = (Vector2)enemy.transform.position - targetPosition;
             float sqr = delta.sqrMagnitude;
             if (sqr < nearestSqr)
             {
