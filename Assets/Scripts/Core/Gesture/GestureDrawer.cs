@@ -358,7 +358,7 @@ public class GestureDrawer : MonoBehaviour
 
         GestureShape expectedShape = GetExpectedShape();
 
-        if (expectedShape != GestureShape.None &&
+        if (expectedShape != GestureShape.Unknown &&
             GestureRecognizer.Instance != null)
         {
             bool hasMatchingTemplate =
@@ -391,7 +391,7 @@ public class GestureDrawer : MonoBehaviour
             }
         }
 
-        if (expectedShape == GestureShape.None &&
+        if (expectedShape == GestureShape.Unknown &&
             EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(
                 completedStrokes.Count))
         {
@@ -402,7 +402,7 @@ public class GestureDrawer : MonoBehaviour
             return;
         }
 
-        if (expectedShape == GestureShape.None &&
+        if (expectedShape == GestureShape.Unknown &&
             BossEnemy.HasActiveBossWithMoreStrokes(
                 completedStrokes.Count))
         {
@@ -414,7 +414,7 @@ public class GestureDrawer : MonoBehaviour
         }
 
         if (completedStrokes.Count == 1 &&
-            expectedShape == GestureShape.None &&
+            expectedShape == GestureShape.Unknown &&
             !EnemyGestureCommand.HasActiveEnemyWithMoreStrokes(
                 completedStrokes.Count))
         {
@@ -575,12 +575,12 @@ public class GestureDrawer : MonoBehaviour
         if (!EnemyGestureCommand.TryGetActiveChallengeShape(
             out GestureShape gestureShape))
         {
-            return GestureShape.None;
+            return GestureShape.Unknown;
         }
 
         return EnemyGestureCommand.HasActiveEnemyChallenges() &&
                EnemyGestureCommand.HasMultipleActiveEnemyShapes()
-            ? GestureShape.None
+            ? GestureShape.Unknown
             : gestureShape;
     }
 

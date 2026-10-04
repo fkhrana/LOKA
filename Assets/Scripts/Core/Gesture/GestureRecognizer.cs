@@ -6,23 +6,17 @@ public class GestureRecognizer : MonoBehaviour
 {
     public static GestureRecognizer Instance { get; private set; }
 
-    public int sampleCount = 64;
-    public float squareSize = 250f;
-    [Tooltip("Ambang maksimal jarak rata-rata; semakin rendah berarti gesture harus lebih mirip.")]
-    public float maxAverageDistance = 45f;
-    [Tooltip("Ambang skor absolut agar gesture dianggap valid. Jika skor di atas nilai ini, hasil dianggap terlalu lemah.")]
-    public float maxAbsoluteScore = 50f;
-    [SerializeField, Tooltip("Ambang sudut tajam untuk corner detection (derajat).")]
-    private float cornerThresholdDegrees = 45f;
-    [SerializeField, Tooltip("Jumlah corner maksimum yang diizinkan sebelum gesture ditolak.")]
-    private int maxAllowedCorners = 12;
-    [Tooltip("Rasio minimum pemisahan antara hasil terbaik dan kedua terbaik agar bentuk dianggap jelas.")]
-    public float recognitionMarginRatio = 0.90f;
-    [SerializeField] private FaGaGestureDisambiguator faGaDisambiguator = new FaGaGestureDisambiguator();
-    [Tooltip("Rasio jarak titik awal-akhir terhadap ukuran gesture. Makin kecil makin ketat untuk menolak garis terbuka.")]
-    public float maxEndpointDistanceRatio = 0.18f;
-    [Tooltip("Rasio maksimum jarak ujung terhadap panjang jalur sebelum stroke dianggap garis lurus.")]
-    public float maxStraightnessRatio = 0.95f;
+    private const int SampleCount = 64;
+    private const float SquareSize = 250f;
+    private const float MaxAverageDistance = 30f;
+    private const float RotationAngleRangeDegrees = 15f;
+    private const float MaxAbsoluteScore = 50f;
+    private const float CornerThresholdDegrees = 45f;
+    private const int MaxAllowedCorners = 5;
+    private const float RecognitionMarginRatio = 0.90f;
+    private const float MaxStraightnessRatio = 0.95f;
+
+    private readonly FaGaGestureDisambiguator faGaDisambiguator = new FaGaGestureDisambiguator();
 
     private readonly List<GestureTemplate> templates = new List<GestureTemplate>();
     private readonly List<IGestureTemplateProvider> templateProviders = new List<IGestureTemplateProvider>();
@@ -91,7 +85,7 @@ public class GestureRecognizer : MonoBehaviour
         }
     }
 
-    public GestureRecognitionResult Recognize(List<Vector2> rawPoints, GestureShape expectedShape = GestureShape.None)
+    public GestureRecognitionResult Recognize(List<Vector2> rawPoints, GestureShape expectedShape = GestureShape.Unknown)
     {
         if (rawPoints == null || rawPoints.Count == 0)
         {
@@ -103,7 +97,7 @@ public class GestureRecognizer : MonoBehaviour
         return Recognize(singleStroke, expectedShape);
     }
 
-    public GestureRecognitionResult Recognize(List<List<Vector2>> strokes, GestureShape expectedShape = GestureShape.None)
+    public GestureRecognitionResult Recognize(List<List<Vector2>> strokes, GestureShape expectedShape = GestureShape.Unknown)
     {
         if (strokes == null || strokes.Count == 0)
         {
@@ -136,7 +130,7 @@ public class GestureRecognizer : MonoBehaviour
             float endpointDistance = Vector2.Distance(stroke[0], stroke[stroke.Count - 1]);
             float straightness = pathLength > Mathf.Epsilon ? endpointDistance / pathLength : 1f;
 
-            if (straightness >= maxStraightnessRatio)
+            if (straightness >= MaxStraightnessRatio)
             {
                 Debug.Log($"Gesture ditolak karena terlalu lurus. straightness: {straightness:F3}");
                 return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
@@ -147,9 +141,9 @@ public class GestureRecognizer : MonoBehaviour
         var candidateStrokeCorners = new List<int>(validStrokes.Count);
         foreach (var stroke in validStrokes)
         {
-            var processedStroke = GestureNormalizationHelper.ProcessPoints(stroke, sampleCount, squareSize);
+            var processedStroke = GestureNormalizationHelper.ProcessPoints(stroke, SampleCount, SquareSize);
             candidateStrokes.Add(processedStroke);
-            candidateStrokeCorners.Add(GestureNormalizationHelper.CountCorners(processedStroke, cornerThresholdDegrees));
+            candidateStrokeCorners.Add(GestureNormalizationHelper.CountCorners(processedStroke, CornerThresholdDegrees));
         }
 
         int totalCornerCount = 0;
@@ -158,19 +152,17 @@ public class GestureRecognizer : MonoBehaviour
             totalCornerCount += strokeCorners;
         }
 
-        if (totalCornerCount > maxAllowedCorners && candidateStrokes.Count > 1)
+        if (totalCornerCount > MaxAllowedCorners && candidateStrokes.Count > 1)
         {
-            Debug.Log($"Gesture ditolak oleh corner detection. corners: {totalCornerCount}, threshold: {cornerThresholdDegrees:F1}, maxAllowedCorners: {maxAllowedCorners}");
+            Debug.Log($"Gesture ditolak oleh corner detection. corners: {totalCornerCount}, threshold: {CornerThresholdDegrees:F1}, maxAllowedCorners: {MaxAllowedCorners}");
             return new GestureRecognitionResult(GestureShape.Unknown, false, expectedShape, false, 0f, strokes.Count);
         }
 
         GestureShape bestShape = GestureShape.Unknown;
         float bestDistance = float.MaxValue;
         float secondBestDistance = float.MaxValue;
-        float bestFaDistance = float.MaxValue;
-        float bestZaDistance = float.MaxValue;
 
-        float angleRange = Mathf.Deg2Rad * 45f;
+        float angleRange = Mathf.Deg2Rad * RotationAngleRangeDegrees;
         foreach (var template in templates)
         {
             // Pastikan jumlah stroke sama dengan template.
@@ -189,11 +181,6 @@ public class GestureRecognizer : MonoBehaviour
                 candidateStrokes,
                 template.Strokes);
 
-            if (template.Shape == GestureShape.Fa && totalDistance < bestFaDistance)
-                bestFaDistance = totalDistance;
-            else if (template.Shape == GestureShape.Za && totalDistance < bestZaDistance)
-                bestZaDistance = totalDistance;
-
             if (totalDistance < bestDistance)
             {
                 secondBestDistance = bestDistance;
@@ -206,25 +193,24 @@ public class GestureRecognizer : MonoBehaviour
             }
         }
 
-        string faScoreText = bestFaDistance == float.MaxValue ? "n/a" : bestFaDistance.ToString("F2");
-        string zaScoreText = bestZaDistance == float.MaxValue ? "n/a" : bestZaDistance.ToString("F2");
-        Debug.Log($"Gesture scores | FA: {faScoreText}, ZA: {zaScoreText}, winner: {bestShape}");
-
-        int totalCandidatePoints = candidateStrokes.Count * sampleCount;
+        int totalCandidatePoints = candidateStrokes.Count * SampleCount;
         float averageDistance = bestDistance / totalCandidatePoints;
-        float secondAverageDistance = secondBestDistance == float.MaxValue ? float.MaxValue : secondBestDistance / totalCandidatePoints;
-        float effectiveMaxAbsoluteScore = Mathf.Min(maxAbsoluteScore, 50f);
-        bool hasClearMatch = averageDistance <= maxAverageDistance &&
-                             bestDistance <= effectiveMaxAbsoluteScore &&
-                             (secondBestDistance == float.MaxValue || averageDistance <= secondAverageDistance * recognitionMarginRatio || averageDistance <= 18f);
+        float secondAverageDistance = secondBestDistance == float.MaxValue
+            ? float.MaxValue
+            : secondBestDistance / totalCandidatePoints;
+        bool hasClearMatch = averageDistance <= MaxAverageDistance &&
+                             bestDistance <= MaxAbsoluteScore &&
+                             (secondBestDistance == float.MaxValue ||
+                              averageDistance <= secondAverageDistance * RecognitionMarginRatio ||
+                              averageDistance <= 18f);
         bool isRecognized = hasClearMatch;
-        bool matchesExpected = expectedShape == GestureShape.None || (isRecognized && bestShape == expectedShape);
+        bool matchesExpected = expectedShape == GestureShape.Unknown || (isRecognized && bestShape == expectedShape);
 
         if (!isRecognized)
         {
             Debug.Log($"Tidak dikenali. Bentuk terlalu ambigu atau tidak jelas. strokeCount: {strokes.Count}, score: {bestDistance:F2}");
         }
-        else if (expectedShape != GestureShape.None && bestShape != expectedShape)
+        else if (expectedShape != GestureShape.Unknown && bestShape != expectedShape)
         {
             Debug.Log($"Gesture salah. Diminta: {expectedShape}, terdeteksi: {bestShape}. strokeCount: {strokes.Count}, score: {bestDistance:F2}");
         }
@@ -238,7 +224,7 @@ public class GestureRecognizer : MonoBehaviour
 
     public List<Vector2> ProcessPoints(List<Vector2> points)
     {
-        return GestureNormalizationHelper.ProcessPoints(points, sampleCount, squareSize);
+        return GestureNormalizationHelper.ProcessPoints(points, SampleCount, SquareSize);
     }
 
     public GestureShape GetClosestActiveTarget(
@@ -250,7 +236,7 @@ public class GestureRecognizer : MonoBehaviour
         if (strokes == null || strokes.Count == 0 ||
             activeTargets == null || activeTargets.Count == 0)
         {
-            return GestureShape.None;
+            return GestureShape.Unknown;
         }
 
         var candidateStrokes = new List<List<Vector2>>(strokes.Count);
@@ -262,14 +248,14 @@ public class GestureRecognizer : MonoBehaviour
 
             totalPointCount += stroke.Count;
             candidateStrokes.Add(
-                GestureNormalizationHelper.ProcessPoints(stroke, sampleCount, squareSize));
+                GestureNormalizationHelper.ProcessPoints(stroke, SampleCount, SquareSize));
         }
 
         if (candidateStrokes.Count == 0 || totalPointCount < 5)
-            return GestureShape.None;
+            return GestureShape.Unknown;
 
-        GestureShape closestShape = GestureShape.None;
-        float angleRange = Mathf.Deg2Rad * 45f;
+        GestureShape closestShape = GestureShape.Unknown;
+        float angleRange = Mathf.Deg2Rad * RotationAngleRangeDegrees;
         foreach (var targetShape in activeTargets)
         {
             foreach (var template in templates)
@@ -340,8 +326,7 @@ public class GestureRecognizer : MonoBehaviour
 
 public enum GestureShape
 {
-    None,
-    Unknown,
+    Unknown = 0,
     Na = 4,
     Ka = 5,
     Da = 6,

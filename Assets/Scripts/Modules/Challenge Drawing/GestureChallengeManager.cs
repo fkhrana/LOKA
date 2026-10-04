@@ -10,7 +10,7 @@ public class GestureChallengeManager : MonoBehaviour
     [SerializeField] private PlayerHealth playerHealth;
     [SerializeField] private int healOnSuccess = 0;
 
-    public GestureShape CurrentRequiredGesture { get; private set; } = GestureShape.None;
+    public GestureShape CurrentRequiredGesture { get; private set; } = GestureShape.Unknown;
     public bool IsRandomChallengeModeActive { get; private set; }
 
     private Coroutine randomChallengeCoroutine;
@@ -54,7 +54,7 @@ public class GestureChallengeManager : MonoBehaviour
     public void ClearChallenge()
     {
         StopRandomChallengeMode();
-        CurrentRequiredGesture = GestureShape.None;
+        CurrentRequiredGesture = GestureShape.Unknown;
     }
 
     public void StartRandomChallengeMode()
@@ -91,7 +91,7 @@ public class GestureChallengeManager : MonoBehaviour
 
     public bool HasActiveChallenge()
     {
-        return CurrentRequiredGesture != GestureShape.None;
+        return CurrentRequiredGesture != GestureShape.Unknown;
     }
 
     private void HandleGestureRecognized(List<List<Vector2>> strokes, GestureRecognitionResult result)
@@ -142,7 +142,7 @@ public class GestureChallengeManager : MonoBehaviour
         randomChallengeCoroutine = null;
     }
 
-    private GestureShape GetRandomShape(GestureShape excludeShape = GestureShape.None)
+    private GestureShape GetRandomShape(GestureShape excludeShape = GestureShape.Unknown)
     {
         if (randomShapes.Length == 0)
             return GestureShape.Na;

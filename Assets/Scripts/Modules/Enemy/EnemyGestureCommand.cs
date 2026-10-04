@@ -93,7 +93,7 @@ public class EnemyGestureCommand : MonoBehaviour
             }
         }
 
-        gestureShape = GestureShape.None;
+        gestureShape = GestureShape.Unknown;
         return false;
     }
 
@@ -117,7 +117,7 @@ public class EnemyGestureCommand : MonoBehaviour
 
     public static bool HasMultipleActiveEnemyShapes()
     {
-        GestureShape firstShape = GestureShape.None;
+        GestureShape firstShape = GestureShape.Unknown;
         bool foundShape = false;
 
         for (int i = 0; i < activeEnemies.Count; i++)
