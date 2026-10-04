@@ -6945,7 +6945,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2977277147243836301, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25.99997
+      value: -26
       objectReference: {fileID: 0}
     - target: {fileID: 3250933354536343674, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: hoverMoveY
@@ -6954,6 +6954,10 @@ PrefabInstance:
     - target: {fileID: 3253753726480153059, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_PreserveAspect
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3777348916379828332, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4045812945959569027, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_Name

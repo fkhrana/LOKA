@@ -6337,17 +6337,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd080c03fb8c9a4482d9d65da22c3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureRecognizer
-  sampleCount: 64
-  squareSize: 250
-  maxAverageDistance: 30
-  maxAbsoluteScore: 60
-  cornerThresholdDegrees: 45
-  maxAllowedCorners: 5
-  recognitionMarginRatio: 0.9
-  faGaDisambiguator:
-    endpointGapWeight: 0.05
-  maxEndpointDistanceRatio: 0.18
-  maxStraightnessRatio: 0.95
 --- !u!114 &1483876491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8988,6 +8977,10 @@ PrefabInstance:
     - target: {fileID: 3253753726480153059, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_PreserveAspect
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3777348916379828332, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4045812945959569027, guid: e28cd7e08e387994d8294ea9f882f399, type: 3}
       propertyPath: m_Name
