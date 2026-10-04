@@ -1,6 +1,7 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class AksaraCarouselUI : MonoBehaviour
 {
@@ -53,11 +54,40 @@ public class AksaraCarouselUI : MonoBehaviour
     private void OnEnable()
     {
         BuildList();
-        UpdateButtonsByIndex(0);
+        isSnapping = false;
+        if (scrollRect != null)
+            scrollRect.StopMovement();
+
+        SetNavigationAvailable(spawnedItems.Count > 1);
+        StartCoroutine(RefreshStateAfterLayout());
         DisableGestureInput();
     }
 
-    private void OnDisable() => EnableGestureInput();
+    private void OnDisable()
+    {
+        EnableGestureInput();
+    }
+
+    private IEnumerator RefreshStateAfterLayout()
+    {
+        // BuildList destroys old cards deferred, so wait until Unity has removed them
+        // and the layout group has arranged the newly spawned cards.
+        yield return null;
+
+        if (content != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+        }
+        SyncIndexToNearestItem();
+        SyncIndexToNearestItem();
+    }
+
+    private void SetNavigationAvailable(bool available)
+    {
+        if (leftArrowButton) leftArrowButton.interactable = available;
+        if (rightArrowButton) rightArrowButton.interactable = available;
+    }
 
     private void DisableGestureInput()
     {
@@ -180,6 +210,7 @@ public class AksaraCarouselUI : MonoBehaviour
     {
         if (spawnedItems.Count == 0) return;
 
+        SyncIndexToNearestItem();
         int targetIndex = Mathf.Clamp(currentIndex + direction, 0, spawnedItems.Count - 1);
         if (targetIndex == currentIndex) return;
 
@@ -215,14 +246,19 @@ public class AksaraCarouselUI : MonoBehaviour
         if (rightArrowButton) rightArrowButton.interactable = index < spawnedItems.Count - 1;
     }
 
-    // Dipanggil dari event ScrollRect.OnEndDrag di Inspector
-    public void OnEndDrag()
+    private void SyncIndexToNearestItem()
     {
         AksaraCarouselItemUI nearest = GetNearestCenterItem();
         if (nearest == null) return;
 
         currentIndex = spawnedItems.IndexOf(nearest);
         UpdateButtonsByIndex(currentIndex);
+    }
+
+    // Dipanggil dari event ScrollRect.OnEndDrag di Inspector
+    public void OnEndDrag()
+    {
+        SyncIndexToNearestItem();
     }
 
     // ============================================================
