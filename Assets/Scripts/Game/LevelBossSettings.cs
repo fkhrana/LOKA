@@ -123,7 +123,7 @@ public class LevelBossSettings : MonoBehaviour
         {
             videoPlayer.playOnAwake = false;
             videoPlayer.source = VideoSource.Url;
-            videoPlayer.url = Application.streamingAssetsPath + "/Video/endscene.mp4";
+            videoPlayer.url = Application.streamingAssetsPath + "/Video/end_new.mp4";
             videoPlayer.Stop();
         }
 
