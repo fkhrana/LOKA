@@ -16,6 +16,7 @@ public class LevelBossSettings : MonoBehaviour
     [SerializeField] private GameObject cutsceneHolder;
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private GameObject skipButton;
+    [SerializeField, Range(1f, 2f)] private float endSceneAudioGain = 1.5f;
 
     [Header("Transition")]
     [SerializeField] private TransitionSettings transitionSettings;
@@ -113,6 +114,11 @@ public class LevelBossSettings : MonoBehaviour
 
     private void StartCutscene()
     {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopBGM(0.8f);
+
+        ConfigureCutsceneAudio();
+
         if (videoPlayer != null)
         {
             videoPlayer.playOnAwake = false;
@@ -134,6 +140,28 @@ public class LevelBossSettings : MonoBehaviour
 
         if (transitionManager != null)
             transitionManager.onTransitionCutPointReached -= StartCutscene;
+    }
+
+    private void ConfigureCutsceneAudio()
+    {
+        if (videoPlayer == null || cutsceneHolder == null)
+            return;
+
+        AudioSource audioSource = cutsceneHolder.GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = cutsceneHolder.AddComponent<AudioSource>();
+
+        audioSource.playOnAwake = false;
+        audioSource.volume = 1f;
+
+        VideoAudioGain audioGain = cutsceneHolder.GetComponent<VideoAudioGain>();
+        if (audioGain == null)
+            audioGain = cutsceneHolder.AddComponent<VideoAudioGain>();
+        audioGain.SetGain(endSceneAudioGain);
+
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+        videoPlayer.EnableAudioTrack(0, true);
+        videoPlayer.SetTargetAudioSource(0, audioSource);
     }
 
     public void SkipCutscene()

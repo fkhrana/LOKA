@@ -6415,6 +6415,7 @@ MonoBehaviour:
   cutsceneHolder: {fileID: 1864713101}
   videoPlayer: {fileID: 1864713103}
   skipButton: {fileID: 1115344108}
+  endSceneAudioGain: 2
   transitionSettings: {fileID: 11400000, guid: b577ec7af0d48c34a9d31ce17f830a8d, type: 2}
   transitionDelay: 0.5
   winVfxDisplayDelay: 0.8
