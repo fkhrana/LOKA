@@ -6349,17 +6349,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd080c03fb8c9a4482d9d65da22c3fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestureRecognizer
-  sampleCount: 64
-  squareSize: 250
-  maxAverageDistance: 30
-  maxAbsoluteScore: 60
-  cornerThresholdDegrees: 45
-  maxAllowedCorners: 5
-  recognitionMarginRatio: 0.9
-  faGaDisambiguator:
-    endpointGapWeight: 0.05
-  maxEndpointDistanceRatio: 0.18
-  maxStraightnessRatio: 0.95
 --- !u!114 &1483876491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9387,7 +9376,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 5207623155023644682, guid: 6a04d244324c34d4c8d19329ed4fb788, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 184e38ee5acf4f34fb3d54f12249ed91, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
