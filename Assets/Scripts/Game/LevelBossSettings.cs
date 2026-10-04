@@ -113,12 +113,19 @@ public class LevelBossSettings : MonoBehaviour
 
     private void StartCutscene()
     {
+        if (videoPlayer != null)
+        {
+            videoPlayer.playOnAwake = false;
+            videoPlayer.source = VideoSource.Url;
+            videoPlayer.url = Application.streamingAssetsPath + "/Video/endscene.mp4";
+            videoPlayer.Stop();
+        }
+
         if (cutsceneHolder != null)
             cutsceneHolder.SetActive(true);
 
         if (videoPlayer != null)
         {
-            videoPlayer.Stop();
             videoPlayer.Play();
         }
 

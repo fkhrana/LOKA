@@ -18,8 +18,8 @@ public class CutsceneManager : MonoBehaviour
     [Header("Video")]
     [SerializeField] private VideoPlayer videoPlayer;
 
-    [Tooltip("Path relatif dari folder StreamingAssets, contoh: Video/startscene.mp4")]
-    [SerializeField] private string videoFileName = "Video/startscene.mp4";
+    [Tooltip("Path relatif dari folder StreamingAssets, contoh: Video/startscene_new.mp4")]
+    [SerializeField] private string videoFileName = "Video/startscene_new.mp4";
 
     [Header("Next Scene")]
     [SerializeField] private string nextSceneName = "MainMenu";
