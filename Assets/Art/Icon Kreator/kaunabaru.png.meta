@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9495edb0e3bbc1549b3cb9689ed0d98c
+guid: e81ab5841b588bf4388c830d5b5989f8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2714841132870395731
-    second: Frame 47 (1)_0
+      213: 4952131936825985727
+    second: kaunabaru_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Ka Una
+      name: kaunabaru_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 243
-        height: 242
+        x: 2
+        y: 1
+        width: 1032
+        height: 1033
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: da814ad9f52f25ad0800000000000000
-      internalID: -2714841132870395731
+      spriteID: fba416f42c189b440800000000000000
+      internalID: 4952131936825985727
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b560b072e14efdc47a84c8535a10ad2f
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Ka Una: -2714841132870395731
+      kaunabaru_0: 4952131936825985727
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

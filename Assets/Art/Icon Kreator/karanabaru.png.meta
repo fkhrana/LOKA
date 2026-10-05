@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ea2b6f03f08c7984d9046e3108158e82
+guid: 8355ec24adc73384ca5fcdb627a698ef
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3289472055890783644
-    second: Frame 45 (1)_0
+      213: 2100231659141920281
+    second: karanabaru_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Nayla
+      name: karanabaru_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 243
-        height: 242
+        x: 2
+        y: 1
+        width: 1032
+        height: 1033
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c9da1fd086d86ad20800000000000000
-      internalID: 3289472055890783644
+      spriteID: 916fe250195852d10800000000000000
+      internalID: 2100231659141920281
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 8f9f442ebea864d4296e259722924760
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Nayla: 3289472055890783644
+      karanabaru_0: 2100231659141920281
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

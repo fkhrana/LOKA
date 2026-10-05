@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: acbb7d2dd62b5104589bac9a1bf2a4bf
+guid: c632399ca42b34241af94e1b2cec6cfe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6766439039475531682
-    second: Frame 44 (1)_0
+      213: 9049542244512671060
+    second: kaaisy_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Ka Rana
+      name: kaaisy_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 243
-        height: 242
+        x: 2
+        y: 1
+        width: 1032
+        height: 1033
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2af364ec47837ed50800000000000000
-      internalID: 6766439039475531682
+      spriteID: 455a11099be669d70800000000000000
+      internalID: 9049542244512671060
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f8eaf7cdfa2f9ad47a79de87bb784302
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Ka Rana: 6766439039475531682
+      kaaisy_0: 9049542244512671060
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
