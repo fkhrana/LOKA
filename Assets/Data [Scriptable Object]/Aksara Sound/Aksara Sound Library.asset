@@ -29,7 +29,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1dbc003510b192f44b3fd420bfb6907f, type: 3}
     volume: 1
   - gestureShape: 10
-    clip: {fileID: 8300000, guid: 9219412646706064faed449766068800, type: 3}
+    clip: {fileID: 8300000, guid: f26d3831f7b448b48a974ba9fa973e5d, type: 3}
     volume: 1
   - gestureShape: 11
     clip: {fileID: 8300000, guid: 7dca8a1bc13d89b429b2ff761c678ace, type: 3}
@@ -44,7 +44,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 3911712f1b7885f44b995a66ec0fb0f8, type: 3}
     volume: 1
   - gestureShape: 14
-    clip: {fileID: 8300000, guid: 05c842a44920cdd408a7b0285c654dd1, type: 3}
+    clip: {fileID: 8300000, guid: ace2cdc77a498c546980d182b48a3464, type: 3}
     volume: 1
   - gestureShape: 15
     clip: {fileID: 8300000, guid: 158f34a813460df43b7bfcff16f41ce5, type: 3}
