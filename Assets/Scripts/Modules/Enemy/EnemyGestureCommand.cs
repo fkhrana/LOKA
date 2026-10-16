@@ -260,12 +260,6 @@ public class EnemyGestureCommand : MonoBehaviour
 
     bool shouldTick = challengeActive || allowMovementBeforeGameStarted;
 
-    // ✅ DEBUG SEMENTARA
-    Debug.Log($"[LateUpdate] {name} | challengeActive={challengeActive} | " +
-              $"allowMovement={allowMovementBeforeGameStarted} | " +
-              $"shouldTick={shouldTick} | gameStarted={CameraIntroManager.GameStarted} | " +
-              $"TickArg={(CameraIntroManager.GameStarted || allowMovementBeforeGameStarted)}");
-
     if (!shouldTick) return;
 
     movementBehavior.Tick(

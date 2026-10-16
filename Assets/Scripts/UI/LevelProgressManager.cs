@@ -69,6 +69,7 @@ public class LevelProgressManager : MonoBehaviour
     private Transform activeLevelBarStarTarget;
     private bool suppressLevelCompleteEvent;
     private bool levelCompletionSaved = false;
+    private bool hasPowerUpTutorial;
 
     private void Awake()
     {
@@ -83,14 +84,20 @@ public class LevelProgressManager : MonoBehaviour
         if (progressBar != null)
             progressBar.interactable = false;
 
-        bool hasPowerUpTutorial =
+        hasPowerUpTutorial =
             FindFirstObjectByType<PowerUpTutorialManager>() != null ||
             FindFirstObjectByType<BossLevelPowerUpTutorial>() != null;
 
+        if (hideProgressBarDuringPowerUpTutorial && hasPowerUpTutorial)
+            SetProgressBarVisible(false);
+    }
+
+    private void Start()
+    {
         if (hideProgressBarDuringPowerUpTutorial &&
             hasPowerUpTutorial &&
-            !GameProgressManager.IsTutorialCompleted())
-            SetProgressBarVisible(false);
+            GameProgressManager.IsTutorialCompleted())
+            SetProgressBarVisible(true);
     }
 
     public void SetProgressBarVisible(bool visible)

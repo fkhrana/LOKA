@@ -221,12 +221,6 @@ public class EnemyMovementBehavior : MonoBehaviour
 
     public void Tick(bool approachPlayer = true)
     {
-        Debug.Log($"[Tick] {name} | approach={approachPlayer} | isActive={isActive} | " +
-              $"isPaused={isMovementPaused} | allPaused={allMovementPaused} | " +
-              $"isKnockback={isKnockedBack} | hasPlayer={(playerTransform != null)} | " +
-              $"moveSpeed={moveSpeed} | timeScale={Time.timeScale} | " +
-              $"gameStarted={CameraIntroManager.GameStarted}");
-
         if (isMovementPaused || allMovementPaused)
             return;
 
