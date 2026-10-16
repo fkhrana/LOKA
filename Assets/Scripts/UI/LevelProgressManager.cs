@@ -80,6 +80,9 @@ public class LevelProgressManager : MonoBehaviour
 
         Instance = this;
 
+        if (progressBar != null)
+            progressBar.interactable = false;
+
         bool hasPowerUpTutorial =
             FindFirstObjectByType<PowerUpTutorialManager>() != null ||
             FindFirstObjectByType<BossLevelPowerUpTutorial>() != null;
