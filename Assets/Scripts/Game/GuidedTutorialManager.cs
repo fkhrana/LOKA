@@ -51,7 +51,7 @@ public class GuidedTutorialManager : MonoBehaviour
     [SerializeField, Min(0f)] private float retryCooldown = 1f;
 
     [Header("Timing")]
-    [SerializeField, Min(0f)] private float delayBetweenSteps = 1.5f;
+    [SerializeField, Min(0f)] private float delayBetweenSteps = 0.5f;
     [SerializeField, Min(0f)] private float delayBeforeHealHint = 1.0f;
     [SerializeField, Min(1f)] private float waitForCollectTimeout = 15f;
     [SerializeField, Min(1f)] private float waitForEnemyHitTimeout = 15f;
