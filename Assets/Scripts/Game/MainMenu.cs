@@ -34,6 +34,10 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject mainMenuContent;
     [SerializeField] private string entryStateName = "";
 
+    [Header("Reset Progress")]
+    [Tooltip("Fallback total level kalau LevelManager tidak ditemukan.")]
+    [SerializeField, Min(1)] private int totalLevels = 4;
+
     private PanelType currentPanel = PanelType.None;
     private bool isTransitioning = false;
     private bool isPanelAnimating = false;
@@ -42,15 +46,11 @@ public class MainMenu : MonoBehaviour
     {
         Time.timeScale = 1f;
 
-        // ⬇️ TAMBAH — Main Menu tidak pernah butuh flag tutorial/training.
-        // Flag static bisa nyangkut kalau pemain keluar di tengah tutorial.
-        // Reset di sini = lapis paling awal & paling aman (tidak bergantung nama scene).
         TutorialManager.IsTrainingMode = false;
         PowerUpTutorialManager.ForceReset();
         BossLevelPowerUpTutorial.ForceReset();
         GuidedTutorialManager.ForceReset();
         GameProgressManager.SetGuidedTutorialActive(false);
-        // ⬆️ SAMPAI SINI
 
         CloseAllPanels();
     }
@@ -175,39 +175,101 @@ public class MainMenu : MonoBehaviour
     public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
     public void TapToStart()
-{
-    if (isTransitioning) return;
-
-    PlayClickSFX();
-
-    string targetScene = nextSceneName;
-
-    // ⬇️ Cutscene cuma muncul kalau BELUM PERNAH nonton
-    if (!GameProgressManager.IsCutsceneCompleted())
     {
-        Debug.Log($"[MainMenu] Cutscene belum nonton → ke Cutscenee: {targetScene}");
-    }
-    else if (GameProgressManager.HasLastScene())
-    {
-        // ⬇️ Cutscene udah nonton → resume ke scene terakhir
-        string saved = GameProgressManager.GetLastScene();
+        if (isTransitioning) return;
 
-        if (!string.IsNullOrEmpty(saved))
+        PlayClickSFX();
+
+        string targetScene = nextSceneName;
+
+        if (!GameProgressManager.IsCutsceneCompleted())
         {
-            targetScene = saved;
-            Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
+            Debug.Log($"[MainMenu] Cutscene belum nonton → ke Cutscenee: {targetScene}");
         }
-    }
-    else
-    {
-        // ⬇️ Cutscene udah nonton tapi lastScene kosong → fallback gameplay
-        targetScene = "MainGameplay(Drawing)";
-        Debug.Log($"[MainMenu] Cutscene udah nonton, langsung gameplay: {targetScene}");
+        else if (GameProgressManager.HasLastScene())
+        {
+            string saved = GameProgressManager.GetLastScene();
+
+            if (!string.IsNullOrEmpty(saved))
+            {
+                targetScene = saved;
+                Debug.Log($"[MainMenu] RESUME ke: {targetScene}");
+            }
+        }
+        else
+        {
+            targetScene = "MainGameplay(Drawing)";
+            Debug.Log($"[MainMenu] Cutscene udah nonton, langsung gameplay: {targetScene}");
+        }
+
+        isTransitioning = true;
+        StartCoroutine(FadeAndLoadScene(targetScene));
     }
 
-    isTransitioning = true;
-    StartCoroutine(FadeAndLoadScene(targetScene));
-}
+    public void ResetProgressAndReload()
+    {
+        if (isTransitioning) return;
+
+        PlayClickSFX();
+
+        int levels = totalLevels;
+        if (LevelManager.Instance != null)
+            levels = Mathf.Max(levels, LevelManager.Instance.TotalLevels);
+
+        string[] progressKeys =
+        {
+            "LastSceneName", "CutsceneCompleted", "CurrentLevelIndex",
+            "OpenTutorial", "TutorialPowerUpDone",
+            "GuidedTutorialDone_Global", "PendingGuidedAfterCutscene",
+            "PowerUp_Freeze_Unlocked", "PowerUp_Freeze_Consumed",
+            "PowerUp_Combo_Unlocked",  "PowerUp_Combo_Consumed",
+            "PowerUp_Shield_Unlocked", "PowerUp_Shield_Consumed",
+            "PowerUp_Boost_Unlocked",  "PowerUp_Boost_Consumed",
+        };
+
+        foreach (var k in progressKeys)
+            PlayerPrefs.DeleteKey(k);
+
+        for (int i = 0; i < levels; i++)
+        {
+            PlayerPrefs.DeleteKey("LevelUnlocked_" + i);
+            PlayerPrefs.DeleteKey("LevelCompleted_" + i);
+
+            PlayerPrefs.DeleteKey("GameState_L" + i);
+            PlayerPrefs.DeleteKey("LastPuzzleIndex_L" + i);
+            PlayerPrefs.DeleteKey("LastWaveIndex_L" + i);
+            PlayerPrefs.DeleteKey("ProcessedEnemies_L" + i);
+
+            PlayerPrefs.DeleteKey("SavedPos_X_L" + i);
+            PlayerPrefs.DeleteKey("SavedPos_Y_L" + i);
+            PlayerPrefs.DeleteKey("SavedPos_Z_L" + i);
+            PlayerPrefs.DeleteKey("HasPlayerPos_L" + i);
+            PlayerPrefs.DeleteKey("HasEnteredGameplay_L" + i);
+
+            PlayerPrefs.DeleteKey("TutorialPowerUpDone_L" + i);
+            PlayerPrefs.DeleteKey("GuidedTutorialDone_L" + i);
+            PlayerPrefs.DeleteKey("BossTutorialDone_L" + i);
+            PlayerPrefs.DeleteKey("LevelCollectedAksara_L" + i);
+        }
+
+        for (int i = 1; i <= levels; i++)
+        {
+            PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i);
+            PlayerPrefs.DeleteKey("FinalBook_Reward_L" + i + "_Name");
+            PlayerPrefs.DeleteKey("FinalBook_RewardDesc_L" + i);
+            PlayerPrefs.DeleteKey("FinalBook_Aksara_L" + i);
+        }
+
+        foreach (string shape in Enum.GetNames(typeof(GestureShape)))
+            PlayerPrefs.DeleteKey("PermanentCollected_" + shape);
+
+        PlayerPrefs.Save();
+
+        Debug.Log($"[MainMenu] Progress di-reset untuk {levels} level. Settings aman.");
+
+        isTransitioning = true;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     private IEnumerator FadeAndLoadScene(string sceneName)
     {

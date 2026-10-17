@@ -45,6 +45,8 @@ public class LevelManager : MonoBehaviour
 
     private CanvasGroup replayCanvasGroup;
 
+    public int TotalLevels => totalLevels;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
