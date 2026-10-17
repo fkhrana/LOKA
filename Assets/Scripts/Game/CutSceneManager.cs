@@ -53,7 +53,6 @@ public class CutsceneManager : MonoBehaviour
         {
             videoPlayer.loopPointReached += OnVideoFinished;
             videoPlayer.errorReceived += OnVideoError;
-            videoPlayer.prepareCompleted += OnVideoPrepared;
         }
     }
 
@@ -63,7 +62,6 @@ public class CutsceneManager : MonoBehaviour
         {
             videoPlayer.loopPointReached -= OnVideoFinished;
             videoPlayer.errorReceived -= OnVideoError;
-            videoPlayer.prepareCompleted -= OnVideoPrepared;
         }
 
         StopShowButtonsCoroutine();
@@ -91,21 +89,17 @@ public class CutsceneManager : MonoBehaviour
             return;
         }
 
+        if (!videoPlayer.gameObject.activeInHierarchy)
+            videoPlayer.gameObject.SetActive(true);
+
         videoPlayer.playOnAwake = false;
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = Application.streamingAssetsPath + "/" + videoFileName;
 
         Debug.Log($"[CutsceneManager] Video URL: {videoPlayer.url}");
 
-        videoPlayer.Prepare();
-    }
-
-    private void OnVideoPrepared(VideoPlayer vp)
-    {
-        if (isLoadingNextScene)
-            return;
-
-        vp.Play();
+        videoPlayer.Stop();
+        videoPlayer.Play();
 
         StopShowButtonsCoroutine();
         showButtonsCoroutine = StartCoroutine(ShowButtonsAfterDelay());
@@ -273,7 +267,7 @@ public class CutsceneManager : MonoBehaviour
     {
         if (videoPlayer == null) return;
 
-        if (videoPlayer.isPrepared && !videoPlayer.isPlaying && !isLoadingNextScene)
+        if (!videoPlayer.isPlaying && !isLoadingNextScene)
         {
             videoPlayer.Play();
         }

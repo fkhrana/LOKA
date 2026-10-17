@@ -428,16 +428,17 @@ public class LevelManager : MonoBehaviour
     }
 
     public void UpdateReplayButton()
-    {
-        if (replayButton == null) return;
+{
+    if (replayButton == null) return;
 
-        int index = carouselSnap != null ? carouselSnap.GetCurrentIndex() : GetCurrentLevelIndex();
+    int index = carouselSnap != null ? carouselSnap.GetCurrentIndex() : GetCurrentLevelIndex();
+    bool unlocked = IsUnlocked(index);
 
-        replayButton.interactable = IsUnlocked(index);
+    replayButton.interactable = unlocked;
 
-        if (replayCanvasGroup != null)
-            replayCanvasGroup.alpha = 1f;
-    }
+    if (replayCanvasGroup != null)
+        replayCanvasGroup.alpha = unlocked ? 1f : 1f;
+}
 
     public void RefreshUI()
     {
