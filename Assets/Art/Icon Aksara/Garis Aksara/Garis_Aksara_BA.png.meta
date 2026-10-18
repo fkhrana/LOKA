@@ -1,0 +1,585 @@
+fileFormatVersion: 2
+guid: 329baa41eb4a0ef4a9376ea346739e27
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 3240209557183541345
+    second: Garis_Aksara_BA_0
+  - first:
+      213: -3488650942732527165
+    second: Garis_Aksara_BA_1
+  - first:
+      213: 3304088496971366502
+    second: Garis_Aksara_BA_2
+  - first:
+      213: 918882510205590340
+    second: Garis_Aksara_BA_3
+  - first:
+      213: 2576108410747515182
+    second: Garis_Aksara_BA_4
+  - first:
+      213: 1986264698093941633
+    second: Garis_Aksara_BA_5
+  - first:
+      213: 1960433021322618976
+    second: Garis_Aksara_BA_6
+  - first:
+      213: 7002426439056879017
+    second: Garis_Aksara_BA_7
+  - first:
+      213: 482442635240188178
+    second: Garis_Aksara_BA_8
+  - first:
+      213: -3384412116092417799
+    second: Garis_Aksara_BA_9
+  - first:
+      213: -2196386533218964935
+    second: Garis_Aksara_BA_10
+  - first:
+      213: -5582932550644268546
+    second: Garis_Aksara_BA_11
+  - first:
+      213: -8126260331347180311
+    second: Garis_Aksara_BA_12
+  - first:
+      213: -4246312316672150322
+    second: Garis_Aksara_BA_13
+  - first:
+      213: -5212681404977032302
+    second: Garis_Aksara_BA_14
+  - first:
+      213: 3643962867716350766
+    second: Garis_Aksara_BA_15
+  - first:
+      213: -2919392783885827676
+    second: Garis_Aksara_BA_16
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_0
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 253
+        width: 36
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 16030c5cc6987fc20800000000000000
+      internalID: 3240209557183541345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_1
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 266
+        width: 28
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c998158372d59fc0800000000000000
+      internalID: -3488650942732527165
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_2
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 266
+        width: 33
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 660ce607bfa7add20800000000000000
+      internalID: 3304088496971366502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_3
+      rect:
+        serializedVersion: 2
+        x: 292
+        y: 252
+        width: 38
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 44b9f1b46c680cc00800000000000000
+      internalID: 918882510205590340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_4
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 189
+        width: 26
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e21708563fc20c320800000000000000
+      internalID: 2576108410747515182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_5
+      rect:
+        serializedVersion: 2
+        x: 299
+        y: 191
+        width: 26
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 183b9cf1831a09b10800000000000000
+      internalID: 1986264698093941633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_6
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 126
+        width: 26
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06861e1327bd43b10800000000000000
+      internalID: 1960433021322618976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_7
+      rect:
+        serializedVersion: 2
+        x: 143
+        y: 126
+        width: 48
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9ade9c1febd9d2160800000000000000
+      internalID: 7002426439056879017
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_8
+      rect:
+        serializedVersion: 2
+        x: 291
+        y: 129
+        width: 26
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 219aef9450bf1b600800000000000000
+      internalID: 482442635240188178
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_9
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 62
+        width: 26
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f888ce9c172801d0800000000000000
+      internalID: -3384412116092417799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_10
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 62
+        width: 28
+        height: 39
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93a2802c51ed481e0800000000000000
+      internalID: -2196386533218964935
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_11
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 62
+        width: 45
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef102e1cc607582b0800000000000000
+      internalID: -5582932550644268546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_12
+      rect:
+        serializedVersion: 2
+        x: 283
+        y: 68
+        width: 26
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e404bd8849b93f80800000000000000
+      internalID: -8126260331347180311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_13
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec4f36722711215c0800000000000000
+      internalID: -4246312316672150322
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_14
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 0
+        width: 31
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2935f0151e5d8a7b0800000000000000
+      internalID: -5212681404977032302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_15
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 0
+        width: 36
+        height: 35
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2362f0fbe4f19230800000000000000
+      internalID: 3643962867716350766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Garis_Aksara_BA_16
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 8
+        width: 47
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a185ac0bbb3c77d0800000000000000
+      internalID: -2919392783885827676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Garis_Aksara_BA_0: 3240209557183541345
+      Garis_Aksara_BA_1: -3488650942732527165
+      Garis_Aksara_BA_10: -2196386533218964935
+      Garis_Aksara_BA_11: -5582932550644268546
+      Garis_Aksara_BA_12: -8126260331347180311
+      Garis_Aksara_BA_13: -4246312316672150322
+      Garis_Aksara_BA_14: -5212681404977032302
+      Garis_Aksara_BA_15: 3643962867716350766
+      Garis_Aksara_BA_16: -2919392783885827676
+      Garis_Aksara_BA_2: 3304088496971366502
+      Garis_Aksara_BA_3: 918882510205590340
+      Garis_Aksara_BA_4: 2576108410747515182
+      Garis_Aksara_BA_5: 1986264698093941633
+      Garis_Aksara_BA_6: 1960433021322618976
+      Garis_Aksara_BA_7: 7002426439056879017
+      Garis_Aksara_BA_8: 482442635240188178
+      Garis_Aksara_BA_9: -3384412116092417799
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

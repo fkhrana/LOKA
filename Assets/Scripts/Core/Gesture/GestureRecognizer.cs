@@ -12,7 +12,7 @@ public class GestureRecognizer : MonoBehaviour
     private const float RotationAngleRangeDegrees = 15f;
     private const float MaxAbsoluteScore = 50f;
     private const float CornerThresholdDegrees = 45f;
-    private const int MaxAllowedCorners = 5;
+    private const int MaxAllowedCorners = 9;
     private const float RecognitionMarginRatio = 0.90f;
     private const float MaxStraightnessRatio = 0.95f;
 

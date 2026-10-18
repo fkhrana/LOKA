@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Nayla/Latihan.unity
     guid: 22ab1e9697192fe4492b4343a74d8da5
   - enabled: 1
+    path: Assets/Scenes/Main/LatihanTulis.unity
+    guid: 4c159cdbdf70f924cb31b1dc8bd9c11a
+  - enabled: 1
     path: Assets/Scenes/Main/MainGameplay(Drawing).unity
     guid: 91a66192e2b92f64ba5ecfa4df5d9f9d
   - enabled: 1
