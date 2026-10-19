@@ -174,6 +174,16 @@ public class MainMenu : MonoBehaviour
     public void OpenTutorial()   => OpenPanel(PanelType.Tutorial);
     public void CloseTutorial()  => ClosePanel(PanelType.Tutorial);
 
+    public void OpenLatihanTulis()
+    {
+        if (isTransitioning)
+            return;
+
+        PlayClickSFX();
+        isTransitioning = true;
+        StartCoroutine(FadeAndLoadScene("LatihanTulis"));
+    }
+
     public void TapToStart()
     {
         if (isTransitioning) return;
