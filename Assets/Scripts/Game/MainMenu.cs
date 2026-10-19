@@ -273,9 +273,10 @@ public class MainMenu : MonoBehaviour
         foreach (string shape in Enum.GetNames(typeof(GestureShape)))
             PlayerPrefs.DeleteKey("PermanentCollected_" + shape);
 
+        PlayerPrefs.DeleteKey("AksaraAnalytics.Consent.v1");
         PlayerPrefs.Save();
 
-        Debug.Log($"[MainMenu] Progress di-reset untuk {levels} level. Settings aman.");
+        Debug.Log($"[MainMenu] Progress dan consent di-reset untuk {levels} level.");
 
         isTransitioning = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

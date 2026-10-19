@@ -12,6 +12,15 @@ public class AnalyticsConsentUI : MonoBehaviour
     [SerializeField] private Button acceptButton;
     [SerializeField] private Button declineButton;
 
+    public static bool HasSavedChoice
+    {
+        get
+        {
+            int savedChoice = PlayerPrefs.GetInt(ConsentKey, NoChoice);
+            return savedChoice == Granted || savedChoice == Denied;
+        }
+    }
+
     private void Awake()
     {
         int savedChoice = PlayerPrefs.GetInt(ConsentKey, NoChoice);
