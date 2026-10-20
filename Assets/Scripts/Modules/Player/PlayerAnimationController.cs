@@ -26,6 +26,7 @@ public class PlayerAnimationController : MonoBehaviour
     private int loseStateHash;
     private LevelProgressManager levelProgressManager;
     private bool winAnimationPlayed;
+    private bool winAnimationInProgress;
 
     private void Awake()
     {
@@ -101,6 +102,9 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void PlayInitiateAttack()
     {
+        if (winAnimationInProgress)
+            return;
+
         winAnimationPlayed = false;
         PlayState(initiateAttackStateHash, initiateAttackStateName);
     }
@@ -129,6 +133,7 @@ public class PlayerAnimationController : MonoBehaviour
             return;
 
         winAnimationPlayed = true;
+        winAnimationInProgress = true;
         PlayState(winStateHash, winStateName);
     }
 
@@ -147,10 +152,34 @@ public class PlayerAnimationController : MonoBehaviour
         PlayState(powerUpStateHash, powerUpStateName);
     }
 
+    private void Update()
+    {
+        if (!winAnimationInProgress || animator == null)
+            return;
+
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (currentState.shortNameHash != winStateHash)
+        {
+            winAnimationInProgress = false;
+            return;
+        }
+
+        if (!currentState.loop && currentState.normalizedTime >= 1f)
+        {
+            winAnimationInProgress = false;
+        }
+    }
+
     private void PlayState(int stateHash, string stateName)
     {
         if (animator == null || animator.runtimeAnimatorController == null)
             return;
+
+        if (winAnimationInProgress && stateHash != winStateHash)
+        {
+            return;
+        }
 
         if (!animator.HasState(0, stateHash))
         {
