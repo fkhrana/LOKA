@@ -3731,7 +3731,7 @@ GameObject:
   - component: {fileID: 1633451509}
   - component: {fileID: 1633451508}
   m_Layer: 5
-  m_Name: 'LevelButton[ini tolong ganti uinya]'
+  m_Name: LatihanButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3754,7 +3754,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 224.99998, y: -399}
-  m_SizeDelta: {x: 429, y: 150}
+  m_SizeDelta: {x: 449, y: 162}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1633451508
 MonoBehaviour:
@@ -3808,10 +3808,10 @@ MonoBehaviour:
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
-    m_HighlightedSprite: {fileID: 7282378504895265225, guid: 31665e9bb3a7e354f9035f6f42bd3d7d, type: 3}
-    m_PressedSprite: {fileID: 7282378504895265225, guid: 31665e9bb3a7e354f9035f6f42bd3d7d, type: 3}
-    m_SelectedSprite: {fileID: -7744887319525917436, guid: 36f36bd460f14fb4db45d92ca8355148, type: 3}
-    m_DisabledSprite: {fileID: -525116907911227870, guid: d201ba3eb6c32f64d81be66cfefc9231, type: 3}
+    m_HighlightedSprite: {fileID: 21300000, guid: 868e2a92e719e404c833dbdb94ea78a1, type: 3}
+    m_PressedSprite: {fileID: 21300000, guid: 868e2a92e719e404c833dbdb94ea78a1, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: 2407bee26d577994e900a7c167d5a9e8, type: 3}
+    m_DisabledSprite: {fileID: 21300000, guid: c789bd962a4447043a8e4ec920fbd325, type: 3}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
     m_HighlightedTrigger: Highlighted
@@ -3855,7 +3855,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3904125481531892719, guid: 86bdb6de71c804a48acb66a057efe475, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2407bee26d577994e900a7c167d5a9e8, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4047,7 +4047,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0.56200004}
-  m_AnchoredPosition: {x: 454, y: -29.663269}
+  m_AnchoredPosition: {x: 454, y: -29.66333}
   m_SizeDelta: {x: 457.1649, y: -112.7265}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1692534455
